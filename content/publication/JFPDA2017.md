@@ -15,16 +15,16 @@ url_code = "https://github.com/maelvalais/allumettes"
 url_dataset = ""
 url_pdf=""
 url_project = "project/touist/"
-url_slides = "https://www.irit.fr/publis/LILAC/Conf_sans_actes/2017_Gasquet_et_al_JFPDA-demonstrations.pdf"
+url_slides = ""
 url_video = ""
 
-#[[url_custom]]
-#name = "Custom Link"
-#url = "http://www.example.org"
-#
+[[url_custom]]
+name = "Poster"
+url = "https://www.irit.fr/publis/LILAC/Conf_sans_actes/2017_Gasquet_et_al_JFPDA-demonstrations.pdf"
+
 ## Optional featured image (relative to `static/img/` folder).
 #[header]
-#image = "headers/bubbles-wide.jpg"
+#image = "/img/poster.jpg"
 #caption = "My caption :smile:"
 
 +++

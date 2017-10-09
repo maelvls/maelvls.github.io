@@ -23,5 +23,5 @@ math = false
 
 +++
 
-![](ctp-vrp_vs_ctp-ccvrp.png)
+![](/img/ctp-vrp_vs_ctp-ccvrp.png)
 "Logistique de crise et aide humanitaire" is a research project completed during the M2 (2014-2015). [github](https://github.com/aheba/ctp), [report](http://homepages.laas.fr/sungueve/Docs/Etu/soutenance-ter-aide-humanitaire.pdf) (fr), [slides](http://homepages.laas.fr/sungueve/Docs/Etu/rapport-ter-aide-humanitaire.pdf) (fr)
