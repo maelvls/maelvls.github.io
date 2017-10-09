@@ -1,3 +1,3 @@
-[submodule "hugo-classic"]
-	path = hugo-classic
-	url = git@github.com:goodroot/hugo-classic.git
+[submodule "themes/academic"]
+	path = themes/academic
+	url = https://github.com/gcushen/hugo-academic.git
