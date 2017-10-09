@@ -161,7 +161,7 @@ defaultContentLanguageInSubdir = false
 
 # Menus
 [[menu.main]]
-  name = "Home"
+  name = "Biography"
   url = "#about"
   weight = 1
 

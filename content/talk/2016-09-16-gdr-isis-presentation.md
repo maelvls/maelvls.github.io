@@ -23,7 +23,8 @@ url_video = ""
 
 <!-- Embed your slides or video here using [shortcodes](https://gcushen.github.io/hugo-academic-demo/post/writing-markdown-latex/).Further details can easily be added using *Markdown* and $\rm \LaTeX$ math code.  -->
 
-I will give a talk at the GdR ISIS meeting on October 6th at the. More
-info in my [internship report][masterthesis].
+I gave a talk at a meeting of the [GdR ISIS](http://gdr-isis.fr) (a CNRS
+group working on _Information, Signal, Image et ViSion_) on October 6th at
+the. More info in my [internship report][masterthesis].
 
 [masterthesis]: https://drive.google.com/open?id=0B5mz8k-t6PT0N2lINEZYX2duOFU
