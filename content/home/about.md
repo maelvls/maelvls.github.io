@@ -40,9 +40,9 @@ Frédéric Maris (IRIT) and Andreas Herzig (CNRS).
 Some extra information on me is available on the lab's [profile].
 
 My PhD thesis consists in developing a tool and language, [TouIST]
-(_Toulouse Integrated Satisfiability Tool_), that will allow us to express
-and solve real-world problems through the use of multiple logic theories:
-SAT, SMT and QBF for now.
+\(_Toulouse Integrated Satisfiability Tool_, pronounced _twist_\), that will
+allow us to express and solve real-world problems through the use of
+multiple logic theories: SAT, SMT and QBF for now.
 
 [TouIST]: https://www.irit.fr/touist
 [Github]: https://github.com/touist/touist
