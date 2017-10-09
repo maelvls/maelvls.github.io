@@ -1,5 +1,5 @@
 enableGitInfo = true # https://gohugo.io/variables/git/
-baseurl = "/touist/"
+baseurl = "/~Mael.Valais/"
 languageCode = "en-us"
 title = "Maël Valais"
 theme = "academic"
