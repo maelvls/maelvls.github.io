@@ -2,11 +2,11 @@
 selected = false
 math = true
 
-date = "2016-09-16"
-title = "Talk at GdR ISIS on October 6th"
+date = "2016-10-06"
+title = "Presentation of the master's thesis work"
 abstract = ""
 abstract_short = ""
-event = "GdR ISIS Meetings"
+event = "Talk at the Information, Signal, Image and ViSion (ISIS) group meeting"
 event_url = "http://www.gdr-isis.fr/index.php?page=reunion&idreunion=321"
 location = "UPMC, Paris, France"
 

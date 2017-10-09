@@ -24,7 +24,7 @@ weight = 5
   year = 2016
 
 [[education.courses]]
-  course = "BSc in Artificial Intelligence"
+  course = "BSc in Computer Science"
   institution = "Université Toulouse 1 – Capitole"
   year = 2014
 +++
@@ -39,9 +39,10 @@ Frédéric Maris (IRIT) and Andreas Herzig (CNRS).
 
 Some extra information on me is available on the lab's [profile].
 
-My PhD thesis consists in developing a tool and language, [TouIST] ([Github]), that will
-allow us to express and solve real-world problems through the use of multiple
-logic theories: SAT, SMT and QBF for now.
+My PhD thesis consists in developing a tool and language, [TouIST]
+(_Toulouse Integrated Satisfiability Tool_), that will allow us to express
+and solve real-world problems through the use of multiple logic theories:
+SAT, SMT and QBF for now.
 
 [TouIST]: https://www.irit.fr/touist
 [Github]: https://github.com/touist/touist
@@ -54,3 +55,8 @@ logic theories: SAT, SMT and QBF for now.
 [Twitter]: https://twitter.com/maelvalais
 
 [profile]: https://www.irit.fr/spip.php?page=annuaire&code=10566
+
+[^touist-meaning]: _**Tou**louse **i**ntegrated **s**atisfiability **t**ool_.
+                   it is prononced _twist_. we were looking for a memorable and
+                   pronounceable name that had no homonym on google. and it
+                   had to sound like fun, too!
