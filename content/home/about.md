@@ -31,8 +31,8 @@ weight = 5
 
 # Biography
 
-I am currently a PhD student at [IRIT] ([location]) (Institut de Recherche en Informatique
-de Toulouse, France) in the [LILaC] and [ADRIA] team.
+I am currently a PhD student at [IRIT] \(Institut de Recherche en Informatique
+de Toulouse, France – [location]) in the [LILaC] and [ADRIA] team.
 [<img src="img/irit.png" style="max-width:30%;min-width:50px;float:right;margin:20px">][IRIT]
 I am under the supervision of Olivier Gasquet (IRIT), Dominique Longin (CNRS),
 Frédéric Maris (IRIT) and Andreas Herzig (CNRS).
