@@ -43,8 +43,8 @@ defaultContentLanguageInSubdir = false
   #   Separate multiple entries with a comma, using the form: `[ {name="Org1", url=""}, {name="Org2", url=""} ]`.
   organizations = [ { name = "IRIT", url = "https://www.irit.fr" } ]
 
-  gravatar = false  # Get your avatar from Gravatar.com? (true/false)
-  avatar = "mael_valais.jpg"  # Specify an avatar image (in `static/img/` folder) or delete value to disable avatar.
+  gravatar = true  # Get your avatar from Gravatar.com? (true/false)
+  #avatar = "mael_valais.jpg"  # Specify an avatar image (in `static/img/` folder) or delete value to disable avatar.
   email = "mael.valais@irit.fr"
   address = "Institut de Recherche en Informatique de Toulouse (IRIT1), Floor 3, Office 303, Toulouse, 31400, France"
   office_hours = ""
