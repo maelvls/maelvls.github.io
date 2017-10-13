@@ -5,7 +5,7 @@
 date = 2016-04-20
 draft = false
 
-title = "Recent Publications"
+title = "Publications"
 subtitle = ""
 widget = "publications"
 
@@ -19,7 +19,7 @@ count = 10
 #   0 = Simple
 #   1 = Classic
 #   2 = Detailed
-list_format = 0
+list_format = 1
 
 # Filter by publication type.
 # -1: Any

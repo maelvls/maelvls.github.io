@@ -6,8 +6,8 @@ theme = "academic"
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 copyright = "&copy; 2017 Maël Valais"
 enableEmoji = true
-footnotereturnlinkcontents = "<sup>^</sup>"
-#footnotereturnlinkcontents = "↩"
+#footnotereturnlinkcontents = "<sup>^</sup>"
+footnotereturnlinkcontents = "↩"
 paginate = 10
 
 # Enable comments by entering your Disqus shortname
@@ -29,7 +29,7 @@ defaultContentLanguageInSubdir = false
 [params]
   # Color theme.
   #   Choose from `default`, `ocean`, `forest`, or `coffee`.
-  color_theme = "default"
+  color_theme = "ocean"
 
   # Font style.
   #   Choose from `default`, `classic`, or `playfair`.
