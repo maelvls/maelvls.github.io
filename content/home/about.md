@@ -29,11 +29,12 @@ weight = 5
   year = 2014
 +++
 
+[<img src="img/irit2018.png" style="max-width:25%;min-width:2cm;float:right;margin:1em;margin-top:1cm">][IRIT]
 # Biography
+
 
 I am currently a PhD student at [IRIT] \(Institut de Recherche en Informatique
 de Toulouse, France – [location]) in the [LILaC] and [ADRIA] team.
-[<img src="img/irit.png" style="max-width:30%;min-width:50px;float:right;margin:20px">][IRIT]
 I am under the supervision of Olivier Gasquet (IRIT), Dominique Longin (CNRS),
 Frédéric Maris (IRIT) and Andreas Herzig (CNRS).
 
