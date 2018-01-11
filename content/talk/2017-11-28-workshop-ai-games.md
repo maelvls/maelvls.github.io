@@ -1,5 +1,5 @@
 +++
-title = "2017 11 28 Workshop Ai Games"
+title = "Workshop AI Games"
 date = 2017-11-28T15:28:56+01:00
 draft = false
 
