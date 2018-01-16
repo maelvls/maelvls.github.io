@@ -45,4 +45,10 @@ I am a teaching instructor for the following courses at University Toulouse 3:
   quick sort); students are also shown linear programming, flow algorithms as
   well as global optimization. Total: 12h.
 
+2018 (Université Toulouse 3 - Paul Sabatier)
+
+- _Logique 1_ (L1, Physics students): 7 lectures of 2h for ~30 students
+  where I introduce and play with propositional logic (each lecture is
+  composed of 1h of tutorial).
+
 [karel]: https://en.wikipedia.org/wiki/Karel_(programming_language)
