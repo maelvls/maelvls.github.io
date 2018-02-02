@@ -49,7 +49,8 @@ I am a teaching instructor for the following courses at University Toulouse 3:
 
 - _Logique 1_ (L1, Physics students): 7 lectures of 2h for ~30 students
   where I introduce and play with propositional logic (each lecture is
-  composed of 1h of tutorial). [Exercices for modeling and semantic
-  satisfiability](https://cloud.irit.fr/index.php/s/HU4oQU8VZqX4IRv)
+  composed of 1h of tutorial). [Moodle](http://moodle.univ-tlse3.fr/course/view.php?id=2830),
+  [slides](https://cloud.irit.fr/index.php/s/emqXmBZtoUW5kVT),
+  [exercices on modeling and semantic satisfiability](https://cloud.irit.fr/index.php/s/HU4oQU8VZqX4IRv)
 
 [karel]: https://en.wikipedia.org/wiki/Karel_(programming_language)
