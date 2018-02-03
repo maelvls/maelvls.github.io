@@ -51,6 +51,6 @@ I am a teaching instructor for the following courses at University Toulouse 3:
   where I introduce and play with propositional logic (each lecture is
   composed of 1h of tutorial). [Moodle](http://moodle.univ-tlse3.fr/course/view.php?id=2830),
   [slides](https://cloud.irit.fr/index.php/s/emqXmBZtoUW5kVT),
-  [exercices on modeling and semantic satisfiability](https://cloud.irit.fr/index.php/s/HU4oQU8VZqX4IRv)
+  [exercices on modeling and semantic satisfiability](https://cloud.irit.fr/index.php/s/HU4oQU8VZqX4IRv), [proofs of slide 84](https://cloud.irit.fr/index.php/s/FA42VbGi7w8CSK9)
 
 [karel]: https://en.wikipedia.org/wiki/Karel_(programming_language)
