@@ -45,12 +45,14 @@ I am a teaching instructor for the following courses at University Toulouse 3:
   quick sort); students are also shown linear programming, flow algorithms as
   well as global optimization. Total: 12h.
 
+[karel]: https://en.wikipedia.org/wiki/Karel_(programming_language)
+
 2018 (Université Toulouse 3 - Paul Sabatier)
 
 - _Logique 1_ (L1, Physics students): 7 lectures of 2h for ~30 students
   where I introduce and play with propositional logic (each lecture is
   composed of 1h of tutorial). [Moodle](http://moodle.univ-tlse3.fr/course/view.php?id=2830),
-  [slides](https://cloud.irit.fr/index.php/s/emqXmBZtoUW5kVT),
-  [exercices on modeling and semantic satisfiability](https://cloud.irit.fr/index.php/s/HU4oQU8VZqX4IRv), [proofs of slide 84](https://cloud.irit.fr/index.php/s/FA42VbGi7w8CSK9)
+  [slides et exos 1 à 23](https://cloud.irit.fr/index.php/s/emqXmBZtoUW5kVT),
+  [exercices 1 à 3 "énigmes logiques" avec les étudiants voleurs](https://cloud.irit.fr/index.php/s/HU4oQU8VZqX4IRv), [preuves que j'ai essayé d'écrire pour exos 14 et 18](https://cloud.irit.fr/index.php/s/FA42VbGi7w8CSK9), [corrections exos 1 à 19](https://cloud.irit.fr/index.php/s/Xp7r8XeoEfcEX0k)
 
-[karel]: https://en.wikipedia.org/wiki/Karel_(programming_language)
+
