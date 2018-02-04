@@ -29,7 +29,7 @@ weight = 5
   year = 2014
 +++
 
-[<img src="img/irit2018.png" style="max-width:30%;min-width:2cm;float:right;margin:1em;margin-top:1.3cm">][IRIT]
+[<img src="img/irit2018.svg" style="max-width:30%;min-width:2cm;float:right;margin:1em;margin-top:1cm">][IRIT]
 # Biography
 
 
