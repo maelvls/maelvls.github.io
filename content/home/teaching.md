@@ -18,7 +18,7 @@ A list of tutorials and lectures I gave as a teaching instructor.
 
 ## 2018 (Université Toulouse 3 - Paul Sabatier)
 
-- _Logique 1_ (L1, Physics students): 7 lectures of 2h for ~30 students
+- _Logique 1_ (L1, Physics & Maths students): 7 lectures of 2h for ~30 students
   where I introduce and play with propositional logic (each lecture is
   composed of 1h of tutorial). Content:
   - [Moodle](http://moodle.univ-tlse3.fr/course/view.php?id=2830)
