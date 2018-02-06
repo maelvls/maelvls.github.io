@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -e
+
+if [ -t 1 ] ; then
+    gray='\033[90m'
+    red='\033[91m'
+    green='\033[92m'
+    yel='\033[93m'
+    blu='\033[94m'
+    purp='\033[95m'
+    end='\033[0m'
+fi
+
+# echo -e "${blu}==>${end} ${red}Pre-push on ${green}$2${end}"
+
+TEMPDIR=/tmp/irit-fr-maelvalais
+
+echo -e "${red}1)${end} ${yel}Cloning to ${green}$TEMPDIR${end}...${end}"
+echo -en "$gray"; set -x
+if git -C "$TEMPDIR" fetch --recurse-submodules >/dev/null 2>&1; then
+    git -C $TEMPDIR reset --hard origin/master --recurse-submodules
+else
+    git clone -q . $TEMPDIR --recurse-submodules | cat
+fi
+cd $TEMPDIR
+set +x; echo -en "$gray"
+
+echo -e "${red}2)${end} ${yel}Updating ${green}maelvalais.github.io${end}...${end}"
+
+echo -en "$gray"; set -x
+MAELVALAIS_GITHUB_IO=/tmp/maelvalais_github_io
+if git -C $MAELVALAIS_GITHUB_IO fetch >/dev/null 2>&1; then
+    git -C $MAELVALAIS_GITHUB_IO reset --hard origin/master
+else
+    git clone git@github.com:maelvalais/maelvalais.github.io.git $MAELVALAIS_GITHUB_IO
+fi
+hugo --quiet
+cp -R public/* $MAELVALAIS_GITHUB_IO
+git -C $MAELVALAIS_GITHUB_IO add .
+git -C $MAELVALAIS_GITHUB_IO ci -m "update on $(date)" | cat || true
+git -C $MAELVALAIS_GITHUB_IO push -f -q
+set +x; echo -en "$end"
+
+
+echo -e "${red}3)${end} ${yel}Updating irit.fr/~Mael.Valais...${end}"
+
+echo -en "$gray"; set -x
+sed -i "s:^baseurl = .*:baseurl = \"/~Mael.Valais/\":" config.toml
+# Because irit's apache seems to default to latin1 otherwise
+cat > public/.htaccess <<< "AddDefaultCharset utf-8"
+# Make an ics folder also
+mkdir -p public/ics
+cat > public/ics/.htaccess <<-'EOF'
+Options +Indexes\n
+IndexOptions IgnoreCase FancyIndexing FoldersFirst NameWidth=*
+EOF
+hugo --quiet
+# Now, copy the www to the production dir
+# Note that I had to add -p to keep the permissions
+rsync -rq public/* bali.irit.fr:/usr/local/WWW-personnel/Mael.Valais
+
+# Set the right permissions as 'scp' does not preserve permissions,
+# because my www files should be in the apache group, but in reality
+# it's created with the gsc (what is that??) group, so I must add the
+# chmod go+r to be sure that apache can read in my www dir
+ssh bali.irit.fr 'find /usr/local/WWW-personnel/Mael.Valais \( -type d -exec chmod ugo+rx {} \; \) -o \( -type f -exec chmod ugo+r {} \; \)'
+set +x; echo -en "$end"
+
+# echo -e "${blu}==>${end} Going on with the ${green}git push${end}..."
