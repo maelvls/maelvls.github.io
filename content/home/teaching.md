@@ -10,14 +10,13 @@ subtitle = ""
 widget = "custom"
 
 # Order that this section will appear in.
-weight = 60
+weight = 10
 
 +++
 
-I give some tutorials and lectures as a teaching instructor for the following
-courses at University Toulouse 3:
+A list of tutorials and lectures I gave as a teaching instructor.
 
-2018 (Université Toulouse 3 - Paul Sabatier)
+## 2018 (Université Toulouse 3 - Paul Sabatier)
 
 - _Logique 1_ (L1, Physics students): 7 lectures of 2h for ~30 students
   where I introduce and play with propositional logic (each lecture is
@@ -29,7 +28,7 @@ courses at University Toulouse 3:
   - [Correction des preuves des exos 14 et 18](https://cloud.irit.fr/index.php/s/FA42VbGi7w8CSK9)
   - [Corrections exos 1 à 19](https://cloud.irit.fr/index.php/s/Xp7r8XeoEfcEX0k)
 
-2017 (Université Toulouse 3 - Paul Sabatier)
+## 2017 (Université Toulouse 3 - Paul Sabatier)
 
 - _Algorithms 1_ (L1, students of _parcours speciaux_): same as previous year.
 - _Language theory and compilation_ (M1, Computer Science students): in
@@ -47,7 +46,7 @@ courses at University Toulouse 3:
 
 [karel]: https://en.wikipedia.org/wiki/Karel_(programming_language)
 
-2016 (Université Toulouse 3 - Paul Sabatier)
+## 2016 (Université Toulouse 3 - Paul Sabatier)
 
 - _Algorithms 1_ (L1, all students): learn the basics of
   algorithmics using a simple programmning language (python) during 14
