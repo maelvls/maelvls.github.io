@@ -24,9 +24,10 @@ A list of tutorials and lectures I gave as a teaching instructor.
   - [Moodle](http://moodle.univ-tlse3.fr/course/view.php?id=2830)
   - [Slides de cours et exos 1 à 23](https://cloud.irit.fr/index.php/s/emqXmBZtoUW5kVT)
   - [Cours d'Andreas Herzig](https://www.irit.fr/~Andreas.Herzig/C)
-  - [Exercices 1 à 3 "énigmes logiques" avec les étudiants voleurs](https://cloud.irit.fr/index.php/s/HU4oQU8VZqX4IRv) à faire pour le ven. 9 février,
   - [Correction des preuves des exos 14 et 18](https://cloud.irit.fr/index.php/s/FA42VbGi7w8CSK9)
-  - [Corrections exos 1 à 19](https://cloud.irit.fr/index.php/s/Xp7r8XeoEfcEX0k)
+  - [Corrections exos 1 à 20](https://cloud.irit.fr/index.php/s/Xp7r8XeoEfcEX0k) (il manque la correction des exos 21, 22 et 23)
+  - [Exercices 1 à 3 "Énigmes logiques" avec les étudiants voleurs](https://cloud.irit.fr/index.php/s/HU4oQU8VZqX4IRv) à faire pour le ven. 9 février 2018
+  - TODO: corrigé des exercices 1 à 3 "Énigmes logiques"
 
 ## 2017 (Université Toulouse 3 - Paul Sabatier)
 
