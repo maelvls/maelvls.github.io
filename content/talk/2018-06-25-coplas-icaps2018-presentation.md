@@ -1,5 +1,5 @@
 +++
-title = "2018 06 25 Coplas2018 Maftec Presentation"
+title = "Presentation at the COPLAS 2018 Workshop"
 date = 2018-06-25T17:05:29+02:00
 draft = false
 
