@@ -45,7 +45,7 @@ set +x; echo -en "$end"
 echo -e "${red}3)${end} ${yel}Updating irit.fr/~Mael.Valais...${end}"
 
 echo -en "$gray"; set -x
-sed -i "s:^baseurl = .*:baseurl = \"/~Mael.Valais/\":" config.toml
+sed -i~ 's:^baseurl = .*:baseurl = "/~Mael.Valais/":' config.toml
 # Because irit's apache seems to default to latin1 otherwise
 cat > public/.htaccess <<< "AddDefaultCharset utf-8"
 # Make an ics folder also
