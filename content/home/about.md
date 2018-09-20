@@ -29,9 +29,11 @@ weight = 5
   year = 2014
 +++
 
+- <i class="fa fa-linkedin" style="margin-right:0.5em"></i> [LinkedIn profile][LinkedIn] (almost always up-to-date)
+- <i class="fa fa-file" style="margin-right:0.5em"></i> [Resume/CV](resume_mael_valais.pdf) (updated on Sept. 20, 2018)
+
 [<img src="img/irit2018.svg" style="max-width:30%;min-width:2cm;float:right;margin:1em;margin-top:1cm">][IRIT]
 # Biography
-
 
 I am currently a PhD student at [IRIT] \(Institut de Recherche en Informatique
 de Toulouse, France – [location]) in the [LILaC] and [ADRIA] team.
