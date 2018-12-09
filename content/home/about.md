@@ -36,7 +36,7 @@ weight = 5
 # Biography
 
 I am currently employed as a contractor at Orange, Toulouse (France). I
-work on developer tooling, examples and documentation in order to improve
+work on tools for developers, examples and documentation in order to improve
 the developer experience when it comes to using the Orange IT's private
 cloud. I also try to promote and find new ways to guide people into sharing
 their own code as well getting the most out of Orange's internal GitLab.
