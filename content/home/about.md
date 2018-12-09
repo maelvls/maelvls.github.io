@@ -35,17 +35,26 @@ weight = 5
 [<img src="img/irit2018.svg" style="max-width:30%;min-width:2cm;float:right;margin:1em;margin-top:1cm">][IRIT]
 # Biography
 
-I am currently a PhD student at [IRIT] \(Institut de Recherche en Informatique
-de Toulouse, France – [location]) in the [LILaC] and [ADRIA] team.
-I am under the supervision of Olivier Gasquet (IRIT), Dominique Longin (CNRS),
-Frédéric Maris (IRIT) and Andreas Herzig (CNRS).
+I am currently employed as a contractor at Orange, Toulouse (France). I
+work on developer tooling, examples and documentation in order to improve
+the developer experience when it comes to using the Orange IT's private
+cloud. I also try to promote and find new ways to guide people into sharing
+their own code as well getting the most out of Orange's internal GitLab.
 
-Some extra information on me is available on the lab's [profile].
+In Oct. 2018, I chose to stop my PhD and move on towards engineering stuff.
+The main reason is that I was bored as hell doing theoretic stuff all day. What
+I loved most during the two years of my unfinished PhD was the development
+part. So I gathered everything I loved about programming and found a job that
+matched.
 
-My PhD thesis consists in developing a tool and a language, [TouIST]
-\(pronounced _twist_, standing for _Toulouse Integrated Satisfiability
-Tool_\), that will allow us to express and solve real-world problems
-through the use of multiple logic theories: SAT, SMT and QBF for now.
+I was a PhD student at [IRIT] \(Institut de Recherche en Informatique de
+Toulouse, France – [location]) in the [LILaC] and [ADRIA] team. I was under
+the supervision of Olivier Gasquet (IRIT), Dominique Longin (CNRS),
+Frédéric Maris (IRIT) and Andreas Herzig (CNRS). My PhD thesis consisted in
+developing a tool and a language, [TouIST] \(pronounced _twist_, standing
+for _Toulouse Integrated Satisfiability Tool_\), that will allow us to
+express and solve real-world problems through the use of multiple logic
+theories: SAT, SMT and QBF for now.
 
 [TouIST]: https://www.irit.fr/touist
 [Github]: https://github.com/touist/touist
