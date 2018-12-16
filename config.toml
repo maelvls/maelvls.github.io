@@ -1,5 +1,5 @@
 enableGitInfo = true # https://gohugo.io/variables/git/
-baseurl = "/"
+baseurl = "/~Mael.Valais/"
 languageCode = "en-us"
 title = "Maël Valais"
 theme = "academic"
@@ -48,7 +48,7 @@ defaultContentLanguageInSubdir = false
   email = "mael.valais@irit.fr"
   address = "Institut de Recherche en Informatique de Toulouse (IRIT1), Floor 3, Office 303, Toulouse, 31400, France"
   office_hours = ""
-  phone = "+33561557343"
+  phone = "+33 7 86 48 43 91"
   skype = ""
   telegram = ""
 
@@ -118,7 +118,8 @@ defaultContentLanguageInSubdir = false
     'Work in progress',  # 3
     'Technical report',  # 4
     'Book',  # 5
-    'Book chapter'  # 6
+    'Book chapter',  # 6
+    'Workshop short paper' # 7
   ]
 
   # Social/Academic Networking
