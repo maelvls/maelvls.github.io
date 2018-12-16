@@ -44,20 +44,21 @@ the developer experience when it comes to using the Orange IT's private
 cloud. I also try to promote and find new ways to guide people into sharing
 their own code as well getting the most out of Orange's internal GitLab.
 
-In Oct. 2018, I chose to stop my PhD and move on towards engineering stuff.
+<!-- In Oct. 2018, I chose to stop my PhD and move on towards engineering stuff.
 The main reason is that I was bored as hell doing theoretic stuff all day. What
 I loved most during the two years of my unfinished PhD was the development
 part. So I gathered everything I loved about programming and found a job that
 matched.
-
-I was a PhD student at [IRIT] \(Institut de Recherche en Informatique de
-Toulouse, France – [location]) in the [LILaC] and [ADRIA] team. I was under
-the supervision of Olivier Gasquet (IRIT), Dominique Longin (CNRS),
-Frédéric Maris (IRIT) and Andreas Herzig (CNRS). My PhD thesis consisted in
-developing a tool and a language, [TouIST] \(pronounced _twist_, standing
-for _Toulouse Integrated Satisfiability Tool_\), that will allow us to
-express and solve real-world problems through the use of multiple logic
-theories: SAT, SMT and QBF for now.
+-->
+Since Oct. 2016, I am also a PhD student at [IRIT] \(Institut de Recherche
+en Informatique de Toulouse, France – [location]) in the [LILaC] and
+[ADRIA] team. I am under the supervision of Olivier Gasquet (IRIT),
+Dominique Longin (CNRS), Frédéric Maris (IRIT) and Andreas Herzig (CNRS).
+My PhD thesis consisted in developing a tool and a language, [TouIST]
+\(pronounced _twist_, standing for _Toulouse Integrated Satisfiability
+Tool_\), that will allow us to express and solve real-world problems
+through the use of multiple logic theories: SAT, SMT and QBF for now. The
+manuscript has been submitted and I will defend in early 2019.
 
 [TouIST]: https://www.irit.fr/touist
 [Github]: https://github.com/touist/touist

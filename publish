@@ -6,8 +6,6 @@ if [ -t 1 ] ; then
     red='\033[91m'
     green='\033[92m'
     yel='\033[93m'
-    blu='\033[94m'
-    purp='\033[95m'
     end='\033[0m'
 fi
 
