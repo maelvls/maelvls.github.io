@@ -34,7 +34,9 @@ weight = 5
 - Contact (academic): [see below](#contact)
 - Contact (profesionnal): [mael.valais@gmail.com](#), +33 7 86 48 43 91
 
-[<img src="img/irit2018.svg" style="max-width:30%;min-width:2cm;float:right;margin:1em;margin-top:1cm">][irit]
+<!--
+  [<img src="img/irit2018.svg" style="max-width:30%;min-width:2cm;float:right;margin:1em;margin-top:1cm">][irit]
+-->
 
 # Biography
 
