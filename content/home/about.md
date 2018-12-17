@@ -40,11 +40,13 @@ weight = 5
 
 # Biography
 
-I am currently employed as a contractor at Orange, Toulouse (France). I
-work on tools for developers, examples and documentation in order to improve
-the developer experience when it comes to using the Orange IT's private
-cloud. I also try to promote and find new ways to guide people into sharing
-their own code as well getting the most out of Orange's internal GitLab.
+I am currently employed by [SQUAD] and am currently contracted to Orange
+(Toulouse, France). I work on tools for developers, examples and documentation
+in order to improve the developer experience when it comes to using the Orange
+IT's private cloud. I also try to promote and find new ways to guide people into
+sharing their own code as well getting the most out of Orange's internal GitLab.
+
+[squad]: https://www.squad.fr
 
 <!-- In Oct. 2018, I chose to stop my PhD and move on towards engineering stuff.
 The main reason is that I was bored as hell doing theoretic stuff all day. What
