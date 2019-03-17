@@ -13,5 +13,7 @@ steps:
   - script: |
       sudo apt-get update
       sudo apt-get install hugo rsync git
+    displayName: "Install"
 
   - script: ./publish
+    displayName: "Build and publish"
