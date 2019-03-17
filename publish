@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+# Required:
+# - GITHUB_TOKEN for pushing to maelvalais.github.io
+# - ~/.ssh/config with correct identity file for bali.irit.fr
+
 if [ -t 1 ] ; then
     gray='\033[90m'
     red='\033[91m'
@@ -30,7 +34,7 @@ MAELVALAIS_GITHUB_IO=/tmp/maelvalais_github_io
 if git -C $MAELVALAIS_GITHUB_IO fetch >/dev/null 2>&1; then
     git -C $MAELVALAIS_GITHUB_IO reset --hard origin/master
 else
-    git clone https://github.com/maelvalais/maelvalais.github.io.git $MAELVALAIS_GITHUB_IO
+    git clone https://user:${GITHUB_TOKEN}@github.com/maelvalais/maelvalais.github.io.git $MAELVALAIS_GITHUB_IO
 fi
 hugo --quiet
 cp -R public/* $MAELVALAIS_GITHUB_IO
@@ -65,3 +69,5 @@ ssh bali.irit.fr 'find /usr/local/WWW-personnel/Mael.Valais \( -type d -exec chm
 set +x; echo -en "$end"
 
 # echo -e "${blu}==>${end} Going on with the ${green}git push${end}..."
+
+
