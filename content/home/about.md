@@ -46,7 +46,7 @@ weight = 5
 # Biography
 
 > **Note:** if you want the most up-to-date information about me, I
-> recommend taking a look at my [LinkedIn][linkedin] page.
+> recommend taking a look at my [LinkedIn] page.
 
 I am currently employed by [SQUAD] and am currently contracted to La Banque
 Postale (Toulouse, France). I work on tools for network administrators,
