@@ -19,6 +19,11 @@ weight = 5
 
 # List your qualifications (such as academic degrees).
 [[education.courses]]
+  course = "PhD in Artificial Intelligence"
+  institution = "Université Toulouse 3 – Paul Sabatier"
+  year = 2019
+
+[[education.courses]]
   course = "MSc in Operations Research"
   institution = "Université Toulouse 3 – Paul Sabatier"
   year = 2016
@@ -29,7 +34,7 @@ weight = 5
   year = 2014
 +++
 
-- <i class="fa fa-linkedin" style="margin-right:0.5em"></i> [LinkedIn profile][linkedin] (most up-to-date information)
+- <i class="fa fa-linkedin" style="margin-right:0.5em"></i> [LinkedIn] profile (most up-to-date information)
 - <i class="fa fa-file" style="margin-right:0.5em"></i> [Resume/CV](resume_mael_valais.pdf) (updated on Oct. 1st, 2018 -- **outdated**)
 - Contact (academic): [see below](#contact)
 - Contact (professional): [mael.valais@gmail.com](#), +33 7 86 48 43 91
@@ -40,36 +45,36 @@ weight = 5
 
 # Biography
 
-I am currently employed by [SQUAD] and am currently contracted to Orange
-(Toulouse, France). I work on tools for developers, examples and documentation
-in order to improve the developer experience when it comes to using the Orange
-IT's private cloud. I also try to promote and find new ways to guide people into
-sharing their own code as well getting the most out of Orange's internal GitLab.
+> **Note:** if you want the most up-to-date information about me, I
+> recommend taking a look at my [LinkedIn][linkedin] page.
+
+I am currently employed by [SQUAD] and am currently contracted to La Banque
+Postale (Toulouse, France). I work on tools for network administrators,
+including a web front-end to Ansible Tower APIs.
+
+Before that, I was contracted to Orange, where I worked on tools for
+developers, examples and documentation in order to improve the developer
+experience when it comes to using the Orange IT's private cloud. I also try
+to promote and find new ways to guide people into sharing their own code as
+well getting the most out of Orange's internal GitLab.
 
 [squad]: https://www.squad.fr
 
-<!-- In Oct. 2018, I chose to stop my PhD and move on towards engineering stuff.
-The main reason is that I was bored as hell doing theoretic stuff all day. What
-I loved most during the two years of my unfinished PhD was the development
-part. So I gathered everything I loved about programming and found a job that
-matched. -->
-
-Since Oct. 2016, I am also a PhD student at [IRIT] \(Institut de Recherche en
-Informatique de Toulouse, France – [location]) in the [LILaC] and [ADRIA] team.
-The manuscript is ready and I will be defending in early 2019.
-
-My PhD work is supervised by Olivier Gasquet (IRIT), Dominique Longin (CNRS),
-Frédéric Maris (IRIT) and Andreas Herzig (CNRS). My goal is to develop a tool
-and a language, [TouIST] \(pronounced _twist_, standing for _Toulouse Integrated
-Satisfiability Tool_\), that will allow us to express and solve real-world
-problems through the use of multiple logic theories: SAT, SMT and QBF for now.
+On April, 10th 2019, I defended my PhD thesis at [IRIT] \(Institut de
+Recherche en Informatique de Toulouse, France – [location]) in the [LILaC]
+and [ADRIA] team. My PhD work was supervised by Olivier Gasquet (IRIT),
+Dominique Longin (CNRS), Frédéric Maris (IRIT) and Andreas Herzig (CNRS).
+My goal was to develop a tool and a language, [TouIST] \(pronounced
+_twist_, standing for _Toulouse Integrated Satisfiability Tool_\), that
+will allow us to express and solve real-world problems through the use of
+multiple logic theories: SAT, SMT and QBF for now.
 
 [touist]: https://www.irit.fr/touist
 [github]: https://github.com/touist/touist
 [irit]: https://www.irit.fr
 [lilac]: https://www.irit.fr/-Equipe-LILaC-
 [adria]: https://www.irit.fr/-Equipe-ADRIA-
-[linkedin]: https://www.linkedin.com/in/maelvalais/
+[LinkedIn]: https://www.linkedin.com/in/maelvalais/
 [location]: https://goo.gl/maps/nuxdSM6P65J2
 [twitter]: https://twitter.com/maelvalais
 [profile]: https://www.irit.fr/spip.php?page=annuaire&code=10566
