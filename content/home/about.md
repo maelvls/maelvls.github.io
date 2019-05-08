@@ -12,9 +12,10 @@ weight = 5
 # List your academic interests.
 [interests]
   interests = [
-    "Artificial Intelligence",
-    "Real-world problem solving",
-    "Logic theories (SAT, SMT, QBF)"
+    "Golang",
+    "Developer tooling",
+    "Functional programming",
+    "CI/CD and Kubernetes"
   ]
 
 # List your qualifications (such as academic degrees).
