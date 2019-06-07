@@ -148,7 +148,7 @@ defaultContentLanguageInSubdir = false
   [[params.social]]
     icon = "twitter"
     icon_pack = "fa"
-    link = "//twitter.com/maelvalais"
+    link = "//twitter.com/maelvls"
 
   [[params.social]]
     icon = "google-scholar"
@@ -158,7 +158,7 @@ defaultContentLanguageInSubdir = false
   [[params.social]]
     icon = "github"
     icon_pack = "fa"
-    link = "//github.com/maelvalais"
+    link = "//github.com/maelvls"
 
 # Menus
 [[menu.main]]
@@ -206,4 +206,4 @@ defaultContentLanguageInSubdir = false
 
 
 # [params]
-#     footer = "[Github](https://github.com/maelvalais) | [Twitter](https://twitter.com/maelvalais)"
+#     footer = "[Github](https://github.com/maelvls) | [Twitter](https://twitter.com/maelvls)"

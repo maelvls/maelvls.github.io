@@ -11,7 +11,7 @@ publication_types = ["0"]
 publication = "In *Journées Francophones sur la Planification, la Décision et l'Apprentissage pour la conduite de systèmes (JFPDA 2017)*."
 publication_short = "In *JFPDA*"
 
-url_code = "https://github.com/maelvalais/allumettes"
+url_code = "https://github.com/maelvls/allumettes"
 url_dataset = ""
 url_pdf=""
 url_project = "project/touist/"

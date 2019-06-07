@@ -75,9 +75,9 @@ multiple logic theories: SAT, SMT and QBF for now.
 [irit]: https://www.irit.fr
 [lilac]: https://www.irit.fr/-Equipe-LILaC-
 [adria]: https://www.irit.fr/-Equipe-ADRIA-
-[LinkedIn]: https://www.linkedin.com/in/maelvalais/
+[linkedin]: https://www.linkedin.com/in/maelvalais/
 [location]: https://goo.gl/maps/nuxdSM6P65J2
-[twitter]: https://twitter.com/maelvalais
+[twitter]: https://twitter.com/maelvls
 [profile]: https://www.irit.fr/spip.php?page=annuaire&code=10566
 
 [^touist-meaning]:

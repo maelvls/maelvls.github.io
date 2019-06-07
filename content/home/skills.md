@@ -21,11 +21,12 @@
 ## Involvement in open source projects
 
 - Large open source projects (by order of contribution significance)
+
   - bug fixes to Boost Graph (C++)
   - bug fixes and improvement to GitLab (Ruby Rails, RSpec)
   - infrastructure improvements to Homebrew (Ruby)
   - bug fixes and use of a more sustainable PDF library dependency
-   to Auto-multiple-choice
+    to Auto-multiple-choice
 
 - Other projects I contributed to
   - ocaml-qbf (OCaml & C), ocamlyices (OCaml & C++) , rls-vscode (Rust & TS)
@@ -39,7 +40,7 @@ Continuous integration I worked with:
 Contributions to package managers:
 
 - I maintain Homebrew taps with automatic bottle creation (travis + bintray):
-  maelvalais/homebrew-amc and touist/homebrew-touist
+  maelvls/homebrew-amc and touist/homebrew-touist
 - I proposed some changes to Homebrew for helping maintain taps (see [gist]
   and [this] PR); yet to be merged
 - I maintain an [OPAM] package (the OCaml package manager)
@@ -49,6 +50,6 @@ Tinkering & discovery:
 - Personal static webpage using Hugo, Jekyll and continuous integration
 - A tiny chat client prototype using unix sockets in Rust
 
-[gist]: https://gist.github.com/maelvalais/068af21911c7debc4655cdaa41bbf092
+[gist]: https://gist.github.com/maelvls/068af21911c7debc4655cdaa41bbf092
 [this]: https://github.com/davidchall/homebrew-hep/pull/114
-[OPAM]: https://opam.ocaml.org/packages/touist/touist.3.2.1/
+[opam]: https://opam.ocaml.org/packages/touist/touist.3.2.1/

@@ -12,7 +12,7 @@ publication_types = ["7"]
 publication = "In * (COPLAS 2018 2017)*."
 publication_short = "In *JFPDA*"
 
-url_code = "https://github.com/maelvalais/allumettes"
+url_code = "https://github.com/maelvls/allumettes"
 url_dataset = ""
 url_pdf=""
 url_project = ""
@@ -29,4 +29,3 @@ url = "https://www.irit.fr/publis/LILAC/Conf_sans_actes/2017_Gasquet_et_al_JFPDA
 #caption = "My caption :smile:"
 
 +++
-
