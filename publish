@@ -37,7 +37,7 @@ MAELVLS_GITHUB_IO=/tmp/maelvls_github_io
 if git -C $MAELVLS_GITHUB_IO fetch >/dev/null 2>&1; then
     git -C $MAELVLS_GITHUB_IO reset --hard origin/master
 else
-    git clone https://user:${GITHUB_TOKEN}@github.com/maelvalais/maelvls.github.io.git $MAELVLS_GITHUB_IO
+    git clone https://user:${GITHUB_TOKEN}@github.com/maelvls/maelvls.github.io.git $MAELVLS_GITHUB_IO
 fi
 hugo --quiet
 cp -R public/* $MAELVLS_GITHUB_IO
