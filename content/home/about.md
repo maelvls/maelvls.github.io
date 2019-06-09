@@ -37,17 +37,95 @@ weight = 5
 
 - <i class="fa fa-linkedin" style="margin-right:0.5em"></i> [LinkedIn] profile (most up-to-date information)
 - <i class="fa fa-file" style="margin-right:0.5em"></i> [Resume/CV PDF](resume_mael_valais.pdf) (updated on June 7th, 2019)
-- Contact (academic): [see below](#contact)
 - Contact (professional): [mael.valais@gmail.com](#), +33 7 86 48 43 91
+- Contact (academic): [see below](#contact)
 
 <!--
   [<img src="img/irit2018.svg" style="max-width:30%;min-width:2cm;float:right;margin:1em;margin-top:1cm">][irit]
 -->
 
-# Biography
+## About me -- looking for opportunities (startup only)
 
 > **Note:** if you want the most up-to-date information about me, I
 > recommend taking a look at my [LinkedIn] page.
+
+- I speak and write English fluently (learnt a lot during my PhD). Come try
+  my delicious and refreshing french-flavoured accent! 😄
+- I enjoy contributing to open-source projects; when I do, it is mostly a way of
+  scratching a developer itch on one of my tools. I sent pull requests
+  to [ocaml-minisat], [ocaml-qbf] and [opam][] (OCaml), [gitlab-ce][] (Ruby on
+  rails, Rspec), [boost-graph][] (C++). I also maintain [homebrew-amc][] (Ruby,
+  Travis CI), [touist][] (OCaml) and four [vscode-extensions] (they use
+  Typescript; one of them has 29k download! 😊). To me, open-source promotes
+  tolerance when it comes to discuss and accept other's patches as well as
+  leading people to give friendly and constructive critics (most of the time
+  though; mileage may vary).
+- I love functional programming; I have 3 years of experience using OCaml
+  building a compiler and solver for propositional logic. I also did some
+  ReasonML. I discovered Elixir and Erlang a couple of days ago and so far, I
+  love it. Still a lot to learn though, but I start to get the hang of it.
+- I am very interested by micro-service architectures; I did some side-projects
+  using Go, gRPC (e.g. [maelvalais/quote]) with Kubernetes. I had a lot of fun
+  with it (mostly thanks to Go's excellent 'dev experience'). I also played with
+  Elixir which also benefits from a very polished 'dev experience'.
+- Throughout my work, I like to improve the 'developer experience' (DX) by
+  improving the tooling as well as the overall DevOps workflow. I think that a
+  good developer experience keeps retaining and gaining good developers. If
+  given the opportunity, I wish to contribute in that regard.
+- I worked with multiple automation and continuous integration tools (Drone.io,
+  Travis CI, Gitlab CI, Circle CI and Appveyor; pull request lifecycle using
+  bots and Slack ChatOps integration with Slack). On the CI/CD side, I also
+  collaborated with the Homebrew 'tap' people: [How to automate the build of
+  bottles on your Homebrew tap][homebrew-tap-auto-bottles].
+- I experimented with Docker, Kubernetes using Terraform, Helm, Traefik and
+  Prometheus/Grafana; both on AWS EKS and GCP GKE
+  (see [maelvalais/awx-gke-terraform] and [maelvalais/terraform-touist]).
+- I have some knowledge on machine learning (more specifically, deep learning)
+  as it was one of the topics during the first 6 months of my PhD (see
+  my [masters-thesis]).
+- I can bring some knowledge about routing problems, more specifically shortest
+  path algorithms. During an internship at Mobigis, I developed a shortest-path
+  algorithm based on Dijkstra for carpooling on actual geographic data; I also
+  contributed to the open-source [boost-graph] library (mainly written in
+  C++11). I also worked on vehicle routing ([vehicule-routing-report] in
+  French).
+- On the teamwork side, I worked in various project agile setups (Scrum and
+  Kanban) in teams ranging from 2 to 6 people.
+- As a last note, I really think pair-programming and code reviews can make us
+  developers grow and learn from others, not only about code but also finding
+  the best tooling and shortcuts (Emacs, IDEs, command line tools...) and such.
+
+Administrative details:
+
+- I am available for hire starting on (around) July 15th, 2019.
+- I am available for interviews or technical assessments every week day after
+  6pm or on Saturdays.
+- On the matter of compensation, 2500 euros per month would fit me perfectly
+  (net salary including everything like bonuses or things alike), depending on
+  the job attractiveness (e.g. technologies, remote possibilities, possibility
+  to attend to tech conferences...)
+
+Maël Valais
+
+[ocaml-minisat]: https://github.com/c-cube/ocaml-minisat/pulls?utf8=%E2%9C%93&q=author%3Amaelvls
+[ocaml-qbf]: https://github.com/c-cube/ocaml-qbf/issues?utf8=%E2%9C%93&q=author%3Amaelvls
+[opam]: https://github.com/ocaml/opam-repository/pulls?utf8=%E2%9C%93&q=author%3Amaelvls
+[gitlab-ce]: https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/1150
+[boost-graph]: https://github.com/boostorg/graph/issues?utf8=%E2%9C%93&q=author%3Amaelvls
+[homebrew-amc]: https://github.com/maelvls/homebrew-amc
+[touist]: https://github.com/touist/touist
+[maelvls/awx-gke-terraform]: https://github.com/maelvls/awx-gke-terraform
+[maelvls/terraform-touist]: https://github.com/maelvls/terraform-touist
+[masters-thesis]: https://drive.google.com/file/d/0B5mz8k-t6PT0N2lINEZYX2duOFU/view
+[vehicule-routing-report]: http://homepages.laas.fr/sungueve/Docs/Etu/rapport-ter-aide-humanitaire.pdf
+[homebrew-tap-auto-bottles]: https://gist.github.com/maelvls/068af21911c7debc4655cdaa41bbf092
+[maelvls/quote]: https://github.com/maelvls/quote
+[maelvls.github.io]: https://maelvls.github.io/
+[mael.valais@gmail.com]: mailto:mael.valais@gmail.com
+[vscode-extensions-github]: https://github.com/maelvls?utf8=%E2%9C%93&tab=repositories&q=vscode&type=&language=
+[vscode-extensions]: https://marketplace.visualstudio.com/search?term=maelvalais&target=VSCode&category=All%20categories&sortBy=Relevance
+
+## Past Experiences
 
 I am currently employed by [SQUAD] and am currently contracted to La Banque
 Postale (Toulouse, France). I work on tools for network administrators,
