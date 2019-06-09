@@ -47,15 +47,15 @@ weight = 5
 ## About me -- looking for opportunities (startup only)
 
 > **Note:** if you want the most up-to-date information about me, I
-> recommend taking a look at my [LinkedIn] page.
+> recommend taking a look at my [LinkedIn][] page.
 
 - I speak and write English fluently (learnt a lot during my PhD). Come try
   my delicious and refreshing french-flavoured accent! 😄
 - I enjoy contributing to open-source projects; when I do, it is mostly a way of
   scratching a developer itch on one of my tools. I sent pull requests
-  to [ocaml-minisat], [ocaml-qbf] and [opam][] (OCaml), [gitlab-ce][] (Ruby on
+  to [ocaml-minisat][], [ocaml-qbf][] and [opam][] (OCaml), [gitlab-ce][] (Ruby on
   rails, Rspec), [boost-graph][] (C++). I also maintain [homebrew-amc][] (Ruby,
-  Travis CI), [touist][] (OCaml) and four [vscode-extensions] (they use
+  Travis CI), [touist][] (OCaml) and four [vscode-extensions][] (they use
   Typescript; one of them has 29k download! 😊). To me, open-source promotes
   tolerance when it comes to discuss and accept other's patches as well as
   leading people to give friendly and constructive critics (most of the time
@@ -65,7 +65,7 @@ weight = 5
   ReasonML. I discovered Elixir and Erlang a couple of days ago and so far, I
   love it. Still a lot to learn though, but I start to get the hang of it.
 - I am very interested by micro-service architectures; I did some side-projects
-  using Go, gRPC (e.g. [maelvalais/quote]) with Kubernetes. I had a lot of fun
+  using Go, gRPC (e.g. [maelvls/quote][]) with Kubernetes. I had a lot of fun
   with it (mostly thanks to Go's excellent 'dev experience'). I also played with
   Elixir which also benefits from a very polished 'dev experience'.
 - Throughout my work, I like to improve the 'developer experience' (DX) by
@@ -79,15 +79,15 @@ weight = 5
   bottles on your Homebrew tap][homebrew-tap-auto-bottles].
 - I experimented with Docker, Kubernetes using Terraform, Helm, Traefik and
   Prometheus/Grafana; both on AWS EKS and GCP GKE
-  (see [maelvalais/awx-gke-terraform] and [maelvalais/terraform-touist]).
+  (see [maelvls/awx-gke-terraform][] and [maelvls/terraform-touist][]).
 - I have some knowledge on machine learning (more specifically, deep learning)
   as it was one of the topics during the first 6 months of my PhD (see
-  my [masters-thesis]).
+  my [masters-thesis][]).
 - I can bring some knowledge about routing problems, more specifically shortest
   path algorithms. During an internship at Mobigis, I developed a shortest-path
   algorithm based on Dijkstra for carpooling on actual geographic data; I also
-  contributed to the open-source [boost-graph] library (mainly written in
-  C++11). I also worked on vehicle routing ([vehicule-routing-report] in
+  contributed to the open-source [boost-graph][] library (mainly written in
+  C++11). I also worked on vehicle routing ([vehicule-routing-report][] in
   French).
 - On the teamwork side, I worked in various project agile setups (Scrum and
   Kanban) in teams ranging from 2 to 6 people.
