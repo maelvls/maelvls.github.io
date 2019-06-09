@@ -13,9 +13,13 @@ if [ -t 1 ]; then
     end='\033[0m'
 fi
 
-# echo -e "${blu}==>${end} ${red}Pre-push on ${green}$2${end}"
+if [ -z "$GITHUB_TOKEN" ]; then
+    echo -e "${red}error:${end} ${yel}GITHUB_TOKEN not set (set it in .envrc and use direnv)${end}" >&2
+    exit 1
+fi
 
 TEMPDIR=/tmp/irit-fr-maelvalais
+
 
 echo -e "${red}1)${end} ${yel}Cloning to ${green}$TEMPDIR${end}...${end}"
 echo -en "$gray"
@@ -29,7 +33,9 @@ cd $TEMPDIR
 set +x
 echo -en "$gray"
 
+
 echo -e "${red}2)${end} ${yel}Updating ${green}maelvls.github.io${end}...${end}"
+echo -e "    ${green}note:${end} 'master' contains compiled code, 'source' is the actual hugo source"
 
 echo -en "$gray"
 set -x
@@ -41,9 +47,10 @@ else
 fi
 hugo --quiet
 cp -R public/* $MAELVLS_GITHUB_IO
+git -C $MAELVLS_GITHUB_IO checkout master
 git -C $MAELVLS_GITHUB_IO add .
 git -C $MAELVLS_GITHUB_IO ci -m "update on $(date)" | cat || true
-git -C $MAELVLS_GITHUB_IO push -f -q
+git -C $MAELVLS_GITHUB_IO push origin master -f -q
 set +x
 echo -en "$end"
 
