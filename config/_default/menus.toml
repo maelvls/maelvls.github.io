@@ -1,0 +1,38 @@
+
+# Menus
+[[main]]
+  name = "Biography"
+  url = "#about"
+  weight = 1
+
+[[main]]
+  name = "Teaching"
+  url = "#teaching"
+  weight = 2
+
+# [[main]]
+#   name = "Publications"
+#   url = "#publications_selected"
+#   weight = 3
+
+[[main]]
+  name = "Posts"
+  url = "#posts"
+  weight = 4
+
+[[main]]
+  name = "Projects"
+  url = "#projects"
+  weight = 5
+
+[[main]]
+  name = "Contact"
+  url = "#contact"
+  weight = 6
+
+# Link to a PDF of your resume/CV from the menu.
+# To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.
+[[main]]
+   name = "CV"
+   url = "resume_mael_valais.pdf"
+   weight = 70
