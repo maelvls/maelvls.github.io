@@ -37,7 +37,7 @@ weight = 5
 
 - <i class="fa fa-linkedin" style="margin-right:0.5em"></i> [LinkedIn] profile (most up-to-date information)
 - <i class="fa fa-file" style="margin-right:0.5em"></i> [Resume/CV PDF](resume_mael_valais.pdf) (updated on June 7th, 2019)
-- Contact (professional): [mael.valais@gmail.com](#), +33 7 86 48 43 91
+- Contact (pro): [mael.valais@gmail.com](#), +33 7 86 48 43 91
 - Contact (academic): [see below](#contact)
 
 <!--
