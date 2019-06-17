@@ -49,8 +49,8 @@ weight = 5
 > **Note:** if you want the most up-to-date information about me, I
 > recommend taking a look at my [LinkedIn][] page.
 
-- I speak and write English fluently (learnt a lot during my PhD). Come try
-  my delicious and refreshing french-flavoured accent! 😄
+- I speak and write English fluently. Come try my delicious and refreshing
+  french-flavoured accent! 😄
 - I enjoy contributing to open-source projects; when I do, it is mostly a
   way of scratching a developer itch on one of my tools. I sent pull
   requests to [ocaml-minisat][], [ocaml-qbf][], [ocamlyices2][] and [opam][]
