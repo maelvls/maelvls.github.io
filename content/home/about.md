@@ -60,9 +60,9 @@ weight = 5
   four [vscode-extensions][] (they use Typescript; one of them has 29k
   download! 😊).
 - From my experience, open-source promotes tolerance when it comes to
-  discuss and accept other's patches as well as leading people to give
-  friendly and constructive critics (most of the time though; mileage may
-  vary, see [this email Linus wrote][linus-fuck-kay] to one of his
+  discussing and accepting other's patches as well as leading people to
+  give friendly and constructive critics (most of the time though; mileage
+  may vary, see [this email Linus wrote][linus-fuck-kay] to one of his
   contributors).
 - I love functional programming; I have 3 years of experience using OCaml
   building a compiler and solver for propositional logic. I also did some
