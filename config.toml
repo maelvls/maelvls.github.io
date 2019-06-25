@@ -143,12 +143,12 @@ defaultContentLanguageInSubdir = false
   [[params.social]]
     icon = "envelope"
     icon_pack = "fa"
-    link = "mailto:mael.valais@irit.fr"
+    link = "mailto:mael.valais@gmail.com"
 
   [[params.social]]
     icon = "twitter"
     icon_pack = "fa"
-    link = "//twitter.com/maelvls"
+    link = "https://twitter.com/maelvls"
 
   [[params.social]]
     icon = "google-scholar"
@@ -158,7 +158,7 @@ defaultContentLanguageInSubdir = false
   [[params.social]]
     icon = "github"
     icon_pack = "fa"
-    link = "//github.com/maelvls"
+    link = "https://github.com/maelvls"
 
 # Menus
 [[menu.main]]
