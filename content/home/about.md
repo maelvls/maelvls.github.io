@@ -43,7 +43,7 @@ weight = 5
   [<img src="img/irit2018.svg" style="max-width:30%;min-width:2cm;float:right;margin:1em;margin-top:1cm">][irit]
 -->
 
-## About me -- looking for opportunities (startup only)
+## About me
 
 > **Note:** if you want the most up-to-date information about me, I
 > recommend taking a look at my [LinkedIn][] page.
@@ -102,18 +102,6 @@ weight = 5
 - As a last note, I really think pair-programming and code reviews can make us
   developers grow and learn from others, not only about code but also finding
   the best tooling and shortcuts (Emacs, IDEs, command line tools...) and such.
-
-Administrative details:
-
-- I am available for hire starting on (around) July 15th, 2019.
-- I am available for interviews or technical assessments every week day
-  after 6pm or on Saturdays.
-- On the matter of compensation, 2500 euros per month would fit me
-  perfectly (net salary including everything like bonuses or things alike),
-  depending on the job attractiveness (e.g. technologies, remote
-  possibilities, possibility to attend to tech conferences...)
-- Contact information:
-  [maelvls.github.io][], +33786484391, [mael.valais@gmail.com][]
 
 [ocamlyices2]: https://github.com/polazarus/ocamlyices2/pulls?utf8=%E2%9C%93&q=author%3Amaelvls+
 [ocaml-minisat]: https://github.com/c-cube/ocaml-minisat/pulls?utf8=%E2%9C%93&q=author%3Amaelvls
