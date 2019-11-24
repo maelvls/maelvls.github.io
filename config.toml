@@ -160,6 +160,11 @@ defaultContentLanguageInSubdir = false
     icon_pack = "fa"
     link = "https://github.com/maelvls"
 
+  [[params.social]]
+    icon = "dev"
+    icon_pack = "fab"
+    link = "https://dev.to/maelvls"
+
 # Menus
 [[menu.main]]
   name = "Biography"

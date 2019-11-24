@@ -35,9 +35,11 @@ weight = 5
   year = 2014
 +++
 
+- <a href="https://dev.to/maelvls"><img
+  src="https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg" alt="Maël
+  Valais's DEV Profile" height="30" width="30"> Tech blog</a>
 - <i class="fa fa-linkedin" style="margin-right:0.5em"></i> [LinkedIn] profile (most up-to-date information)
 - <i class="fa fa-file" style="margin-right:0.5em"></i> [Resume/CV PDF](resume_mael_valais.pdf) (updated on June 7th, 2019)
-- Contact: [mael.valais@gmail.com](#), +33 7 86 48 43 91
 
 <!--
   [<img src="img/irit2018.svg" style="max-width:30%;min-width:2cm;float:right;margin:1em;margin-top:1cm">][irit]
@@ -127,11 +129,13 @@ weight = 5
 
 ## Past Experiences
 
-I am currently employed by [SQUAD] and am currently contracted to La Banque
-Postale (Toulouse, France). I work on tools for network administrators,
-including a web front-end to Ansible Tower APIs.
+Tody, I work at Ori. Ori is a cloud infrastructure startup located in
+London. I develop network control-planes and Kubernetes controllers.
 
-Before that, I was contracted to Orange, where I worked on tools for
+I was previously employed by [SQUAD][squad], working as a contractor for La
+Banque Postale (Toulouse, France). I worked on tools for network
+administrators, including a web front-end to Ansible Tower APIs. Before La
+Banque Postale, I was contracted to Orange, where I worked on tools for
 developers, examples and documentation in order to improve the developer
 experience when it comes to using the Orange IT's private cloud. I also try
 to promote and find new ways to guide people into sharing their own code as
