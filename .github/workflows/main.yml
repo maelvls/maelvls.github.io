@@ -25,8 +25,5 @@ jobs:
         keep_history: false
         allow_empty_commit: true
         build_dir: publish
-        committer_name: Maël Valais
-        committer_email: mael.valais@gmail.com
-        commit_message: update
         # Write the given domain name to the CNAME file
         fqdn: maelvls.dev
