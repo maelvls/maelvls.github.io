@@ -3,7 +3,6 @@ set -e
 
 # Required:
 # - GITHUB_TOKEN for pushing to maelvls.github.io
-# - ~/.ssh/config with correct identity file for bali.irit.fr
 
 if [ -t 1 ]; then
     gray='\033[90m'
@@ -53,36 +52,6 @@ set -x
     git -C "$COMPILED" add .
     git -C "$COMPILED" ci -m "update on $(date)" | cat || true
     git -C "$COMPILED" push https://user:${GITHUB_TOKEN}@github.com/maelvls/maelvls.github.io.git master -f -q
-}
-set +x
-echo -en "$end"
-
-if ! ssh bali.irit.fr -x 'date' >/dev/null; then
-    echo -e "${red}error:${end} ${yel}ssh bali.irit.fr${end} not working (see in ~/.ssh/config)${end}" >&2
-    exit 1
-fi
-
-echo -e "${red}3)${end} ${yel}Updating irit.fr/~Mael.Valais...${end}"
-
-echo -en "$gray"
-set -x
-{
-    cd "$(mktemp -d)"
-    clone_hugo_source "$HUGO_REPO" .
-    sed -i~ 's:^baseurl = .*:baseurl = "/~Mael.Valais/":' config.toml
-    hugo --quiet
-
-    # Because irit's apache seems to default to latin1 otherwise
-    cat >public/.htaccess <<<"AddDefaultCharset utf-8"
-    # Now, copy the www to the production dir
-    # Note that I had to add -p to keep the permissions
-    rsync -rq public/* bali.irit.fr:/usr/local/WWW-personnel/Mael.Valais
-
-    # Set the right permissions as 'scp' does not preserve permissions,
-    # because my www files should be in the apache group, but in reality
-    # it's created with the gsc (what is that??) group, so I must add the
-    # chmod go+r to be sure that apache can read in my www dir
-    ssh bali.irit.fr 'find /usr/local/WWW-personnel/Mael.Valais \( -type d -exec chmod ugo+rx {} \; \) -o \( -type f -exec chmod ugo+r {} \; \)'
 }
 set +x
 echo -en "$end"
