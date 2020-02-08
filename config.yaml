@@ -1,0 +1,68 @@
+baseURL: https://v2.maelvls.dev/
+languageCode: en-us
+title: maelvls dev blog
+theme: hugo-vitae
+# googleAnalytics = "UA-123-45"
+paginate: 1000
+pygmentsstyle: abap
+pygmentscodefences: true
+pygmentscodefencesguesssyntax: true
+taxonomies:
+  tag: tags
+  series: series
+params:
+  customCSS: css/maelvls.css
+  subtitle: Software engineer at [Ori](https://www.ori.co/). I write mostly about Kubernetes and Go.
+  avatar: /img/mael.jpg
+  disableDisqusTypes:
+    - page
+  social:
+    - name: Github
+      icon: fab fa-github
+      url: "https://github.com/maelvls"
+    - name: Github
+      icon: fab fa-twitter
+      url: "https://twitter.com/maelvls"
+menu:
+  main:
+    - name: Home
+      url: /
+      weight: 1
+    - name: About
+      url: /about
+      weight: 3
+
+
+# Specifics to Hugo.
+markup:
+  goldmark:
+    extensions:
+      definitionList: true
+      footnote: true
+      linkify: true
+      strikethrough: true
+      table: true
+      taskList: true
+      typographer: true
+    parser:
+      attribute: true
+      autoHeadingID: true
+      autoHeadingIDType: github
+    renderer:
+      hardWraps: false
+      unsafe: false
+      xHTML: false
+  highlight:
+    codeFences: true
+    guessSyntax: false
+    hl_Lines: ""
+    lineNoStart: 1
+    lineNos: false
+    lineNumbersInTable: true
+    noClasses: true
+    style: monokai
+    tabWidth: 4
+  tableOfContents:
+    endLevel: 3
+    ordered: false
+    startLevel: 2

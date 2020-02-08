@@ -1,4 +1,6 @@
-public/.envrc
+.envrc
+
+# Local Netlify folder
+.netlify
+
 public/
-.vscode/
-resources

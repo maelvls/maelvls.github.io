@@ -1,0 +1,208 @@
+---
+title: "GO111MODULE is everywhere: history and tips"
+tags: [go]
+date: 2019-11-13
+description: |
+    GO111MODULE is all over the place. It appears in README install
+    instructions, in Dockerfiles, in makefiles. On top of that, the behavior of
+    GO111MODULE has changed from Go 1.11 to 1.12, changed again with 1.13 and
+    will changed a last time in 1.14.
+---
+
+You might have noticed that `GO111MODULE=on` is flourishing everywhere.
+Many readmes have that:
+
+```sh
+GO111MODULE=on go get -u golang.org/x/tools/gopls@latest
+```
+
+In this short post, I will explain why `GO111MODULE` exists, its caveats
+and interesting bits that you need to know when dealing with Go Modules.
+
+- [From `GOPATH` to `GO111MODULE`](#from-gopath-to-go111module)
+- [The `GO111MODULE` environment variable](#the-go111module-environment-variable)
+  - [`GO111MODULE` with Go 1.11 and 1.12](#go111module-with-go-111-and-112)
+  - [`GO111MODULE` with Go 1.13](#go111module-with-go-113)
+  - [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
+- [Caveats when using Go Modules](#caveats-when-using-go-modules)
+  - [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
+  - [Where are the sources of the dependencies with Go Modules](#where-are-the-sources-of-the-dependencies-with-go-modules)
+  - [Set `GO111MODULE` on a per-folder basis with `direnv`](#set-go111module-on-a-per-folder-basis-with-direnv)
+  - [Private Go Modules and Dockerfile](#private-go-modules-and-dockerfile)
+    - [Solution 1: vendoring](#solution-1-vendoring)
+    - [Solution 2: no vendoring](#solution-2-no-vendoring)
+
+## From `GOPATH` to `GO111MODULE`
+
+First off, let's talk about GOPATH. When Go was first introduced in 2009,
+it was not shipped with a package manager. Instead, `go get` would fetch
+all the sources by using their import paths and store them in
+`$GOPATH/src`. There was no versioning and the 'master' branch would
+represent a stable version of the package.
+
+Go Modules (previously called vgo -- versioned Go) were introduced with Go
+1.11. Instead of using the GOPATH for storing a single git checkout of
+every package, Go Modules stores tagged versions with `go.mod` keeping
+track of each package's version.
+
+Since then, the interaction between the 'GOPATH behavior' and the 'Go
+Modules behavior' has become one of the biggest gotchas of Go. One
+environment variable is responsible for 95% of this pain: `GO111MODULE`.
+
+## The `GO111MODULE` environment variable
+
+`GO111MODULE` is an environment variable that can be set when using `go`
+for changing how Go imports packages. One of the first pain-points is that
+depending on the Go version, its semantics changes.
+
+### `GO111MODULE` with Go 1.11 and 1.12
+
+- `GO111MODULE=on` will force using Go modules even if the project is in
+  your GOPATH. Requires `go.mod` to work.
+- `GO111MODULE=off` forces Go to behave the GOPATH way, even outside of
+  GOPATH.
+- `GO111MODULE=auto` is the default mode. In this mode, Go will behave
+
+  - similarly to `GO111MODULE=on` when you are outside of `GOPATH`,
+  - similarly to `GO111MODULE=off` when you are inside the `GOPATH` even if
+    a `go.mod` is present.
+
+Whenever you are in your GOPATH and you want to do an operation that
+requires Go modules (e.g., `go get` a specific version of a binary), you
+need to do:
+
+```sh
+GO111MODULE=on go get github.com/golang/mock/tree/master/mockgen@v1.3.1
+```
+
+### `GO111MODULE` with Go 1.13
+
+Using Go 1.13, `GO111MODULE`'s default (`auto`) changes:
+
+- behaves like `GO111MODULE=on` anywhere there is a `go.mod` OR anywhere
+  outside the GOPATH even if there is no `go.mod`. So you can keep all your
+  repositories in your GOPATH with Go 1.13.
+- behaves like `GO111MODULE=off` in the GOPATH with no `go.mod`.
+
+### So, why is `GO111MODULE` everywhere?!
+
+Now that we know that `GO111MODULE` can be very useful for enabling the Go
+Modules behavior, here is the answer: that's because `GO111MODULE=on`
+allows you to select a version. Without Go Modules, `go get` fetches the
+latest commit from master. With Go Modules, you can select a specific
+version based on git tags.
+
+I use `GO111MODULE=on` very often when I want to switch between the latest
+version and the HEAD version of `gopls` (the Go Language Server):
+
+```sh
+GO111MODULE=on go get -u golang.org/x/tools/gopls@latest
+GO111MODULE=on go get -u golang.org/x/tools/gopls@master
+GO111MODULE=on go get -u golang.org/x/tools/gopls@v0.1
+GO111MODULE=on go get golang.org/x/tools/gopls@v0.1.8
+```
+
+The `@latest` suffix will use the latest git tag of gopls. Note that `-u`
+(which means 'update') is not needed for `@v0.1.8` since this is a 'fixed'
+version, and updating a fixed version does not really make sense. It is
+also interesting to note that with `@v0.1`, `go get` will fetch the latest
+patch version for that tag.
+
+## Caveats when using Go Modules
+
+Now, let's go through some caveats I encountered when working with Go
+Modules.
+
+### Remember that `go get` also updates your `go.mod`
+
+That’s one of the weird things with `go get`: sometimes, it serves the
+purpose of installing binaries or downloading packages. But with Go
+modules, if you are in a repo with a `go.mod`, it will silently add the
+package you go get to your go.mod.
+
+That’s one of the catches of Go modules! 😁
+
+### Where are the sources of the dependencies with Go Modules
+
+When using Go Modules, the packages that are used during `go build` are
+stored in `$GOPATH/pkg/mod`. When trying to inspect an 'import' in vim or
+VSCode, you might end up in the GOPATH version of the package instead of
+the pkg/mod one used during compilation.
+
+A second issue that arises is when you want to hack one of your dependencies, for example for testing purposes.
+
+**Solution 1**: use `go mod vendor` + `go build -mod=vendor`. That will
+force `go` to use the vendor/ files instead of using the `$GOPATH/pkg/mod`
+ones. This option also solves the problem of vim and VSCode not opening the
+right version of a package’s file.
+
+**Solution 2**: add a 'replace' line at the end of your `go.mod`:
+
+```plain
+use replace github.com/maelvls/beers => ../beers
+```
+
+where `../beers` is a local copy I made of the dependency I want to inspect
+and hack.
+
+### Set `GO111MODULE` on a per-folder basis with `direnv`
+
+During the migration from GOPATH-based projects (mainly using Dep) to Go
+Modules, I found myself struggling with two different places: inside and
+outside GOPATH. All Go Modules had to be kept outside of GOPATH, which
+meant my projects were in different folders.
+
+To remediate that, I used `GO111MODULE` extensively. I would keep all my
+projects in the GOPATH, and for the Go Modules-enabled projects, I would
+set `export GO111MODULE=on`.
+
+This is where [`direnv`](https://direnv.net/) comes in handy. Direnv is a
+lightweight command written in Go that will load a file, `.envrc`, whenever
+you enter a directory and `.envrc` is present. For every Go Module-enabled
+project, I would have this `.envrc`:
+
+```sh
+# .envrc
+export GO111MODULE=on
+export GOPRIVATE=github.com/mycompany/\*
+export GOFLAGS=-mod=vendor
+```
+
+The GOPRIVATE disables the Go Proxy (Go 1.13) for certain import paths. I
+also found useful to set `-mod=vendor` so that every command uses the
+`vendor` folder (`go mod vendor`).
+
+### Private Go Modules and Dockerfile
+
+At my company, we use a lot of private repositories. As explained above, we
+can use `GOPRIVATE` in order to tell Go 1.13 to skip the package proxy and
+fetch our private packages directly from Github.
+
+But what about building Docker images? How can `go get` fetch our private
+repositories from a docker build?
+
+#### Solution 1: vendoring
+
+With `go mod vendor`, no need to pass Github credentials to the docker
+build context. We can just put everything in `vendor/` and the problem is
+solved. In the Dockerfile, `-mod=vendor` will be required, but developers
+don't even have to bother with `-mod=vendor` since they have access to the
+private Github repositories anyway using their local Git config
+
+- Pros: faster build on CI (~10 to 30 seconds less)
+- Cons: PRs are bloated with `vendor/` changes and the repo's size might be
+  big
+
+#### Solution 2: no vendoring
+
+If `vendor/` is just too big (e.g., for Kubernetes controllers, `vendor/`
+is about 30MB), we can very well do it without vendoring. That would
+require to pass some form of GITHUB_TOKEN as argument of `docker build`,
+and in the Dockerfile, set something like:
+
+```sh
+git config --global url."https://foo:${GITHUB_TOKEN}@github.com/company".insteadOf "https://github.com/company"
+export GOPRIVATE=github.com/company/\*
+```
+
+_Illustration by Bailey Beougher, from The Illustrated Children's Guide to Kubernetes._
