@@ -3,9 +3,9 @@ title: Avoid GKE's expensive load balancer by using hostPort
 tags: [kubernetes, networking]
 date: 2020-01-20
 description: |
-    Some pods were unable to connect to the kube-proxy pod on one of my GKE
-    Kubernetes clusters. Was it a low-on-memory node or some iptable rule not
-    behaving the way it should?
+    I want to avoid using the expensive Google Network Load Balancer and
+    instead do the load balancing in-cluster using akrobateo, which
+    acts as a LoadBalancer controller.
 ---
 
 

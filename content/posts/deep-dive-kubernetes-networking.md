@@ -3,10 +3,9 @@ title: "Deep dive into Kubernetes Networking: my kube-dns is not working!"
 tags: [kubernetes, networking]
 date: 2020-01-26
 description: |
-    When I scaled my GKE cluster from one node to two nodes, I realised there
-    was some DNS issues with one of the pods on the new node. Here is a way to
-    avoid using the expensive Google Network Load Balancer and instead do the
-    load balancing in-cluster using akrobateo, which acts as a LoadBalancer controller.
+    Some pods were unable to connect to the kube-proxy pod on one of my GKE
+    Kubernetes clusters. This post present an in-depth investigation using
+    tcpdump, wireshark and iptables tracing.
 ---
 
 When I scaled my GKE cluster from one node to two nodes, I realised there
