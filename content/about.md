@@ -15,4 +15,4 @@ I also worked with the network team to build our custom Envoy control
 plane.
 
 I completed my PhD in logic and artificial intelligence in 2019
-([citations](https://scholar.google.com/citations?user=0BrmuaAAAAAJ&hl=en&oi=ao)).
+([papers](https://scholar.google.com/citations?user=0BrmuaAAAAAJ&hl=en&oi=ao)).
