@@ -52,12 +52,11 @@ immediately guess which parts are important and which aren&rsquo;t.</p><div clas
 
     <span style=color:#00f>return</span> <span style=color:#000>deployedJob</span>, <span style=color:#00f>nil</span>
 }
-
 </code></pre></div><p>The outline of this function doesn&rsquo;t tell us anything about what the flow
 is and where the important logic is. Having deeply nested <code>if-else</code>
 statements hurt Go&rsquo;s glanceability: where is the &ldquo;happy path&rdquo;? Where are
-the &ldquo;error paths&rdquo;?</p><p>By refactoring and removing <code>else</code> statements, we obtain a more coherent
-aligned-to-the-left path:</p><p>The green line represents the &ldquo;core logic&rdquo; and is at the minimum
+the &ldquo;error paths&rdquo;?</p><img src=https://dev-to-uploads.s3.amazonaws.com/i/7b3cznvap68mlcehqy96.png width=500><p>By refactoring and removing <code>else</code> statements, we obtain a more coherent
+aligned-to-the-left path:</p><img src=https://thepracticaldev.s3.amazonaws.com/i/hol2tmwjoeb0j79z8pym.png width=500><p>The green line represents the &ldquo;core logic&rdquo; and is at the minimum
 indentation level. The red line represents anything out of the ordinary:
 error handling and guards.</p><p>And since our eyes are very good at following lines, the <em>line of sight</em>
 (the green line) guides us and greatly improves the experience of glancing
