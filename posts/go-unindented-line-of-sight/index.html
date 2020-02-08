@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Go Happy Path: the Unindented Line of Sight - maelvls dev blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<meta property="og:title" content="Go Happy Path: the Unindented Line of Sight" />
+<meta property="og:description" content="Readability is a properly we all love about Go. In other languages, it
+might be fine to have a lot of nested if statements; in Go, it is a good
+practice to keep away from overly-nested logic.
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/posts/go-unindented-line-of-sight/" />
+<meta property="article:published_time" content="2019-11-23T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-11-23T00:00:00+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Happy Path: the Unindented Line of Sight"/>
+<meta name="twitter:description" content="Readability is a properly we all love about Go. In other languages, it
+might be fine to have a lot of nested if statements; in Go, it is a good
+practice to keep away from overly-nested logic.
+"/>
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/css/main.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/css/all.css" />
+		<link rel="stylesheet" type="text/css" href="https://maelvls.dev/css/maelvls.css" />
+	
+</head>
+
+<body>
+	<div class="container wrapper">
+		<div class="header">
+	
+		<div class="avatar">
+			<a href="https://maelvls.dev/">
+				<img src="/img/mael.jpg" alt="maelvls dev blog" />
+			</a>
+		</div>
+	
+	<h1 class="site-title"><a href="https://maelvls.dev/">maelvls dev blog</a></h1>
+	<div class="site-description"><p>Software engineer. I write mostly about Kubernetes and Go.</p><nav class="nav social">
+			<ul class="flat"><li class="li-social"><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li class="li-social"><a href="https://twitter.com/maelvls"><i title="Github" class="icons fab fa-twitter"></i></a></li></ul>
+		</nav>
+	</div>
+
+	<nav class="nav">
+		<ul class="flat">
+			
+			<li>
+				<a href="/">Home</a>
+			</li>
+			
+			<li>
+				<a href="/about">About</a>
+			</li>
+			
+		</ul>
+	</nav>
+</div>
+
+
+		<div class="post">
+			<div class="author">
+				
+			</div>
+			<div class="post-header">
+				
+					<div class="meta">
+						<div class="date">
+							<span class="day">23</span>
+							<span class="rest">Nov 2019</span>
+						</div>
+					</div>
+				
+				<div class="matter">
+					<h1 class="title">Go Happy Path: the Unindented Line of Sight</h1>
+				</div>
+			</div>
+			<div class="markdown">
+				<p>While perusing how other Kubernetes developers are implementing their own
+reconciliation loop, I came across <a href="https://github.com/kubeflow/katib/blob/40f55b41c/pkg/controller.v1alpha3/trial/trial_controller.go#L259-L291">an interesting piece of
+code</a>.</p>
+<p>The author decided to use the <code>if-else</code> control flow at its maximum
+potential: the logic goes as deep as three tabs to the right. We cannot
+immediately guess which parts are important and which aren&rsquo;t.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> (<span style="color:#000">r</span> *<span style="color:#000">ReconcileTrial</span>) <span style="color:#000">reconcileJob</span>(<span style="color:#000">instance</span> *<span style="color:#000">trialsv1alpha3</span>.<span style="color:#000">Trial</span>, <span style="color:#000">desiredJob</span> *<span style="color:#000">unstructured</span>.<span style="color:#000">Unstructured</span>) (*<span style="color:#000">unstructured</span>.<span style="color:#000">Unstructured</span>, <span style="color:#00f">error</span>) {
+    <span style="color:#00f">var</span> <span style="color:#000">err</span> <span style="color:#00f">error</span>
+    <span style="color:#000">logger</span> := <span style="color:#000">log</span>.<span style="color:#000">WithValues</span>(<span style="color:#5a2">&#34;Trial&#34;</span>, <span style="color:#000">types</span>.<span style="color:#000">NamespacedName</span>{<span style="color:#000">Name</span>: <span style="color:#000">instance</span>.<span style="color:#000">GetName</span>(), <span style="color:#000">Namespace</span>: <span style="color:#000">instance</span>.<span style="color:#000">GetNamespace</span>()})
+    <span style="color:#000">apiVersion</span> := <span style="color:#000">desiredJob</span>.<span style="color:#000">GetAPIVersion</span>()
+    <span style="color:#000">kind</span> := <span style="color:#000">desiredJob</span>.<span style="color:#000">GetKind</span>()
+    <span style="color:#000">gvk</span> := <span style="color:#000">schema</span>.<span style="color:#000">FromAPIVersionAndKind</span>(<span style="color:#000">apiVersion</span>, <span style="color:#000">kind</span>)
+
+    <span style="color:#000">deployedJob</span> := &amp;<span style="color:#000">unstructured</span>.<span style="color:#000">Unstructured</span>{}
+    <span style="color:#000">deployedJob</span>.<span style="color:#000">SetGroupVersionKind</span>(<span style="color:#000">gvk</span>)
+    <span style="color:#000">err</span> = <span style="color:#000">r</span>.<span style="color:#000">Get</span>(<span style="color:#000">context</span>.<span style="color:#000">TODO</span>(), <span style="color:#000">types</span>.<span style="color:#000">NamespacedName</span>{<span style="color:#000">Name</span>: <span style="color:#000">desiredJob</span>.<span style="color:#000">GetName</span>(), <span style="color:#000">Namespace</span>: <span style="color:#000">desiredJob</span>.<span style="color:#000">GetNamespace</span>()}, <span style="color:#000">deployedJob</span>)
+    <span style="color:#00f">if</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
+        <span style="color:#00f">if</span> <span style="color:#000">errors</span>.<span style="color:#000">IsNotFound</span>(<span style="color:#000">err</span>) {
+            <span style="color:#00f">if</span> <span style="color:#000">instance</span>.<span style="color:#000">IsCompleted</span>() {
+                <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#00f">nil</span>
+            }
+            <span style="color:#000">logger</span>.<span style="color:#000">Info</span>(<span style="color:#5a2">&#34;Creating Job&#34;</span>, <span style="color:#5a2">&#34;kind&#34;</span>, <span style="color:#000">kind</span>,
+                <span style="color:#5a2">&#34;name&#34;</span>, <span style="color:#000">desiredJob</span>.<span style="color:#000">GetName</span>())
+            <span style="color:#000">err</span> = <span style="color:#000">r</span>.<span style="color:#000">Create</span>(<span style="color:#000">context</span>.<span style="color:#000">TODO</span>(), <span style="color:#000">desiredJob</span>)
+            <span style="color:#00f">if</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
+                <span style="color:#000">logger</span>.<span style="color:#000">Error</span>(<span style="color:#000">err</span>, <span style="color:#5a2">&#34;Create job error&#34;</span>)
+                <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#000">err</span>
+            }
+            <span style="color:#000">eventMsg</span> := <span style="color:#000">fmt</span>.<span style="color:#000">Sprintf</span>(<span style="color:#5a2">&#34;Job %s has been created&#34;</span>, <span style="color:#000">desiredJob</span>.<span style="color:#000">GetName</span>())
+            <span style="color:#000">r</span>.<span style="color:#000">recorder</span>.<span style="color:#000">Eventf</span>(<span style="color:#000">instance</span>, <span style="color:#000">corev1</span>.<span style="color:#000">EventTypeNormal</span>, <span style="color:#000">JobCreatedReason</span>, <span style="color:#000">eventMsg</span>)
+            <span style="color:#000">msg</span> := <span style="color:#5a2">&#34;Trial is running&#34;</span>
+            <span style="color:#000">instance</span>.<span style="color:#000">MarkTrialStatusRunning</span>(<span style="color:#000">TrialRunningReason</span>, <span style="color:#000">msg</span>)
+        } <span style="color:#00f">else</span> {
+            <span style="color:#000">logger</span>.<span style="color:#000">Error</span>(<span style="color:#000">err</span>, <span style="color:#5a2">&#34;Trial Get error&#34;</span>)
+            <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#000">err</span>
+        }
+    } <span style="color:#00f">else</span> {
+        <span style="color:#00f">if</span> <span style="color:#000">instance</span>.<span style="color:#000">IsCompleted</span>() &amp;&amp; !<span style="color:#000">instance</span>.<span style="color:#000">Spec</span>.<span style="color:#000">RetainRun</span> {
+            <span style="color:#00f">if</span> <span style="color:#000">err</span> = <span style="color:#000">r</span>.<span style="color:#000">Delete</span>(<span style="color:#000">context</span>.<span style="color:#000">TODO</span>(), <span style="color:#000">desiredJob</span>, <span style="color:#000">client</span>.<span style="color:#000">PropagationPolicy</span>(<span style="color:#000">metav1</span>.<span style="color:#000">DeletePropagationForeground</span>)); <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
+                <span style="color:#000">logger</span>.<span style="color:#000">Error</span>(<span style="color:#000">err</span>, <span style="color:#5a2">&#34;Delete job error&#34;</span>)
+                <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#000">err</span>
+            } <span style="color:#00f">else</span> {
+                <span style="color:#000">eventMsg</span> := <span style="color:#000">fmt</span>.<span style="color:#000">Sprintf</span>(<span style="color:#5a2">&#34;Job %s has been deleted&#34;</span>, <span style="color:#000">desiredJob</span>.<span style="color:#000">GetName</span>())
+                <span style="color:#000">r</span>.<span style="color:#000">recorder</span>.<span style="color:#000">Eventf</span>(<span style="color:#000">instance</span>, <span style="color:#000">corev1</span>.<span style="color:#000">EventTypeNormal</span>, <span style="color:#000">JobDeletedReason</span>, <span style="color:#000">eventMsg</span>)
+                <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#00f">nil</span>
+            }
+        }
+    }
+
+    <span style="color:#00f">return</span> <span style="color:#000">deployedJob</span>, <span style="color:#00f">nil</span>
+}
+
+</code></pre></div><p>The outline of this function doesn&rsquo;t tell us anything about what the flow
+is and where the important logic is. Having deeply nested <code>if-else</code>
+statements hurt Go&rsquo;s glanceability: where is the &ldquo;happy path&rdquo;? Where are
+the &ldquo;error paths&rdquo;?</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>By refactoring and removing <code>else</code> statements, we obtain a more coherent
+aligned-to-the-left path:</p>
+<!-- raw HTML omitted -->
+<p>The green line represents the &ldquo;core logic&rdquo; and is at the minimum
+indentation level. The red line represents anything out of the ordinary:
+error handling and guards.</p>
+<p>And since our eyes are very good at following lines, the <em>line of sight</em>
+(the green line) guides us and greatly improves the experience of glancing
+at a piece of code.</p>
+<p>Here is the actual code I rewrote:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> (<span style="color:#000">r</span> *<span style="color:#000">ReconcileTrial</span>) <span style="color:#000">reconcileJob</span>(<span style="color:#000">instance</span> *<span style="color:#000">trialsv1alpha3</span>.<span style="color:#000">Trial</span>, <span style="color:#000">desiredJob</span> *<span style="color:#000">unstructured</span>.<span style="color:#000">Unstructured</span>) (*<span style="color:#000">unstructured</span>.<span style="color:#000">Unstructured</span>, <span style="color:#00f">error</span>) {
+    <span style="color:#00f">var</span> <span style="color:#000">err</span> <span style="color:#00f">error</span>
+    <span style="color:#000">logger</span> := <span style="color:#000">log</span>.<span style="color:#000">WithValues</span>(<span style="color:#5a2">&#34;Trial&#34;</span>, <span style="color:#000">types</span>.<span style="color:#000">NamespacedName</span>{<span style="color:#000">Name</span>: <span style="color:#000">instance</span>.<span style="color:#000">GetName</span>(), <span style="color:#000">Namespace</span>: <span style="color:#000">instance</span>.<span style="color:#000">GetNamespace</span>()})
+    <span style="color:#000">apiVersion</span> := <span style="color:#000">desiredJob</span>.<span style="color:#000">GetAPIVersion</span>()
+    <span style="color:#000">kind</span> := <span style="color:#000">desiredJob</span>.<span style="color:#000">GetKind</span>()
+    <span style="color:#000">gvk</span> := <span style="color:#000">schema</span>.<span style="color:#000">FromAPIVersionAndKind</span>(<span style="color:#000">apiVersion</span>, <span style="color:#000">kind</span>)
+
+    <span style="color:#000">deployedJob</span> := &amp;<span style="color:#000">unstructured</span>.<span style="color:#000">Unstructured</span>{}
+    <span style="color:#000">deployedJob</span>.<span style="color:#000">SetGroupVersionKind</span>(<span style="color:#000">gvk</span>)
+
+    <span style="color:#000">err</span> = <span style="color:#000">r</span>.<span style="color:#000">Get</span>(<span style="color:#000">context</span>.<span style="color:#000">TODO</span>(), <span style="color:#000">types</span>.<span style="color:#000">NamespacedName</span>{<span style="color:#000">Name</span>: <span style="color:#000">desiredJob</span>.<span style="color:#000">GetName</span>(), <span style="color:#000">Namespace</span>: <span style="color:#000">desiredJob</span>.<span style="color:#000">GetNamespace</span>()}, <span style="color:#000">deployedJob</span>)
+    <span style="color:#00f">switch</span> {
+    <span style="color:#00f">case</span> <span style="color:#000">errors</span>.<span style="color:#000">IsNotFound</span>(<span style="color:#000">err</span>) &amp;&amp; <span style="color:#000">instance</span>.<span style="color:#000">IsCompleted</span>():
+        <span style="color:#888;font-style:italic">// Job deleted and trial completed, nothing left to do.
+</span><span style="color:#888;font-style:italic"></span>        <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#00f">nil</span>
+    <span style="color:#00f">case</span> <span style="color:#000">errors</span>.<span style="color:#000">IsNotFound</span>(<span style="color:#000">err</span>):
+        <span style="color:#888;font-style:italic">// Job deleted, we must create a job.
+</span><span style="color:#888;font-style:italic"></span>        <span style="color:#000">logger</span>.<span style="color:#000">Info</span>(<span style="color:#5a2">&#34;Creating Job&#34;</span>, <span style="color:#5a2">&#34;kind&#34;</span>, <span style="color:#000">kind</span>, <span style="color:#5a2">&#34;name&#34;</span>, <span style="color:#000">desiredJob</span>.<span style="color:#000">GetName</span>())
+        <span style="color:#000">err</span> = <span style="color:#000">r</span>.<span style="color:#000">Create</span>(<span style="color:#000">context</span>.<span style="color:#000">TODO</span>(), <span style="color:#000">desiredJob</span>)
+        <span style="color:#00f">if</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
+            <span style="color:#000">logger</span>.<span style="color:#000">Error</span>(<span style="color:#000">err</span>, <span style="color:#5a2">&#34;Create job error&#34;</span>)
+            <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#000">err</span>
+        }
+        <span style="color:#000">eventMsg</span> := <span style="color:#000">fmt</span>.<span style="color:#000">Sprintf</span>(<span style="color:#5a2">&#34;Job %s has been created&#34;</span>, <span style="color:#000">desiredJob</span>.<span style="color:#000">GetName</span>())
+        <span style="color:#000">r</span>.<span style="color:#000">recorder</span>.<span style="color:#000">Eventf</span>(<span style="color:#000">instance</span>, <span style="color:#000">corev1</span>.<span style="color:#000">EventTypeNormal</span>, <span style="color:#000">JobCreatedReason</span>, <span style="color:#000">eventMsg</span>)
+        <span style="color:#000">msg</span> := <span style="color:#5a2">&#34;Trial is running&#34;</span>
+        <span style="color:#000">instance</span>.<span style="color:#000">MarkTrialStatusRunning</span>(<span style="color:#000">TrialRunningReason</span>, <span style="color:#000">msg</span>)
+
+        <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#00f">nil</span>
+    <span style="color:#00f">case</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span>:
+        <span style="color:#000">logger</span>.<span style="color:#000">Error</span>(<span style="color:#000">err</span>, <span style="color:#5a2">&#34;Trial Get error&#34;</span>)
+        <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#000">err</span>
+    }
+
+    <span style="color:#00f">if</span> !<span style="color:#000">instance</span>.<span style="color:#000">IsCompleted</span>() || <span style="color:#000">instance</span>.<span style="color:#000">Spec</span>.<span style="color:#000">RetainRun</span> {
+        <span style="color:#000">eventMsg</span> := <span style="color:#000">fmt</span>.<span style="color:#000">Sprintf</span>(<span style="color:#5a2">&#34;Job %s has been deleted&#34;</span>, <span style="color:#000">desiredJob</span>.<span style="color:#000">GetName</span>())
+        <span style="color:#000">r</span>.<span style="color:#000">recorder</span>.<span style="color:#000">Eventf</span>(<span style="color:#000">instance</span>, <span style="color:#000">corev1</span>.<span style="color:#000">EventTypeNormal</span>, <span style="color:#000">JobDeletedReason</span>, <span style="color:#000">eventMsg</span>)
+        <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#00f">nil</span>
+    }
+
+    <span style="color:#000">err</span> = <span style="color:#000">r</span>.<span style="color:#000">Delete</span>(<span style="color:#000">context</span>.<span style="color:#000">TODO</span>(), <span style="color:#000">desiredJob</span>, <span style="color:#000">client</span>.<span style="color:#000">PropagationPolicy</span>(<span style="color:#000">metav1</span>.<span style="color:#000">DeletePropagationForeground</span>))
+    <span style="color:#00f">if</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
+        <span style="color:#000">logger</span>.<span style="color:#000">Error</span>(<span style="color:#000">err</span>, <span style="color:#5a2">&#34;Delete job error&#34;</span>)
+        <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, <span style="color:#000">err</span>
+    }
+
+    <span style="color:#00f">return</span> <span style="color:#000">deployedJob</span>, <span style="color:#00f">nil</span>
+}
+</code></pre></div><p>You can also take a look at Matt Ryer&rsquo;s <em>Idiomatic Go Tricks</em> where he
+presents some ways of keeping your code as readable as possible:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/yeetIgNeIkc" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+			</div>
+			<div class="tags">
+				
+				
+				
+				
+					
+				
+					
+					
+					
+						<div class="taxosfloating_left">
+							<p>Tags</p>
+						</div>
+						<div class="termsfloating_right">
+							<p>
+								
+									
+									
+									
+								
+									
+									
+									
+									
+										<a href="/tags/go/"> go </a>
+									
+									
+									
+									
+									
+									
+								
+									
+									
+									
+									
+									
+									
+									
+								
+									
+									
+									
+									
+									
+								
+									
+									
+									
+								
+							</p>
+						</div>
+						<div class="clearit"></div>
+					
+					
+					
+				
+				
+			</div></div>
+	</div>
+	<div class="footer wrapper">
+	<nav class="nav">
+		<div class="footertext"></div>
+	</nav>
+</div>
+
+
+
+</body>
+</html>

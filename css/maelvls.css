@@ -1,0 +1,25 @@
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, monospace;
+  font-size: 0.9em;
+  line-height: 1rem;
+}
+
+.highlight pre {
+  padding: 0.5rem;
+  background-color: #eff0f1 !important;
+}
+
+body {
+  font-family: "Roboto Regular", sans-serif;
+  font-weight: 400;
+  color: #111;
+  line-height: 1.5em;
+  font-size: 1rem;
+}
+
+blockquote {
+  font-size: 0.9rem;
+}

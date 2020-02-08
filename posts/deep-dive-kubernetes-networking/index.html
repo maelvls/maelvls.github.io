@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Deep dive into Kubernetes Networking: my kube-dns is not working! - maelvls dev blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<meta property="og:title" content="Deep dive into Kubernetes Networking: my kube-dns is not working!" />
+<meta property="og:description" content="When I scaled my GKE cluster from one node to two nodes, I realised there
+was some DNS issues with one of the pods on the new node. Here is a way to
+avoid using the expensive Google Network Load Balancer and instead do the
+load balancing in-cluster using akrobateo, which acts as a LoadBalancer controller.
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/posts/deep-dive-kubernetes-networking/" />
+<meta property="article:published_time" content="2020-01-26T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-01-26T00:00:00+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Deep dive into Kubernetes Networking: my kube-dns is not working!"/>
+<meta name="twitter:description" content="When I scaled my GKE cluster from one node to two nodes, I realised there
+was some DNS issues with one of the pods on the new node. Here is a way to
+avoid using the expensive Google Network Load Balancer and instead do the
+load balancing in-cluster using akrobateo, which acts as a LoadBalancer controller.
+"/>
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/css/main.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/css/all.css" />
+		<link rel="stylesheet" type="text/css" href="https://maelvls.dev/css/maelvls.css" />
+	
+</head>
+
+<body>
+	<div class="container wrapper">
+		<div class="header">
+	
+		<div class="avatar">
+			<a href="https://maelvls.dev/">
+				<img src="/img/mael.jpg" alt="maelvls dev blog" />
+			</a>
+		</div>
+	
+	<h1 class="site-title"><a href="https://maelvls.dev/">maelvls dev blog</a></h1>
+	<div class="site-description"><p>Software engineer. I write mostly about Kubernetes and Go.</p><nav class="nav social">
+			<ul class="flat"><li class="li-social"><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li class="li-social"><a href="https://twitter.com/maelvls"><i title="Github" class="icons fab fa-twitter"></i></a></li></ul>
+		</nav>
+	</div>
+
+	<nav class="nav">
+		<ul class="flat">
+			
+			<li>
+				<a href="/">Home</a>
+			</li>
+			
+			<li>
+				<a href="/about">About</a>
+			</li>
+			
+		</ul>
+	</nav>
+</div>
+
+
+		<div class="post">
+			<div class="author">
+				
+			</div>
+			<div class="post-header">
+				
+					<div class="meta">
+						<div class="date">
+							<span class="day">26</span>
+							<span class="rest">Jan 2020</span>
+						</div>
+					</div>
+				
+				<div class="matter">
+					<h1 class="title">Deep dive into Kubernetes Networking: my kube-dns is not working!</h1>
+				</div>
+			</div>
+			<div class="markdown">
+				<p>When I scaled my GKE cluster from one node to two nodes, I realised there
+was some DNS issues with one of the pods on the new Node 2 (that&rsquo;s what I
+initially thought).</p>
+<p><img src="https://thepracticaldev.s3.amazonaws.com/i/on2rnt6a75d5h9bka2o9.png" alt="network diagram of the cluster where DNS not working in a pod of Node 2"></p>
+<p>So I went into pod-on-2 (10.24.12.40) and checked that DNS wasn&rsquo;t working.
+What I did is run</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">% gcloud compute ssh node-2
+% docker run --rm -it --net=container:<span style="color:#00f">$(</span>docker ps | grep POD_pod-on-2 | head -1 | cut -f1 -d<span style="color:#5a2">&#34; &#34;</span><span style="color:#00f">)</span> nicolaka/netshoot
+% nslookup github.com
+;; connection timed out; no servers could be reached
+</code></pre></div><p>Let&rsquo;s see if this DNS request actually goes out of the container. So I ran
+tcpdump on the <code>cbr0</code> interface on node 2. <code>cbr0</code> is the linux bridge used
+by Kubernetes (the bridge and the interface have the same name). Using
+Wireshark on top of tcpdump gives me easier-to-explore results:</p>
+<p><img src="https://thepracticaldev.s3.amazonaws.com/i/7hhxfzdt4qix6iigtk9u.png" alt="Wireshark running on interface cbr0 on node 2"></p>
+<p>Note that the actual name of Node 2 is <em>gke-august-period-234610-worker-micro-1de60498-9gsb</em> (now, you know!). Here is the command I used for opening wireshark on Node 2:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">% gcloud compute ssh node-2 --command &#34;docker run --rm --net=host corfr/tcpdump -i cbr0 -U -w - &#39;not port 22&#39;&#34; | wireshark -k -i -
+tcpdump: listening on cbr0, link-type EN10MB (Ethernet), capture size 262144 bytes
+</code></pre></div><p>What we see is that <code>cbr0</code> properly receives UDP packets coming from the
+pod <code>10.24.12.40</code>, and that the DNS address is <code>10.27.240.10</code>. I double
+checked, <code>10.27.240.10</code> is the DNS address set in <code>/etc/resolve.conf</code>
+inside containers in this pod.</p>
+<p>Here is the network setup with the IPs to get a better picture:</p>
+<p><img src="https://thepracticaldev.s3.amazonaws.com/i/1128v8dy1azertdj0r52.png" alt="Network diagram of the Kubernetes cluster with two nodes and two pods and with IPs displayed"></p>
+<p>Let&rsquo;s check that <code>10.27.240.10</code> is actually a service:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">% kubectl -n kube-system get service kube-dns         
+NAME       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE
+kube-dns   ClusterIP   10.27.240.10   &lt;none&gt;        53/UDP,53/TCP   34d
+</code></pre></div><p>We now know that the DNS used in all the pods is the ClusterIP of the
+kube-dns service. That&rsquo;s not a real pod IP, so the iptables should be
+translating that into an actual pod IP.</p>
+<p>Now that we know that the packet goes to <code>cbr0</code>, is it forwarded to Node
+2&rsquo;s <code>eth0</code>? I used Wireshark again, but on <code>eth0</code> this time:</p>
+<p><img src="https://thepracticaldev.s3.amazonaws.com/i/obo74jzx8u9ab5xnd949.png" alt="Wireshark on eth0 of Node 2"></p>
+<p>Apparently, the packet destination has been re-written from <code>10.27.240.10</code>
+to <code>10.24.9.31</code> (an actual pod IP) which is good sign. This pod IP
+corresponds to one of the replicas of kube-dns on node 1, which seems fine.</p>
+<p>At this point, I was wondering: are UDP packets from node 2 to node 1
+properly routed?</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mvalais@node-2 ~ $ docker run -it --rm --net=host nicolaka/netshoot
+% nslookup github.com 10.27.240.10
+Server:		10.27.240.10
+Address:	10.27.240.10#53
+
+Non-authoritative answer:
+Name:	github.com
+Address: 192.30.253.113
+</code></pre></div><p>Wait what? The DNS query to <code>10.27.240.10</code> works from the host but not from
+the pod? At this point, my guesses were:</p>
+<ol>
+<li>something wrong with the routes on the host,</li>
+<li>something is wrong with networking on node 1</li>
+<li>something is wrong with the iptables of node 2</li>
+<li>an issue with routing of <code>10.24.0.0/14</code> on the VPC (it&rsquo;s the CIDR
+allocated to this GKE cluster; the nodes themselves receive <code>/24</code> CIDRs
+from this range)</li>
+</ol>
+<p>Let&rsquo;s rule (1) out. Here is the L3 routing table on node 2:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mvalais@node-2 ~ $ docker run -it --rm --net=host nicolaka/netshoot
+% ip route
+default via 10.142.0.1 dev eth0    proto dhcp   src 10.142.15.206 metric <span style="color:#3af">1024</span>
+default via 10.142.0.1 dev eth0    proto dhcp
+10.24.12.0/24          dev cbr0    proto kernel src 10.24.12.1
+10.142.0.1             dev eth0    proto dhcp   src 10.142.15.206 metric <span style="color:#3af">1024</span>
+10.142.0.1             dev eth0    proto dhcp
+169.254.123.0/24       dev docker0 proto kernel src 169.254.123.1 linkdown
+</code></pre></div><p>Remembering that Node 2&rsquo;s eth0 has the IP <code>10.142.15.206</code>, it looks like
+all packets that are meant for Node 1&rsquo;s kube-dns will use the first rule.
+So no problem on this side.</p>
+<p>The (2) guess is easy to check: I ran tcpdump with wireshark on the eth0 of
+node 1. No trace of an UDP packet coming from <code>10.24.12.40</code>. So the packets
+don&rsquo;t even reach the node 1.</p>
+<p>Let&rsquo;s recap all we know: the packet goes from the pod&rsquo;s eth0 to the linux
+bridge, and is then rewritten and forwarded to the host&rsquo;s eth0.</p>
+<p><!-- raw HTML omitted --></p>
+<p>So we are left with</p>
+<ol>
+<li>something is wrong with the iptables of node 2</li>
+<li>an issue with routing of <code>10.24.0.0/14</code> on the VPC</li>
+</ol>
+<p>I now realise that I could have ruled out the iptable issue since I could see the packet on Node 2&rsquo;s eth0 interface. But I wanted to know how that packet was handled anyway!</p>
+<p>So let&rsquo;s dive into what iptables is doing to this packet. First, let&rsquo;s see if a conntrack entry exists due to the DNAT rewriting:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#888;font-style:italic"># From the pod on Node 2:</span>
+% nslookup github.com
+% <span style="color:#000">mvalais</span>@<span style="color:#000">node</span><span style="color:#3af">-2</span> ~ $ <span style="color:#000">docker</span> <span style="color:#000">run</span> --<span style="color:#000">net</span>=<span style="color:#000">host</span> --<span style="color:#000">privileged</span> --<span style="color:#000">rm</span> <span style="color:#000">missioncriticalkubernetes</span>/<span style="color:#000">conntrack</span> -<span style="color:#000">L</span> | <span style="color:#000">grep</span> <span style="color:#3af">10.24</span>
+<span style="color:#000">conntrack</span> <span style="color:#000">v1.4.4 </span>(<span style="color:#000">conntrack</span>-<span style="color:#000">tools</span>): <span style="color:#3af">52</span> <span style="color:#000">flow</span> <span style="color:#000">entries</span> <span style="color:#000">have</span> <span style="color:#000">been</span> <span style="color:#000">shown.</span>
+<span style="color:#000">udp</span> <span style="color:#3af">17</span> <span style="color:#3af">26</span>  <span style="color:#000">src</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span>    <span style="color:#000">dst</span>=<span style="color:#3af">10.27</span><span style="color:#3af">.240</span><span style="color:#3af">.10</span> <span style="color:#000">sport</span>=<span style="color:#3af">57400</span> <span style="color:#000">dport</span>=<span style="color:#3af">53</span> <span style="color:#000">[UNREPLIED</span><span style="color:#000">]</span> <span style="color:#000">src</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span> <span style="color:#000">dst</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span>     <span style="color:#000">sport</span>=<span style="color:#3af">53</span> <span style="color:#000">dport</span>=<span style="color:#3af">57400</span>           <span style="color:#000">mark</span>=<span style="color:#3af">0</span> <span style="color:#000">use</span>=<span style="color:#3af">1</span>
+
+<span style="color:#888;font-style:italic"># From Node 2&#39;s host networking:</span>
+% nslookup github.com 10.27.240.10
+% <span style="color:#000">mvalais</span>@<span style="color:#000">node</span><span style="color:#3af">-2</span> ~ $ <span style="color:#000">docker</span> <span style="color:#000">run</span> --<span style="color:#000">net</span>=<span style="color:#000">host</span> --<span style="color:#000">privileged</span> --<span style="color:#000">rm</span> <span style="color:#000">missioncriticalkubernetes</span>/<span style="color:#000">conntrack</span> -<span style="color:#000">L</span> | <span style="color:#000">grep</span> <span style="color:#3af">10.24</span>
+<span style="color:#000">udp</span> <span style="color:#3af">17</span> <span style="color:#3af">175</span> <span style="color:#000">src</span>=<span style="color:#3af">10.142</span><span style="color:#3af">.15</span><span style="color:#3af">.206</span> <span style="color:#000">dst</span>=<span style="color:#3af">10.27</span><span style="color:#3af">.240</span><span style="color:#3af">.10</span> <span style="color:#000">sport</span>=<span style="color:#3af">37337</span> <span style="color:#000">dport</span>=<span style="color:#3af">53</span>             <span style="color:#000">src</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span> <span style="color:#000">dst</span>=<span style="color:#3af">10.142</span><span style="color:#3af">.15</span><span style="color:#3af">.206</span> <span style="color:#000">sport</span>=<span style="color:#3af">53</span> <span style="color:#000">dport</span>=<span style="color:#3af">37337</span> <span style="color:#000">[ASSURED</span><span style="color:#000">]</span> <span style="color:#000">mark</span>=<span style="color:#3af">0</span> <span style="color:#000">use</span>=<span style="color:#3af">1</span>
+</code></pre></div><p>Coming from the pod, we see that the DNAT rewriting happened but the
+connection status is UNREPLIED. Coming from the host, the DNAT rewriting
+also happened but the connection status is ASSURED, which means a reply has
+been given.</p>
+<p>Now, the deep dive: let&rsquo;s use iptables&rsquo; <code>TRACE</code> target to know how this
+packet gets rewritten when coming from the pod:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#888;font-style:italic"># From Node 2</span>
+% sudo modprobe ipt_LOG
+% <span style="color:#000">sudo</span> <span style="color:#000">iptables</span> -<span style="color:#000">A</span> <span style="color:#000">PREROUTING</span> -<span style="color:#000">t</span> <span style="color:#000">raw</span> -<span style="color:#000">s</span> <span style="color:#3af">10.24</span><span style="color:#3af">.0</span><span style="color:#3af">.0</span>/<span style="color:#3af">16</span> -<span style="color:#000">j</span> <span style="color:#000">TRACE</span>
+% sudo iptables -A PREROUTING -t raw -d 10.24.0.0/16 -j TRACE
+% <span style="color:#000">docker</span> <span style="color:#000">run</span> --<span style="color:#000">rm</span> -<span style="color:#000">it</span> --<span style="color:#000">net</span>=<span style="color:#000">container</span>:$(<span style="color:#000">docker</span> <span style="color:#000">ps</span> | <span style="color:#000">grep</span> <span style="color:#000">POD_pod</span>-<span style="color:#000">on</span><span style="color:#3af">-2</span> | <span style="color:#000">head</span> <span style="color:#3af">-1</span> | <span style="color:#000">cut</span> -<span style="color:#000">f1</span> -<span style="color:#000">d</span><span style="color:#5a2">&#34;</span><span style="color:#5a2"> &#34;</span>) --<span style="color:#000">privileged</span> <span style="color:#000">nicolaka</span>/<span style="color:#000">netshoot</span> <span style="color:#000">nslookup</span> <span style="color:#000">github.com</span>
+% <span style="color:#000">dmesg</span> -<span style="color:#000">w</span>
+<span style="color:#000">[90332.179725</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">raw</span>:<span style="color:#000">PREROUTING</span>:<span style="color:#000">policy</span>:<span style="color:#3af">2</span>                  <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=     <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.27</span><span style="color:#3af">.240</span><span style="color:#3af">.10</span>  <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">64</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.200327</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">mangle</span>:<span style="color:#000">PREROUTING</span>:<span style="color:#000">policy</span>:<span style="color:#3af">1</span>               <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=     <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.27</span><span style="color:#3af">.240</span><span style="color:#3af">.10</span>  <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">64</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.221171</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">nat</span>:<span style="color:#000">PREROUTING</span>:<span style="color:#000">rule</span>:<span style="color:#3af">1</span>                    <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=     <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.27</span><span style="color:#3af">.240</span><span style="color:#3af">.10</span>  <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">64</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.241576</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">nat</span>:<span style="color:#000">KUBE</span>-<span style="color:#000">SERVICES</span>:<span style="color:#000">rule</span>:<span style="color:#3af">14</span>                <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=     <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.27</span><span style="color:#3af">.240</span><span style="color:#3af">.10</span>  <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">64</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.262385</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">nat</span>:<span style="color:#000">KUBE</span>-<span style="color:#000">SVC</span>-<span style="color:#000">TCOU7JCQXEZGVUNU</span>:<span style="color:#000">rule</span>:<span style="color:#3af">2</span>     <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=     <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.27</span><span style="color:#3af">.240</span><span style="color:#3af">.10</span>  <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">64</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.284116</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">nat</span>:<span style="color:#000">KUBE</span>-<span style="color:#000">SEP</span>-<span style="color:#000">MQYG7Z5PYI3N6YFY</span>:<span style="color:#000">rule</span>:<span style="color:#3af">2</span>     <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=     <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.27</span><span style="color:#3af">.240</span><span style="color:#3af">.10</span>  <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">64</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.305838</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">mangle</span>:<span style="color:#000">FORWARD</span>:<span style="color:#000">policy</span>:<span style="color:#3af">1</span>                  <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.326491</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">filter</span>:<span style="color:#000">FORWARD</span>:<span style="color:#000">rule</span>:<span style="color:#3af">1</span>                    <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.346973</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">filter</span>:<span style="color:#000">KUBE</span>-<span style="color:#000">FORWARD</span>:<span style="color:#000">return</span>:<span style="color:#3af">4</span>             <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.368068</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">filter</span>:<span style="color:#000">FORWARD</span>:<span style="color:#000">rule</span>:<span style="color:#3af">2</span>                    <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.389031</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">filter</span>:<span style="color:#000">KUBE</span>-<span style="color:#000">SERVICES</span>:<span style="color:#000">return</span>:<span style="color:#3af">1</span>            <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.410253</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">filter</span>:<span style="color:#000">FORWARD</span>:<span style="color:#000">rule</span>:<span style="color:#3af">3</span>                    <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.430735</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">filter</span>:<span style="color:#000">DOCKER</span>-<span style="color:#000">USER</span>:<span style="color:#000">return</span>:<span style="color:#3af">1</span>              <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.451887</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">filter</span>:<span style="color:#000">FORWARD</span>:<span style="color:#000">rule</span>:<span style="color:#3af">4</span>                    <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.472366</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">filter</span>:<span style="color:#000">DOCKER</span>-<span style="color:#000">ISOLATION</span>-<span style="color:#000">STAGE</span><span style="color:#3af">-1</span>:<span style="color:#000">return</span>:<span style="color:#3af">2</span> <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.494488</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">filter</span>:<span style="color:#000">FORWARD</span>:<span style="color:#000">rule</span>:<span style="color:#3af">10</span>                   <span style="color:#000">IN</span>=<span style="color:#000">cbr0</span> <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.515049</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">mangle</span>:<span style="color:#000">POSTROUTING</span>:<span style="color:#000">policy</span>:<span style="color:#3af">1</span>              <span style="color:#000">IN</span>=     <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.531693</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">nat</span>:<span style="color:#000">POSTROUTING</span>:<span style="color:#000">rule</span>:<span style="color:#3af">1</span>                   <span style="color:#000">IN</span>=     <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.547953</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">nat</span>:<span style="color:#000">KUBE</span>-<span style="color:#000">POSTROUTING</span>:<span style="color:#000">return</span>:<span style="color:#3af">2</span>            <span style="color:#000">IN</span>=     <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.564769</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">nat</span>:<span style="color:#000">POSTROUTING</span>:<span style="color:#000">rule</span>:<span style="color:#3af">2</span>                   <span style="color:#000">IN</span>=     <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.580978</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">nat</span>:<span style="color:#000">IP</span>-<span style="color:#000">MASQ</span>:<span style="color:#000">rule</span>:<span style="color:#3af">2</span>                       <span style="color:#000">IN</span>=     <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+<span style="color:#000">[90332.596840</span><span style="color:#000">]</span> <span style="color:#000">TRACE</span>: <span style="color:#000">nat</span>:<span style="color:#000">POSTROUTING</span>:<span style="color:#000">policy</span>:<span style="color:#3af">4</span>                 <span style="color:#000">IN</span>=     <span style="color:#000">OUT</span>=<span style="color:#000">eth0</span> <span style="color:#000">PHYSIN</span>=<span style="color:#000">veth4a3719bc</span> <span style="color:#000">SRC</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.12</span><span style="color:#3af">.40</span> <span style="color:#000">DST</span>=<span style="color:#3af">10.24</span><span style="color:#3af">.9</span><span style="color:#3af">.31</span>     <span style="color:#000">LEN</span>=<span style="color:#3af">82</span> <span style="color:#000">TOS</span>=<span style="color:#3af">0x00</span> <span style="color:#000">PREC</span>=<span style="color:#3af">0x00</span> <span style="color:#000">TTL</span>=<span style="color:#3af">63</span> <span style="color:#000">ID</span>=<span style="color:#3af">43592</span> <span style="color:#000">PROTO</span>=<span style="color:#000">UDP</span> <span style="color:#000">SPT</span>=<span style="color:#3af">36775</span> <span style="color:#000">DPT</span>=<span style="color:#3af">53</span> <span style="color:#000">LEN</span>=<span style="color:#3af">62</span>
+</code></pre></div><p>The last list, <code>POSTROUTING</code>, makes it clear that the packet is properly
+sent to the host&rsquo;s <code>eth0</code> with <code>src 10.24.12.40</code> and <code>dst 10.24.9.31</code>. The
+packet should get to node 1 now!</p>
+<p>I noticed that using <code>-j TRACE</code> is extremely expensive. For example, using
+<code>-p icmp</code> would result in pings going from 1ms (without tracing) to 500ms.
+I also overloaded one of the nodes by adding a rule that was &ldquo;too wide&rdquo; and
+nearly killed the entire node. Use tracing filters (<code>-s</code>, <code>-p</code>, <code>-d</code>) as
+narrow as possible!</p>
+<p>So UDP traffic doesn&rsquo;t get routed. But what about ICMP and TCP packets? I
+had previously noticed that <code>ping</code> would work from 10.24.12.40 to
+10.24.9.31.</p>
+<p>Let&rsquo;s see if TCP traffic also works. This time, instead of ssh-ing into the
+nodes and running docker, I used <code>--generator=run-pod/v1</code> and <code>--override</code>
+in order to choose on which node the pod is launched. Here is a sample of
+what I give to <code>--override</code> for running a pod on <code>node-2</code>:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#00f">apiVersion</span>: v1
+<span style="color:#00f">spec</span>:
+  <span style="color:#00f">affinity</span>:
+    <span style="color:#00f">nodeAffinity</span>:
+      <span style="color:#00f">requiredDuringSchedulingIgnoredDuringExecution</span>:
+        <span style="color:#00f">nodeSelectorTerms</span>:
+          - <span style="color:#00f">matchFields</span>:
+              - <span style="color:#00f">key</span>: metadata.name
+                <span style="color:#00f">operator</span>: In
+                <span style="color:#00f">values</span>: [node<span style="color:#3af">-2</span>]
+</code></pre></div><p>From a pod on Node 1 (<code>10.24.9.32</code>):</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">% kubectl run --generator=run-pod/v1 tmp-host-a --overrides=<span style="color:#5a2">&#39;{&#34;apiVersion&#34;:&#34;v1&#34;,&#34;spec&#34;:{&#34;affinity&#34;:{&#34;nodeAffinity&#34;:{&#34;requiredDuringSchedulingIgnoredDuringExecution&#34;:{&#34;nodeSelectorTerms&#34;:[{&#34;matchFields&#34;:[{&#34;key&#34;:&#34;metadata.name&#34;,&#34;operator&#34;:&#34;In&#34;,&#34;values&#34;:[&#34;node-1&#34;]}]}]}}}}}&#39;</span> --rm -i --tty --image nicolaka/netshoot
+% nc -v 10.24.12.41 <span style="color:#3af">80</span>
+Connection to 10.24.12.41 <span style="color:#3af">80</span> port [tcp/http] succeeded!
+</code></pre></div><p>From a pod on Node 2 (<code>10.24.12.41</code>):</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">% kubectl run --generator=run-pod/v1 tmp-host-b --overrides=<span style="color:#5a2">&#39;{&#34;apiVersion&#34;:&#34;v1&#34;,&#34;spec&#34;:{&#34;affinity&#34;:{&#34;nodeAffinity&#34;:{&#34;requiredDuringSchedulingIgnoredDuringExecution&#34;:{&#34;nodeSelectorTerms&#34;:[{&#34;matchFields&#34;:[{&#34;key&#34;:&#34;metadata.name&#34;,&#34;operator&#34;:&#34;In&#34;,&#34;values&#34;:[&#34;node-2&#34;]}]}]}}}}}&#39;</span> --rm -i --tty --image nicolaka/netshoot
+% nc -v -l <span style="color:#3af">80</span>
+Listening on [0.0.0.0] (family 0, port 80)
+Connection from 10.24.9.32 <span style="color:#3af">38274</span> received!
+</code></pre></div><p>The traffic on 80/tcp definitely seems to work from Node 1 to Node 2! Now,
+let&rsquo;s try the same but with 53/tcp and from Node 2 to Node 1.</p>
+<p>From pod on Node 1 (<code>10.24.9.32</code>):</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">% nc -v -l <span style="color:#3af">53</span>
+Listening on [0.0.0.0] (family 0, port 53)
+</code></pre></div><p>From pod on Node 2 (<code>10.24.12.41</code>):</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">% curl 10.24.9.32:53
+curl: (28) Failed to connect to 10.24.9.32 port 53: Operation timed out
+</code></pre></div><p>To recap, only 80/tcp, 443/tcp and icmp packets are routed. It&rsquo;s
+surprisingly very specific: what if the VPC firewall rules were off? That
+was my last guess, but I guess it should have been myst first&hellip;</p>
+<p>Two weeks ago, I remember having deleted some left-over rules when I was
+playing with Kops. I might have deleted one of the rules that allowed this
+traffic to flow!</p>
+<p>Here is what the UI shows:</p>
+<p><img src="https://thepracticaldev.s3.amazonaws.com/i/zgh9r6zvifnnvszqqlcw.png" alt="Screenshot of the VPC interface on GCP, the 10.24.0.0 subnet doesn&rsquo;t seem to be allowed"></p>
+<p>Even easier-to-read, using <code>gcloud</code>:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">% gcloud compute firewall-rules list
+NAME                   NETWORK  DIRECTION  PRIORITY ALLOW
+akrobateo-fw-traefik   default  INGRESS    <span style="color:#3af">1000</span>     tcp:80,tcp:443
+default-allow-icmp     default  INGRESS    <span style="color:#3af">65534</span>    icmp
+default-allow-internal default  INGRESS    <span style="color:#3af">65534</span>    tcp:0-65535,udp:0-65535,icmp
+default-allow-rdp      default  INGRESS    <span style="color:#3af">65534</span>    tcp:3389
+default-allow-ssh      default  INGRESS    <span style="color:#3af">65534</span>    tcp:22
+</code></pre></div><p>How is the traffic using the <code>10.24.0.0/14</code> subnet supposed to be routed?
+This subnet was allocated to this GKE cluster; node 1 was given the CIDR
+<code>10.24.9.0/24</code> and node 2 was given the CIDR <code>10.24.12.0/24</code>.</p>
+<p>So I added a new rule <code>gke-august-period-234610-all</code> (august-period-234610
+is the name of my project); it looks like that:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">NAME                         NETWORK  DIRECTION  PRIORITY  ALLOW                         DENY  DISABLED
+gke-august-period-234610-all default  INGRESS    <span style="color:#3af">1000</span>      udp,icmp,esp,ah,sctp,tcp            False
+</code></pre></div><p>Now, let&rsquo;s test again using 53/udp:</p>
+<p>Pod on Node 2 (<code>10.24.12.41</code>):</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">% nc -v -u 10.24.9.32 <span style="color:#3af">8888</span>
+<span style="color:#888;font-style:italic"># Exits with 0 and no output</span>
+</code></pre></div><p>Pod on Node 1 (<code>10.24.9.32</code>):</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">% tcpdump
+tcpdump: verbose output suppressed, use -v or -vv <span style="color:#00f">for</span> full protocol decode
+listening on eth0, link-type EN10MB (Ethernet), capture size <span style="color:#3af">262144</span> bytes
+21:54:39.787779 IP 10.24.12.41.40760 &gt; tmp-host-a.8888: UDP, length <span style="color:#3af">1</span>
+21:54:39.787802 IP tmp-host-a &gt; 10.24.12.41: ICMP tmp-host-a udp port <span style="color:#3af">8888</span> unreachable, length <span style="color:#3af">37</span>
+21:54:39.787805 IP 10.24.12.41.40760 &gt; tmp-host-a.8888: UDP, length <span style="color:#3af">1</span>
+21:54:39.787808 IP tmp-host-a &gt; 10.24.12.41: ICMP tmp-host-a udp port <span style="color:#3af">8888</span> unreachable, length <span style="color:#3af">37</span>
+</code></pre></div><p>Yay! In the end, the issue was not so deep&hellip; A manual edit to the firewall
+rules that I had not thought through and for which I have no record of. I
+already terraformed a lot of the cluster and node creation, but I should
+definitely move everything to terraform and stop doing manual edits that
+can&rsquo;t be traced back!</p>
+
+			</div>
+			<div class="tags">
+				
+				
+				
+				
+					
+				
+					
+					
+					
+						<div class="taxosfloating_left">
+							<p>Tags</p>
+						</div>
+						<div class="termsfloating_right">
+							<p>
+								
+									
+									
+									
+								
+									
+									
+									
+									
+									
+									
+									
+									
+									
+								
+									
+									
+										<a href="/tags/kubernetes/"> kubernetes </a>
+									
+									
+									
+									
+									
+									
+								
+									
+									
+										<a href="/tags/networking/"> networking </a>
+									
+									
+									
+									
+								
+									
+									
+									
+								
+							</p>
+						</div>
+						<div class="clearit"></div>
+					
+					
+					
+				
+				
+			</div></div>
+	</div>
+	<div class="footer wrapper">
+	<nav class="nav">
+		<div class="footertext"></div>
+	</nav>
+</div>
+
+
+
+</body>
+</html>
