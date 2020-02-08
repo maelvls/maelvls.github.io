@@ -17,14 +17,20 @@ implement them in my controller?
 In this post, I will explain what 'status conditions' are in Kubernetes and
 show how they can be used in your own controllers.
 
-- [Pod example](#pod-example)
-- [What other projects do](#what-other-projects-do)
-- [Conditions vs. State machine](#conditions-vs-state-machine)
-- [Conditions vs. Events](#conditions-vs-events)
-- [Orthogonality vs. Extensibility](#orthogonality-vs-extensibility)
-- [Are Conditions still used?](#are-conditions-still-used)
-- [Conditions vs. Reasons](#conditions-vs-reasons)
-- [How many conditions?](#how-many-conditions)
+---
+
+Table of contents:
+
+1. [Pod example](#pod-example)
+2. [What other projects do](#what-other-projects-do)
+3. [Conditions vs. State machine](#conditions-vs-state-machine)
+4. [Conditions vs. Events](#conditions-vs-events)
+5. [Orthogonality vs. Extensibility](#orthogonality-vs-extensibility)
+6. [Are Conditions still used?](#are-conditions-still-used)
+7. [Conditions vs. Reasons](#conditions-vs-reasons)
+8. [How many conditions?](#how-many-conditions)
+
+---
 
 In the following, a 'component' is considered to be one sync loop. A sync
 loop (also called reconciliation loop) is what must be done in order to

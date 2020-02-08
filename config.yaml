@@ -64,5 +64,5 @@ markup:
     tabWidth: 4
   tableOfContents:
     endLevel: 3
-    ordered: false
+    ordered: true
     startLevel: 2
