@@ -23,3 +23,28 @@ body {
 blockquote {
   font-size: 0.9rem;
 }
+
+table {
+  border-collapse: collapse;
+  font-size: 0.78em;
+  margin: 0.8em auto 1.2em;
+  table-layout: fixed;
+}
+
+@media screen and (min-width: 500px) {
+  table {
+    font-size: 0.9em;
+  }
+}
+table th {
+  border: 1px solid #dbdbdb;
+  padding: 5px 1vw;
+  background: #f9f9fa;
+  background: var(--theme-background, #f9f9fa);
+  text-align: left;
+}
+table td {
+  border: 1px solid #dbdbdb;
+  padding: 5px 1vw;
+  box-sizing: border-box;
+}
