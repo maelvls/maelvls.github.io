@@ -26,4 +26,4 @@ jobs:
         allow_empty_commit: true
         build_dir: publish
         # Write the given domain name to the CNAME file
-        fqdn: maelvls.dev
+        # fqdn: maelvls.dev
