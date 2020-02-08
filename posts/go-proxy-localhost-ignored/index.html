@@ -1,306 +1,143 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>What to do when Go ignores HTTP_PROXY for 127.0.0.1 - maelvls dev blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<meta property="og:title" content="What to do when Go ignores HTTP_PROXY for 127.0.0.1" />
-<meta property="og:description" content="At some point, the Go team chose to disable the proxy for requests coming
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>What to do when Go ignores HTTP_PROXY for 127.0.0.1 - maelvls dev blog</title><meta name=viewport content="width=device-width,initial-scale=1"><meta property="og:title" content="What to do when Go ignores HTTP_PROXY for 127.0.0.1"><meta property="og:description" content="At some point, the Go team chose to disable the proxy for requests coming
 from localhost or 127.0.0.1. This is annoying when debugging services
-locally.
-" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/posts/go-proxy-localhost-ignored/" />
-<meta property="article:published_time" content="2020-01-06T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-01-06T00:00:00+00:00" />
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="What to do when Go ignores HTTP_PROXY for 127.0.0.1"/>
-<meta name="twitter:description" content="At some point, the Go team chose to disable the proxy for requests coming
+locally."><meta property="og:type" content="article"><meta property="og:url" content="https://maelvls.dev/posts/go-proxy-localhost-ignored/"><meta property="article:published_time" content="2020-01-06T00:00:00+00:00"><meta property="article:modified_time" content="2020-01-06T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="What to do when Go ignores HTTP_PROXY for 127.0.0.1"><meta name=twitter:description content="At some point, the Go team chose to disable the proxy for requests coming
 from localhost or 127.0.0.1. This is annoying when debugging services
-locally.
-"/>
-<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/css/normalize.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/css/main.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/css/all.css" />
-		<link rel="stylesheet" type="text/css" href="https://maelvls.dev/css/maelvls.css" />
-	
-</head>
-
-<body>
-	<div class="container wrapper">
-		<div class="header">
-	
-		<div class="avatar">
-			<a href="https://maelvls.dev/">
-				<img src="/img/mael.jpg" alt="maelvls dev blog" />
-			</a>
-		</div>
-	
-	<h1 class="site-title"><a href="https://maelvls.dev/">maelvls dev blog</a></h1>
-	<div class="site-description"><p>Software engineer. I write mostly about Kubernetes and Go.</p><nav class="nav social">
-			<ul class="flat"><li class="li-social"><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li class="li-social"><a href="https://twitter.com/maelvls"><i title="Github" class="icons fab fa-twitter"></i></a></li></ul>
-		</nav>
-	</div>
-
-	<nav class="nav">
-		<ul class="flat">
-			
-			<li>
-				<a href="/">Home</a>
-			</li>
-			
-			<li>
-				<a href="/about">About</a>
-			</li>
-			
-		</ul>
-	</nav>
-</div>
-
-
-		<div class="post">
-			<div class="author">
-				
-			</div>
-			<div class="post-header">
-				
-					<div class="meta">
-						<div class="date">
-							<span class="day">06</span>
-							<span class="rest">Jan 2020</span>
-						</div>
-					</div>
-				
-				<div class="matter">
-					<h1 class="title">What to do when Go ignores HTTP_PROXY for 127.0.0.1</h1>
-				</div>
-			</div>
-			<div class="markdown">
-				<p>I use <a href="https://proxyman.io">Proxyman</a> for inspecting the HTTP and HTTPS
+locally."><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/main.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/all.css><link rel=stylesheet type=text/css href=https://maelvls.dev/css/maelvls.css></head><body><div class="container wrapper"><div class=header><div class=avatar><a href=https://maelvls.dev/><img src=/img/mael.jpg alt="maelvls dev blog"></a></div><h1 class=site-title><a href=https://maelvls.dev/>maelvls dev blog</a></h1><div class=site-description><p>Software engineer. I write mostly about Kubernetes and Go.</p><nav class="nav social"><ul class=flat><li class=li-social><a href=https://github.com/maelvls><i title=Github class="icons fab fa-github"></i></a></li><li class=li-social><a href=https://twitter.com/maelvls><i title=Github class="icons fab fa-twitter"></i></a></li></ul></nav></div><nav class=nav><ul class=flat><li><a href=/>Home</a></li><li><a href=/about>About</a></li></ul></nav></div><div class=post><div class=author></div><div class=post-header><div class=meta><div class=date><span class=day>06</span>
+<span class=rest>Jan 2020</span></div></div><div class=matter><h1 class=title>What to do when Go ignores HTTP_PROXY for 127.0.0.1</h1></div></div><div class=markdown><p>I use <a href=https://proxyman.io>Proxyman</a> for inspecting the HTTP and HTTPS
 traffic coming from applications. For example, you may want to know which
 API calls are made by <code>docker</code> when running <code>docker search</code>. What I would
-do is</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#000">HTTPS_PROXY</span>=http://localhost:9090 docker search ubuntu
+do is</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#000>HTTPS_PROXY</span>=http://localhost:9090 docker search ubuntu
 </code></pre></div><p>Since Proxyman acts like a proxy listening on 0.0.0.0:9090, I can see and
 replay all the HTTP calls, similarly to what you would do with the Chrome
-DevTools.</p>
-<p><img src="https://thepracticaldev.s3.amazonaws.com/i/yhe5ex8vnoo01lf75r23.png" alt="Screenshot with macOS&rsquo; Proxyman for a local Openstack instance"></p>
-<p>Note that HTTPS is a bit tricky and requires an additional step on macOS
-(settings &gt; Proxyman CA &gt; Generate new) but works flawlessly with any Go
+DevTools.</p><p><img src=https://thepracticaldev.s3.amazonaws.com/i/yhe5ex8vnoo01lf75r23.png alt="Screenshot with macOS&rsquo; Proxyman for a local Openstack instance"></p><p>Note that HTTPS is a bit tricky and requires an additional step on macOS
+(settings > Proxyman CA > Generate new) but works flawlessly with any Go
 binary since Go supports <code>HTTPS_PROXY</code> by default. For Python, it becomes a
-bit trickier often requires the app to have a flag like <code>--cacert</code>.</p>
-<p>But by default, Go [ignores <code>HTTPS_PROXY</code>] for <code>localhost</code> and <code>127.0.0.1</code> hosts (see <a href="https://godoc.org/golang.org/x/net/http/httpproxy#Config.ProxyFunc">ProxyFunc</a> and <a href="https://github.com/golang/net/blob/c0dbc17a35534bf2e581d7a942408dc936316da4/http/httpproxy/proxy.go#L172-L191">useProxy</a>):</p>
-<blockquote>
-<p>As a special case, if req.URL.Host is &ldquo;localhost&rdquo; (with or without a port
-number), then a nil URL and nil error will be returned.</p>
-</blockquote>
-<p>Note that the documentation forgets to mention that <code>127.0.0.1</code> (and
+bit trickier often requires the app to have a flag like <code>--cacert</code>.</p><p>But by default, Go [ignores <code>HTTPS_PROXY</code>] for <code>localhost</code> and <code>127.0.0.1</code> hosts (see <a href=https://godoc.org/golang.org/x/net/http/httpproxy#Config.ProxyFunc>ProxyFunc</a> and <a href=https://github.com/golang/net/blob/c0dbc17a35534bf2e581d7a942408dc936316da4/http/httpproxy/proxy.go#L172-L191>useProxy</a>):</p><blockquote><p>As a special case, if req.URL.Host is &ldquo;localhost&rdquo; (with or without a port
+number), then a nil URL and nil error will be returned.</p></blockquote><p>Note that the documentation forgets to mention that <code>127.0.0.1</code> (and
 related) are also ignored. That&rsquo;s a bummer since using a proxy may be the
 only way to debug a CLI or an application that makes network calls without
-logging properly.</p>
-<p>Two solutions: either you have access (and are willing to) hack the source
+logging properly.</p><p>Two solutions: either you have access (and are willing to) hack the source
 code in order to force Go to use the proxy with <code>localhost</code> anyway, or you
-can hack your <code>/etc/hosts</code> and use a different host.</p>
-<h2 id="solution-1-hack-the-proxy-setup-by-tweaking-httptransport">Solution 1: hack the proxy setup by tweaking <code>http.Transport</code></h2>
-<p>You need to have access to the place where the <code>http.Client</code> is set. Imagine that you are working on something that uses the Openstack API. You would have something like:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">package</span> <span style="color:#000">main</span>
+can hack your <code>/etc/hosts</code> and use a different host.</p><h2 id=solution-1-hack-the-proxy-setup-by-tweaking-httptransport>Solution 1: hack the proxy setup by tweaking <code>http.Transport</code></h2><p>You need to have access to the place where the <code>http.Client</code> is set. Imagine that you are working on something that uses the Openstack API. You would have something like:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#00f>package</span> <span style=color:#000>main</span>
 
-<span style="color:#00f">import</span> (
-	<span style="color:#5a2">&#34;fmt&#34;</span>
-	<span style="color:#5a2">&#34;os&#34;</span>
+<span style=color:#00f>import</span> (
+	<span style=color:#5a2>&#34;fmt&#34;</span>
+	<span style=color:#5a2>&#34;os&#34;</span>
 
-	<span style="color:#5a2">&#34;github.com/gophercloud/gophercloud&#34;</span>
-	<span style="color:#5a2">&#34;github.com/gophercloud/gophercloud/openstack&#34;</span>
-	<span style="color:#5a2">&#34;github.com/gophercloud/gophercloud/openstack/compute/v2/servers&#34;</span>
+	<span style=color:#5a2>&#34;github.com/gophercloud/gophercloud&#34;</span>
+	<span style=color:#5a2>&#34;github.com/gophercloud/gophercloud/openstack&#34;</span>
+	<span style=color:#5a2>&#34;github.com/gophercloud/gophercloud/openstack/compute/v2/servers&#34;</span>
 )
 
-<span style="color:#00f">func</span> <span style="color:#000">main</span>() {
-	<span style="color:#000">pr</span>, <span style="color:#000">err</span> := <span style="color:#000">openstack</span>.<span style="color:#000">NewClient</span>(<span style="color:#5a2">&#34;http://localhost/identity/v3&#34;</span>)
-	<span style="color:#00f">if</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
-		<span style="color:#000">fmt</span>.<span style="color:#000">Fprintf</span>(<span style="color:#000">os</span>.<span style="color:#000">Stderr</span>, <span style="color:#5a2">&#34;could not create an openstack client&#34;</span>)
-		<span style="color:#000">os</span>.<span style="color:#000">Exit</span>(<span style="color:#3af">1</span>)
+<span style=color:#00f>func</span> <span style=color:#000>main</span>() {
+	<span style=color:#000>pr</span>, <span style=color:#000>err</span> := <span style=color:#000>openstack</span>.<span style=color:#000>NewClient</span>(<span style=color:#5a2>&#34;http://localhost/identity/v3&#34;</span>)
+	<span style=color:#00f>if</span> <span style=color:#000>err</span> != <span style=color:#00f>nil</span> {
+		<span style=color:#000>fmt</span>.<span style=color:#000>Fprintf</span>(<span style=color:#000>os</span>.<span style=color:#000>Stderr</span>, <span style=color:#5a2>&#34;could not create an openstack client&#34;</span>)
+		<span style=color:#000>os</span>.<span style=color:#000>Exit</span>(<span style=color:#3af>1</span>)
 	}
 
-	<span style="color:#000">err</span> = <span style="color:#000">openstack</span>.<span style="color:#000">Authenticate</span>(<span style="color:#000">pr</span>, <span style="color:#000">gophercloud</span>.<span style="color:#000">AuthOptions</span>{
-		<span style="color:#000">IdentityEndpoint</span>: <span style="color:#5a2">&#34;http://localhost/identity/v3&#34;</span>,
-		<span style="color:#000">DomainName</span>:       <span style="color:#5a2">&#34;Default&#34;</span>,
-		<span style="color:#000">Username</span>:         <span style="color:#5a2">&#34;admin&#34;</span>,
-		<span style="color:#000">Password</span>:         <span style="color:#5a2">&#34;secret&#34;</span>,
-		<span style="color:#000">TenantName</span>:       <span style="color:#5a2">&#34;admin&#34;</span>,
+	<span style=color:#000>err</span> = <span style=color:#000>openstack</span>.<span style=color:#000>Authenticate</span>(<span style=color:#000>pr</span>, <span style=color:#000>gophercloud</span>.<span style=color:#000>AuthOptions</span>{
+		<span style=color:#000>IdentityEndpoint</span>: <span style=color:#5a2>&#34;http://localhost/identity/v3&#34;</span>,
+		<span style=color:#000>DomainName</span>:       <span style=color:#5a2>&#34;Default&#34;</span>,
+		<span style=color:#000>Username</span>:         <span style=color:#5a2>&#34;admin&#34;</span>,
+		<span style=color:#000>Password</span>:         <span style=color:#5a2>&#34;secret&#34;</span>,
+		<span style=color:#000>TenantName</span>:       <span style=color:#5a2>&#34;admin&#34;</span>,
 	})
-	<span style="color:#00f">if</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
-		<span style="color:#000">fmt</span>.<span style="color:#000">Fprintf</span>(<span style="color:#000">os</span>.<span style="color:#000">Stderr</span>, <span style="color:#5a2">&#34;auth failed&#34;</span>)
-		<span style="color:#000">os</span>.<span style="color:#000">Exit</span>(<span style="color:#3af">1</span>)
+	<span style=color:#00f>if</span> <span style=color:#000>err</span> != <span style=color:#00f>nil</span> {
+		<span style=color:#000>fmt</span>.<span style=color:#000>Fprintf</span>(<span style=color:#000>os</span>.<span style=color:#000>Stderr</span>, <span style=color:#5a2>&#34;auth failed&#34;</span>)
+		<span style=color:#000>os</span>.<span style=color:#000>Exit</span>(<span style=color:#3af>1</span>)
 	}
 
-	<span style="color:#000">compute</span>, <span style="color:#000">err</span> := <span style="color:#000">openstack</span>.<span style="color:#000">NewComputeV2</span>(<span style="color:#000">pr</span>, <span style="color:#000">gophercloud</span>.<span style="color:#000">EndpointOpts</span>{<span style="color:#000">Region</span>: <span style="color:#5a2">&#34;&#34;</span>})
-	<span style="color:#000">srvs</span>, <span style="color:#000">err</span> := <span style="color:#000">servers</span>.<span style="color:#000">List</span>(<span style="color:#000">compute</span>, <span style="color:#00f">nil</span>).<span style="color:#000">AllPages</span>()
-	<span style="color:#00f">if</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
-		<span style="color:#000">fmt</span>.<span style="color:#000">Fprintf</span>(<span style="color:#000">os</span>.<span style="color:#000">Stderr</span>, <span style="color:#5a2">&#34;%v\n&#34;</span>, <span style="color:#000">err</span>)
-		<span style="color:#000">os</span>.<span style="color:#000">Exit</span>(<span style="color:#3af">1</span>)
+	<span style=color:#000>compute</span>, <span style=color:#000>err</span> := <span style=color:#000>openstack</span>.<span style=color:#000>NewComputeV2</span>(<span style=color:#000>pr</span>, <span style=color:#000>gophercloud</span>.<span style=color:#000>EndpointOpts</span>{<span style=color:#000>Region</span>: <span style=color:#5a2>&#34;&#34;</span>})
+	<span style=color:#000>srvs</span>, <span style=color:#000>err</span> := <span style=color:#000>servers</span>.<span style=color:#000>List</span>(<span style=color:#000>compute</span>, <span style=color:#00f>nil</span>).<span style=color:#000>AllPages</span>()
+	<span style=color:#00f>if</span> <span style=color:#000>err</span> != <span style=color:#00f>nil</span> {
+		<span style=color:#000>fmt</span>.<span style=color:#000>Fprintf</span>(<span style=color:#000>os</span>.<span style=color:#000>Stderr</span>, <span style=color:#5a2>&#34;%v\n&#34;</span>, <span style=color:#000>err</span>)
+		<span style=color:#000>os</span>.<span style=color:#000>Exit</span>(<span style=color:#3af>1</span>)
 	}
 
-	<span style="color:#000">fmt</span>.<span style="color:#000">Printf</span>(<span style="color:#5a2">&#34;servers:\n%v\n&#34;</span>, <span style="color:#000">srvs</span>)
+	<span style=color:#000>fmt</span>.<span style=color:#000>Printf</span>(<span style=color:#5a2>&#34;servers:\n%v\n&#34;</span>, <span style=color:#000>srvs</span>)
 }
-</code></pre></div><p>We must be able to swap the <code>http.Transport</code> used. The <a href="https://golang.org/src/net/http/transport.go#L42"><code>http.DefaultTransport</code></a> uses <code>ProxyFromEnvironment</code>:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// DefaultTransport is the default implementation of Transport and is
-</span><span style="color:#888;font-style:italic"></span><span style="color:#888;font-style:italic">// used by DefaultClient. It establishes network connections as needed
-</span><span style="color:#888;font-style:italic"></span><span style="color:#888;font-style:italic">// and caches them for reuse by subsequent calls. It uses HTTP proxies
-</span><span style="color:#888;font-style:italic"></span><span style="color:#888;font-style:italic">// as directed by the $HTTP_PROXY and $NO_PROXY (or $http_proxy and
-</span><span style="color:#888;font-style:italic"></span><span style="color:#888;font-style:italic">// $no_proxy) environment variables.
-</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">var</span> <span style="color:#000">DefaultTransport</span> <span style="color:#000">RoundTripper</span> = &amp;<span style="color:#000">Transport</span>{
-	<span style="color:#000">Proxy</span>: <span style="color:#000">ProxyFromEnvironment</span>,
-	<span style="color:#000">DialContext</span>: (&amp;<span style="color:#000">net</span>.<span style="color:#000">Dialer</span>{
-		<span style="color:#000">Timeout</span>:   <span style="color:#3af">30</span> * <span style="color:#000">time</span>.<span style="color:#000">Second</span>,
-		<span style="color:#000">KeepAlive</span>: <span style="color:#3af">30</span> * <span style="color:#000">time</span>.<span style="color:#000">Second</span>,
-		<span style="color:#000">DualStack</span>: <span style="color:#00f">true</span>,
-	}).<span style="color:#000">DialContext</span>,
-	<span style="color:#000">ForceAttemptHTTP2</span>:     <span style="color:#00f">true</span>,
-	<span style="color:#000">MaxIdleConns</span>:          <span style="color:#3af">100</span>,
-	<span style="color:#000">IdleConnTimeout</span>:       <span style="color:#3af">90</span> * <span style="color:#000">time</span>.<span style="color:#000">Second</span>,
-	<span style="color:#000">TLSHandshakeTimeout</span>:   <span style="color:#3af">10</span> * <span style="color:#000">time</span>.<span style="color:#000">Second</span>,
-	<span style="color:#000">ExpectContinueTimeout</span>: <span style="color:#3af">1</span> * <span style="color:#000">time</span>.<span style="color:#000">Second</span>,
+</code></pre></div><p>We must be able to swap the <code>http.Transport</code> used. The <a href=https://golang.org/src/net/http/transport.go#L42><code>http.DefaultTransport</code></a> uses <code>ProxyFromEnvironment</code>:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#888;font-style:italic>// DefaultTransport is the default implementation of Transport and is
+</span><span style=color:#888;font-style:italic></span><span style=color:#888;font-style:italic>// used by DefaultClient. It establishes network connections as needed
+</span><span style=color:#888;font-style:italic></span><span style=color:#888;font-style:italic>// and caches them for reuse by subsequent calls. It uses HTTP proxies
+</span><span style=color:#888;font-style:italic></span><span style=color:#888;font-style:italic>// as directed by the $HTTP_PROXY and $NO_PROXY (or $http_proxy and
+</span><span style=color:#888;font-style:italic></span><span style=color:#888;font-style:italic>// $no_proxy) environment variables.
+</span><span style=color:#888;font-style:italic></span><span style=color:#00f>var</span> <span style=color:#000>DefaultTransport</span> <span style=color:#000>RoundTripper</span> = &amp;<span style=color:#000>Transport</span>{
+	<span style=color:#000>Proxy</span>: <span style=color:#000>ProxyFromEnvironment</span>,
+	<span style=color:#000>DialContext</span>: (&amp;<span style=color:#000>net</span>.<span style=color:#000>Dialer</span>{
+		<span style=color:#000>Timeout</span>:   <span style=color:#3af>30</span> * <span style=color:#000>time</span>.<span style=color:#000>Second</span>,
+		<span style=color:#000>KeepAlive</span>: <span style=color:#3af>30</span> * <span style=color:#000>time</span>.<span style=color:#000>Second</span>,
+		<span style=color:#000>DualStack</span>: <span style=color:#00f>true</span>,
+	}).<span style=color:#000>DialContext</span>,
+	<span style=color:#000>ForceAttemptHTTP2</span>:     <span style=color:#00f>true</span>,
+	<span style=color:#000>MaxIdleConns</span>:          <span style=color:#3af>100</span>,
+	<span style=color:#000>IdleConnTimeout</span>:       <span style=color:#3af>90</span> * <span style=color:#000>time</span>.<span style=color:#000>Second</span>,
+	<span style=color:#000>TLSHandshakeTimeout</span>:   <span style=color:#3af>10</span> * <span style=color:#000>time</span>.<span style=color:#000>Second</span>,
+	<span style=color:#000>ExpectContinueTimeout</span>: <span style=color:#3af>1</span> * <span style=color:#000>time</span>.<span style=color:#000>Second</span>,
 }
-</code></pre></div><p>Let&rsquo;s change <code>ProxyFromEnvironment</code> with something of our own:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">Proxy</span>: <span style="color:#00f">func</span>(<span style="color:#000">req</span> *<span style="color:#000">http</span>.<span style="color:#000">Request</span>) (*<span style="color:#000">url</span>.<span style="color:#000">URL</span>, <span style="color:#00f">error</span>) {
-    <span style="color:#00f">return</span> <span style="color:#000">url</span>.<span style="color:#000">Parse</span>(<span style="color:#5a2">&#34;http://127.0.0.1:9090&#34;</span>)
+</code></pre></div><p>Let&rsquo;s change <code>ProxyFromEnvironment</code> with something of our own:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#000>Proxy</span>: <span style=color:#00f>func</span>(<span style=color:#000>req</span> *<span style=color:#000>http</span>.<span style=color:#000>Request</span>) (*<span style=color:#000>url</span>.<span style=color:#000>URL</span>, <span style=color:#00f>error</span>) {
+    <span style=color:#00f>return</span> <span style=color:#000>url</span>.<span style=color:#000>Parse</span>(<span style=color:#5a2>&#34;http://127.0.0.1:9090&#34;</span>)
 },
-</code></pre></div><p>Now, the code looks like this:</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">package</span> <span style="color:#000">main</span>
+</code></pre></div><p>Now, the code looks like this:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#00f>package</span> <span style=color:#000>main</span>
 
-<span style="color:#00f">import</span> (
-	<span style="color:#5a2">&#34;fmt&#34;</span>
-	<span style="color:#5a2">&#34;net&#34;</span>
-	<span style="color:#5a2">&#34;net/http&#34;</span>
-	<span style="color:#5a2">&#34;net/url&#34;</span>
-	<span style="color:#5a2">&#34;os&#34;</span>
-	<span style="color:#5a2">&#34;time&#34;</span>
+<span style=color:#00f>import</span> (
+	<span style=color:#5a2>&#34;fmt&#34;</span>
+	<span style=color:#5a2>&#34;net&#34;</span>
+	<span style=color:#5a2>&#34;net/http&#34;</span>
+	<span style=color:#5a2>&#34;net/url&#34;</span>
+	<span style=color:#5a2>&#34;os&#34;</span>
+	<span style=color:#5a2>&#34;time&#34;</span>
 
-	<span style="color:#5a2">&#34;github.com/gophercloud/gophercloud&#34;</span>
-	<span style="color:#5a2">&#34;github.com/gophercloud/gophercloud/openstack&#34;</span>
-	<span style="color:#5a2">&#34;github.com/gophercloud/gophercloud/openstack/compute/v2/servers&#34;</span>
+	<span style=color:#5a2>&#34;github.com/gophercloud/gophercloud&#34;</span>
+	<span style=color:#5a2>&#34;github.com/gophercloud/gophercloud/openstack&#34;</span>
+	<span style=color:#5a2>&#34;github.com/gophercloud/gophercloud/openstack/compute/v2/servers&#34;</span>
 )
 
-<span style="color:#00f">func</span> <span style="color:#000">main</span>() {
-	<span style="color:#000">pr</span>, <span style="color:#000">err</span> := <span style="color:#000">openstack</span>.<span style="color:#000">NewClient</span>(<span style="color:#5a2">&#34;http://localhost/identity/v3&#34;</span>)
-	<span style="color:#00f">if</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
-		<span style="color:#000">fmt</span>.<span style="color:#000">Fprintf</span>(<span style="color:#000">os</span>.<span style="color:#000">Stderr</span>, <span style="color:#5a2">&#34;could not create an openstack client&#34;</span>)
-		<span style="color:#000">os</span>.<span style="color:#000">Exit</span>(<span style="color:#3af">1</span>)
+<span style=color:#00f>func</span> <span style=color:#000>main</span>() {
+	<span style=color:#000>pr</span>, <span style=color:#000>err</span> := <span style=color:#000>openstack</span>.<span style=color:#000>NewClient</span>(<span style=color:#5a2>&#34;http://localhost/identity/v3&#34;</span>)
+	<span style=color:#00f>if</span> <span style=color:#000>err</span> != <span style=color:#00f>nil</span> {
+		<span style=color:#000>fmt</span>.<span style=color:#000>Fprintf</span>(<span style=color:#000>os</span>.<span style=color:#000>Stderr</span>, <span style=color:#5a2>&#34;could not create an openstack client&#34;</span>)
+		<span style=color:#000>os</span>.<span style=color:#000>Exit</span>(<span style=color:#3af>1</span>)
 	}
-	<span style="color:#000">pr</span>.<span style="color:#000">HTTPClient</span>.<span style="color:#000">Transport</span> = &amp;<span style="color:#000">http</span>.<span style="color:#000">Transport</span>{
-		<span style="color:#000">Proxy</span>: <span style="color:#00f">func</span>(<span style="color:#000">req</span> *<span style="color:#000">http</span>.<span style="color:#000">Request</span>) (*<span style="color:#000">url</span>.<span style="color:#000">URL</span>, <span style="color:#00f">error</span>) {
-			<span style="color:#00f">return</span> <span style="color:#000">url</span>.<span style="color:#000">Parse</span>(<span style="color:#5a2">&#34;http://127.0.0.1:9090&#34;</span>)
+	<span style=color:#000>pr</span>.<span style=color:#000>HTTPClient</span>.<span style=color:#000>Transport</span> = &amp;<span style=color:#000>http</span>.<span style=color:#000>Transport</span>{
+		<span style=color:#000>Proxy</span>: <span style=color:#00f>func</span>(<span style=color:#000>req</span> *<span style=color:#000>http</span>.<span style=color:#000>Request</span>) (*<span style=color:#000>url</span>.<span style=color:#000>URL</span>, <span style=color:#00f>error</span>) {
+			<span style=color:#00f>return</span> <span style=color:#000>url</span>.<span style=color:#000>Parse</span>(<span style=color:#5a2>&#34;http://127.0.0.1:9090&#34;</span>)
 		},
-		<span style="color:#000">DialContext</span>: (&amp;<span style="color:#000">net</span>.<span style="color:#000">Dialer</span>{
-			<span style="color:#000">Timeout</span>:   <span style="color:#3af">30</span> * <span style="color:#000">time</span>.<span style="color:#000">Second</span>,
-			<span style="color:#000">KeepAlive</span>: <span style="color:#3af">30</span> * <span style="color:#000">time</span>.<span style="color:#000">Second</span>,
-			<span style="color:#000">DualStack</span>: <span style="color:#00f">true</span>,
-		}).<span style="color:#000">DialContext</span>,
-		<span style="color:#000">ForceAttemptHTTP2</span>:     <span style="color:#00f">true</span>,
-		<span style="color:#000">MaxIdleConns</span>:          <span style="color:#3af">100</span>,
-		<span style="color:#000">IdleConnTimeout</span>:       <span style="color:#3af">90</span> * <span style="color:#000">time</span>.<span style="color:#000">Second</span>,
-		<span style="color:#000">TLSHandshakeTimeout</span>:   <span style="color:#3af">10</span> * <span style="color:#000">time</span>.<span style="color:#000">Second</span>,
-		<span style="color:#000">ExpectContinueTimeout</span>: <span style="color:#3af">1</span> * <span style="color:#000">time</span>.<span style="color:#000">Second</span>,
+		<span style=color:#000>DialContext</span>: (&amp;<span style=color:#000>net</span>.<span style=color:#000>Dialer</span>{
+			<span style=color:#000>Timeout</span>:   <span style=color:#3af>30</span> * <span style=color:#000>time</span>.<span style=color:#000>Second</span>,
+			<span style=color:#000>KeepAlive</span>: <span style=color:#3af>30</span> * <span style=color:#000>time</span>.<span style=color:#000>Second</span>,
+			<span style=color:#000>DualStack</span>: <span style=color:#00f>true</span>,
+		}).<span style=color:#000>DialContext</span>,
+		<span style=color:#000>ForceAttemptHTTP2</span>:     <span style=color:#00f>true</span>,
+		<span style=color:#000>MaxIdleConns</span>:          <span style=color:#3af>100</span>,
+		<span style=color:#000>IdleConnTimeout</span>:       <span style=color:#3af>90</span> * <span style=color:#000>time</span>.<span style=color:#000>Second</span>,
+		<span style=color:#000>TLSHandshakeTimeout</span>:   <span style=color:#3af>10</span> * <span style=color:#000>time</span>.<span style=color:#000>Second</span>,
+		<span style=color:#000>ExpectContinueTimeout</span>: <span style=color:#3af>1</span> * <span style=color:#000>time</span>.<span style=color:#000>Second</span>,
 	}
 
-	<span style="color:#000">err</span> = <span style="color:#000">openstack</span>.<span style="color:#000">Authenticate</span>(<span style="color:#000">pr</span>, <span style="color:#000">gophercloud</span>.<span style="color:#000">AuthOptions</span>{
-		<span style="color:#000">IdentityEndpoint</span>: <span style="color:#5a2">&#34;http://localhost/identity/v3&#34;</span>,
-		<span style="color:#000">DomainName</span>:       <span style="color:#5a2">&#34;Default&#34;</span>,
-		<span style="color:#000">Username</span>:         <span style="color:#5a2">&#34;admin&#34;</span>,
-		<span style="color:#000">Password</span>:         <span style="color:#5a2">&#34;secret&#34;</span>,
-		<span style="color:#000">TenantName</span>:       <span style="color:#5a2">&#34;admin&#34;</span>,
+	<span style=color:#000>err</span> = <span style=color:#000>openstack</span>.<span style=color:#000>Authenticate</span>(<span style=color:#000>pr</span>, <span style=color:#000>gophercloud</span>.<span style=color:#000>AuthOptions</span>{
+		<span style=color:#000>IdentityEndpoint</span>: <span style=color:#5a2>&#34;http://localhost/identity/v3&#34;</span>,
+		<span style=color:#000>DomainName</span>:       <span style=color:#5a2>&#34;Default&#34;</span>,
+		<span style=color:#000>Username</span>:         <span style=color:#5a2>&#34;admin&#34;</span>,
+		<span style=color:#000>Password</span>:         <span style=color:#5a2>&#34;secret&#34;</span>,
+		<span style=color:#000>TenantName</span>:       <span style=color:#5a2>&#34;admin&#34;</span>,
 	})
-	<span style="color:#00f">if</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
-		<span style="color:#000">fmt</span>.<span style="color:#000">Fprintf</span>(<span style="color:#000">os</span>.<span style="color:#000">Stderr</span>, <span style="color:#5a2">&#34;auth failed&#34;</span>)
-		<span style="color:#000">os</span>.<span style="color:#000">Exit</span>(<span style="color:#3af">1</span>)
+	<span style=color:#00f>if</span> <span style=color:#000>err</span> != <span style=color:#00f>nil</span> {
+		<span style=color:#000>fmt</span>.<span style=color:#000>Fprintf</span>(<span style=color:#000>os</span>.<span style=color:#000>Stderr</span>, <span style=color:#5a2>&#34;auth failed&#34;</span>)
+		<span style=color:#000>os</span>.<span style=color:#000>Exit</span>(<span style=color:#3af>1</span>)
 	}
 
-	<span style="color:#000">compute</span>, <span style="color:#000">err</span> := <span style="color:#000">openstack</span>.<span style="color:#000">NewComputeV2</span>(<span style="color:#000">pr</span>, <span style="color:#000">gophercloud</span>.<span style="color:#000">EndpointOpts</span>{<span style="color:#000">Region</span>: <span style="color:#5a2">&#34;&#34;</span>})
-	<span style="color:#000">srvs</span>, <span style="color:#000">err</span> := <span style="color:#000">servers</span>.<span style="color:#000">List</span>(<span style="color:#000">compute</span>, <span style="color:#00f">nil</span>).<span style="color:#000">AllPages</span>()
-	<span style="color:#00f">if</span> <span style="color:#000">err</span> != <span style="color:#00f">nil</span> {
-		<span style="color:#000">fmt</span>.<span style="color:#000">Fprintf</span>(<span style="color:#000">os</span>.<span style="color:#000">Stderr</span>, <span style="color:#5a2">&#34;%v\n&#34;</span>, <span style="color:#000">err</span>)
-		<span style="color:#000">os</span>.<span style="color:#000">Exit</span>(<span style="color:#3af">1</span>)
+	<span style=color:#000>compute</span>, <span style=color:#000>err</span> := <span style=color:#000>openstack</span>.<span style=color:#000>NewComputeV2</span>(<span style=color:#000>pr</span>, <span style=color:#000>gophercloud</span>.<span style=color:#000>EndpointOpts</span>{<span style=color:#000>Region</span>: <span style=color:#5a2>&#34;&#34;</span>})
+	<span style=color:#000>srvs</span>, <span style=color:#000>err</span> := <span style=color:#000>servers</span>.<span style=color:#000>List</span>(<span style=color:#000>compute</span>, <span style=color:#00f>nil</span>).<span style=color:#000>AllPages</span>()
+	<span style=color:#00f>if</span> <span style=color:#000>err</span> != <span style=color:#00f>nil</span> {
+		<span style=color:#000>fmt</span>.<span style=color:#000>Fprintf</span>(<span style=color:#000>os</span>.<span style=color:#000>Stderr</span>, <span style=color:#5a2>&#34;%v\n&#34;</span>, <span style=color:#000>err</span>)
+		<span style=color:#000>os</span>.<span style=color:#000>Exit</span>(<span style=color:#3af>1</span>)
 	}
 
-	<span style="color:#000">fmt</span>.<span style="color:#000">Printf</span>(<span style="color:#5a2">&#34;servers:\n%v\n&#34;</span>, <span style="color:#000">srvs</span>)
+	<span style=color:#000>fmt</span>.<span style=color:#000>Printf</span>(<span style=color:#5a2>&#34;servers:\n%v\n&#34;</span>, <span style=color:#000>srvs</span>)
 }
 </code></pre></div><p>Now, all traffic including calls to <code>Host: localhost</code> or <code>Host: 127.0.0.1</code>
-will be properly proxied to <code>localhost:9090</code>.</p>
-<h2 id="solution-2-use-a-different-host-name">Solution 2: use a different host name</h2>
-<p>In your <code>/etc/hosts</code>, add the line such as <code>local 127.0.0.1</code>. Now, you can
+will be properly proxied to <code>localhost:9090</code>.</p><h2 id=solution-2-use-a-different-host-name>Solution 2: use a different host name</h2><p>In your <code>/etc/hosts</code>, add the line such as <code>local 127.0.0.1</code>. Now, you can
 use the host <code>local</code> instead of <code>localhost</code>, which means Go will proxy your
-requests properly.</p>
-
-			</div>
-			<div class="tags">
-				
-				
-				
-				
-					
-				
-					
-					
-					
-						<div class="taxosfloating_left">
-							<p>Tags</p>
-						</div>
-						<div class="termsfloating_right">
-							<p>
-								
-									
-									
-									
-								
-									
-									
-										<a href="/tags/go/"> go </a>
-									
-									
-									
-									
-									
-									
-									
-									
-								
-									
-									
-									
-									
-									
-									
-									
-								
-									
-									
-									
-									
-									
-								
-									
-									
-										<a href="/tags/proxyman/"> proxyman </a>
-									
-									
-								
-							</p>
-						</div>
-						<div class="clearit"></div>
-					
-					
-					
-				
-				
-			</div></div>
-	</div>
-	<div class="footer wrapper">
-	<nav class="nav">
-		<div class="footertext"></div>
-	</nav>
-</div>
-
-
-
-</body>
-</html>
+requests properly.</p></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/go/>go</a>
+<a href=/tags/proxyman/>proxyman</a></p></div><div class=clearit></div></div></div></div><div class="footer wrapper"><nav class=nav><div class=footertext></div></nav></div></body></html>
