@@ -62,7 +62,6 @@ func (r *ReconcileTrial) reconcileJob(instance *trialsv1alpha3.Trial, desiredJob
 
     return deployedJob, nil
 }
-
 ```
 
 The outline of this function doesn't tell us anything about what the flow

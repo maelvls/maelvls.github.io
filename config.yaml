@@ -50,7 +50,7 @@ markup:
       autoHeadingIDType: github
     renderer:
       hardWraps: false
-      unsafe: false
+      unsafe: true # so that I can use <img>
       xHTML: false
   highlight:
     codeFences: true
