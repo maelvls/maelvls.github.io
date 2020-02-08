@@ -12,7 +12,7 @@ taxonomies:
   series: series
 params:
   customCSS: css/maelvls.css
-  subtitle: Software engineer at [Ori](https://www.ori.co/). I write mostly about Kubernetes and Go.
+  subtitle: Software engineer. I write mostly about Kubernetes and Go.
   avatar: /img/mael.jpg
   disableDisqusTypes:
     - page
