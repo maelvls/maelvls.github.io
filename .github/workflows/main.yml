@@ -3,31 +3,31 @@ name: Build and deploy to github pages
 on:
   push:
     branches:
-    - source
+      - source
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-      with:
-        submodules: true
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
 
-    - name: Install Hugo
-      run: |
-        wget https://github.com/gohugoio/hugo/releases/download/v0.64.0/hugo_extended_0.64.0_Linux-64bit.deb -O /tmp/hugo.deb
-        sudo dpkg -i /tmp/hugo.deb
-    - name: Build
-      run: |
-        hugo --minify
+      - name: Install Hugo
+        run: |
+          wget https://github.com/gohugoio/hugo/releases/download/v0.64.0/hugo_extended_0.64.0_Linux-64bit.deb -O /tmp/hugo.deb
+          sudo dpkg -i /tmp/hugo.deb
+      - name: Build
+        run: |
+          hugo --minify
 
-    # The GITHUB_TOKEN already given for running github actions is not
-    # sufficient. It allows me to push to master but for some reason it
-    # won't trigger a github-pages "build & push to CDN". I had to create a
-    # personnal access token with the 'repo' scope.
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        deploy_key: ${{ secrets.GITHUB_PAT }}
-        publish_dir: ./public
-        publish_branch: master
+      # The GITHUB_TOKEN already given for running github actions is not
+      # sufficient. It allows me to push to master but for some reason it
+      # won't trigger a github-pages "build & push to CDN". I had to create a
+      # personnal access token with the 'repo' scope.
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.GITHUB_PAT }}
+          publish_dir: ./public
+          publish_branch: master
