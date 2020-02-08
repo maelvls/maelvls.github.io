@@ -7,6 +7,13 @@ samp {
   line-height: 1rem;
 }
 
+pre {
+  border-radius: 5px;
+  white-space: pre-wrap;
+  background-color: #eff0f1 !important;
+  border: 1px solid rgba(0, 0, 0, 0.103);
+}
+
 .highlight pre {
   padding: 0.5rem;
   background-color: #eff0f1 !important;
@@ -48,3 +55,4 @@ table td {
   padding: 5px 1vw;
   box-sizing: border-box;
 }
+
