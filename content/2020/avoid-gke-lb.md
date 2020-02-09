@@ -12,7 +12,7 @@ description: |
 I like being able to keep my own GKE Kubernetes cluster for experimenting.
 But I realized that this _Network Load Balancer_ was way too expensive.
 
-![Network Load Balancing: Forwarding Rule Minimum Service Charge in EMEA](https://thepracticaldev.s3.amazonaws.com/i/tuwja6zrnpqhcxkglz2f.png)
+![Network Load Balancing: Forwarding Rule Minimum Service Charge in EMEA](https://dev-to-uploads.s3.amazonaws.com/i/r7s429n5ae3yl9xwopxc.png)
 
 What happens is that GKE has a LoadBalancer controller running (I can't see
 it) and whenever I have a service with `type: LoadBalancer`, it will create
