@@ -212,26 +212,13 @@ stack. These pods have:
 
 Here is a diagram that shows the whole picture:
 
-```plain
-                                            internal-ip: 10.142.0.62
-                       node                 external-ip: 35.211.248.124
-                      +------------------------------------------------+
-                      |                                                |
-                      |                        akrobateo-traefik-4jh5k |
-                      |                       +------10.24.4.2--------+|
-                      |   src: 1.2.3.4:80,    |                       ||
-                      |   dst: 10.24.4.2:80   |                       ||
-  src: 1.2.3.4:80,  ---------iptable------------> ---iptables----+    ||
-  dst: 10.142.0.62:80 |                       |                  |    ||
-                      |                       |                  |    ||
-                      |                       | src: 1.2.3.4:80, |    ||
-                      |                       | dst: 10.27.244.111:80 ||
-                      |                       |                  |    ||
-                      |                       |                  |    ||
-     to traefik pod <-------pod-to-pod----- <--------------------+    ||
-                      |                       |                       ||
-                      |                       |                       ||
-                      |                       +-----------------------+|
-                      |                                                |
-                      +------------------------------------------------+
-```
+![Packet routing using Akrobateo, Traefik and iptables](https://dev-to-uploads.s3.amazonaws.com/i/3ywzjorrhc6glr8ehh1f.png)
+
+## Recap
+
+- Akrobateo is a controller that watches Services of `type: LoadBalancer`
+- When it finds one, creates a deamonset of empty pods
+- The task of these empty pods is to set one iptable rule that redirects
+  traffic to the ClusterIP of the `type: LoadBalancer` service
+- Akrobateo also sets the Service's status with the loadBalancer IP.
+- Benefit: since the loadBalancer IP is properly set, ExternalDNS works.

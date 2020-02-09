@@ -21,7 +21,7 @@ params:
     - name: Github
       icon: fab fa-github
       url: "https://github.com/maelvls"
-    - name: Github
+    - name: Twitter
       icon: fab fa-twitter
       url: "https://twitter.com/maelvls"
 
