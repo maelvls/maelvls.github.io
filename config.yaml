@@ -2,15 +2,16 @@ baseURL: https://maelvls.dev/
 languageCode: en-us
 title: maelvls dev blog
 theme: hugo-vitae
-# googleAnalytics = "UA-123-45"
+googleAnalytics: "UA-88710120-3"
 paginate: 1000
-pygmentsstyle: abap
+pygmentsstyle: abap # will deprecate soon since we use goldmark now
 pygmentscodefences: true
 pygmentscodefencesguesssyntax: true
 taxonomies:
   tag: tags
   series: series
 params:
+  mainSections: ["2020", "2019"]
   customCSS: css/maelvls.css
   subtitle: Software engineer. I write mostly about Kubernetes and Go.
   avatar: /img/mael.jpg
@@ -23,6 +24,7 @@ params:
     - name: Github
       icon: fab fa-twitter
       url: "https://twitter.com/maelvls"
+
 menu:
   main:
     - name: Home
