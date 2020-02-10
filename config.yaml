@@ -3,7 +3,7 @@ languageCode: en-us
 title: maelvls dev blog
 theme: hugo-vitae
 googleAnalytics: "UA-88710120-3"
-disqusShortname: maelvls-dev
+# disqusShortname: maelvls-dev
 paginate: 1000
 pygmentsstyle: abap # will deprecate soon since we use goldmark now
 pygmentscodefences: true
@@ -34,7 +34,6 @@ menu:
     - name: About
       url: /about
       weight: 3
-
 
 # Specifics to Hugo.
 markup:
