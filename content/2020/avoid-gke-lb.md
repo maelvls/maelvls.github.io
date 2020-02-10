@@ -6,6 +6,7 @@ description: |
     I want to avoid using the expensive Google Network Load Balancer and
     instead do the load balancing in-cluster using akrobateo, which
     acts as a LoadBalancer controller.
+url: /avoid-gke-lb-with-hostport
 ---
 
 

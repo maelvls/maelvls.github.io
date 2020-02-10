@@ -6,6 +6,7 @@ description: |
     Some pods were unable to connect to the kube-proxy pod on one of my GKE
     Kubernetes clusters. This post present an in-depth investigation using
     tcpdump, wireshark and iptables tracing.
+url: /deep-dive-kubernetes-networking
 ---
 
 When I scaled my GKE cluster from one node to two nodes, I realised there

@@ -6,6 +6,7 @@ description: |
     Readability is a properly we all love about Go. In other languages, it
     might be fine to have a lot of nested if statements; in Go, it is a good
     practice to keep away from overly-nested logic.
+url: /go-happy-line-of-sight
 ---
 
 While perusing how other Kubernetes developers are implementing their own

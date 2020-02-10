@@ -6,6 +6,7 @@ description: |
     At some point, the Go team chose to disable the proxy for requests coming
     from localhost or 127.0.0.1. This is annoying when debugging services
     locally.
+url: /go-ignores-proxy-localhost
 ---
 
 I use [Proxyman](https://proxyman.io) for inspecting the HTTP and HTTPS

@@ -8,6 +8,7 @@ description: |
     how to set the status is scattered across comments, issues, PRs and the
     Kubernetes code itself. Conditions may be a good solution for your
     controller, but for what?
+url: /kubernetes-conditions
 ---
 
 While building a Kubernetes controller using CRDs, I stumbled across
