@@ -1,5 +1,5 @@
 ---
-title: "Deep dive into Kubernetes Networking: my kube-dns is not working!"
+title: "Debugging Kubernetes Networking: my kube-dns is not working!"
 tags: [kubernetes, networking]
 date: 2020-01-26
 description: |
