@@ -9,7 +9,7 @@ API calls are made by <code>docker</code> when running <code>docker search</code
 do is</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#000>HTTPS_PROXY</span>=http://localhost:9090 docker search ubuntu
 </code></pre></div><p>Since Proxyman acts like a proxy listening on 0.0.0.0:9090, I can see and
 replay all the HTTP calls, similarly to what you would do with the Chrome
-DevTools.</p><p><img src=https://thepracticaldev.s3.amazonaws.com/i/yhe5ex8vnoo01lf75r23.png alt="Screenshot with macOS&rsquo; Proxyman for a local Openstack instance"></p><p>Note that HTTPS is a bit tricky and requires an additional step on macOS
+DevTools.</p><p><img src=proxyman.png alt="Screenshot with macOS&rsquo; Proxyman for a local Openstack instance"></p><p>Note that HTTPS is a bit tricky and requires an additional step on macOS
 (settings > Proxyman CA > Generate new) but works flawlessly with any Go
 binary since Go supports <code>HTTPS_PROXY</code> by default. For Python, it becomes a
 bit trickier often requires the app to have a flag like <code>--cacert</code>.</p><p>But by default, Go [ignores <code>HTTPS_PROXY</code>] for <code>localhost</code> and <code>127.0.0.1</code> hosts (see <a href=https://godoc.org/golang.org/x/net/http/httpproxy#Config.ProxyFunc>ProxyFunc</a> and <a href=https://github.com/golang/net/blob/c0dbc17a35534bf2e581d7a942408dc936316da4/http/httpproxy/proxy.go#L172-L191>useProxy</a>):</p><blockquote><p>As a special case, if req.URL.Host is &ldquo;localhost&rdquo; (with or without a port
