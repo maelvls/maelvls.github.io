@@ -70,17 +70,12 @@ is and where the important logic is. Having deeply nested `if-else`
 statements hurt Go's glanceability: where is the "happy path"? Where are
 the "error paths"?
 
-<!--
-<img src="https://thepracticaldev.s3.amazonaws.com/i/8d17xp5y16pu70w966d2.png" width="500">
--->
-<img src="https://dev-to-uploads.s3.amazonaws.com/i/7b3cznvap68mlcehqy96.png" width="500"/>
-
+<img src="before.png" width="500"/>
 
 By refactoring and removing `else` statements, we obtain a more coherent
 aligned-to-the-left path:
 
-
-<img src="https://thepracticaldev.s3.amazonaws.com/i/hol2tmwjoeb0j79z8pym.png" width="500"/>
+<img src="after.png" width="500"/>
 
 The green line represents the "core logic" and is at the minimum
 indentation level. The red line represents anything out of the ordinary:

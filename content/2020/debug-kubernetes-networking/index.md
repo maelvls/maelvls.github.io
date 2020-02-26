@@ -7,14 +7,13 @@ description: |
     Kubernetes clusters. This post present an in-depth investigation using
     tcpdump, wireshark and iptables tracing.
 url: /debugging-kubernetes-networking
-alias: [/deep-dive-kubernetes-networking]
 ---
 
 When I scaled my GKE cluster from one node to two nodes, I realised there
 was some DNS issues with one of the pods on the new Node 2 (that's what I
 initially thought).
 
-![network diagram of the cluster where DNS not working in a pod of Node 2](https://thepracticaldev.s3.amazonaws.com/i/on2rnt6a75d5h9bka2o9.png)
+![network diagram of the cluster where DNS not working in a pod of Node 2](diagram-node-2-dns-not-working.png)
 
 So I went into pod-on-2 (10.24.12.40) and checked that DNS wasn't working.
 What I did is run
@@ -31,11 +30,11 @@ tcpdump on the `cbr0` interface on node 2. `cbr0` is the linux bridge used
 by Kubernetes (the bridge and the interface have the same name). Using
 Wireshark on top of tcpdump gives me easier-to-explore results:
 
-![Wireshark running on interface cbr0 on node 2](https://thepracticaldev.s3.amazonaws.com/i/7hhxfzdt4qix6iigtk9u.png)
+![Wireshark running on interface cbr0 on node 2](wireshark-node-2-cbr0-and-terminal.png)
 
 Note that the actual name of Node 2 is _gke-august-period-234610-worker-micro-1de60498-9gsb_ (now, you know!). Here is the command I used for opening wireshark on Node 2:
 
-```
+```sh
 % gcloud compute ssh node-2 --command "docker run --rm --net=host corfr/tcpdump -i cbr0 -U -w - 'not port 22'" | wireshark -k -i -
 tcpdump: listening on cbr0, link-type EN10MB (Ethernet), capture size 262144 bytes
 ```
@@ -47,12 +46,12 @@ inside containers in this pod.
 
 Here is the network setup with the IPs to get a better picture:
 
-![Network diagram of the Kubernetes cluster with two nodes and two pods and with IPs displayed](https://thepracticaldev.s3.amazonaws.com/i/1128v8dy1azertdj0r52.png)
+![Network diagram of the Kubernetes cluster with two nodes and two pods and with IPs displayed](diagram-pod-ips.png)
 
 Let's check that `10.27.240.10` is actually a service:
 
-```
-% kubectl -n kube-system get service kube-dns         
+```sh
+% kubectl -n kube-system get service kube-dns
 NAME       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE
 kube-dns   ClusterIP   10.27.240.10   <none>        53/UDP,53/TCP   34d
 ```
@@ -64,7 +63,7 @@ translating that into an actual pod IP.
 Now that we know that the packet goes to `cbr0`, is it forwarded to Node
 2's `eth0`? I used Wireshark again, but on `eth0` this time:
 
-![Wireshark on eth0 of Node 2](https://thepracticaldev.s3.amazonaws.com/i/obo74jzx8u9ab5xnd949.png)
+![Wireshark on eth0 of Node 2](wireshark-node-2-eth0.png)
 
 Apparently, the packet destination has been re-written from `10.27.240.10`
 to `10.24.9.31` (an actual pod IP) which is good sign. This pod IP
@@ -119,7 +118,7 @@ Let's recap all we know: the packet goes from the pod's eth0 to the linux
 bridge, and is then rewritten and forwarded to the host's eth0.
 
 <img
-src="https://thepracticaldev.s3.amazonaws.com/i/mheve9tq2cobub1jz933.png"
+src="diagram-node-2-iptables-flow.png"
 width="400" alt="On Node 2, packet goes from pod's eth0 to host's cbr0 and
 then host's eth0" />
 
@@ -262,7 +261,7 @@ traffic to flow!
 
 Here is what the UI shows:
 
-![Screenshot of the VPC interface on GCP, the 10.24.0.0 subnet doesn't seem to be allowed](https://thepracticaldev.s3.amazonaws.com/i/zgh9r6zvifnnvszqqlcw.png)
+![Screenshot of the VPC interface on GCP, the 10.24.0.0 subnet doesn't seem to be allowed](gcp-ui-vpc-firewall-rules.png)
 
 Even easier-to-read, using `gcloud`:
 

@@ -13,14 +13,14 @@ url: /avoid-gke-lb-with-hostport
 I like being able to keep my own GKE Kubernetes cluster for experimenting.
 But I realized that this _Network Load Balancer_ was way too expensive.
 
-![Network Load Balancing: Forwarding Rule Minimum Service Charge in EMEA](https://dev-to-uploads.s3.amazonaws.com/i/r7s429n5ae3yl9xwopxc.png)
+![Network Load Balancing: Forwarding Rule Minimum Service Charge in EMEA](cost-load-balancer-gke.png)
 
 What happens is that GKE has a LoadBalancer controller running (I can't see
 it) and whenever I have a service with `type: LoadBalancer`, it will create
 a L4 load balancer that balances 80 and 443 traffic across the nodes. Here
 is a diagram of my current setup:
 
-![ExternalDNS, GKE and Traefik](https://thepracticaldev.s3.amazonaws.com/i/4076pdg5wo2siwjyx7jq.png)
+![ExternalDNS, GKE and Traefik](how-service-controller-works-on-gke.png)
 
 I use Traefik as a reverse-proxy and terminates the end-user TLS
 connection. And since Traefik sets the `status.loadBalancer.ingress` on the
@@ -213,7 +213,7 @@ stack. These pods have:
 
 Here is a diagram that shows the whole picture:
 
-![Packet routing using Akrobateo, Traefik and iptables](https://dev-to-uploads.s3.amazonaws.com/i/3ywzjorrhc6glr8ehh1f.png)
+![Packet routing using Akrobateo, Traefik and iptables](packet-routing-with-akrobateo.png)
 
 ## Recap
 

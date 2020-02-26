@@ -22,7 +22,7 @@ Since Proxyman acts like a proxy listening on 0.0.0.0:9090, I can see and
 replay all the HTTP calls, similarly to what you would do with the Chrome
 DevTools.
 
-![Screenshot with macOS' Proxyman for a local Openstack instance](https://thepracticaldev.s3.amazonaws.com/i/yhe5ex8vnoo01lf75r23.png)
+![Screenshot with macOS' Proxyman for a local Openstack instance](proxyman.png)
 
 Note that HTTPS is a bit tricky and requires an additional step on macOS
 (settings > Proxyman CA > Generate new) but works flawlessly with any Go
