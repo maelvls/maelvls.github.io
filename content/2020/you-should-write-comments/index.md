@@ -22,15 +22,19 @@ It is true that Go favors easy-to-read code rather than
 smart-but-hard-to-parse code, which really helps keeping the level of
 comments low. But there are still many reasons comments are still needed.
 
-**Fighting tribal knowledge.** Excellent naming and structure cannot help
-with the "why" of a piece of code. Complex math operations is a typical
-example of code that needs to be thougouly commented. Teams want to keep
-the amount of "tribal knowledge" as low as possible, and the only way in
-this kind of situation is to write comments. Take a look at
+### Fighting tribal knowledge
+
+Excellent naming and structure cannot help with the "why" of a piece of
+code. Complex math operations is a typical example of code that needs to be
+thougouly commented. Teams want to keep the amount of "tribal knowledge" as
+low as possible, and the only way in this kind of situation is to write
+comments. Take a look at
 [this](https://github.com/haproxy/haproxy/blob/530408f976e5fe2f2f2b4b733b39da36770b566f/include/proto/freq_ctr.h#L138-L248)
 for example.
 
-**Good naming takes time.** Finding a good name that properly carries the
+### Good naming takes time
+
+Finding a good name that properly carries the
 exact intent and help self-documenting takes time. It always takes a few
 iterations before the code becomes self-documenting enough to be able to
 remove comments.
@@ -41,11 +45,12 @@ As shown by the diagram, the amount of comments for a given code base
 decreases thanks to PR reviews and refactorings. The more we learn and
 understand our code base, the better we become at self-documenting.
 
-**Comments are disposable, don't copy them over.** Now, let's talk about
-the issue of comments becoming outdated. Over time, comments start lying.
-That's where my second point comes into play: deleting and rewriting
-comments is part of our job. I would even say that it takes around 40% of
-my time spent coding.
+### Comments are disposable, don't copy them over
+
+Now, let's talk about the issue of comments becoming outdated. Over time,
+comments start lying. That's where my second point comes into play:
+deleting and rewriting comments is part of our job. I would even say that
+it takes around 40% of my time spent coding.
 
 During code reviews, I pay extra attention to these comments. And yes, very
 often, comments don't make sense anymore because of some copy-paste of
@@ -61,12 +66,12 @@ them. But would you rather have no comments at all and let the amount of
 tribal knowledge creep in every part of your code base, making it harder
 and harder for new engineers to join the team?
 
-I think we all enjoy reading good comments. Well commented code is an art,
-and some project like HAProxy, Git or the Linux kernel have done an amazing
-job at keeping knowledge in code as opposed to knowledge staying in the
-developer's brains. Just take a look at
+I think we all enjoy reading good comments. Well commented code is an art.
+Some project like HAProxy, Git or the Linux kernel have done an amazing job
+at keeping knowledge accessible as opposed to knowledge locked in and
+scattered across many brains. Just take a look at
 [`ebtree/ebtree.h`](https://github.com/haproxy/haproxy/blob/530408f976e5fe2f2f2b4b733b39da36770b566f/ebtree/ebtree.h#L23),
 [`unpack-trees.c`](https://github.com/git/git/blob/2d2118b814c11f509e1aa76cb07110f7231668dc/unpack-trees.c#L821-L836)
 and
-[`kernel/sched/core.c`](https://github.com/torvalds/linux/blob/bfdc6d91a25f4545bcd1b12e3219af4838142ef1/kernel/sched/core.c#L157-L171)).
+[`kernel/sched/core.c`](https://github.com/torvalds/linux/blob/bfdc6d91a25f4545bcd1b12e3219af4838142ef1/kernel/sched/core.c#L157-L171).
 Absolute delight.
