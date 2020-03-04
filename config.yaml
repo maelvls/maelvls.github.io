@@ -14,7 +14,8 @@ taxonomies:
 params:
   mainSections: ["2020", "2019"]
   customCSS: css/maelvls.css
-  subtitle: Software engineer. I write mostly about Kubernetes and Go.
+  subtitle: |
+    Software engineer. I write mostly about Kubernetes and Go. [About](/about)
   avatar: /img/mael.jpg
   disableDisqusTypes:
     - page
@@ -26,14 +27,14 @@ params:
       icon: fab fa-twitter
       url: "https://twitter.com/maelvls"
 
-menu:
-  main:
-    - name: Home
-      url: /
-      weight: 1
-    - name: About
-      url: /about
-      weight: 3
+# menu:
+#   main:
+#     - name: Home
+#       url: /
+#       weight: 1
+#     - name: About
+#       url: /about
+#       weight: 3
 
 # Specifics to Hugo.
 markup:
