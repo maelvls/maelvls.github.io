@@ -7,6 +7,7 @@ description: |
     might be fine to have a lot of nested if statements; in Go, it is a good
     practice to keep away from overly-nested logic.
 url: /go-happy-line-of-sight
+images: [go-happy-line-of-sight/cover-happy-line-of-sight.png]
 ---
 
 While perusing how other Kubernetes developers are implementing their own

@@ -7,6 +7,7 @@ description: |
     instead do the load balancing in-cluster using akrobateo, which
     acts as a LoadBalancer controller.
 url: /avoid-gke-lb-with-hostport
+images: [avoid-gke-lb-with-hostport/cover-external-dns.png]
 ---
 
 

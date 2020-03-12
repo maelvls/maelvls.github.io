@@ -7,6 +7,7 @@ description: |
     Kubernetes clusters. This post present an in-depth investigation using
     tcpdump, wireshark and iptables tracing.
 url: /debugging-kubernetes-networking
+images: [debugging-kubernetes-networking/cover-debug-kubernetes-networking.png]
 ---
 
 When I scaled my GKE cluster from one node to two nodes, I realised there

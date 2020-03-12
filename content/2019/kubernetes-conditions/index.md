@@ -9,6 +9,7 @@ description: |
     Kubernetes code itself. Conditions may be a good solution for your
     controller, but for what?
 url: /kubernetes-conditions
+images: [kubernetes-conditions/cover-kubernetes-conditions.png]
 ---
 
 While building a Kubernetes controller using CRDs, I stumbled across

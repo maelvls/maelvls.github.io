@@ -7,6 +7,7 @@ description: |
     from localhost or 127.0.0.1. This is annoying when debugging services
     locally.
 url: /go-ignores-proxy-localhost
+images: [go-ignores-proxy-localhost/cover-go-proxy-ignored.png]
 ---
 
 I use [Proxyman](https://proxyman.io) for inspecting the HTTP and HTTPS

@@ -8,6 +8,7 @@ description: |
     GO111MODULE has changed from Go 1.11 to 1.12, changed again with 1.13 and
     will changed a last time in 1.14.
 url: /go111module-everywhere
+images: [go111module-everywhere/cover-go-modules-sad.jpg]
 ---
 
 You might have noticed that `GO111MODULE=on` is flourishing everywhere.
