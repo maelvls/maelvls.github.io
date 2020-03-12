@@ -313,3 +313,9 @@ rules that I had not thought through and for which I have no record of. I
 already terraformed a lot of the cluster and node creation, but I should
 definitely move everything to terraform and stop doing manual edits that
 can't be traced back!
+
+---
+
+If you with to leave a comment, here is a Twitter thread:
+
+{{< twitter 1221488683485925376 >}}

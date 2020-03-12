@@ -142,3 +142,9 @@ You can also take a look at Matt Ryer's _Idiomatic Go Tricks_ where he
 presents some ways of keeping your code as readable as possible:
 
 {{< youtube yeetIgNeIkc >}}
+
+---
+
+Wish to comment? Here is the Twitter thread for that post:
+
+{{< twitter 1198259761722122240 >}}

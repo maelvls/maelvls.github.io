@@ -191,3 +191,9 @@ will be properly proxied to `localhost:9090`.
 In your `/etc/hosts`, add the line such as `local 127.0.0.1`. Now, you can
 use the host `local` instead of `localhost`, which means Go will proxy your
 requests properly.
+
+---
+
+Join the discussion on Twitter:
+
+{{< twitter 1214242197119406080 >}}

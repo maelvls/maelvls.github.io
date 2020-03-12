@@ -223,3 +223,9 @@ Here is a diagram that shows the whole picture:
   traffic to the ClusterIP of the `type: LoadBalancer` service
 - Akrobateo also sets the Service's status with the loadBalancer IP.
 - Benefit: since the loadBalancer IP is properly set, ExternalDNS works.
+
+---
+
+Want to drop a comment? Here is a Twitter thread:
+
+{{< twitter 1219193625478881285 >}}

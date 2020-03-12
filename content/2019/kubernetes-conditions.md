@@ -452,3 +452,9 @@ status:
 ```
 
 [pod-readiness-gate]: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate
+
+---
+
+Discussion is happening here:
+
+{{< twitter 1195058503695642627 >}}
