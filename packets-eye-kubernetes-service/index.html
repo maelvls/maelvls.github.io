@@ -15,12 +15,13 @@ expose a set of pods using selectors. Since it is L4-only, the service only
 deals with TCP and UDP: only IPs and ports.</p><p>An Ingress is the L7 counterpart of the service: it deals with TLS,
 hostnames, HTTP paths and virtual servers (called &ldquo;backends&rdquo;).</p><p>In this article, I will focus on services and how the L4 traffic flows. You
 might see some mentions of ingresses since Traefik is an ingress controller
-but I will not describe the traffic handling at the L7 level.</p><p>An ingress controller, like Traefik, is a binary running as a simple
-deployment that watches all Ingress objects and live-updates the L7 proxy.
-Traefik has the nice property of embeding both the &ldquo;ingress watcher&rdquo; and
-the L7 proxy in a single binary. HAProxy and Nginx both use separate
-ingress controllers. And in order to get L4 traffic coming to the L7 proxy,
-we usually use a service that has the type <code>LoadBalancer</code>.</p><p>I call &ldquo;service-lb controller&rdquo; a binary that watches service objects that
+but I will not describe the traffic handling at the L7 level.</p><p>An ingress controller is a binary running as a simple deployment that
+watches all Ingress objects and live-updates the L7 proxy. Traefik
+qualifies as an ingress controllers: it has the nice property of embeding
+both the &ldquo;ingress watcher&rdquo; and the L7 proxy in a single binary. HAProxy and
+Nginx both use separate ingress controllers. And in order to get L4 traffic
+coming to the L7 proxy, we usually use a service that has the type
+<code>LoadBalancer</code>.</p><p>I call &ldquo;service-lb controller&rdquo; a binary that watches service objects that
 have the <code>LoadBalancer</code> type. Any time the Google&rsquo;s service-lb controller
 sees a new <code>LoadBalancer</code> service, it spins up a Network Load Balancer and
 sets up some firewall rules. In fact, Google&rsquo;s service-lb controller runs
