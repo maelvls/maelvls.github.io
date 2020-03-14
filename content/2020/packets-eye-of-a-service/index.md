@@ -71,7 +71,7 @@ conntrack):
 
 Now, let's see how it goes when using
 [Akrobateo](https://github.com/kontena/akrobateo) (I detailed that
-[here](](/avoid-gke-lb-with-hostport/))). Instead of using an external
+[here](/avoid-gke-lb-with-hostport/)). Instead of using an external
 compute resource, we use the node's IP in order to let traffic in.
 
 Note: Akrobateo is EOL, but K3s's
