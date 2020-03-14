@@ -41,12 +41,13 @@ In this article, I will focus on services and how the L4 traffic flows. You
 might see some mentions of ingresses since Traefik is an ingress controller
 but I will not describe the traffic handling at the L7 level.
 
-An ingress controller, like Traefik, is a binary running as a simple
-deployment that watches all Ingress objects and live-updates the L7 proxy.
-Traefik has the nice property of embeding both the "ingress watcher" and
-the L7 proxy in a single binary. HAProxy and Nginx both use separate
-ingress controllers. And in order to get L4 traffic coming to the L7 proxy,
-we usually use a service that has the type `LoadBalancer`.
+An ingress controller is a binary running as a simple deployment that
+watches all Ingress objects and live-updates the L7 proxy. Traefik
+qualifies as an ingress controllers: it has the nice property of embeding
+both the "ingress watcher" and the L7 proxy in a single binary. HAProxy and
+Nginx both use separate ingress controllers. And in order to get L4 traffic
+coming to the L7 proxy, we usually use a service that has the type
+`LoadBalancer`.
 
 I call "service-lb controller" a binary that watches service objects that
 have the `LoadBalancer` type. Any time the Google's service-lb controller
