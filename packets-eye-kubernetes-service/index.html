@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>The Packet's-Eye View of a Kubernetes Service - maelvls dev blog</title><meta name=viewport content="width=device-width,initial-scale=1"><meta property="og:title" content="The Packet's-Eye View of a Kubernetes Service"><meta property="og:description" content="The Service and Ingress respectively brings L4 and L7 traffics to your
+pods. In this article, I focus on how traffic flows in and what are the
+interactions between the ingress controller and the &#34;service-lb&#34; controller
+(the things that creates the external load balancer). I also detail how the
+'hostPort' approach shapes traffic."><meta property="og:type" content="article"><meta property="og:url" content="https://maelvls.dev/packets-eye-kubernetes-service/"><meta property="article:published_time" content="2020-03-14T00:00:00+00:00"><meta property="article:modified_time" content="2020-03-14T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="The Packet's-Eye View of a Kubernetes Service"><meta name=twitter:description content="The Service and Ingress respectively brings L4 and L7 traffics to your
+pods. In this article, I focus on how traffic flows in and what are the
+interactions between the ingress controller and the &#34;service-lb&#34; controller
+(the things that creates the external load balancer). I also detail how the
+'hostPort' approach shapes traffic."><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/main.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/all.css><link rel=stylesheet type=text/css href=https://maelvls.dev/css/maelvls.css></head><body><div class="container wrapper"><div class=header><div class=avatar><a href=https://maelvls.dev/><img src=/img/mael.jpg alt="maelvls dev blog"></a></div><h1 class=site-title><a href=https://maelvls.dev/>maelvls dev blog</a></h1><div class=site-description><p>Software engineer. I write mostly about Kubernetes and Go. <a href=/about>About</a></p><nav class="nav social"><ul class=flat><li class=li-social><a href=https://github.com/maelvls><i title=Github class="icons fab fa-github"></i></a></li><li class=li-social><a href=https://twitter.com/maelvls><i title=Twitter class="icons fab fa-twitter"></i></a></li></ul></nav></div></div><div class=post><div class=author></div><div class=post-header><div class=meta><div class=date><span class=day>14</span>
+<span class=rest>Mar 2020</span></div></div><div class=matter><h1 class=title>The Packet's-Eye View of a Kubernetes Service</h1></div></div><div class=markdown><p>A few weeks back, I had already written about <a href=/avoid-gke-lb-with-hostport/>how to avoid the expensive
+GKE load balancer</a>. This time, I want to go a
+bit deeper and detail how the Service object routes packets to a pod and
+how the &lsquo;hostPort&rsquo; method actually works under the hood.</p><p>In Kubernetes, the Service object holds the L4 endpoints that allow you to
+expose a set of pods using selectors. Since it is L4-only, the service only
+deals with TCP and UDP: only IPs and ports.</p><p>An Ingress is the L7 counterpart of the service: it deals with TLS,
+hostnames, HTTP paths and virtual servers (called &ldquo;backends&rdquo;).</p><p>In this article, I will focus on services and how the L4 traffic flows. You
+might see some mentions of ingresses since Traefik is an ingress controller
+but I will not describe the traffic handling at the L7 level.</p><p>An ingress controller, like Traefik, is a binary running as a simple
+deployment that watches all Ingress objects and live-updates the L7 proxy.
+Traefik has the nice property of embeding both the &ldquo;ingress watcher&rdquo; and
+the L7 proxy in a single binary. HAProxy and Nginx both use separate
+ingress controllers. And in order to get L4 traffic flowing in, the L7
+proxy needs a service.</p><p>Now, we also want external traffic to be able to come in. That&rsquo;s where we
+usually use an external load balancer like GKE&rsquo;s Network Load Balancer.
+What happens is that Google runs a small closed-source binary that runs on
+your master node and acts as a service-lb controller. And unfortunately you
+cannot see any logs since it is not running as a pod.</p><p>I call &ldquo;service-lb controller&rdquo; a binary that watches service objects that
+have the <code>LoadBalancer</code> type. Any time the Google&rsquo;s service-lb controller
+sees a new <code>LoadBalancer</code> service, it spins up a load balancer and sets up
+some firewall rules. Here is a diagram that represents how the service-lb
+controller interacts with the ingress controller:</p><p><img src=kubernetes-service-controllers-with-gke-service.svg alt></p><p>So, how does external traffic make it to the pod? The following diagram
+shows how a packet is forwarded to the right pod. Notice how many iptable
+rewriting happen (which corresponds to one connection managed by
+conntrack):</p><p><img src=kubernetes-traffic-with-gke-lb.svg alt></p><p>Now, let&rsquo;s see how it goes when using Akrobateo (I detailed that
+<a href=%5D(/avoid-gke-lb-with-hostport/)>here</a>). Instead of using an external
+compute resource, we use the node&rsquo;s IP in order to let traffic in.</p><p>Note: Akrobateo is EOL, but K3s&rsquo;s service-lb and Metallb work in a very
+similar way, setting the service&rsquo;s <code>status.loadBalancer</code> field with the
+correct external IP.</p><p><img src=kubernetes-service-controllers-with-akrobateo.svg alt></p><p>You might wonder why the &lsquo;internal IP&rsquo; is used in <code>status.loadBalancer</code>. We
+might expect the external IP to be set there. But since Google&rsquo;s VPC NAT
+swaps the node&rsquo;s external IP to the node&rsquo;s internal IP, the incoming
+packets have the internal IP as source IP. So that&rsquo;s why 😁.</p><p>Here is the diagram of a packet being routed towards a pod:</p><p><img src=kubernetes-traffic-with-akrobateo.svg alt></p><p>With that method, we only rely on the VPC&rsquo;s firewall rules. But using the
+node&rsquo;s IP is not perfect: it might be a seen as a security risk, and the
+many IPs that end up in the service&rsquo;s <code>status.loadBalancer</code> isn&rsquo;t ideal
+when it comes to setting your DNS <code>A</code> records:</p><ul><li>when a node disappears, the DNS might forward traffic to a unexisting node,</li><li>offloading ingress traffic load balancing from a load balancer with a
+single IP to relying on DNS records isn&rsquo;t ideal since DNS records leave
+you very few options as to how to balance traffic.</li></ul><p>K3s uses this approach of using the node IPs as service backends and does
+not need any external load balancer.</p></div><div class=tags></div></div></div><div class="footer wrapper"><nav class=nav><div class=footertext></div></nav></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></body></html>
