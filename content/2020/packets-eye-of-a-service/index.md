@@ -30,11 +30,11 @@ GKE load balancer](/avoid-gke-lb-with-hostport/). This time, I want to go a
 bit deeper and detail how the Service object routes packets to a pod and
 how the 'hostPort' method actually works under the hood.
 
-In Kubernetes, the Service object holds the L4 endpoints that allow you to
-expose a set of pods using selectors. Since it is L4-only, the service only
-deals with TCP and UDP: only IPs and ports.
+In Kubernetes, the service object represents how a set of pods can be hit
+with TCP or UDP connections. Since it is L4-only, the service only deals
+with IPs and ports.
 
-An Ingress is the L7 counterpart of the service: it deals with TLS,
+An Ingress is the L7 counterpart of a service: it deals with TLS,
 hostnames, HTTP paths and virtual servers (called "backends").
 
 In this article, I will focus on services and how the L4 traffic flows. You
