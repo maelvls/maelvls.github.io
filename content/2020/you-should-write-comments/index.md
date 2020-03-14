@@ -6,6 +6,8 @@ description: |
    writing comments is as important as writing the code itself.
 date: 2020-02-27
 url: /you-should-write-comments
+images: [you-should-write-comments/cover-you-should-write-comments.png]
+tags: [go, software-engineering]
 ---
 
 Comments is one of these topics that we seem to never agree on
