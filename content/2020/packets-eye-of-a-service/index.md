@@ -9,6 +9,7 @@ description: |
 date: 2020-03-14
 url: /packets-eye-kubernetes-service
 images: [packets-eye-kubernetes-service/cover-packets-eye-kubernetes-service.png]
+tags: [kubernetes, networking, traefik]
 ---
 
 <!--
@@ -72,9 +73,10 @@ Now, let's see how it goes when using Akrobateo (I detailed that
 [here](](/avoid-gke-lb-with-hostport/))). Instead of using an external
 compute resource, we use the node's IP in order to let traffic in.
 
-Note: Akrobateo is EOL, but K3s's service-lb and Metallb work in a very
-similar way, setting the service's `status.loadBalancer` field with the
-correct external IP.
+Note: Akrobateo is EOL, but K3s's
+[servicelb](https://github.com/rancher/k3s/blob/master/pkg/servicelb/controller.go)
+and Metallb work in a very similar way, setting the service's
+`status.loadBalancer` field with the correct external IP.
 
 ![](kubernetes-service-controllers-with-akrobateo.svg)
 
