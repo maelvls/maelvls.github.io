@@ -32,9 +32,10 @@ shows how a packet is forwarded to the right pod. Notice how many iptable
 rewriting happen (which corresponds to one connection managed by
 conntrack):</p><p><img src=kubernetes-traffic-with-gke-lb.svg alt></p><p>Now, let&rsquo;s see how it goes when using Akrobateo (I detailed that
 <a href=%5D(/avoid-gke-lb-with-hostport/)>here</a>). Instead of using an external
-compute resource, we use the node&rsquo;s IP in order to let traffic in.</p><p>Note: Akrobateo is EOL, but K3s&rsquo;s service-lb and Metallb work in a very
-similar way, setting the service&rsquo;s <code>status.loadBalancer</code> field with the
-correct external IP.</p><p><img src=kubernetes-service-controllers-with-akrobateo.svg alt></p><p>You might wonder why the &lsquo;internal IP&rsquo; is used in <code>status.loadBalancer</code>. We
+compute resource, we use the node&rsquo;s IP in order to let traffic in.</p><p>Note: Akrobateo is EOL, but K3s&rsquo;s
+<a href=https://github.com/rancher/k3s/blob/master/pkg/servicelb/controller.go>servicelb</a>
+and Metallb work in a very similar way, setting the service&rsquo;s
+<code>status.loadBalancer</code> field with the correct external IP.</p><p><img src=kubernetes-service-controllers-with-akrobateo.svg alt></p><p>You might wonder why the &lsquo;internal IP&rsquo; is used in <code>status.loadBalancer</code>. We
 might expect the external IP to be set there. But since Google&rsquo;s VPC NAT
 swaps the node&rsquo;s external IP to the node&rsquo;s internal IP, the incoming
 packets have the internal IP as source IP. So that&rsquo;s why 😁.</p><p>Here is the diagram of a packet being routed towards a pod:</p><p><img src=kubernetes-traffic-with-akrobateo.svg alt></p><p>With that method, we only rely on the VPC&rsquo;s firewall rules. But using the
@@ -43,4 +44,6 @@ many IPs that end up in the service&rsquo;s <code>status.loadBalancer</code> isn
 when it comes to setting your DNS <code>A</code> records:</p><ul><li>when a node disappears, the DNS might forward traffic to a unexisting node,</li><li>offloading ingress traffic load balancing from a load balancer with a
 single IP to relying on DNS records isn&rsquo;t ideal since DNS records leave
 you very few options as to how to balance traffic.</li></ul><p>K3s uses this approach of using the node IPs as service backends and does
-not need any external load balancer.</p></div><div class=tags></div></div></div><div class="footer wrapper"><nav class=nav><div class=footertext></div></nav></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></body></html>
+not need any external load balancer.</p></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/kubernetes/>kubernetes</a>
+<a href=/tags/networking/>networking</a>
+<a href=/tags/traefik/>traefik</a></p></div><div class=clearit></div></div></div></div><div class="footer wrapper"><nav class=nav><div class=footertext></div></nav></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></body></html>
