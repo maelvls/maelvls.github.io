@@ -45,20 +45,18 @@ An ingress controller, like Traefik, is a binary running as a simple
 deployment that watches all Ingress objects and live-updates the L7 proxy.
 Traefik has the nice property of embeding both the "ingress watcher" and
 the L7 proxy in a single binary. HAProxy and Nginx both use separate
-ingress controllers. And in order to get L4 traffic flowing in, the L7
-proxy needs a service.
-
-Now, we also want external traffic to be able to come in. That's where we
-usually use an external load balancer like GKE's Network Load Balancer.
-What happens is that Google runs a small closed-source binary that runs on
-your master node and acts as a service-lb controller. And unfortunately you
-cannot see any logs since it is not running as a pod.
+ingress controllers. And in order to get L4 traffic coming to the L7 proxy,
+we usually use a service that has the type `LoadBalancer`.
 
 I call "service-lb controller" a binary that watches service objects that
 have the `LoadBalancer` type. Any time the Google's service-lb controller
-sees a new `LoadBalancer` service, it spins up a load balancer and sets up
-some firewall rules. Here is a diagram that represents how the service-lb
-controller interacts with the ingress controller:
+sees a new `LoadBalancer` service, it spins up a Network Load Balancer and
+sets up some firewall rules. In fact, Google's service-lb controller runs
+as a small closed-source binary that runs on your master node (but not
+visible as a pod) and acts as a service-lb controller.
+
+Here is a diagram that represents how GKE's service-lb controller interacts
+with the ingress controller:
 
 ![](kubernetes-service-controllers-with-gke-service.svg)
 
