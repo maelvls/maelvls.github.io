@@ -1,8 +1,9 @@
 ---
 title: Migrating from GKE to Civo's K3s
-description: ""
+description: "My free trial on GKE was ending in 2 days and I had to find a
+way to migrate away. I decided to switch to Civo's managed K3s."
 date: 2020-03-15
-url: /migrate-gke-to-civo
+url: /migrate-gke-to-k3s-civo
 images: []
 tags: [kubernetes]
 draft: true
@@ -12,9 +13,15 @@ Two days ago, reality hit me hard with this message:
 
 ![Only 2 days left on my GCP 1-year trial](2-days-free-trial.png)
 
-I had only 2 days to find a plan and migrate everything away from GKE! I
-chose to migrate to Civo's K3s managed Kubernetes since they are in beta
-and I really wanted to try K3s.
+I had only 2 days to find a plan and migrate everything away from GKE! My
+current setup was only using a single `n1-standard-1` on `us-west-1` and
+with no network load balancer. But that was still around €15 a month and I
+just didn't want to pay.
+
+Note that I will still use Google's CloudDNS service for now.
+
+I chose to migrate to Civo's managed K3s since they are in beta and I
+really wanted to try K3s.
 
 So I went ahead and create a two-nodes cluster:
 
@@ -94,11 +101,13 @@ I also had to edit the deployment again in order to remove the temporary
 
 To recap, the whole migration was painless. The only data I migrated was
 MinIO. Note that I didn't have any SLA to comply with, but if I had planned
-a bit better I could have moved over with almost zero downtime. I would
-have made sure to keep the old and new MinIO instances replicated until the
-move was over. The only problem with the whole migration is the DNS change:
-I cannot precisely know how much time that will take: after the migration
-was over and the DNS entries propagated, if some people were hitting the
-old IP (e.g., old DNS entries), the old and new clusters would have become
-out-of-sync. To mitigate that, I could have chosen to "cut" the old cluster
-just to make sure that case never happens.
+a bit better I could have moved over with almost zero downtime.
+
+In order to get a almost-zero-downtime, I would have made sure to keep the
+old and new MinIO instances replicated until the move was over. The only
+problem with the whole migration is the DNS change: I cannot precisely know
+how much time that will take: after the migration was over and the DNS
+entries propagated, if some people were hitting the old IP (e.g., old DNS
+entries), the old and new clusters would have become out-of-sync. To
+mitigate that, I could have chosen to "cut" the old cluster just to make
+sure that case never happens.
