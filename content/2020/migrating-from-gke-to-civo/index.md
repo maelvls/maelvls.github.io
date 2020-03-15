@@ -11,7 +11,7 @@ draft: true
 
 Two days ago, reality hit me hard with this message:
 
-![Only 2 days left on my GCP 1-year trial](2-days-free-trial.png)
+<img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="60%">
 
 I had only 2 days to find a plan and migrate everything away from GKE! My
 current setup was only using a single `n1-standard-1` on `us-west-1` and
