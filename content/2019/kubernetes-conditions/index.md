@@ -454,8 +454,17 @@ status:
 
 [pod-readiness-gate]: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate
 
----
-
+<!--
 Discussion is happening here:
 
 {{< twitter 1195058503695642627 >}}
+-->
+
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

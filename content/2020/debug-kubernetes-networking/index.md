@@ -315,8 +315,16 @@ already terraformed a lot of the cluster and node creation, but I should
 definitely move everything to terraform and stop doing manual edits that
 can't be traced back!
 
----
-
+<!--
 If you with to leave a comment, here is a Twitter thread:
 
 {{< twitter 1221488683485925376 >}}
+-->
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

@@ -111,3 +111,12 @@ entries propagated, if some people were hitting the old IP (e.g., old DNS
 entries), the old and new clusters would have become out-of-sync. To
 mitigate that, I could have chosen to "cut" the old cluster just to make
 sure that case never happens.
+
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

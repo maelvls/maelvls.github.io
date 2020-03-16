@@ -193,8 +193,17 @@ In your `/etc/hosts`, add the line such as `local 127.0.0.1`. Now, you can
 use the host `local` instead of `localhost`, which means Go will proxy your
 requests properly.
 
----
+<!--
+Join the discussion [on
+Twitter](https://twitter.com/maelvls/status/1214242197119406080) or post a
+message here
+-->
 
-Join the discussion on Twitter:
-
-{{< twitter 1214242197119406080 >}}
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

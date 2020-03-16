@@ -103,3 +103,12 @@ when it comes to setting your DNS `A` records:
 
 K3s uses this approach of using the node IPs as service backends and does
 not need any external load balancer.
+
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

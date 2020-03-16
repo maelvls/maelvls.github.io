@@ -225,8 +225,17 @@ Here is a diagram that shows the whole picture:
 - Akrobateo also sets the Service's status with the loadBalancer IP.
 - Benefit: since the loadBalancer IP is properly set, ExternalDNS works.
 
----
-
+<!--
 Want to drop a comment? Here is a Twitter thread:
 
 {{< twitter 1219193625478881285 >}}
+-->
+
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

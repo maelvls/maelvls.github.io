@@ -145,7 +145,17 @@ presents some ways of keeping your code as readable as possible:
 {{< youtube yeetIgNeIkc >}}
 
 ---
-
+<!--
 Wish to comment? Here is the Twitter thread for that post:
 
 {{< twitter 1198259761722122240 >}}
+-->
+
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

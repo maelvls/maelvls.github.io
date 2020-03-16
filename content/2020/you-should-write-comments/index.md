@@ -78,8 +78,17 @@ and
 [`kernel/sched/core.c`](https://github.com/torvalds/linux/blob/bfdc6d91a25f4545bcd1b12e3219af4838142ef1/kernel/sched/core.c#L157-L171).
 Absolute delight.
 
----
-
+<!--
 Join the discussion on Twitter:
 
 {{< twitter 1233140530017644544 >}}
+-->
+
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
