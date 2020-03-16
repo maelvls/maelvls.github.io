@@ -60,14 +60,15 @@ visible as a pod) and acts as a service-lb controller.
 Here is a diagram that represents how GKE's service-lb controller interacts
 with the ingress controller:
 
-![](kubernetes-service-controllers-with-gke-service.svg)
+<img alt="GKE service LoadBalancer controller and ingress controller
+interaction" src="kubernetes-service-controllers-with-gke-service.svg" width="80%"/>
 
 So, how does external traffic make it to the pod? The following diagram
 shows how a packet is forwarded to the right pod. Notice how many iptable
 rewriting happen (which corresponds to one connection managed by
 conntrack):
 
-![](kubernetes-traffic-with-gke-lb.svg)
+<img alt="Packet coming from a user hitting the GKE network balancer and forwarded to the right pod" src="kubernetes-traffic-with-gke-lb.svg" width="80%"/>
 
 Now, let's see how it goes when using
 [Akrobateo](https://github.com/kontena/akrobateo) (I detailed that
@@ -80,7 +81,8 @@ and [Metallb](https://github.com/metallb/metallb) work in a very similar
 way, setting the service's `status.loadBalancer` field with the correct
 external IP.
 
-![](kubernetes-service-controllers-with-akrobateo.svg)
+<img alt="Akrobateo service LoadBalancer controller and ingress controller
+interaction" src="kubernetes-service-controllers-with-akrobateo.svg" width="70%"/>
 
 You might wonder why the 'internal IP' is used in `status.loadBalancer`. We
 might expect the external IP to be set there. But since Google's VPC NAT
@@ -89,7 +91,9 @@ packets have the internal IP as source IP. So that's why 😁.
 
 Here is the diagram of a packet being routed towards a pod:
 
-![](kubernetes-traffic-with-akrobateo.svg)
+<img alt="Packet coming from a user hitting one of the nodes directly
+through DNS resolution and forwarded to the right pod"
+src="kubernetes-traffic-with-akrobateo.svg" width="70%"/>
 
 With that method, we only rely on the VPC's firewall rules. But using the
 node's IP is not perfect: it might be a seen as a security risk, and the
