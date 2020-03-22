@@ -4,7 +4,7 @@ description: "My free trial on GKE was ending in 2 days and I had to find a
 way to migrate away. I decided to switch to Civo's managed K3s."
 date: 2020-03-22
 url: /from-gke-to-civo-k3s
-images: []
+images: [from-gke-to-civo-k3s/civo-k3s.png]
 tags: [kubernetes]
 ---
 
