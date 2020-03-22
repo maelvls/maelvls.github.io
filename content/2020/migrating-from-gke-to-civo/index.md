@@ -2,14 +2,13 @@
 title: Migrating from GKE to Civo's K3s
 description: "My free trial on GKE was ending in 2 days and I had to find a
 way to migrate away. I decided to switch to Civo's managed K3s."
-date: 2020-03-15
-url: /migrate-gke-to-k3s-civo
+date: 2020-03-22
+url: /from-gke-to-civo-k3s
 images: []
 tags: [kubernetes]
-draft: true
 ---
 
-Two days ago, reality hit me hard with this message:
+A few days ago, reality hit me hard with this message:
 
 <img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="60%">
 
@@ -111,6 +110,9 @@ entries propagated, if some people were hitting the old IP (e.g., old DNS
 entries), the old and new clusters would have become out-of-sync. To
 mitigate that, I could have chosen to "cut" the old cluster just to make
 sure that case never happens.
+
+The repo for my Kubernetes playground cluster (`*.k.maelvls.dev`) is
+available [here](https://github.com/maelvls/k.maelvls.dev).
 
 <script src="https://utteranc.es/client.js"
         repo="maelvls/maelvls.github.io"
