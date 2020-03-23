@@ -10,5 +10,5 @@ close-to-the-user compute resources.
 
 I mostly write Go, Kubernetes controllers and network-related components.
 
-I completed a PhD thesis in logic in 2019
+I completed a PhD in logic in 2019
 ([papers](https://scholar.google.com/citations?user=0BrmuaAAAAAJ&hl=en&oi=ao)).
