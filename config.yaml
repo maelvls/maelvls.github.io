@@ -15,7 +15,7 @@ params:
   mainSections: ["2020", "2019"]
   customCSS: css/maelvls.css
   subtitle: |
-    Software engineer. I write mostly about Kubernetes and Go. [About](/about)
+    Systems software engineer. I write mostly about Kubernetes and Go. [About](/about)
   avatar: /img/mael.jpg
   disableDisqusTypes:
     - page
