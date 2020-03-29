@@ -15,7 +15,7 @@ You might have noticed that `GO111MODULE=on` is flourishing everywhere.
 Many readmes have that:
 
 ```sh
-GO111MODULE=on go get -u golang.org/x/tools/gopls@latest
+GO111MODULE=on go get golang.org/x/tools/gopls@latest
 ```
 
 In this short post, I will explain why `GO111MODULE` exists, its caveats
@@ -171,6 +171,16 @@ dependencies to their latest minor revision... And since a ton of projects
 choose to have breaking changes between minor versions (e.g. v0.2.0 to
 v0.3.0), using `-u` has a large chance of breaking things.
 
+So if you see this:
+
+```sh
+# Both -u and @latest!
+GO111MODULE=on go get -u golang.org/x/tools/gopls@latest
+```
+
+then you will immediately realize that it is wrong: you want to be using
+the recorded versions given in `go.sum` when go-getting a binary!
+
 Rebecca Stambler [reminds
 us](https://github.com/golang/go/issues/35868#issuecomment-564151454) that
 we should not use `-u` in conjunction with a version:
@@ -179,7 +189,7 @@ we should not use `-u` in conjunction with a version:
 > give you incorrect versions of the dependencies.
 
 But it's kind of hidden in this issue... I guess it is written somewhere in
-the Go help (btw, what a hiddeous help compared to `git help`) but that
+the Go help (btw, what a hideous help compared to `git help`) but that
 kind of caveat should be more visible: maybe print a warning when
 installing a binary with both `@version` and `-u`?
 
