@@ -120,9 +120,9 @@ I use `GO111MODULE=on` very often when I want to switch between the latest
 version and the HEAD version of `gopls` (the Go Language Server):
 
 ```sh
-GO111MODULE=on go get -u golang.org/x/tools/gopls@latest
-GO111MODULE=on go get -u golang.org/x/tools/gopls@master
-GO111MODULE=on go get -u golang.org/x/tools/gopls@v0.1
+GO111MODULE=on go get golang.org/x/tools/gopls@latest
+GO111MODULE=on go get golang.org/x/tools/gopls@master
+GO111MODULE=on go get golang.org/x/tools/gopls@v0.1
 GO111MODULE=on go get golang.org/x/tools/gopls@v0.1.8
 GO111MODULE="on" go get sigs.k8s.io/kind@v0.7.0
 ```
