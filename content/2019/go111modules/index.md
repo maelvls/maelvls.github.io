@@ -29,7 +29,10 @@ Table of contents:
 2. [The `GO111MODULE` environment variable](#the-go111module-environment-variable)
    1. [`GO111MODULE` with Go 1.11 and 1.12](#go111module-with-go-111-and-112)
    2. [`GO111MODULE` with Go 1.13](#go111module-with-go-113)
-   3. [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
+   3. [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
+   4. [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
+   5. [The pitfall of `go.mod` being silently updated](#the-pitfall-of-gomod-being-silently-updated)
+   6. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
 3. [Caveats when using Go Modules](#caveats-when-using-go-modules)
    1. [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
    2. [Where are the sources of the dependencies with Go Modules](#where-are-the-sources-of-the-dependencies-with-go-modules)
@@ -61,7 +64,7 @@ environment variable is responsible for 95% of this pain: `GO111MODULE`.
 
 `GO111MODULE` is an environment variable that can be set when using `go`
 for changing how Go imports packages. One of the first pain-points is that
-depending on the Go version, its semantics changes.
+depending on the Go version, its semantics change.
 
 ### `GO111MODULE` with Go 1.11 and 1.12
 
@@ -92,6 +95,19 @@ Using Go 1.13, `GO111MODULE`'s default (`auto`) changes:
   repositories in your GOPATH with Go 1.13.
 - behaves like `GO111MODULE=off` in the GOPATH with no `go.mod`.
 
+### `GO111MODULE` with Go 1.14
+
+The `GO111MODULE` variable has the same behavior as with Go 1.13.
+
+Note that some slight changes in behaviors unrelated to `GO111MODULE`
+happened:
+
+- The `vendor/` is picked up automatically. That has the tendency of
+  breaking Gomock ([issue](https://github.com/golang/mock/issues/415))
+  which were unknowingly not using `vendor/` before 1.14.
+- You still need to use `cd && GO111MODULE=on go get` when you don't want
+  to mess up your current project’s `go.mod` (that's so annoying).
+
 ### So, why is `GO111MODULE` everywhere?!
 
 Now that we know that `GO111MODULE` can be very useful for enabling the Go
@@ -108,13 +124,64 @@ GO111MODULE=on go get -u golang.org/x/tools/gopls@latest
 GO111MODULE=on go get -u golang.org/x/tools/gopls@master
 GO111MODULE=on go get -u golang.org/x/tools/gopls@v0.1
 GO111MODULE=on go get golang.org/x/tools/gopls@v0.1.8
+GO111MODULE="on" go get sigs.k8s.io/kind@v0.7.0
 ```
 
-The `@latest` suffix will use the latest git tag of gopls. Note that `-u`
-(which means 'update') is not needed for `@v0.1.8` since this is a 'fixed'
-version, and updating a fixed version does not really make sense. It is
-also interesting to note that with `@v0.1`, `go get` will fetch the latest
-patch version for that tag.
+### The pitfall of `go.mod` being silently updated
+
+And to make things even worse, some projects have an even more complicated
+one-liners:
+
+```sh
+(cd && GO111MODULE=on go get golang.org/x/tools/gopls@latest)
+```
+
+> Note: the `@latest` suffix will use the latest git tag of gopls. Note
+> that `-u` (which means 'update') is not needed for `@v0.1.8` since this
+> is a 'fixed' version, and updating a fixed version does not really make
+> sense. It is also interesting to note that with `@v0.1`, `go get` will
+> fetch the latest patch version for that tag.
+
+That's yet another Go ideocracy: by default (and you can't turn that off),
+if you are in a folder that has a `go.mod`, `go get` will update that
+`go.mod` with what you just installed. And in the case of development
+binaries like [gopls](https://github.com/golang/tools/tree/master/gopls) or
+[kind](https://github.com/kubernetes-sigs/kind), you definitely don't want
+to have these appearing in the `go.mod` file!
+
+So the workaround is to give a one-liner that makes sure that you won't be
+in a `go.mod`-enabled folder: `(cd && go get)` does exactly that.
+
+I hope that (sooner or later) we will have a clear separation of concerns
+between `go get` that is adding a dependency to your `go.mod` (like npm
+install) and `go install` that is meant to install a binary without messing
+up your `go.mod`. But then, two issues:
+
+- We all use `go get` to install dev dependencies, so moving to `go
+  install` would kind of not work (habits...)
+- `go install` doesn’t allow you to give a version (e.g., `@latest` or
+  `@v1.4.5`), and `go run` either by the way. 😞
+
+### The `-u` and `@version` pitfall
+
+I have been bitten multiple times by this: when using `go get @latest` (for
+a binary, at least), you should avoid using `-u` so that it uses the
+dependencies as defined in `go.sum`. Otherwise, it will update all the
+dependencies to their latest minor revision... And since a ton of projects
+choose to have breaking changes between minor versions (e.g. v0.2.0 to
+v0.3.0), using `-u` has a large chance of breaking things.
+
+Rebecca Stambler [reminds
+us](https://github.com/golang/go/issues/35868#issuecomment-564151454) that
+we should not use `-u` in conjunction with a version:
+
+> `-u` should not be used in conjunction with the `@latest` tag, as it will
+> give you incorrect versions of the dependencies.
+
+But it's kind of hidden in this issue... I guess it is written somewhere in
+the Go help (btw, what a hiddeous help compared to `git help`) but that
+kind of caveat should be more visible: maybe print a warning when
+installing a binary with both `@version` and `-u`?
 
 ## Caveats when using Go Modules
 
