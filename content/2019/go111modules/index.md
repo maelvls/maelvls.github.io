@@ -165,9 +165,12 @@ up your `go.mod`.
 
 ```sh
 $ export GO111MODULE=on
+
 $ go get golang.org/x/tools/gopls@v0.1.8              # ✅
+
 $ go install golang.org/x/tools/gopls@v0.1.8          # ❌
-can't load package: package golang.org/x/tools/gopls@v0.1.8: cannot use path@version syntax in GOPATH mode
+can t load package: package golang.org/x/tools/gopls@v0.1.8: cannot use path@version syntax in GOPATH mode
+
 $ go run golang.org/x/tools/gopls@v0.1.8              # ❌
 package golang.org/x/tools/gopls@v0.1.8: can only use path@version syntax with 'go get'
 ```
