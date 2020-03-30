@@ -155,12 +155,22 @@ in a `go.mod`-enabled folder: `(cd && go get)` does exactly that.
 I hope that (sooner or later) we will have a clear separation of concerns
 between `go get` that is adding a dependency to your `go.mod` (like npm
 install) and `go install` that is meant to install a binary without messing
-up your `go.mod`. But then, two issues:
+up your `go.mod`.
 
-- We all use `go get` to install dev dependencies, so moving to `go
-  install` would kind of not work (habits...)
-- `go install` doesn’t allow you to give a version (e.g., `@latest` or
-  `@v1.4.5`), and `go run` either by the way. 😞
+- First caveat: we all use `go get` to install dev dependencies, so moving
+  to `go install` would kind of not work (habits...)
+- Second caveat: `go install` doesn’t allow you to give a version (e.g.,
+  `@latest` or `@v1.4.5`), and `go run` either by the way. So `go install`
+  isn't that useful after all... 😞
+
+```sh
+$ export GO111MODULE=on
+$ go get golang.org/x/tools/gopls@v0.1.8              # ✅
+$ go install golang.org/x/tools/gopls@v0.1.8          # ❌
+can't load package: package golang.org/x/tools/gopls@v0.1.8: cannot use path@version syntax in GOPATH mode
+$ go run golang.org/x/tools/gopls@v0.1.8              # ❌
+package golang.org/x/tools/gopls@v0.1.8: can only use path@version syntax with 'go get'
+```
 
 ### The `-u` and `@version` pitfall
 
