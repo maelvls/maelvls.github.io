@@ -60,11 +60,14 @@ up your <code>go.mod</code>.</p><ul><li>First caveat: we all use <code>go get</c
 to <code>go install</code> would kind of not work (habits&mldr;)</li><li>Second caveat: <code>go install</code> doesn’t allow you to give a version (e.g.,
 <code>@latest</code> or <code>@v1.4.5</code>), and <code>go run</code> either by the way. So <code>go install</code>
 isn&rsquo;t that useful after all&mldr; 😞</li></ul><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ <span style=color:#000>export</span> <span style=color:#000>GO111MODULE</span>=on
+
 $ go get golang.org/x/tools/gopls@v0.1.8              <span style=color:#888;font-style:italic># ✅</span>
+
 $ go install golang.org/x/tools/gopls@v0.1.8          <span style=color:#888;font-style:italic># ❌</span>
-can<span style=color:#5a2>&#39;t load package: package golang.org/x/tools/gopls@v0.1.8: cannot use path@version syntax in GOPATH mode
-</span><span style=color:#5a2>$ go run golang.org/x/tools/gopls@v0.1.8              # ❌
-</span><span style=color:#5a2>package golang.org/x/tools/gopls@v0.1.8: can only use path@version syntax with &#39;</span>go get<span style=color:red>&#39;</span>
+can t load package: package golang.org/x/tools/gopls@v0.1.8: cannot use path@version syntax in GOPATH mode
+
+$ go run golang.org/x/tools/gopls@v0.1.8              <span style=color:#888;font-style:italic># ❌</span>
+package golang.org/x/tools/gopls@v0.1.8: can only use path@version syntax with <span style=color:#5a2>&#39;go get&#39;</span>
 </code></pre></div><h3 id=the--u-and-version-pitfall>The <code>-u</code> and <code>@version</code> pitfall</h3><p>I have been bitten multiple times by this: when using <code>go get @latest</code> (for
 a binary, at least), you should avoid using <code>-u</code> so that it uses the
 dependencies as defined in <code>go.sum</code>. Otherwise, it will update all the
