@@ -57,3 +57,12 @@ Here is my current setup:
 And finally, here is a picture from the backyard. 🙂
 
 ![Backyard](at-maels.jpg)
+
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
