@@ -11,21 +11,27 @@ Here is my current setup:
 
 ![My home office in 2020](mael-home-office-desk-2020.jpg)
 
-- [Blue Yeti](https://www.bluedesigns.com/products/yeti) mic,
+- [Blue Yeti](https://www.bluedesigns.com/products/yeti) USB microphone
+  > Why a standalone mic just for Zoom? One very important aspect of the
+  > remote-only work setup is the importance of being properly understood.
+  > I take this very seriously and think that the sound quality of the mic
+  > I use every day influences how effective my meetings are. I also make a
+  > number of calls to potential candidates, which means I should sound
+  > perfect.
 - [Yeti Compass](https://www.bluedesigns.com/products/compass) boom arm
   > Note that the boom arm is meant to carry the shock mount + the mic and
   > since I only mounted the Yeti mic, the spring mechanism is a bit too
   > tight which means the arm tends to go up. I unscrewed the screw in the
   > base of the boom arm at its minimum but the tension is still too high
   > and the boom arm tends to go up.
-- Some random chair (I wish I could afford the Herman Miller Aeron),
+- Some random chair (I wish I could afford the Herman Miller Aeron)
 - Apple Magic Keyboard. I also use a [Sharkoon PureWriter
   TKL](https://fr.sharkoon.com/product/PureWriter%20TKL) from time to time
   when I want to bother my collegues with the clank-clank sound of the red
-  switches.
+  switches
 - [Logitech MX
-  Master](https://www.amazon.co.uk/Logitech-Master-Wireless-Bluetooth-Windows/dp/B00ULNAOMA).
-  Just an excellent mouse.
+  Master](https://www.amazon.co.uk/Logitech-Master-Wireless-Bluetooth-Windows/dp/B00ULNAOMA)
+  Just an excellent mouse
 - [LG 27UL850-W 27 inches 4K monitor](https://www.amazon.com/LG-27UL850-W-Display-DisplayHDR-Connectivity/dp/B07MKT1W65/ref=cm_cr_arp_d_product_top?ie=UTF8)
 - [Griffin Elevator stand](https://griffintechnology.com/products/stands-and-mounts/elevator)
 - AUKEY mousepad XXL
@@ -36,13 +42,6 @@ Here is my current setup:
 - (old 2019 setup) [Logitech K760](https://www.amazon.com/Logitech-Wireless-Solar-Kebyoard-iPhone/dp/B007VL8Y2C) (wireless solar keyboard)
 - (old 2019 setup) Logitech M90 mouse (cheap €6 mouse)
 
-## Why a microphone?
-
-One very important aspect of the remote-only work setup is the importance
-of being understood properly. I take this very seriously and think that the
-sound quality of the mic I use every day influences how effective my
-meetings are. I also make a number of calls to potential candidates, which
-means I should sound perfect.
 
 <!--
 ## Cool software stuff
@@ -54,3 +53,7 @@ means I should sound perfect.
 - iTerm 2 + zsh + antigen + async prompt theme (agkozak-zsh-prompt) + tons
   of stuff around command line
 -->
+
+And finally, here is a picture from the backyard. 🙂
+
+![Backyard](at-maels.jpg)
