@@ -61,7 +61,7 @@ because using conntrack requires more power since some state must be
 stored. And state also means it is harder to scale since distributed state
 is a hard problem!</p><p>As we can see on the diagram, the firewall does not need to remember
 anything: it is just a static one-to-one relation between <code>10.142.0.62</code> and
-<code>35.211.248.124</code>.</p><ol><li><p>Outgoing traffic from your broadband modem router has to be SNATed
+<code>35.211.248.124</code>.</p><p>To recap:</p><ol><li><p>Outgoing traffic from your broadband modem router has to be SNATed
 (source-based NAT). The router needs to keep track of outgoing
 connections using conntrack.</p></li><li><p>Incoming traffic from the Internet to a Google Cloud VM has to go
 through the VPC firewall. The packet rewritting is very fast and very
