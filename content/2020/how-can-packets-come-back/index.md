@@ -1,15 +1,13 @@
 ---
 title: How do packets find their way back?
 description: |
-    In one of my previous posts about how traffic flows when using Kubernetes
-    Services. While drawing the last diagram, I could clearly see how traffic
-    could go the way forward but could not understand how it was making its
-    way back to the user.
-date: 2020-04-20
+    In one of my previous posts, I studied how traffic flows when using
+    Kubernetes Services. While drawing the last diagram, I did not clearly
+    understand how traffic could make its way back to the user.
+date: 2020-04-13
 url: /how-do-packets-come-back
-images: []
+images: [how-do-packets-come-back/cover-how-can-packets-come-back.png]
 tags: [networking, gcp]
-draft: true
 ---
 
 In this article, I will expand on the last diagram I drew for my post "[The
