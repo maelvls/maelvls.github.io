@@ -97,6 +97,8 @@ As we can see on the diagram, the firewall does not need to remember
 anything: it is just a static one-to-one relation between `10.142.0.62` and
 `35.211.248.124`.
 
+To recap:
+
 1. Outgoing traffic from your broadband modem router has to be SNATed
    (source-based NAT). The router needs to keep track of outgoing
    connections using conntrack.
