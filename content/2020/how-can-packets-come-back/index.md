@@ -116,11 +116,11 @@ Here is what I want to remember from this post:
    through the VPC firewall. The packet rewritting is very fast and very
    scalable since it only uses DNAT, which means no need to remember
    anything.
-3. Most packet forwarding in Kubernetes also relies on stateless DNATing
-   (e.g. hostPorts). Note that some parts of Kubernetes rely on stateful
-   SNAT rewritting, for example when you use `policy: Cluster` which is the
-   default policy for a Service. In the above diagram, you can see that
-   happening:
+3. Most packet forwarding in Kubernetes relies on stateless DNATing (e.g.
+   hostPorts). Some parts of Kubernetes rely on stateful SNAT rewritting,
+   for example when you use `policy: Cluster` in a which is the default
+   policy for a Service. The following diagram shows where this rewriting
+   happens (extracted from the diagram shown at the beginning of the post):
 
    <img alt="Packet's source is rewritten (SNAT) because of the 'policy: Cluster' that is set in the Service." src="kubernetes-snat-cluster-ip.svg" width="50%"/>
 
