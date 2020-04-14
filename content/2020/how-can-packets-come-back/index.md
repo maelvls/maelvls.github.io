@@ -3,7 +3,9 @@ title: How do packets find their way back?
 description: |
     In one of my previous posts, I studied how traffic flows when using
     Kubernetes Services. While drawing the last diagram, I did not clearly
-    understand how traffic could make its way back to the user.
+    see how traffic could make its way back to the user. In this
+    post, I focus on how packets find their way back and what makes stateless
+    rewritting interesting.
 date: 2020-04-13
 url: /how-do-packets-come-back
 images: [how-do-packets-come-back/cover-how-can-packets-come-back.png]
