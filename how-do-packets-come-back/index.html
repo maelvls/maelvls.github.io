@@ -18,7 +18,7 @@ following diagram, we can see a packet coming from a user, then being
 re-written by Google&rsquo;s VPC firewalls and finally coming into a VM &ldquo;node 1&rdquo;:</p><p><img alt="Packet coming from a user hitting one going through Google's VPC" src=dnat-google-vpc.svg width=90%></p><p>So, how come the packet can come back <del>and does it use conntrack</del> and
 does Google&rsquo;s firewall have to remember some state?</p><blockquote><p><strong>Update 14th April:</strong> I initially thought that the conntrack kernel
 module would not register anything when using DNAT.
-<a href=https://networkop.co.uk/>@networkops</a> showed me that conntrack
+<a href=https://twitter.com/networkop1>@networkop1</a> showed me that conntrack
 registers the connection even for stateless DNATing.</p></blockquote><blockquote><p><a href=https://netfilter.org/documentation/HOWTO/netfilter-hacking-HOWTO-3.html#ss3.3>conntrack</a>
 is a part of the netfilter suite in the Linux kernel. It is in charge of
 remembering connections that are forwarded. The initial packet hits the
