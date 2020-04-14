@@ -32,19 +32,27 @@ re-written by Google's VPC firewalls and finally coming into a VM "node 1":
 <img alt="Packet coming from a user hitting one going through Google's VPC"
 src="dnat-google-vpc.svg" width="90%"/>
 
-So, how come the packet can come back and does it use conntrack?
+So, how come the packet can come back ~~and does it use conntrack~~ and
+does Google's firewall have to remember some state?
 
-> "conntrack" is a piece of the Linux kernel that is asked to remember
-> connections that are forwarded. The initial packet hits the iptables
-> machinery and conntrack remembers it so that further packets don't need
-> to go through iptables again. You can list the tracked connections using
-> the
+> **Update 14th April:** I initially thought that the conntrack kernel
+> module would not register anything when using DNAT.
+> [@networkops](https://networkop.co.uk/) showed me that conntrack
+> registers the connection even for stateless DNATing.
+
+> [conntrack](https://netfilter.org/documentation/HOWTO/netfilter-hacking-HOWTO-3.html#ss3.3)
+> is a part of the netfilter suite in the Linux kernel. It is in charge of
+> remembering connections that are forwarded. The initial packet hits the
+> iptables machinery and conntrack remembers it so that further packets
+> don't need to go through iptables again. You can list the tracked
+> connections using the
 > [conntrack(8)](https://manpages.debian.org/testing/conntrack/conntrack.8.en.html)
 > tool. I mention it in "[Debugging Kubernetes
 > Networking](/debugging-kubernetes-networking)".
 
 Let us dive a bit more and add the "response" packets. For the following
-diagram, I used the excellent [textik](https://textik.com/):
+diagram, I used the excellent [textik](https://textik.com/) ascii drawing
+tool.
 
 ```plain
                      D-NAT (dest-based NAT, also called port-forwarding)
@@ -80,7 +88,7 @@ diagram, I used the excellent [textik](https://textik.com/):
 <!-- https://textik.com/#0db10960397c06f5 -->
 
 By reading through the diagram, we can see that the packet is re-written by
-the Google's firewall using D-NAT: the destination is replaced by a fixed
+the Google's firewall using DNAT: the destination is replaced by a fixed
 IP, the one of the VM.
 
 > Why do I say "packets" but what I should really say is "segments"? That's
@@ -88,16 +96,16 @@ IP, the one of the VM.
 > of the kernel and TCP/IP stack implementors, who actually cares about the
 > L3 layer "units"? And I enjoy the "packet" word too more than "segment"!
 
-Now, why do I care about Google's firewalls using conntracks? That's
-because using conntrack requires more power since some state must be
-stored. And state also means it is harder to scale since distributed state
-is a hard problem!
+Now, why do I care about Google's firewalls storing state? That's because
+if some state about a connection has to be remembered, it means it is
+harder to distribute the firewall horizontally, which makes it harder to
+scale.
 
 As we can see on the diagram, the firewall does not need to remember
 anything: it is just a static one-to-one relation between `10.142.0.62` and
 `35.211.248.124`.
 
-To recap:
+Here is what I want to remember from this post:
 
 1. Outgoing traffic from your broadband modem router has to be SNATed
    (source-based NAT). The router needs to keep track of outgoing
@@ -106,7 +114,7 @@ To recap:
    through the VPC firewall. The packet rewritting is very fast and very
    scalable since it only uses DNAT, which means no need to remember
    anything.
-3. Must packet forwarding in Kubernetes also relies on stateless DNATing
+3. Most packet forwarding in Kubernetes also relies on stateless DNATing
    (e.g. hostPorts). Note that some parts of Kubernetes rely on stateful
    SNAT rewritting, for example when you use `policy: Cluster` which is the
    default policy for a Service. In the above diagram, you can see that
