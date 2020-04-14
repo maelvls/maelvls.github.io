@@ -37,7 +37,7 @@ does Google's firewall have to remember some state?
 
 > **Update 14th April:** I initially thought that the conntrack kernel
 > module would not register anything when using DNAT.
-> [@networkops](https://networkop.co.uk/) showed me that conntrack
+> [@networkop1](https://twitter.com/networkop1) showed me that conntrack
 > registers the connection even for stateless DNATing.
 
 > [conntrack](https://netfilter.org/documentation/HOWTO/netfilter-hacking-HOWTO-3.html#ss3.3)
