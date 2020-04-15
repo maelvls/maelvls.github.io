@@ -1,7 +1,7 @@
 ---
 title: Resources for learning how to write Kubernetes controllers
 description: ""
-date: 2020-04-19
+date: 2020-04-14
 url: /resources-for-writing-controllers
 images: []
 tags: [kubernetes, go]
@@ -38,9 +38,6 @@ One controller
 > changing the "status" to 3. In other words, the system's behavior is
 > level-based rather than edge-based. This enables robust behavior in the
 > presence of missed intermediate state changes.
-
-
-
 
 <script src="https://utteranc.es/client.js"
         repo="maelvls/maelvls.github.io"
