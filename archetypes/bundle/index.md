@@ -2,6 +2,7 @@
 title: "{{ replace .Name "-" " " | title }}"
 description: ""
 date: {{ .Date }}
+url: /{{ .Name }}
 images: [title/cover.png]
 draft: true
 ---
