@@ -27,6 +27,8 @@ Anyone writing Kubernetes controllers might want to take a look at the
 following resources.
 One controller
 
+**[Kubernetes API conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)**
+
 > When a new version of an object is POSTed or PUT, the "spec" is updated
 > and available immediately. Over time the system will work to bring the
 > "status" into line with the "spec". The system will drive toward the most
@@ -36,6 +38,8 @@ One controller
 > changing the "status" to 3. In other words, the system's behavior is
 > level-based rather than edge-based. This enables robust behavior in the
 > presence of missed intermediate state changes.
+
+
 
 
 <script src="https://utteranc.es/client.js"
