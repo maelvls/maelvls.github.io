@@ -38,7 +38,7 @@ and `k8s.io/apimachinery` with the following error:
 ../../../go/pkg/mod/k8s.io/client-go@v11.0.0+incompatible/tools/clientcmd/api/v1/conversion.go:52:12: s.DefaultConvert undefined (type conversion.Scope has no field or method DefaultConvert)
 ```
 
-The fix is to 
+The workaround is to set client-go to use the latest pre-v1.18 version:
 
 ```diff
  require (
@@ -54,7 +54,7 @@ The fix is to
 The `v0.17.4` version is the last version of apimachinery and api that
 stays compatible with client-go pre-v1.18.
 
-Long-term: you want to move from client-go `v11.0.0` (i.e. tag
+**Long-term**: you want to move away from client-go `v11.0.0` (i.e. tag
 `kubernetes-1.14.0`) to an earlier version (e.g. `v12.0.0`).
 
 What’s funny is that we can’t use `v12.0.0` because the client-go project
