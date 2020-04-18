@@ -6,6 +6,7 @@ googleAnalytics: "UA-88710120-3"
 # disqusShortname: maelvls-dev
 paginate: 1000
 pygmentsstyle: abap # will deprecate soon since we use goldmark now
+pygmentsUseClasses: true # hugo gen chromastyles --style=abap > statis/css/syntax.css
 pygmentscodefences: true
 pygmentscodefencesguesssyntax: true
 taxonomies:
