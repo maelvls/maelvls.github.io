@@ -17,32 +17,32 @@ apiserver, one kube-controller-manager and one kube-scheduler). And each of
 these binaries have multiple components (i.e., sync loops):</p><table><thead><tr><th>binary</th><th>sync loop = component</th><th>reads</th><th>creates</th><th>updates</th></tr></thead><tbody><tr><td>kube-controller-manager</td><td><a href=https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/deployment/deployment_controller.go#L560-L649><code>syncDeployment</code></a></td><td>Pod</td><td>ReplicaSet</td><td>Deployment</td></tr><tr><td>kube-controller-manager</td><td><a href=https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/replicaset/replica_set.go#L653-L721><code>syncReplicaSet</code></a></td><td></td><td>Pod</td><td></td></tr><tr><td>kubelet</td><td><a href=https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/kubelet/status/status_manager.go#L514-L567><code>syncPod</code></a></td><td></td><td></td><td>Pod</td></tr><tr><td>kube-scheduler</td><td><a href=https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/scheduler/scheduler.go#L589-L762><code>scheduleOne</code></a></td><td></td><td></td><td>Pod</td></tr><tr><td>kubelet</td><td><a href=https://github.com/kubernetes/kubernetes/blob/5bac42bff9bfb9dfe0f2ea40f1c80cac47fc12b2/pkg/kubelet/kubelet_node_status.go#L374-L391><code>syncNodeStatus</code></a></td><td></td><td></td><td>Node</td></tr></tbody></table><p>We can see that one single object (Pod) can be read, edited and updated by
 different components. When I say &lsquo;edited&rsquo;, I mean the sync loop edits the
 status (which contains the conditions), not the rest. The status is a way
-of communicating between components/sync loops.</p><p>As Brian Grant put it,</p><blockquote class=twitter-tweet><p lang=en dir=ltr>Rather than rigid fine-grained state enumerations that couldn't be evolved, we initially adopted simple basic states that could report open-ended reasons for being in each state (<a href=https://t.co/l5WXSjbg3K>https://t.co/l5WXSjbg3K</a>), and later non-orthogonal, extensible conditions (<a href=https://t.co/XiwOcgcSGY>https://t.co/XiwOcgcSGY</a>).</p>&mdash; Brian Grant (@bgrant0607) <a href="https://twitter.com/bgrant0607/status/1111473660479430656?ref_src=twsrc%5Etfw">March 29, 2019</a></blockquote><script async src=https://platform.twitter.com/widgets.js></script><h2 id=pod-example>Pod example</h2><p>Let&rsquo;s read a Pod manifest:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#888;font-style:italic># kubectl -n cert-manager get pods -oyaml</span>
-<span style=color:#00f>kind</span>: Pod
-<span style=color:#00f>status</span>:
-  <span style=color:#00f>conditions</span>:
-    - <span style=color:#00f>lastTransitionTime</span>: <span style=color:#5a2>&#34;2019-10-22T16:29:24Z&#34;</span>
-      <span style=color:#00f>status</span>: <span style=color:#5a2>&#34;True&#34;</span>
-      <span style=color:#00f>type</span>: PodScheduled
-    - <span style=color:#00f>lastTransitionTime</span>: <span style=color:#5a2>&#34;2019-10-22T16:29:24Z&#34;</span>
-      <span style=color:#00f>status</span>: <span style=color:#5a2>&#34;True&#34;</span>
-      <span style=color:#00f>type</span>: Initialized
-    - <span style=color:#00f>lastTransitionTime</span>: <span style=color:#5a2>&#34;2019-10-22T16:29:31Z&#34;</span>
-      <span style=color:#00f>status</span>: <span style=color:#5a2>&#34;True&#34;</span>
-      <span style=color:#00f>type</span>: ContainersReady
-    - <span style=color:#00f>lastTransitionTime</span>: <span style=color:#5a2>&#34;2019-10-22T16:29:31Z&#34;</span>
-      <span style=color:#00f>status</span>: <span style=color:#5a2>&#34;True&#34;</span>
-      <span style=color:#00f>type</span>: Ready
-  <span style=color:#00f>containerStatuses</span>:
-    - <span style=color:#00f>image</span>: quay.io/jetstack/cert-manager-controller:v0<span style=color:#3af>.6</span><span style=color:#3af>.1</span>
-      <span style=color:#00f>ready</span>: <span style=color:#00f>true</span>
-      <span style=color:#00f>state</span>: { <span style=color:#00f>running</span>: { <span style=color:#00f>startedAt</span>: <span style=color:#5a2>&#34;2019-10-22T16:29:31Z&#34;</span> } }
-  <span style=color:#00f>phase</span>: Running
-</code></pre></div><p>A condition contains a Status and a Type. It may also contain a Reason and
-a Message. For example:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>- <span style=color:#00f>lastTransitionTime</span>: <span style=color:#5a2>&#34;2019-10-22T16:29:31Z&#34;</span>
-  <span style=color:#00f>status</span>: <span style=color:#5a2>&#34;True&#34;</span>
-  <span style=color:#00f>type</span>: ContainersReady
-</code></pre></div><p>The <a href=https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-conditions>pod-lifecycle</a> documentation explains the difference between the
+of communicating between components/sync loops.</p><p>As Brian Grant put it,</p><blockquote class=twitter-tweet><p lang=en dir=ltr>Rather than rigid fine-grained state enumerations that couldn't be evolved, we initially adopted simple basic states that could report open-ended reasons for being in each state (<a href=https://t.co/l5WXSjbg3K>https://t.co/l5WXSjbg3K</a>), and later non-orthogonal, extensible conditions (<a href=https://t.co/XiwOcgcSGY>https://t.co/XiwOcgcSGY</a>).</p>&mdash; Brian Grant (@bgrant0607) <a href="https://twitter.com/bgrant0607/status/1111473660479430656?ref_src=twsrc%5Etfw">March 29, 2019</a></blockquote><script async src=https://platform.twitter.com/widgets.js></script><h2 id=pod-example>Pod example</h2><p>Let&rsquo;s read a Pod manifest:</p><div class=highlight><pre class=chroma><code class=language-yaml data-lang=yaml><span class=c># kubectl -n cert-manager get pods -oyaml</span><span class=w>
+</span><span class=w></span><span class=k>kind</span><span class=p>:</span><span class=w> </span>Pod<span class=w>
+</span><span class=w></span><span class=k>status</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>conditions</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>    </span>- <span class=k>lastTransitionTime</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2019-10-22T16:29:24Z&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>status</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;True&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>type</span><span class=p>:</span><span class=w> </span>PodScheduled<span class=w>
+</span><span class=w>    </span>- <span class=k>lastTransitionTime</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2019-10-22T16:29:24Z&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>status</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;True&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>type</span><span class=p>:</span><span class=w> </span>Initialized<span class=w>
+</span><span class=w>    </span>- <span class=k>lastTransitionTime</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2019-10-22T16:29:31Z&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>status</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;True&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>type</span><span class=p>:</span><span class=w> </span>ContainersReady<span class=w>
+</span><span class=w>    </span>- <span class=k>lastTransitionTime</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2019-10-22T16:29:31Z&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>status</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;True&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>type</span><span class=p>:</span><span class=w> </span>Ready<span class=w>
+</span><span class=w>  </span><span class=k>containerStatuses</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>    </span>- <span class=k>image</span><span class=p>:</span><span class=w> </span>quay.io/jetstack/cert-manager-controller<span class=p>:</span>v0<span class=m>.6</span><span class=m>.1</span><span class=w>
+</span><span class=w>      </span><span class=k>ready</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span><span class=w>      </span><span class=k>state</span><span class=p>:</span><span class=w> </span>{<span class=w> </span><span class=k>running</span><span class=p>:</span><span class=w> </span>{<span class=w> </span><span class=k>startedAt</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2019-10-22T16:29:31Z&#34;</span><span class=w> </span>}<span class=w> </span>}<span class=w>
+</span><span class=w>  </span><span class=k>phase</span><span class=p>:</span><span class=w> </span>Running<span class=w>
+</span></code></pre></div><p>A condition contains a Status and a Type. It may also contain a Reason and
+a Message. For example:</p><div class=highlight><pre class=chroma><code class=language-yaml data-lang=yaml>- <span class=k>lastTransitionTime</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2019-10-22T16:29:31Z&#34;</span><span class=w>
+</span><span class=w>  </span><span class=k>status</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;True&#34;</span><span class=w>
+</span><span class=w>  </span><span class=k>type</span><span class=p>:</span><span class=w> </span>ContainersReady<span class=w>
+</span></code></pre></div><p>The <a href=https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-conditions>pod-lifecycle</a> documentation explains the difference between the
 &lsquo;phase&rsquo; and &lsquo;conditions:</p><ol><li>The top-level <code>phase</code> is an aggregated state that answers some
 user-facing questions such as <em>is my pod in a terminal state?</em> but has
 gaps since the actual state is contained in the conditions.</li><li>The <code>conditions</code> array is a set of types (Ready, PodScheduled&mldr;) with a
@@ -69,25 +69,25 @@ for clients that just want a meaningful representation of the object&rsquo;s
 current state. There are no existing examples of the new pattern to
 follow instead, just the guidance that we should use top-level fields
 in the status to represent meaningful information. We can revisit the
-specifics when new patterns start to emerge in core.</p></blockquote><p>Instead of using a list of conditions, cluster-api projects go like that:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#00f>status</span>:
-  <span style=color:#00f>ready</span>: <span style=color:#00f>false</span>
-  <span style=color:#00f>phase</span>: <span style=color:#5a2>&#34;Failed&#34;</span>
-  <span style=color:#00f>failureReason</span>: <span style=color:#5a2>&#34;GcpMachineCrashed&#34;</span>
-  <span style=color:#00f>failureMessage</span>: <span style=color:#5a2>&#34;VM crashed: ...&#34;</span>
-</code></pre></div></li><li><p><a href=https://github.com/jetstack/cert-manager>cert-manager</a> uses Conditions,
+specifics when new patterns start to emerge in core.</p></blockquote><p>Instead of using a list of conditions, cluster-api projects go like that:</p><div class=highlight><pre class=chroma><code class=language-yaml data-lang=yaml><span class=k>status</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>ready</span><span class=p>:</span><span class=w> </span><span class=kc>false</span><span class=w>
+</span><span class=w>  </span><span class=k>phase</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;Failed&#34;</span><span class=w>
+</span><span class=w>  </span><span class=k>failureReason</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;GcpMachineCrashed&#34;</span><span class=w>
+</span><span class=w>  </span><span class=k>failureMessage</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;VM crashed: ...&#34;</span><span class=w>
+</span></code></pre></div></li><li><p><a href=https://github.com/jetstack/cert-manager>cert-manager</a> uses Conditions,
 but the only type is &lsquo;Ready&rsquo;. The rest of the information is given in
 Ready&rsquo;s Reason field. That might be unfortunate for users or other
 components that are willing to use cert-manager&rsquo;s API, similarly to what
 happens with the PodSchedulable condition and its reason,
 PodReasonUnschedulable. For example, the <a href=https://github.com/jetstack/cert-manager/blob/b91b7d8d3/pkg/controller/issuers/sync.go#L61-L69>Issuer&rsquo;s
-Sync</a>:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#00f>kind</span>: Issuer
-<span style=color:#00f>status</span>:
-  <span style=color:#00f>conditions</span>:
-    - <span style=color:#00f>type</span>: <span style=color:#5a2>&#34;Ready&#34;</span>
-      <span style=color:#00f>status</span>: <span style=color:#5a2>&#34;False&#34;</span>
-      <span style=color:#00f>reason</span>: <span style=color:#5a2>&#34;ErrorConfig&#34;</span>
-      <span style=color:#00f>message</span>: <span style=color:#5a2>&#34;Resource validation failed: ...&#34;</span>
-</code></pre></div></li><li><p>Openshift uses conditions a lot but does not use the standard &lsquo;Ready&rsquo;
+Sync</a>:</p><div class=highlight><pre class=chroma><code class=language-yaml data-lang=yaml><span class=k>kind</span><span class=p>:</span><span class=w> </span>Issuer<span class=w>
+</span><span class=w></span><span class=k>status</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>conditions</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>    </span>- <span class=k>type</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;Ready&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>status</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;False&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>reason</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;ErrorConfig&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>message</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;Resource validation failed: ...&#34;</span><span class=w>
+</span></code></pre></div></li><li><p>Openshift uses conditions a lot but does not use the standard &lsquo;Ready&rsquo;
 type. For example, cluster-version-operators (CVO) has a <a href=https://github.com/openshift/api/blob/b1bcdbc3/config/v1/types_cluster_operator.go#L123-L134><code>kind: ClusterOperator</code></a>
 with condition types &lsquo;Available&rsquo;, &lsquo;Progressing&rsquo;, &lsquo;Degraded&rsquo; and
 &lsquo;Upgradeable&rsquo;.</p></li><li><p>Hyperconverged Cluster Operator (HCO) uses conditions but in a slightly
@@ -179,22 +179,22 @@ representation of the category of cause of the current status, and
 may contain specific details of the individual occurrence.</p><p><code>Reason</code> is intended to be used in concise output, such as one-line
 kubectl get output, and in summarizing occurrences of causes, whereas
 <code>Message</code> is intended to be presented to users in detailed status
-explanations, such as kubectl describe output.</p></blockquote><p>Later, they mode to non-orthogonal (read: may-be-corrolated conditions):</p><blockquote><p>(<a href=https://twitter.com/bgrant0607/status/1111473660479430656>Brian Grant, Mar 2019</a>) Rather than rigid fine-grained state enumerations that couldn&rsquo;t be evolved, we initially adopted simple basic states that could report <a href=http://issues.k8s.io/1146>open-ended reasons for being in each state</a> (2014), and later <a href=http://issues.k8s.io/7856>non-orthogonal, extensible conditions</a> (2017).</p></blockquote><p>Since the Pod conditions do not have a &lsquo;Reason&rsquo; field (in the previous Pod example), let&rsquo;s take a look at the Node conditions instead:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#00f>kind</span>: Node
-<span style=color:#00f>status</span>:
-  <span style=color:#00f>conditions</span>:
-    - <span style=color:#00f>type</span>: DiskPressure
-      <span style=color:#00f>status</span>: <span style=color:#5a2>&#34;False&#34;</span>
-      <span style=color:#00f>reason</span>: KubeletHasNoDiskPressure
-      <span style=color:#00f>message</span>: kubelet has no disk pressure
-      <span style=color:#00f>lastHeartbeatTime</span>: <span style=color:#5a2>&#34;2019-11-17T14:18:26Z&#34;</span>
-      <span style=color:#00f>lastTransitionTime</span>: <span style=color:#5a2>&#34;2019-10-22T16:27:53Z&#34;</span>
-    - <span style=color:#00f>type</span>: Ready
-      <span style=color:#00f>status</span>: <span style=color:#5a2>&#34;True&#34;</span>
-      <span style=color:#00f>reason</span>: KubeletReady
-      <span style=color:#00f>message</span>: kubelet is posting ready status. AppArmor enabled
-      <span style=color:#00f>lastHeartbeatTime</span>: <span style=color:#5a2>&#34;2019-11-17T14:18:26Z&#34;</span>
-      <span style=color:#00f>lastTransitionTime</span>: <span style=color:#5a2>&#34;2019-10-22T16:27:53Z&#34;</span>
-</code></pre></div><p>Here, the &lsquo;Ready&rsquo; condition type has an additional &lsquo;Reason&rsquo; field that
+explanations, such as kubectl describe output.</p></blockquote><p>Later, they mode to non-orthogonal (read: may-be-corrolated conditions):</p><blockquote><p>(<a href=https://twitter.com/bgrant0607/status/1111473660479430656>Brian Grant, Mar 2019</a>) Rather than rigid fine-grained state enumerations that couldn&rsquo;t be evolved, we initially adopted simple basic states that could report <a href=http://issues.k8s.io/1146>open-ended reasons for being in each state</a> (2014), and later <a href=http://issues.k8s.io/7856>non-orthogonal, extensible conditions</a> (2017).</p></blockquote><p>Since the Pod conditions do not have a &lsquo;Reason&rsquo; field (in the previous Pod example), let&rsquo;s take a look at the Node conditions instead:</p><div class=highlight><pre class=chroma><code class=language-yaml data-lang=yaml><span class=k>kind</span><span class=p>:</span><span class=w> </span>Node<span class=w>
+</span><span class=w></span><span class=k>status</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>conditions</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>    </span>- <span class=k>type</span><span class=p>:</span><span class=w> </span>DiskPressure<span class=w>
+</span><span class=w>      </span><span class=k>status</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;False&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>reason</span><span class=p>:</span><span class=w> </span>KubeletHasNoDiskPressure<span class=w>
+</span><span class=w>      </span><span class=k>message</span><span class=p>:</span><span class=w> </span>kubelet<span class=w> </span>has<span class=w> </span>no<span class=w> </span>disk<span class=w> </span>pressure<span class=w>
+</span><span class=w>      </span><span class=k>lastHeartbeatTime</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2019-11-17T14:18:26Z&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>lastTransitionTime</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2019-10-22T16:27:53Z&#34;</span><span class=w>
+</span><span class=w>    </span>- <span class=k>type</span><span class=p>:</span><span class=w> </span>Ready<span class=w>
+</span><span class=w>      </span><span class=k>status</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;True&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>reason</span><span class=p>:</span><span class=w> </span>KubeletReady<span class=w>
+</span><span class=w>      </span><span class=k>message</span><span class=p>:</span><span class=w> </span>kubelet<span class=w> </span>is<span class=w> </span>posting<span class=w> </span>ready<span class=w> </span>status.<span class=w> </span>AppArmor<span class=w> </span>enabled<span class=w>
+</span><span class=w>      </span><span class=k>lastHeartbeatTime</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2019-11-17T14:18:26Z&#34;</span><span class=w>
+</span><span class=w>      </span><span class=k>lastTransitionTime</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2019-10-22T16:27:53Z&#34;</span><span class=w>
+</span></code></pre></div><p>Here, the &lsquo;Ready&rsquo; condition type has an additional &lsquo;Reason&rsquo; field that
 gives the user more information about the transition. The Reason field is
 sometimes used by other components: for example, <code>PodReasonUnschedulable</code>
 is a reason of the <code>PodSchedulable</code> condition type. This reason is set by
@@ -216,16 +216,16 @@ changed arbitrarily - it becomes part of the API, and has the same
 backwards- and forwards-compatibility concerns of any other part of the
 API.</p></blockquote><p>Conditions are also a clean way of letting third-party components (such as
 the cluster-api controller) to add their own &lsquo;named&rsquo; conditions to an
-existing object, e.g. to a Pod (see <a href=https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate>pod-readiness-gate</a>):</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#00f>Kind</span>: Pod
-<span style=color:#00f>spec</span>:
-  <span style=color:#00f>readinessGates</span>:
-    - <span style=color:#00f>conditionType</span>: <span style=color:#5a2>&#34;www.example.com/feature-1&#34;</span>
-<span style=color:#00f>status</span>:
-  <span style=color:#00f>conditions</span>:
-    - <span style=color:#00f>type</span>: Ready <span style=color:#888;font-style:italic># this is a builtin PodCondition</span>
-      <span style=color:#00f>status</span>: <span style=color:#5a2>&#34;False&#34;</span>
-    - <span style=color:#00f>type</span>: <span style=color:#5a2>&#34;www.example.com/feature-1&#34;</span> <span style=color:#888;font-style:italic># an extra PodCondition</span>
-      <span style=color:#00f>status</span>: <span style=color:#5a2>&#34;False&#34;</span>
-</code></pre></div><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/controller/>controller</a>
+existing object, e.g. to a Pod (see <a href=https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate>pod-readiness-gate</a>):</p><div class=highlight><pre class=chroma><code class=language-yaml data-lang=yaml><span class=k>Kind</span><span class=p>:</span><span class=w> </span>Pod<span class=w>
+</span><span class=w></span><span class=k>spec</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>readinessGates</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>    </span>- <span class=k>conditionType</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;www.example.com/feature-1&#34;</span><span class=w>
+</span><span class=w></span><span class=k>status</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>conditions</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>    </span>- <span class=k>type</span><span class=p>:</span><span class=w> </span>Ready<span class=w> </span><span class=c># this is a builtin PodCondition</span><span class=w>
+</span><span class=w>      </span><span class=k>status</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;False&#34;</span><span class=w>
+</span><span class=w>    </span>- <span class=k>type</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;www.example.com/feature-1&#34;</span><span class=w> </span><span class=c># an extra PodCondition</span><span class=w>
+</span><span class=w>      </span><span class=k>status</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;False&#34;</span><span class=w>
+</span></code></pre></div><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/controller/>controller</a>
 <a href=/tags/go/>go</a>
 <a href=/tags/kubernetes/>kubernetes</a></p></div><div class=clearit></div></div></div></div><div class="footer wrapper"><nav class=nav><div class=footertext></div></nav></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></body></html>

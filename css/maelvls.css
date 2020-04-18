@@ -10,13 +10,19 @@ samp {
 pre {
   border-radius: 5px;
   white-space: pre;
-  background-color: #eff0f1 !important;
+  /* background-color: #eff0f1; */
   border: 1px solid rgba(0, 0, 0, 0.103);
 }
 
 .highlight pre {
   padding: 0.5rem;
-  background-color: #eff0f1 !important;
+  background-color: #eff0f1;
+}
+
+.nohighlight .highlight pre {
+  padding: 0.5rem;
+  background-color: #fff;
+  border: 0;
 }
 
 body {

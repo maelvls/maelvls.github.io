@@ -33,7 +33,7 @@ connections using the
 tool. I mention it in &ldquo;<a href=/debugging-kubernetes-networking>Debugging Kubernetes
 Networking</a>".</p></blockquote><p>Let us dive a bit more and add the &ldquo;response&rdquo; packets. For the following
 diagram, I used the excellent <a href=https://textik.com/>textik</a> ascii drawing
-tool.</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>                     D-NAT (dest-based NAT, also called port-forwarding)
+tool.</p><div class=nohighlight><div class=highlight><pre class=chroma><code class=language-plain data-lang=plain>                     D-NAT (dest-based NAT, also called port-forwarding)
 
           +--------------------------------------------------------------------------+
           |   src: 90.76.45.149:32345                       src: 35.211.248.124:80   |
@@ -61,7 +61,7 @@ tool.</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-
           |                                                                          |
           +-------------------------------10.142.0.62--------------------------------+
                                           (VM in VPC)
-</code></pre></div><p>By reading through the diagram, we can see that the packet is re-written by
+</code></pre></div></div><p>By reading through the diagram, we can see that the packet is re-written by
 the Google&rsquo;s firewall using DNAT: the destination is replaced by a fixed
 IP, the one of the VM.</p><blockquote><p>Why do I say &ldquo;packets&rdquo; but what I should really say is &ldquo;segments&rdquo;? That&rsquo;s
 because I don&rsquo;t really know anyone using this strict terminology. Outside

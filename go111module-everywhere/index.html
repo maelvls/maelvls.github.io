@@ -6,7 +6,7 @@ instructions, in Dockerfiles, in makefiles. On top of that, the behavior of
 GO111MODULE has changed from Go 1.11 to 1.12, changed again with 1.13 and
 will changed a last time in 1.14."><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/main.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/all.css><link rel=stylesheet type=text/css href=https://maelvls.dev/css/maelvls.css></head><body><div class="container wrapper"><div class=header><div class=avatar><a href=https://maelvls.dev/><img src=/img/mael.jpg alt="maelvls dev blog"></a></div><h1 class=site-title><a href=https://maelvls.dev/>maelvls dev blog</a></h1><div class=site-description><p>Systems software engineer. I write mostly about Kubernetes and Go. <a href=/about>About</a></p><nav class="nav social"><ul class=flat><li class=li-social><a href=https://github.com/maelvls><i title=Github class="icons fab fa-github"></i></a></li><li class=li-social><a href=https://twitter.com/maelvls><i title=Twitter class="icons fab fa-twitter"></i></a></li></ul></nav></div></div><div class=post><div class=author></div><div class=post-header><div class=meta><div class=date><span class=day>13</span>
 <span class=rest>Nov 2019</span></div></div><div class=matter><h1 class=title>GO111MODULE is everywhere: history and tips</h1></div></div><div class=markdown><p>You might have noticed that <code>GO111MODULE=on</code> is flourishing everywhere.
-Many readmes have that:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#000>GO111MODULE</span>=on go get golang.org/x/tools/gopls@latest
+Many readmes have that:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=nv>GO111MODULE</span><span class=o>=</span>on go get golang.org/x/tools/gopls@latest
 </code></pre></div><p>In this short post, I will explain why <code>GO111MODULE</code> exists, its caveats
 and interesting bits that you need to know when dealing with Go Modules.</p><hr><p>Table of contents:</p><ol><li><a href=#from-gopath-to-go111module>From <code>GOPATH</code> to <code>GO111MODULE</code></a></li><li><a href=#the-go111module-environment-variable>The <code>GO111MODULE</code> environment variable</a><ol><li><a href=#go111module-with-go-111-and-112><code>GO111MODULE</code> with Go 1.11 and 1.12</a></li><li><a href=#go111module-with-go-113><code>GO111MODULE</code> with Go 1.13</a></li><li><a href=#go111module-with-go-114><code>GO111MODULE</code> with Go 1.14</a></li><li><a href=#so-why-is-go111module-everywhere>So, why is <code>GO111MODULE</code> everywhere?!</a></li><li><a href=#the-pitfall-of-gomod-being-silently-updated>The pitfall of <code>go.mod</code> being silently updated</a></li><li><a href=#the--u-and-version-pitfall>The <code>-u</code> and <code>@version</code> pitfall</a></li></ol></li><li><a href=#caveats-when-using-go-modules>Caveats when using Go Modules</a><ol><li><a href=#remember-that-go-get-also-updates-your-gomod>Remember that <code>go get</code> also updates your <code>go.mod</code></a></li><li><a href=#where-are-the-sources-of-the-dependencies-with-go-modules>Where are the sources of the dependencies with Go Modules</a></li><li><a href=#set-go111module-on-a-per-folder-basis-with-direnv>Set <code>GO111MODULE</code> on a per-folder basis with <code>direnv</code></a></li><li><a href=#private-go-modules-and-dockerfile>Private Go Modules and Dockerfile</a><ol><li><a href=#solution-1-vendoring>Solution 1: vendoring</a></li><li><a href=#solution-2-no-vendoring>Solution 2: no vendoring</a></li></ol></li></ol></li></ol><hr><h2 id=from-gopath-to-go111module>From <code>GOPATH</code> to <code>GO111MODULE</code></h2><p>First off, let&rsquo;s talk about GOPATH. When Go was first introduced in 2009,
 it was not shipped with a package manager. Instead, <code>go get</code> would fetch
@@ -24,7 +24,7 @@ your GOPATH. Requires <code>go.mod</code> to work.</p></li><li><p><code>GO111MOD
 GOPATH.</p></li><li><p><code>GO111MODULE=auto</code> is the default mode. In this mode, Go will behave</p><ul><li>similarly to <code>GO111MODULE=on</code> when you are outside of <code>GOPATH</code>,</li><li>similarly to <code>GO111MODULE=off</code> when you are inside the <code>GOPATH</code> even if
 a <code>go.mod</code> is present.</li></ul></li></ul><p>Whenever you are in your GOPATH and you want to do an operation that
 requires Go modules (e.g., <code>go get</code> a specific version of a binary), you
-need to do:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#000>GO111MODULE</span>=on go get github.com/golang/mock/tree/master/mockgen@v1.3.1
+need to do:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=nv>GO111MODULE</span><span class=o>=</span>on go get github.com/golang/mock/tree/master/mockgen@v1.3.1
 </code></pre></div><h3 id=go111module-with-go-113><code>GO111MODULE</code> with Go 1.13</h3><p>Using Go 1.13, <code>GO111MODULE</code>'s default (<code>auto</code>) changes:</p><ul><li>behaves like <code>GO111MODULE=on</code> anywhere there is a <code>go.mod</code> OR anywhere
 outside the GOPATH even if there is no <code>go.mod</code>. So you can keep all your
 repositories in your GOPATH with Go 1.13.</li><li>behaves like <code>GO111MODULE=off</code> in the GOPATH with no <code>go.mod</code>.</li></ul><h3 id=go111module-with-go-114><code>GO111MODULE</code> with Go 1.14</h3><p>The <code>GO111MODULE</code> variable has the same behavior as with Go 1.13.</p><p>Note that some slight changes in behaviors unrelated to <code>GO111MODULE</code>
@@ -36,13 +36,13 @@ Modules behavior, here is the answer: that&rsquo;s because <code>GO111MODULE=on<
 allows you to select a version. Without Go Modules, <code>go get</code> fetches the
 latest commit from master. With Go Modules, you can select a specific
 version based on git tags.</p><p>I use <code>GO111MODULE=on</code> very often when I want to switch between the latest
-version and the HEAD version of <code>gopls</code> (the Go Language Server):</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#000>GO111MODULE</span>=on go get golang.org/x/tools/gopls@latest
-<span style=color:#000>GO111MODULE</span>=on go get golang.org/x/tools/gopls@master
-<span style=color:#000>GO111MODULE</span>=on go get golang.org/x/tools/gopls@v0.1
-<span style=color:#000>GO111MODULE</span>=on go get golang.org/x/tools/gopls@v0.1.8
-<span style=color:#000>GO111MODULE</span>=<span style=color:#5a2>&#34;on&#34;</span> go get sigs.k8s.io/kind@v0.7.0
+version and the HEAD version of <code>gopls</code> (the Go Language Server):</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=nv>GO111MODULE</span><span class=o>=</span>on go get golang.org/x/tools/gopls@latest
+<span class=nv>GO111MODULE</span><span class=o>=</span>on go get golang.org/x/tools/gopls@master
+<span class=nv>GO111MODULE</span><span class=o>=</span>on go get golang.org/x/tools/gopls@v0.1
+<span class=nv>GO111MODULE</span><span class=o>=</span>on go get golang.org/x/tools/gopls@v0.1.8
+<span class=nv>GO111MODULE</span><span class=o>=</span><span class=s2>&#34;on&#34;</span> go get sigs.k8s.io/kind@v0.7.0
 </code></pre></div><h3 id=the-pitfall-of-gomod-being-silently-updated>The pitfall of <code>go.mod</code> being silently updated</h3><p>And to make things even worse, some projects have an even more complicated
-one-liners:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>(<span style=color:#000>cd</span> &amp;&amp; <span style=color:#000>GO111MODULE</span>=on go get golang.org/x/tools/gopls@latest)
+one-liners:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=o>(</span><span class=nb>cd</span> <span class=o>&amp;&amp;</span> <span class=nv>GO111MODULE</span><span class=o>=</span>on go get golang.org/x/tools/gopls@latest<span class=o>)</span>
 </code></pre></div><blockquote><p>Note: the <code>@latest</code> suffix will use the latest git tag of gopls. Note
 that <code>-u</code> (which means &lsquo;update&rsquo;) is not needed for <code>@v0.1.8</code> since this
 is a &lsquo;fixed&rsquo; version, and updating a fixed version does not really make
@@ -59,22 +59,22 @@ install) and <code>go install</code> that is meant to install a binary without m
 up your <code>go.mod</code>.</p><ul><li>First caveat: we all use <code>go get</code> to install dev dependencies, so moving
 to <code>go install</code> would kind of not work (habits&mldr;)</li><li>Second caveat: <code>go install</code> doesn’t allow you to give a version (e.g.,
 <code>@latest</code> or <code>@v1.4.5</code>), and <code>go run</code> either by the way. So <code>go install</code>
-isn&rsquo;t that useful after all&mldr; 😞</li></ul><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ <span style=color:#000>export</span> <span style=color:#000>GO111MODULE</span>=on
+isn&rsquo;t that useful after all&mldr; 😞</li></ul><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>$ <span class=nb>export</span> <span class=nv>GO111MODULE</span><span class=o>=</span>on
 
-$ go get golang.org/x/tools/gopls@v0.1.8              <span style=color:#888;font-style:italic># ✅</span>
+$ go get golang.org/x/tools/gopls@v0.1.8              <span class=c1># ✅</span>
 
-$ go install golang.org/x/tools/gopls@v0.1.8          <span style=color:#888;font-style:italic># ❌</span>
+$ go install golang.org/x/tools/gopls@v0.1.8          <span class=c1># ❌</span>
 can t load package: package golang.org/x/tools/gopls@v0.1.8: cannot use path@version syntax in GOPATH mode
 
-$ go run golang.org/x/tools/gopls@v0.1.8              <span style=color:#888;font-style:italic># ❌</span>
-package golang.org/x/tools/gopls@v0.1.8: can only use path@version syntax with <span style=color:#5a2>&#39;go get&#39;</span>
+$ go run golang.org/x/tools/gopls@v0.1.8              <span class=c1># ❌</span>
+package golang.org/x/tools/gopls@v0.1.8: can only use path@version syntax with <span class=s1>&#39;go get&#39;</span>
 </code></pre></div><h3 id=the--u-and-version-pitfall>The <code>-u</code> and <code>@version</code> pitfall</h3><p>I have been bitten multiple times by this: when using <code>go get @latest</code> (for
 a binary, at least), you should avoid using <code>-u</code> so that it uses the
 dependencies as defined in <code>go.sum</code>. Otherwise, it will update all the
 dependencies to their latest minor revision&mldr; And since a ton of projects
 choose to have breaking changes between minor versions (e.g. v0.2.0 to
-v0.3.0), using <code>-u</code> has a large chance of breaking things.</p><p>So if you see this:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#888;font-style:italic># Both -u and @latest!</span>
-<span style=color:#000>GO111MODULE</span>=on go get -u golang.org/x/tools/gopls@latest
+v0.3.0), using <code>-u</code> has a large chance of breaking things.</p><p>So if you see this:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=c1># Both -u and @latest!</span>
+<span class=nv>GO111MODULE</span><span class=o>=</span>on go get -u golang.org/x/tools/gopls@latest
 </code></pre></div><p>then you will immediately realize that it is wrong: you want to be using
 the recorded versions given in <code>go.sum</code> when go-getting a binary!</p><p>Rebecca Stambler <a href=https://github.com/golang/go/issues/35868#issuecomment-564151454>reminds
 us</a> that
@@ -92,7 +92,7 @@ VSCode, you might end up in the GOPATH version of the package instead of
 the pkg/mod one used during compilation.</p><p>A second issue that arises is when you want to hack one of your dependencies, for example for testing purposes.</p><p><strong>Solution 1</strong>: use <code>go mod vendor</code> + <code>go build -mod=vendor</code>. That will
 force <code>go</code> to use the vendor/ files instead of using the <code>$GOPATH/pkg/mod</code>
 ones. This option also solves the problem of vim and VSCode not opening the
-right version of a package’s file.</p><p><strong>Solution 2</strong>: add a &lsquo;replace&rsquo; line at the end of your <code>go.mod</code>:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>use replace github.com/maelvls/beers =&gt; ../beers
+right version of a package’s file.</p><p><strong>Solution 2</strong>: add a &lsquo;replace&rsquo; line at the end of your <code>go.mod</code>:</p><div class=highlight><pre class=chroma><code class=language-plain data-lang=plain>use replace github.com/maelvls/beers =&gt; ../beers
 </code></pre></div><p>where <code>../beers</code> is a local copy I made of the dependency I want to inspect
 and hack.</p><h3 id=set-go111module-on-a-per-folder-basis-with-direnv>Set <code>GO111MODULE</code> on a per-folder basis with <code>direnv</code></h3><p>During the migration from GOPATH-based projects (mainly using Dep) to Go
 Modules, I found myself struggling with two different places: inside and
@@ -102,10 +102,10 @@ projects in the GOPATH, and for the Go Modules-enabled projects, I would
 set <code>export GO111MODULE=on</code>.</p><p>This is where <a href=https://direnv.net/><code>direnv</code></a> comes in handy. Direnv is a
 lightweight command written in Go that will load a file, <code>.envrc</code>, whenever
 you enter a directory and <code>.envrc</code> is present. For every Go Module-enabled
-project, I would have this <code>.envrc</code>:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#888;font-style:italic># .envrc</span>
-<span style=color:#000>export</span> <span style=color:#000>GO111MODULE</span>=on
-<span style=color:#000>export</span> <span style=color:#000>GOPRIVATE</span>=github.com/mycompany/<span style=color:#5a2>\*</span>
-<span style=color:#000>export</span> <span style=color:#000>GOFLAGS</span>=-mod=vendor
+project, I would have this <code>.envrc</code>:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=c1># .envrc</span>
+<span class=nb>export</span> <span class=nv>GO111MODULE</span><span class=o>=</span>on
+<span class=nb>export</span> <span class=nv>GOPRIVATE</span><span class=o>=</span>github.com/mycompany/<span class=se>\*</span>
+<span class=nb>export</span> <span class=nv>GOFLAGS</span><span class=o>=</span>-mod<span class=o>=</span>vendor
 </code></pre></div><p>The GOPRIVATE disables the Go Proxy (Go 1.13) for certain import paths. I
 also found useful to set <code>-mod=vendor</code> so that every command uses the
 <code>vendor</code> folder (<code>go mod vendor</code>).</p><h3 id=private-go-modules-and-dockerfile>Private Go Modules and Dockerfile</h3><p>At my company, we use a lot of private repositories. As explained above, we
@@ -119,6 +119,6 @@ private Github repositories anyway using their local Git config</p><ul><li>Pros:
 big</li></ul><h4 id=solution-2-no-vendoring>Solution 2: no vendoring</h4><p>If <code>vendor/</code> is just too big (e.g., for Kubernetes controllers, <code>vendor/</code>
 is about 30MB), we can very well do it without vendoring. That would
 require to pass some form of GITHUB_TOKEN as argument of <code>docker build</code>,
-and in the Dockerfile, set something like:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>git config --global url.<span style=color:#5a2>&#34;</span><span style=color:#5a2>https://foo:</span><span style=color:#5a2>${</span><span style=color:#000>GITHUB_TOKEN</span><span style=color:#5a2>}</span><span style=color:#5a2>@github.com/company</span><span style=color:#5a2>&#34;</span>.insteadOf <span style=color:#5a2>&#34;https://github.com/company&#34;</span>
-<span style=color:#000>export</span> <span style=color:#000>GOPRIVATE</span>=github.com/company/<span style=color:#5a2>\*</span>
+and in the Dockerfile, set something like:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>git config --global url.<span class=s2>&#34;</span><span class=s2>https://foo:</span><span class=si>${</span><span class=nv>GITHUB_TOKEN</span><span class=si>}</span><span class=s2>@github.com/company</span><span class=s2>&#34;</span>.insteadOf <span class=s2>&#34;https://github.com/company&#34;</span>
+<span class=nb>export</span> <span class=nv>GOPRIVATE</span><span class=o>=</span>github.com/company/<span class=se>\*</span>
 </code></pre></div><p><em>Illustration by Bailey Beougher, from The Illustrated Children&rsquo;s Guide to Kubernetes.</em></p><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/go/>go</a></p></div><div class=clearit></div></div></div></div><div class="footer wrapper"><nav class=nav><div class=footertext></div></nav></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></body></html>

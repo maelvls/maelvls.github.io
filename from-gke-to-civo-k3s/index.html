@@ -9,8 +9,8 @@ I could have gone with a single node.</p><h2 id=migrating-external-dns-cert-mana
 <code>*.k.maelvls.dev</code>. The shorter the better!</p><p>After creating Traefik, I knew that its service would automatically be
 populated with the <code>status.loadBalancer</code> field thanks to K3s&rsquo;
 <a href=https://github.com/rancher/k3s/blob/master/pkg/servicelb/controller.go>servicelb</a>.
-Let&rsquo;s see:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>% kubectl -n traefik get services
-NAME     TYPE          CLUSTER-IP        EXTERNAL-IP      PORT(S)
+Let&rsquo;s see:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% kubectl -n traefik get services
+NAME     TYPE          CLUSTER-IP        EXTERNAL-IP      PORT<span class=o>(</span>S<span class=o>)</span>
 traefik  LoadBalancer  192.168.255.134   91.211.152.190   443:32164/TCP,80:32684/TCP
 </code></pre></div><p>Great! Now, Traefik will propagate this external IP to the ingresses, and
 ExternalDNS will use the <code>status.loadBalancer</code> from these ingresses in
@@ -20,21 +20,21 @@ Service</a> where I
 describe how Akrobateo works (K3s&rsquo; servicelb has the exact same behavior).</p><h2 id=migrating-minio>Migrating MinIO</h2><p>I use minio for various uses. It is great if you want a S3-compatible
 storage solution. In order to migrate, I followed
 <a href=https://www.scaleway.com/en/docs/how-to-migrate-object-storage-buckets-with-minio>this</a>.
-It&rsquo;s quite painless:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ kubectl -n minio run a --generator=run-pod/v1 -it --rm --restart=Never --image=alpine
+It&rsquo;s quite painless:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>$ kubectl -n minio run a --generator<span class=o>=</span>run-pod/v1 -it --rm --restart<span class=o>=</span>Never --image<span class=o>=</span>alpine
 
-% wget https://dl.minio.io/client/mc/release/linux-amd64/mc &amp;&amp; install mc /usr/bin
-% mc config host add old https://minio.kube.maelvls.dev AKIAIOSFODNN7EXAMPLE <span style=color:#5a2>&#34;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&#34;</span> --api S3v4
-% mc config host add new http://minio:9000 AKIAIOSFODNN7EXAMPLE <span style=color:#5a2>&#34;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&#34;</span> --api S3v4
+% wget https://dl.minio.io/client/mc/release/linux-amd64/mc <span class=o>&amp;&amp;</span> install mc /usr/bin
+% mc config host add old https://minio.kube.maelvls.dev AKIAIOSFODNN7EXAMPLE <span class=s2>&#34;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&#34;</span> --api S3v4
+% mc config host add new http://minio:9000 AKIAIOSFODNN7EXAMPLE <span class=s2>&#34;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&#34;</span> --api S3v4
 
-% mc ls old/         <span style=color:#888;font-style:italic># List buckets since I had to create manually each bucket.</span>
-% mc mb new/bucket1  <span style=color:#888;font-style:italic># Then create each bucket one by one.</span>
+% mc ls old/         <span class=c1># List buckets since I had to create manually each bucket.</span>
+% mc mb new/bucket1  <span class=c1># Then create each bucket one by one.</span>
 % mc cp --recursive old/bucket1/ new/bucket1/
 </code></pre></div><p>I also decided to change the access key & secret key. Again, quite
 painless. As mentioned in the
 <a href=https://github.com/minio/minio/tree/master/docs/config>documentation</a>,
-I changed the secret stored in Kubernetes:</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>kubectl -n minio edit secret minio
+I changed the secret stored in Kubernetes:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>kubectl -n minio edit secret minio
 </code></pre></div><p>and then I temporarily added the <code>MINIO_ACCESS_KEY_OLD</code> and
-<code>MINIO_SECRET_KEY_OLD</code> to the deployment by editing it.</p><div class=highlight><pre style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>kubectl -n minio edit deployment minio
+<code>MINIO_SECRET_KEY_OLD</code> to the deployment by editing it.</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>kubectl -n minio edit deployment minio
 </code></pre></div><p>After that, the pods get recreated and MinIO picks up the new secret. Note:
 I also had to edit the deployment again in order to remove the temporary
 <code>_OLD</code> environment variables.</p><hr><p>To recap, the whole migration was painless. The only data I migrated was

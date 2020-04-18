@@ -182,7 +182,7 @@ ul {
     margin-bottom: 0;
     margin-top: 0;
     padding: 20px;
-    background-color: transparent !important;
+    background-color: transparent;
 }
 
 .highlight {
@@ -217,6 +217,7 @@ ul {
 .header .site-title {
     margin: 0 0 10px 0;
     line-height: 0.2em;
+    font-size: 2.75rem;
 }
     .site-title a {
         color: #333;
@@ -358,7 +359,7 @@ ul {
         color: #555;
     }
     .footer a:hover {
-        color: #3700ff !important;
+        color: #3700ff;
     }
 
 .tag-cloud {
@@ -467,7 +468,7 @@ ul {
     }
 
     .container {
-        margin-top: 10px;
+        margin-top: 0px;
     }
 
     .header .nav.social li {
@@ -482,6 +483,18 @@ ul {
         display: none;
     }
 
+    .header .site-title {
+      line-height: 1em;
+    }
+
+    .header .site-description {
+      flex-direction: column;
+    }
+
+    .header p {
+      margin: 5px 0 5px 0;
+    }
+
     blockquote {
         margin-left: 1rem;
         font-size: 1rem;
@@ -490,6 +503,6 @@ ul {
     }
 
     .icons {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
     }
 }
