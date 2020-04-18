@@ -56,6 +56,8 @@ Let us dive a bit more and add the "response" packets. For the following
 diagram, I used the excellent [textik](https://textik.com/) ascii drawing
 tool.
 
+<div class="nohighlight">
+
 ```plain
                      D-NAT (dest-based NAT, also called port-forwarding)
 
@@ -86,6 +88,8 @@ tool.
           +-------------------------------10.142.0.62--------------------------------+
                                           (VM in VPC)
 ```
+
+</div>
 
 <!-- https://textik.com/#0db10960397c06f5 -->
 
