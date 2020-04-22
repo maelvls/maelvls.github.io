@@ -10,7 +10,6 @@ url: /avoid-gke-lb-with-hostport
 images: [avoid-gke-lb-with-hostport/cover-external-dns.png]
 ---
 
-
 I like being able to keep my own GKE Kubernetes cluster for experimenting.
 But I realized that this _Network Load Balancer_ was way too expensive.
 
@@ -49,6 +48,35 @@ IP and then set the `externalIPs` with these.
 Instead, I opted for the `hostPort` solution. No restriction on 80 or 443.
 But I still have to automate a lot. Fortunately,
 [akrobateo](https://github.com/kontena/akrobateo) does exactly what I need.
+
+> **hostPort** is a field you can set in a Pod. The hostPort is used by
+> kube-proxy to forward traffic coming to the node with the destination
+> `hostIP:hostPort` to the pod itself.
+>
+> ```yaml
+> apiVersion: v1
+> kind: Pod
+> metadata:
+>   name: akrobateo-lb-xmz8z
+> spec:
+>   containers:
+>   - image: "registry.pharos.sh/kontenapharos/akrobateo-lb:0.1.1"
+>     ports:
+>     - containerPort: 443
+>       hostPort: 443                # ⚠️
+>       name: https
+>       protocol: TCP
+> status:
+>   hostIP: 172.31.4.153             # ⚠️ hostIP and hostPort go together
+>   podIP: 192.168.1.38
+> ```
+>
+> In this example pod, the pod runs on the node that has the hostIP
+> `172.31.4.153`. Any time traffic comes to the main network interface of
+> the node with the TCP packet destination `dst: 172.31.4.153:443` will be
+> forwarded (i.e., DNATed) to `dst: 192.168.1.38:443`.
+>
+> Note that this pod was actually created using a DeamonSet.
 
 Akrobateo acts as an internal LoadBalancer service controller and replaces
 the gce-ingress-controller that GKE applies to every GKE cluster. It is
@@ -89,7 +117,10 @@ Listed 0 items.
 At this point, the LoadBalancer service should contain the IPs of the nodes:
 
 ```sh
-% k -n traefik get services traefik -oyaml
+kubectl -n traefik get services traefik -oyaml
+```
+
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -115,9 +146,13 @@ status:
     ingress:
     - ip: 35.211.248.124
     - ip: 35.231.10.40
+```
 
+When displayed with `kubectl get`, we can see the two IPs from the
+status.loadBalancer in the "EXTERNAL-IP" column:
 
-% k -n traefik get services -owide
+```sh
+% kubectl -n traefik get services -owide
 NAME                TYPE           CLUSTER-IP      EXTERNAL-IP                   PORT(S)
 traefik             LoadBalancer   10.27.244.111   35.211.248.124,35.231.10.40   80:30371/TCP,443:32748/TCP
 ```
@@ -125,7 +160,7 @@ traefik             LoadBalancer   10.27.244.111   35.211.248.124,35.231.10.40  
 Let's check that these are the external IPs of the cluster nodes:
 
 ```sh
-% k get nodes -owide
+% kubectl get nodes -owide
 NAME                                                 INTERNAL-IP   EXTERNAL-IP
 gke-august-period-234610-worker-0c5c84f5-rq25        10.142.0.61   35.231.10.40
 gke-august-period-234610-worker-micro-cf12d79d-klh6  10.142.0.62   35.211.248.124
@@ -136,7 +171,7 @@ LoadBalancer service it finds. The DeamonSet is created in the same
 namespace as where the Service is:
 
 ```sh
-% k get ds -A
+% kubectl get ds -A
 NAMESPACE     NAME                       DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE
 traefik       akrobateo-traefik          2         2         2       2            2
 ```
@@ -162,9 +197,24 @@ and might simply pick the first element.
 
 ## Pros and cons
 
-- **What about security, isn't `hostPort` a bad practice?** I don't know
-  enough yet and cannot really tell.
-- **What if I have many more nodes, can it scale?** I don't know.
+- **Isn't `hostPort` a bad practice?** From the [Kubernetes
+  documentation](https://kubernetes.io/docs/concepts/configuration/overview/#services):
+
+  > Don't specify a `hostPort` for a Pod unless it is absolutely necessary.
+  > When you bind a Pod to a `hostPort`, it limits the number of places the
+  > Pod can be scheduled, because each <`hostIP`, `hostPort`, `protocol`>
+  > combination must be unique. If you don't specify the `hostIP` and
+  > `protocol` explicitly, Kubernetes will use `0.0.0.0` as the default
+  > `hostIP` and `TCP` as the default `protocol`.
+
+  I do not fuly grasp what are the implications of using a hostPort. I
+  guess it "litters" the iptables on the node? I'm not sure.
+
+- **What if I have many more nodes, can it scale?** I guess it won't. Maybe
+  one idea would be to leader-elect two or three nodes and put only these
+  two or three IPs in `status.loadbalancer.ingress[]`. If one of the nodes
+  fails, the DNS will be updated; the client will be able to failover using
+  the two or three IPs from the DNS record.
 - **Reliability?** If the nodes that are advertised in the `A` DNS records
   go down, no more ingress traffic possible.
 - **What if the node's external-ip changes?** Since these IPs are
@@ -230,6 +280,26 @@ Want to drop a comment? Here is a Twitter thread:
 
 {{< twitter 1219193625478881285 >}}
 -->
+<!-- 
+## Metallb vs. K3s' servicelb vs. akrobateo
+
+- metallb = vrrp + arp (l2), see "[MetalLB Layer 2 concepts](https://metallb.universe.tf/concepts/layer2/)"
+
+ARP = 
+NDP = 
+
+MetalLB implements something close to VRRP.
+
+-->
+
+**Update 22 April 2020:**
+
+- Explain what I mean by `hostPort`;
+- In "Isn't `hostPort` a bad practice?", I replaced "I don't know" with a
+  [link](https://kubernetes.io/docs/concepts/configuration/overview/#services)
+  to the Kubernetes documentation that mention why I should avoid hostPort.
+- In "What if I have many more nodes, can it scale?", I replaced "I don't
+  know" with a proposition of solution.
 
 <script src="https://utteranc.es/client.js"
         repo="maelvls/maelvls.github.io"
