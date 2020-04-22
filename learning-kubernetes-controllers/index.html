@@ -15,8 +15,8 @@ sync loops.</li><li>A CRD (custom resource definition) is a simple YAML manifest
 describes a custom object. After applying it to a Kubernetes cluster, it
 will start accepting manifests of this custom kind.</li><li>&ldquo;CRD&rdquo; is just a schema and doesn&rsquo;t carry any logic (except for the basic
 validation the apiserver does). The actual logic happens in controllers.</li><li>Many people also use the term &ldquo;operator&rdquo; to mean &ldquo;controllers&rdquo;. I do not
-make a distinction between an operator (e.g., elatic operator) or
-controllers.</li></ul><hr><p>Here are the links that I would give to anyone interested in writing their
+make a distinction between an operator (e.g., the <a href=https://github.com/elastic/cloud-on-k8s>elastic
+operator</a>) or controllers.</li></ul><hr><p>Here are the links that I would give to anyone interested in writing their
 own controller:</p><ul><li><a href=https://book.kubebuilder.io/quick-start.html>Kubebuilder book</a> is a
 nice starting point. Kubebuilder uses code generation a lot and that&rsquo;s
 what most controllers use nowadays (Rancher uses a somehow forked version
