@@ -1,6 +1,6 @@
 ---
-title: The Kubernetes level-based state
-description: "a"
+title: Kubernetes level-based behaviour
+description: ""
 date: 2020-04-20
 url: /kubernetes-level-based-state
 tags: [kubernetes]
