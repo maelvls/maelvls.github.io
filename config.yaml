@@ -6,7 +6,7 @@ googleAnalytics: "UA-88710120-3"
 # disqusShortname: maelvls-dev
 paginate: 1000
 pygmentsstyle: abap # will deprecate soon since we use goldmark now
-pygmentsUseClasses: true # hugo gen chromastyles --style=abap > statis/css/syntax.css
+pygmentsUseClasses: true # hugo gen chromastyles --style=abap >> static/css/maelvls.css
 pygmentscodefences: true
 pygmentscodefencesguesssyntax: true
 taxonomies:
@@ -17,8 +17,7 @@ params:
 
   # Custom css is expected to be in static/css/.
   customCSS: maelvls.css
-  subtitle: |
-    Systems software engineer. I write mostly about Kubernetes and Go. [About](/about)
+  subtitle: Systems software engineer. I write mostly about Kubernetes and Go. [About](/about)
   avatar: /img/mael.jpg
   disableDisqusTypes:
     - page
