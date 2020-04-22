@@ -41,8 +41,12 @@ own controller:
 
 - [Kubebuilder book](https://book.kubebuilder.io/quick-start.html) is a
   nice starting point. Kubebuilder uses code generation a lot and that's
-  what most controllers use nowadays (at Rancher, they use a somehow forked
-  version of controller-runtime and controller-tools that generates code).
+  what most controllers use nowadays (Rancher uses a somehow forked version
+  of controller-runtime and controller-tools,
+  [Wrangler](https://github.com/rancher/wrangler), that also generates code
+  but with their own "style" – for example, simple flat interfaces instead
+  of [client-go](https://github.com/kubernetes/client-go)'s deeply nested
+  interfaces that don't feel like Go).
 - The [Kubernetes API
   conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
   is an amazing document. It summarizes a lot of the "tribal knowledge"
