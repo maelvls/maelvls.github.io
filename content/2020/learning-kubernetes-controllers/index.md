@@ -20,11 +20,11 @@ scattered everywhere. This post intends to help you start with controllers.
 
 Let us begin with some terminology:
 
-- when I say "controller" (singular noun), I mean one single loop that
-  watches some objects. I often call this loop "controller loop" or "sync
-  loop" or even "reconcile loop".
-- When I say "controllers" (plural), I mean one binary that runs multiple
-  sync loops.
+- By "controller" (singular noun), I mean one single loop that watches some
+  objects. I often call this loop "controller loop" or "sync loop" or even
+  "reconcile loop".
+- By "controllers" (plural), I mean one binary that runs multiple sync
+  loops.
 - A CRD (custom resource definition) is a simple YAML manifest that
   describes a custom object. After applying it to a Kubernetes cluster, it
   will start accepting manifests of this custom kind.
