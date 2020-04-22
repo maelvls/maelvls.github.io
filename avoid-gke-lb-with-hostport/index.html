@@ -20,7 +20,7 @@ be able to use ExternalDNS.</li></ol><p>Thus, my goal is expose Traefik on 80 an
 and I would have to write some controller that would get the node internal
 IP and then set the <code>externalIPs</code> with these.</p><p>Instead, I opted for the <code>hostPort</code> solution. No restriction on 80 or 443.
 But I still have to automate a lot. Fortunately,
-<a href=https://github.com/kontena/akrobateo>akrobateo</a> does exactly what I need.</p><blockquote><p><strong>hostPort</strong> is a field you can set in a Pod. The hostPort is used by
+<a href=https://github.com/kontena/akrobateo>akrobateo</a> does exactly what I need.</p><blockquote><p><code>hostPort</code> is a field you can set in a Pod. The hostPort is used by
 kube-proxy to forward traffic coming to the node with the destination
 <code>hostIP:hostPort</code> to the pod itself.</p><div class=highlight><pre class=chroma><code class=language-yaml data-lang=yaml><span class=k>apiVersion</span><span class=p>:</span><span class=w> </span>v1<span class=w>
 </span><span class=w></span><span class=k>kind</span><span class=p>:</span><span class=w> </span>Pod<span class=w>
@@ -106,9 +106,12 @@ and might simply pick the first element.</p><h2 id=pros-and-cons>Pros and cons</
 documentation</a>:</p><blockquote><p>Don&rsquo;t specify a <code>hostPort</code> for a Pod unless it is absolutely necessary.
 When you bind a Pod to a <code>hostPort</code>, it limits the number of places the
 Pod can be scheduled, because each &lt;<code>hostIP</code>, <code>hostPort</code>, <code>protocol</code>>
-combination must be unique. If you don&rsquo;t specify the <code>hostIP</code> and
+combination must be unique.</p><p>[When using <code>hostPort</code>,] if you don&rsquo;t specify the <code>hostIP</code> and
 <code>protocol</code> explicitly, Kubernetes will use <code>0.0.0.0</code> as the default
-<code>hostIP</code> and <code>TCP</code> as the default <code>protocol</code>.</p></blockquote><p>I do not fuly grasp what are the implications of using a hostPort. I
+<code>hostIP</code> and <code>TCP</code> as the default <code>protocol</code>.</p><p>If you explicitly need to expose a Pod’s port on the node, consider
+using a
+<a href=https://kubernetes.io/docs/concepts/services-networking/service/#nodeport>NodePort</a>
+Service before resorting to <code>hostPort</code>.</p></blockquote><p>I do not fuly grasp what are the implications of using a hostPort. I
 guess it &ldquo;litters&rdquo; the iptables on the node? I&rsquo;m not sure.</p></li><li><p><strong>What if I have many more nodes, can it scale?</strong> I guess it won&rsquo;t. Maybe
 one idea would be to leader-elect two or three nodes and put only these
 two or three IPs in <code>status.loadbalancer.ingress[]</code>. If one of the nodes
