@@ -62,9 +62,45 @@ own controller:
 - The Kubernetes `status` field is tricky. You can take a look at
   "[conditions vs. phases vs.
   reasons](https://maelvls.dev/kubernetes-conditions/)".
-- The Kubernetes codebase itself is also a very nice read. For
+- The [Kubernetes codebase](https://github.com/kubernetes/kubernetes)
+  itself is also a very nice read. It might feel overwhelming at first; I
+  invite you to take a look at a few of the following sync loops contained
+  in the `kube-controller-manager`, `kube-scheduler` and `kubelet`. Since
+  each sync loop reads or updates different objects, I also detail which
+  objects are updated or created by each sync loop:
+
+  | binary                  | sync loop = component              | reads | creates    | updates    |
+  | ----------------------- | ---------------------------------- | ----- | ---------- | ---------- |
+  | kube-controller-manager | [`syncDeployment`][syncdeployment] | Pod   | ReplicaSet | Deployment |
+  | kube-controller-manager | [`syncReplicaSet`][syncreplicaset] |       | Pod        |            |
+  | kubelet                 | [`syncPod`][syncpod]               |       |            | Pod        |
+  | kube-scheduler          | [`scheduleOne`][scheduleone]       |       |            | Pod        |
+  | kubelet                 | [`syncNodeStatus`][syncnodestatus] |       |            | Node       |
+
+  [scheduleone]: https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/scheduler/scheduler.go#L589-L762
+  [syncdeployment]: https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/deployment/deployment_controller.go#L560-L649
+  [syncreplicaset]: https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/replicaset/replica_set.go#L653-L721
+  [syncpod]: https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/kubelet/status/status_manager.go#L514-L567
+  [syncnodestatus]: https://github.com/kubernetes/kubernetes/blob/5bac42bff9bfb9dfe0f2ea40f1c80cac47fc12b2/pkg/kubelet/kubelet_node_status.go#L374-L391
+
+
+- For
   example, [syncReplicaSet](https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/replicaset/replica_set.go#L653-L721)
   shows how the Kubernetes team structures their sync functions.
+- [Gotime 105](https://changelog.com/gotime/105) "Kubernetes and Cloud
+  Native" with Joe Beda (initiator of Kubernetes) and Kris Nova is very
+  interesting and tells us more about the genesis of the project, which
+  things like why is Kubernetes written in Go and why client-go feels like
+  Java.
+- [https://github.com/operator-framework/operator-sdk](operator-sdk)
+  (RedHat) is a package that aims at helping dealing with the whole
+  scafollding when writing a sync loop. It relies on
+  [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime).
+  I don't use either of them but taking a look at these projects helps
+  getting more understanding about the challenges (read: boilerplate) that
+  comes when writing controllers. I personally write all the
+  controller-related boilerplate myself (creating the queue, setting event
+  handlers, running the loop itself...).
 
 And a final note: CRDs are not necessary for writing a controller! You can
 write a tiny controller that watches the "standard" Kubernetes objects.
