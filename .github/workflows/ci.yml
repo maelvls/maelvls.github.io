@@ -17,15 +17,14 @@ jobs:
         with:
           hugo-version: "0.64.0"
 
-      - name: hugo -d ./public --minify
-      - name: hugo -d ./public/unpublished --baseURL "https://maelvls.dev/unpublished/" --buildDrafts --buildFuture
+      - run: hugo -d ./public --minify
+      - run: hugo -d ./public/unpublished --baseURL "https://maelvls.dev/unpublished/" --buildDrafts --buildFuture
 
       # The GITHUB_TOKEN already given for running github actions is not
       # sufficient. It allows me to push to master but for some reason it
       # won't trigger a github-pages "build & push to CDN". I had to create a
       # personnal access token with the 'repo' scope.
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      - uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.GITHUB_PAT }}
           publish_dir: ./public
