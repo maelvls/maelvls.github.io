@@ -20,7 +20,27 @@ be able to use ExternalDNS.</li></ol><p>Thus, my goal is expose Traefik on 80 an
 and I would have to write some controller that would get the node internal
 IP and then set the <code>externalIPs</code> with these.</p><p>Instead, I opted for the <code>hostPort</code> solution. No restriction on 80 or 443.
 But I still have to automate a lot. Fortunately,
-<a href=https://github.com/kontena/akrobateo>akrobateo</a> does exactly what I need.</p><p>Akrobateo acts as an internal LoadBalancer service controller and replaces
+<a href=https://github.com/kontena/akrobateo>akrobateo</a> does exactly what I need.</p><blockquote><p><strong>hostPort</strong> is a field you can set in a Pod. The hostPort is used by
+kube-proxy to forward traffic coming to the node with the destination
+<code>hostIP:hostPort</code> to the pod itself.</p><div class=highlight><pre class=chroma><code class=language-yaml data-lang=yaml><span class=k>apiVersion</span><span class=p>:</span><span class=w> </span>v1<span class=w>
+</span><span class=w></span><span class=k>kind</span><span class=p>:</span><span class=w> </span>Pod<span class=w>
+</span><span class=w></span><span class=k>metadata</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>name</span><span class=p>:</span><span class=w> </span>akrobateo-lb-xmz8z<span class=w>
+</span><span class=w></span><span class=k>spec</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>containers</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span>- <span class=k>image</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;registry.pharos.sh/kontenapharos/akrobateo-lb:0.1.1&#34;</span><span class=w>
+</span><span class=w>    </span><span class=k>ports</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>    </span>- <span class=k>containerPort</span><span class=p>:</span><span class=w> </span><span class=m>443</span><span class=w>
+</span><span class=w>      </span><span class=k>hostPort</span><span class=p>:</span><span class=w> </span><span class=m>443</span><span class=w>                </span><span class=c># ⚠️</span><span class=w>
+</span><span class=w>      </span><span class=k>name</span><span class=p>:</span><span class=w> </span>https<span class=w>
+</span><span class=w>      </span><span class=k>protocol</span><span class=p>:</span><span class=w> </span>TCP<span class=w>
+</span><span class=w></span><span class=k>status</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>hostIP</span><span class=p>:</span><span class=w> </span><span class=m>172.31</span><span class=m>.4</span><span class=m>.153</span><span class=w>             </span><span class=c># ⚠️ hostIP and hostPort go together</span><span class=w>
+</span><span class=w>  </span><span class=k>podIP</span><span class=p>:</span><span class=w> </span><span class=m>192.168</span><span class=m>.1</span><span class=m>.38</span><span class=w>
+</span></code></pre></div><p>In this example pod, the pod runs on the node that has the hostIP
+<code>172.31.4.153</code>. Any time traffic comes to the main network interface of
+the node with the TCP packet destination <code>dst: 172.31.4.153:443</code> will be
+forwarded (i.e., DNATed) to <code>dst: 192.168.1.38:443</code>.</p><p>Note that this pod was actually created using a DeamonSet.</p></blockquote><p>Akrobateo acts as an internal LoadBalancer service controller and replaces
 the gce-ingress-controller that GKE applies to every GKE cluster. It is
 inspired by K3S&rsquo;
 <a href=https://github.com/rancher/k3s/blob/341a5553/pkg/servicelb/controller.go>servicelb</a>.</p><p>The akrobateo controller reads the LoadBalancer services and updates the
@@ -33,44 +53,43 @@ a new firewall rule:</p><div class=highlight><pre class=chroma><code class=langu
 </code></pre></div><p>Also, make sure we don&rsquo;t have a L4 load balancer still running. The load
 balancer won&rsquo;t get removed automatically.</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% gcloud compute forwarding-rules list
 Listed <span class=m>0</span> items.
-</code></pre></div><p>At this point, the LoadBalancer service should contain the IPs of the nodes:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% k -n traefik get services traefik -oyaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: traefik
-  namespace: traefik
-spec:
-  clusterIP: 10.27.244.111
-  externalTrafficPolicy: Cluster
-  ports:
-  - name: http
-    nodePort: <span class=m>30371</span>
-    port: <span class=m>80</span>
-    protocol: TCP
-    targetPort: http
-  - name: https
-    nodePort: <span class=m>32748</span>
-    port: <span class=m>443</span>
-    protocol: TCP
-    targetPort: https
-  type: LoadBalancer
-status:
-  loadBalancer:
-    ingress:
-    - ip: 35.211.248.124
-    - ip: 35.231.10.40
-
-
-% k -n traefik get services -owide
+</code></pre></div><p>At this point, the LoadBalancer service should contain the IPs of the nodes:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>kubectl -n traefik get services traefik -oyaml
+</code></pre></div><div class=highlight><pre class=chroma><code class=language-yaml data-lang=yaml><span class=k>apiVersion</span><span class=p>:</span><span class=w> </span>v1<span class=w>
+</span><span class=w></span><span class=k>kind</span><span class=p>:</span><span class=w> </span>Service<span class=w>
+</span><span class=w></span><span class=k>metadata</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>name</span><span class=p>:</span><span class=w> </span>traefik<span class=w>
+</span><span class=w>  </span><span class=k>namespace</span><span class=p>:</span><span class=w> </span>traefik<span class=w>
+</span><span class=w></span><span class=k>spec</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>clusterIP</span><span class=p>:</span><span class=w> </span><span class=m>10.27</span><span class=m>.244</span><span class=m>.111</span><span class=w>
+</span><span class=w>  </span><span class=k>externalTrafficPolicy</span><span class=p>:</span><span class=w> </span>Cluster<span class=w>
+</span><span class=w>  </span><span class=k>ports</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span>- <span class=k>name</span><span class=p>:</span><span class=w> </span>http<span class=w>
+</span><span class=w>    </span><span class=k>nodePort</span><span class=p>:</span><span class=w> </span><span class=m>30371</span><span class=w>
+</span><span class=w>    </span><span class=k>port</span><span class=p>:</span><span class=w> </span><span class=m>80</span><span class=w>
+</span><span class=w>    </span><span class=k>protocol</span><span class=p>:</span><span class=w> </span>TCP<span class=w>
+</span><span class=w>    </span><span class=k>targetPort</span><span class=p>:</span><span class=w> </span>http<span class=w>
+</span><span class=w>  </span>- <span class=k>name</span><span class=p>:</span><span class=w> </span>https<span class=w>
+</span><span class=w>    </span><span class=k>nodePort</span><span class=p>:</span><span class=w> </span><span class=m>32748</span><span class=w>
+</span><span class=w>    </span><span class=k>port</span><span class=p>:</span><span class=w> </span><span class=m>443</span><span class=w>
+</span><span class=w>    </span><span class=k>protocol</span><span class=p>:</span><span class=w> </span>TCP<span class=w>
+</span><span class=w>    </span><span class=k>targetPort</span><span class=p>:</span><span class=w> </span>https<span class=w>
+</span><span class=w>  </span><span class=k>type</span><span class=p>:</span><span class=w> </span>LoadBalancer<span class=w>
+</span><span class=w></span><span class=k>status</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>  </span><span class=k>loadBalancer</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>    </span><span class=k>ingress</span><span class=p>:</span><span class=w>
+</span><span class=w></span><span class=w>    </span>- <span class=k>ip</span><span class=p>:</span><span class=w> </span><span class=m>35.211</span><span class=m>.248</span><span class=m>.124</span><span class=w>
+</span><span class=w>    </span>- <span class=k>ip</span><span class=p>:</span><span class=w> </span><span class=m>35.231</span><span class=m>.10</span><span class=m>.40</span><span class=w>
+</span></code></pre></div><p>When displayed with <code>kubectl get</code>, we can see the two IPs from the
+status.loadBalancer in the &ldquo;EXTERNAL-IP&rdquo; column:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% kubectl -n traefik get services -owide
 NAME                TYPE           CLUSTER-IP      EXTERNAL-IP                   PORT<span class=o>(</span>S<span class=o>)</span>
 traefik             LoadBalancer   10.27.244.111   35.211.248.124,35.231.10.40   80:30371/TCP,443:32748/TCP
-</code></pre></div><p>Let&rsquo;s check that these are the external IPs of the cluster nodes:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% k get nodes -owide
+</code></pre></div><p>Let&rsquo;s check that these are the external IPs of the cluster nodes:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% kubectl get nodes -owide
 NAME                                                 INTERNAL-IP   EXTERNAL-IP
 gke-august-period-234610-worker-0c5c84f5-rq25        10.142.0.61   35.231.10.40
 gke-august-period-234610-worker-micro-cf12d79d-klh6  10.142.0.62   35.211.248.124
 </code></pre></div><p>The <code>kube-system/akrobateo</code> controller will create a DeamonSet for every
 LoadBalancer service it finds. The DeamonSet is created in the same
-namespace as where the Service is:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% k get ds -A
+namespace as where the Service is:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% kubectl get ds -A
 NAMESPACE     NAME                       DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE
 traefik       akrobateo-traefik          <span class=m>2</span>         <span class=m>2</span>         <span class=m>2</span>       <span class=m>2</span>            <span class=m>2</span>
 </code></pre></div><p>This DeamonSet runs one pod per node, each pod being responsible for
@@ -83,11 +102,21 @@ reason, it doesn&rsquo;t. As we have seen previously, the Akrobateo controller
 has successfully updated the traefik/traefik service (type LoadBalancer).
 And since Traefik is the ingress controller responsible for setting the
 <code>status.loadBalancer.ingress</code> on ingresses, Traefik is probably the culprit
-and might simply pick the first element.</p><h2 id=pros-and-cons>Pros and cons</h2><ul><li><strong>What about security, isn&rsquo;t <code>hostPort</code> a bad practice?</strong> I don&rsquo;t know
-enough yet and cannot really tell.</li><li><strong>What if I have many more nodes, can it scale?</strong> I don&rsquo;t know.</li><li><strong>Reliability?</strong> If the nodes that are advertised in the <code>A</code> DNS records
-go down, no more ingress traffic possible.</li><li><strong>What if the node&rsquo;s external-ip changes?</strong> Since these IPs are
+and might simply pick the first element.</p><h2 id=pros-and-cons>Pros and cons</h2><ul><li><p><strong>Isn&rsquo;t <code>hostPort</code> a bad practice?</strong> From the <a href=https://kubernetes.io/docs/concepts/configuration/overview/#services>Kubernetes
+documentation</a>:</p><blockquote><p>Don&rsquo;t specify a <code>hostPort</code> for a Pod unless it is absolutely necessary.
+When you bind a Pod to a <code>hostPort</code>, it limits the number of places the
+Pod can be scheduled, because each &lt;<code>hostIP</code>, <code>hostPort</code>, <code>protocol</code>>
+combination must be unique. If you don&rsquo;t specify the <code>hostIP</code> and
+<code>protocol</code> explicitly, Kubernetes will use <code>0.0.0.0</code> as the default
+<code>hostIP</code> and <code>TCP</code> as the default <code>protocol</code>.</p></blockquote><p>I do not fuly grasp what are the implications of using a hostPort. I
+guess it &ldquo;litters&rdquo; the iptables on the node? I&rsquo;m not sure.</p></li><li><p><strong>What if I have many more nodes, can it scale?</strong> I guess it won&rsquo;t. Maybe
+one idea would be to leader-elect two or three nodes and put only these
+two or three IPs in <code>status.loadbalancer.ingress[]</code>. If one of the nodes
+fails, the DNS will be updated; the client will be able to failover using
+the two or three IPs from the DNS record.</p></li><li><p><strong>Reliability?</strong> If the nodes that are advertised in the <code>A</code> DNS records
+go down, no more ingress traffic possible.</p></li><li><p><strong>What if the node&rsquo;s external-ip changes?</strong> Since these IPs are
 ephemeral, the controller will pick up this change and change the
-<code>status.loadBalancer.ingress</code> field of my <code>type: LoadBalancer</code> service.</li></ul><h2 id=how-does-it-work>How does it work?</h2><p>Since I created a firewall rule for 80 and 443, GCE forwards the traffic
+<code>status.loadBalancer.ingress</code> field of my <code>type: LoadBalancer</code> service.</p></li></ul><h2 id=how-does-it-work>How does it work?</h2><p>Since I created a firewall rule for 80 and 443, GCE forwards the traffic
 from 35.211.248.124 (the node&rsquo;s external-ip) to 10.142.0.62 (the node&rsquo;s
 internal-ip). And since we use <code>hostPort</code>, kubelet creates some iptable
 rules that redirect traffic to the pod running on that node:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% gcloud compute ssh gke-august-period-234610-worker-micro-cf12d79d-klh6 --command<span class=o>=</span><span class=s1>&#39;sudo iptables-save&#39;</span> <span class=p>|</span> egrep <span class=s2>&#34;(HOSTPORT|HP)&#34;</span>
@@ -112,5 +141,8 @@ sudo iptables -t nat -I POSTROUTING -d 10.27.244.111/32 -p TCP -j MASQUERADE
 sudo iptables -t nat -I PREROUTING ! -s 10.27.244.111/32 -p TCP --dport <span class=m>443</span> -j DNAT --to 10.27.244.111:443
 sudo iptables -t nat -I POSTROUTING -d 10.27.244.111/32 -p TCP -j MASQUERADE
 </code></pre></div></li></ul><p>Here is a diagram that shows the whole picture:</p><p><img src=packet-routing-with-akrobateo.png alt="Packet routing using Akrobateo, Traefik and iptables"></p><h2 id=recap>Recap</h2><ul><li>Akrobateo is a controller that watches Services of <code>type: LoadBalancer</code></li><li>When it finds one, creates a deamonset of empty pods</li><li>The task of these empty pods is to set one iptable rule that redirects
-traffic to the ClusterIP of the <code>type: LoadBalancer</code> service</li><li>Akrobateo also sets the Service&rsquo;s status with the loadBalancer IP.</li><li>Benefit: since the loadBalancer IP is properly set, ExternalDNS works.</li></ul><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/kubernetes/>kubernetes</a>
+traffic to the ClusterIP of the <code>type: LoadBalancer</code> service</li><li>Akrobateo also sets the Service&rsquo;s status with the loadBalancer IP.</li><li>Benefit: since the loadBalancer IP is properly set, ExternalDNS works.</li></ul><p><strong>Update 22 April 2020:</strong></p><ul><li>Explain what I mean by <code>hostPort</code>;</li><li>In &ldquo;Isn&rsquo;t <code>hostPort</code> a bad practice?", I replaced &ldquo;I don&rsquo;t know&rdquo; with a
+<a href=https://kubernetes.io/docs/concepts/configuration/overview/#services>link</a>
+to the Kubernetes documentation that mention why I should avoid hostPort.</li><li>In &ldquo;What if I have many more nodes, can it scale?", I replaced &ldquo;I don&rsquo;t
+know&rdquo; with a proposition of solution.</li></ul><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/kubernetes/>kubernetes</a>
 <a href=/tags/networking/>networking</a></p></div><div class=clearit></div></div></div></div><div class="footer wrapper"><nav class=nav><div class=footertext></div></nav></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></body></html>
