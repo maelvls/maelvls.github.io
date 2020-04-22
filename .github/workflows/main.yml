@@ -13,14 +13,12 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+      - uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: '0.64.0'
+          hugo-version: "0.64.0"
 
-      - name: Build
-        run: |
-          hugo --minify
+      - name: hugo -d ./public --minify
+      - name: hugo -d ./public/unpublished --baseURL "https://maelvls.dev/unpublished/" --buildDrafts --buildFuture
 
       # The GITHUB_TOKEN already given for running github actions is not
       # sufficient. It allows me to push to master but for some reason it
