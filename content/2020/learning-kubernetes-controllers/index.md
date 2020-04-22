@@ -8,13 +8,17 @@ description: |
 date: 2020-04-22T11:58:26+02:00
 url: /learning-kubernetes-controllers
 images: [learning-kubernetes-controllers/cover-learning-kubernetes-controllers.png]
+tags: [kubernetes, controllers]
 ---
 
 Kubernetes' extensibility is probably its biggest strength. Controllers and
 CRDs are all over the place. But finding the right information to begin
 writing a controller isn't easy due to the sheer amount of tribal knowledge
-scattered everywhere. Here are some links to help you start. And let us
-begin with some notes on terminology:
+scattered everywhere. This post intends to help you start with controllers.
+
+---
+
+Let us begin with some terminology:
 
 - when I say "controller" (singular noun), I mean one single loop that
   watches some objects. I often call this loop "controller loop" or "sync
@@ -30,8 +34,10 @@ begin with some notes on terminology:
   make a distinction between an operator (e.g., elatic operator) or
   controllers.
 
-And here are the links that I would give to anyone interested in writing
-their own controller:
+---
+
+Here are the links that I would give to anyone interested in writing their
+own controller:
 
 - [Kubebuilder book](https://book.kubebuilder.io/quick-start.html) is a
   nice starting point. Kubebuilder uses code generation a lot and that's
