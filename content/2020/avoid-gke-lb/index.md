@@ -49,7 +49,7 @@ Instead, I opted for the `hostPort` solution. No restriction on 80 or 443.
 But I still have to automate a lot. Fortunately,
 [akrobateo](https://github.com/kontena/akrobateo) does exactly what I need.
 
-> **hostPort** is a field you can set in a Pod. The hostPort is used by
+> `hostPort` is a field you can set in a Pod. The hostPort is used by
 > kube-proxy to forward traffic coming to the node with the destination
 > `hostIP:hostPort` to the pod itself.
 >
@@ -203,9 +203,16 @@ and might simply pick the first element.
   > Don't specify a `hostPort` for a Pod unless it is absolutely necessary.
   > When you bind a Pod to a `hostPort`, it limits the number of places the
   > Pod can be scheduled, because each <`hostIP`, `hostPort`, `protocol`>
-  > combination must be unique. If you don't specify the `hostIP` and
+  > combination must be unique.
+  >
+  > [When using `hostPort`,] if you don't specify the `hostIP` and
   > `protocol` explicitly, Kubernetes will use `0.0.0.0` as the default
   > `hostIP` and `TCP` as the default `protocol`.
+  >
+  > If you explicitly need to expose a Pod’s port on the node, consider
+  > using a
+  > [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport)
+  > Service before resorting to `hostPort`.
 
   I do not fuly grasp what are the implications of using a hostPort. I
   guess it "litters" the iptables on the node? I'm not sure.
