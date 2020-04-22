@@ -87,7 +87,7 @@ own controller:
   interesting and tells us more about the genesis of the project, which
   things like why is Kubernetes written in Go and why client-go feels like
   Java.
-- [https://github.com/operator-framework/operator-sdk](operator-sdk)
+- The [operator-sdk](https://github.com/operator-framework/operator-sdk)
   (RedHat) is a package that aims at helping dealing with the whole
   scafollding when writing a sync loop. It relies on
   [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime).
