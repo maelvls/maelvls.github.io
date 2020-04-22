@@ -82,11 +82,6 @@ own controller:
   [syncreplicaset]: https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/replicaset/replica_set.go#L653-L721
   [syncpod]: https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/kubelet/status/status_manager.go#L514-L567
   [syncnodestatus]: https://github.com/kubernetes/kubernetes/blob/5bac42bff9bfb9dfe0f2ea40f1c80cac47fc12b2/pkg/kubelet/kubelet_node_status.go#L374-L391
-
-
-- For
-  example, [syncReplicaSet](https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/replicaset/replica_set.go#L653-L721)
-  shows how the Kubernetes team structures their sync functions.
 - [Gotime 105](https://changelog.com/gotime/105) "Kubernetes and Cloud
   Native" with Joe Beda (initiator of Kubernetes) and Kris Nova is very
   interesting and tells us more about the genesis of the project, which
