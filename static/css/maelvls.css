@@ -44,6 +44,19 @@ table {
   table-layout: fixed;
 }
 
+table tbody tr:nth-of-type(even) {
+  background-color: #f9f9fa;
+}
+
+table thead th {
+  border-bottom: 2px solid #dee2e6;
+  vertical-align: bottom;
+}
+
+table tbody tr:nth-of-type(odd) {
+  background-color: #fff;
+}
+
 @media screen and (min-width: 500px) {
   table {
     font-size: 0.9em;
