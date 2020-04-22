@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.64.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="keywords" content="kubernetes"><meta name="description" content="My free trial on GKE was ending in 2 days and I had to find a way to migrate away. I decided to switch to Civo&#39;s managed K3s."><meta property="og:title" content="Migrating from GKE to Civo&#39;s K3s" />
+<meta property="og:description" content="My free trial on GKE was ending in 2 days and I had to find a way to migrate away. I decided to switch to Civo&#39;s managed K3s." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/unpublished/from-gke-to-civo-k3s/" />
+<meta property="og:image" content="https://maelvls.dev/unpublished/from-gke-to-civo-k3s/civo-k3s.png" />
+<meta property="article:published_time" content="2020-03-22T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-03-22T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://maelvls.dev/unpublished/from-gke-to-civo-k3s/civo-k3s.png"/>
+
+<meta name="twitter:title" content="Migrating from GKE to Civo&#39;s K3s"/>
+<meta name="twitter:description" content="My free trial on GKE was ending in 2 days and I had to find a way to migrate away. I decided to switch to Civo&#39;s managed K3s."/>
+
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/maelvls.css" /><title>Migrating from GKE to Civo&#39;s K3s | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/unpublished/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/unpublished/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="meta">
+<div class="date">
+<span class="day">22</span>
+<span class="rest">Mar 2020</span>
+</div>
+</div>
+
+<div class="matter">
+<h1 class="title">Migrating from GKE to Civo&#39;s K3s</h1>
+</div>
+</div>
+<div class="markdown">
+<p>A few days ago, reality hit me hard with this message:</p>
+<img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="60%">
+<p>I had only 2 days to find a plan and migrate everything away from GKE! My
+current setup was only using a single <code>n1-standard-1</code> on <code>us-west-1</code> and
+with no network load balancer. But that was still around €15 a month and I
+just didn&rsquo;t want to pay.</p>
+<p>Note that I will still use Google&rsquo;s CloudDNS service for now.</p>
+<p>I chose to migrate to Civo&rsquo;s managed K3s since they are in beta and I
+really wanted to try K3s.</p>
+<p>So I went ahead and create a two-nodes cluster:</p>
+<p><img src="civo-k3s.png" alt="My K3s cluster on Civo"></p>
+<p>Note that since this is K3s, the master can also be scheduled with pods. So
+I could have gone with a single node.</p>
+<h2 id="migrating-external-dns-cert-manager-and-traefik">Migrating external-dns, cert-manager and traefik</h2>
+<p>That&rsquo;s the easy part. I just had to go through my README.md and play the
+<code>helm</code> commands one by one (I know I know, I should automate that 😁).</p>
+<p>In the process, I decided to go with <code>*.k.maelvls.dev</code> instead of
+<code>*.k.maelvls.dev</code>. The shorter the better!</p>
+<p>After creating Traefik, I knew that its service would automatically be
+populated with the <code>status.loadBalancer</code> field thanks to K3s&rsquo;
+<a href="https://github.com/rancher/k3s/blob/master/pkg/servicelb/controller.go">servicelb</a>.
+Let&rsquo;s see:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% kubectl -n traefik get services
+NAME     TYPE          CLUSTER-IP        EXTERNAL-IP      PORT<span class="o">(</span>S<span class="o">)</span>
+traefik  LoadBalancer  192.168.255.134   91.211.152.190   443:32164/TCP,80:32684/TCP
+</code></pre></div><p>Great! Now, Traefik will propagate this external IP to the ingresses, and
+ExternalDNS will use the <code>status.loadBalancer</code> from these ingresses in
+order to set <code>A</code> records.</p>
+<p>If you want to know more about how servicelb works, you can take a look at
+<a href="https://maelvls.dev/packets-eye-kubernetes-service/">The Packet&rsquo;s-Eye View of a Kubernetes
+Service</a> where I
+describe how Akrobateo works (K3s&rsquo; servicelb has the exact same behavior).</p>
+<h2 id="migrating-minio">Migrating MinIO</h2>
+<p>I use minio for various uses. It is great if you want a S3-compatible
+storage solution. In order to migrate, I followed
+<a href="https://www.scaleway.com/en/docs/how-to-migrate-object-storage-buckets-with-minio">this</a>.
+It&rsquo;s quite painless:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">$ kubectl -n minio run a --generator<span class="o">=</span>run-pod/v1 -it --rm --restart<span class="o">=</span>Never --image<span class="o">=</span>alpine
+
+% wget https://dl.minio.io/client/mc/release/linux-amd64/mc <span class="o">&amp;&amp;</span> install mc /usr/bin
+% mc config host add old https://minio.kube.maelvls.dev AKIAIOSFODNN7EXAMPLE <span class="s2">&#34;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&#34;</span> --api S3v4
+% mc config host add new http://minio:9000 AKIAIOSFODNN7EXAMPLE <span class="s2">&#34;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&#34;</span> --api S3v4
+
+% mc ls old/         <span class="c1"># List buckets since I had to create manually each bucket.</span>
+% mc mb new/bucket1  <span class="c1"># Then create each bucket one by one.</span>
+% mc cp --recursive old/bucket1/ new/bucket1/
+</code></pre></div><p>I also decided to change the access key &amp; secret key. Again, quite
+painless. As mentioned in the
+<a href="https://github.com/minio/minio/tree/master/docs/config">documentation</a>,
+I changed the secret stored in Kubernetes:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">kubectl -n minio edit secret minio
+</code></pre></div><p>and then I temporarily added the <code>MINIO_ACCESS_KEY_OLD</code> and
+<code>MINIO_SECRET_KEY_OLD</code> to the deployment by editing it.</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">kubectl -n minio edit deployment minio
+</code></pre></div><p>After that, the pods get recreated and MinIO picks up the new secret. Note:
+I also had to edit the deployment again in order to remove the temporary
+<code>_OLD</code> environment variables.</p>
+<hr>
+<p>To recap, the whole migration was painless. The only data I migrated was
+MinIO. Note that I didn&rsquo;t have any SLA to comply with, but if I had planned
+a bit better I could have moved over with almost zero downtime.</p>
+<p>In order to get a almost-zero-downtime, I would have made sure to keep the
+old and new MinIO instances replicated until the move was over. The only
+problem with the whole migration is the DNS change: I cannot precisely know
+how much time that will take: after the migration was over and the DNS
+entries propagated, if some people were hitting the old IP (e.g., old DNS
+entries), the old and new clusters would have become out-of-sync. To
+mitigate that, I could have chosen to &ldquo;cut&rdquo; the old cluster just to make
+sure that case never happens.</p>
+<p>The repo for my Kubernetes playground cluster (<code>*.k.maelvls.dev</code>) is
+available <a href="https://github.com/maelvls/k.maelvls.dev">here</a>.</p>
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+</div>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+<div class="taxosfloating_left">
+<p>Tags</p>
+</div>
+<div class="termsfloating_right">
+<p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a href="/tags/kubernetes/"> kubernetes </a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+<div class="clearit"></div>
+
+
+
+
+
+</div></div>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.64.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:title" content="Kubeconfigs and Certs" />
+<meta property="og:description" content="Let&rsquo;s go through the client-certificate in my kube config. This kube config contains one user, &ldquo;kind-kind&rdquo;. Instead of inspecting the certificate PEM with openssl, I use certigo (much nicer experience!)
+kubectl config view -ojson --flatten \  | jq &#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39; -r \  | base64 -d \  | certigo dump That gives us:
+** CERTIFICATE 1 ** Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC Subject: O=system:masters, CN=kubernetes-admin Issuer: CN=kubernetes Warnings: Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set The common name (CN=) is &ldquo;kubernetes-admin&rdquo;, that&rsquo;s the name of the user." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/unpublished/kubeconfigs-and-certs/" />
+<meta property="og:image" content="https://maelvls.dev/unpublished/kubeconfigs-and-certs/cover-kubeconfigs-and-certs.png" />
+<meta property="article:published_time" content="2020-04-18T22:14:07+02:00" />
+<meta property="article:modified_time" content="2020-04-18T22:14:07+02:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://maelvls.dev/unpublished/kubeconfigs-and-certs/cover-kubeconfigs-and-certs.png"/>
+
+<meta name="twitter:title" content="Kubeconfigs and Certs"/>
+<meta name="twitter:description" content="Let&rsquo;s go through the client-certificate in my kube config. This kube config contains one user, &ldquo;kind-kind&rdquo;. Instead of inspecting the certificate PEM with openssl, I use certigo (much nicer experience!)
+kubectl config view -ojson --flatten \  | jq &#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39; -r \  | base64 -d \  | certigo dump That gives us:
+** CERTIFICATE 1 ** Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC Subject: O=system:masters, CN=kubernetes-admin Issuer: CN=kubernetes Warnings: Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set The common name (CN=) is &ldquo;kubernetes-admin&rdquo;, that&rsquo;s the name of the user."/>
+
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/maelvls.css" /><title>Kubeconfigs and Certs | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/unpublished/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/unpublished/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="meta">
+<div class="date">
+<span class="day">18</span>
+<span class="rest">Apr 2020</span>
+</div>
+</div>
+
+<div class="matter">
+<h1 class="title">Kubeconfigs and Certs</h1>
+</div>
+</div>
+<div class="markdown">
+<p>Let&rsquo;s go through the client-certificate in my kube config. This kube config
+contains one user, &ldquo;kind-kind&rdquo;. Instead of inspecting the certificate PEM
+with openssl, I use <a href="https://github.com/square/certigo">certigo</a> (much
+nicer experience!)</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">kubectl config view -ojson --flatten <span class="se">\
+</span><span class="se"></span>  <span class="p">|</span> jq <span class="s1">&#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39;</span> -r <span class="se">\
+</span><span class="se"></span>  <span class="p">|</span> base64 -d <span class="se">\
+</span><span class="se"></span>  <span class="p">|</span> certigo dump
+</code></pre></div><p>That gives us:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">** CERTIFICATE 1 **
+Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC
+Subject:
+    O=system:masters, CN=kubernetes-admin
+Issuer:
+    CN=kubernetes
+Warnings:
+    Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set
+</code></pre></div><p>The common name (<code>CN=</code>) is &ldquo;kubernetes-admin&rdquo;, that&rsquo;s the name of the user.
+The organization (<code>O=</code>) is &ldquo;system:master&rdquo;.</p>
+<blockquote>
+<p>Quick recap of what a certificate is. For us, &ldquo;certificate&rdquo; means a
+<a href="https://tools.ietf.org/html/rfc5280#section-4.1">X.509-v3</a>-formated
+binary chunk. This binary chunk is, most of the time, presented in the
+PEM format (the binary chunk is encoded in base 64 and wrapped with some
+decorations:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">-----BEGIN RSA PRIVATE KEY-----
+&lt;the base64-encoded X.509 binary chunk&gt;
+-----END RSA PRIVATE KEY-----
+</code></pre></div><p>This chunk of binary data contains three important parts:</p>
+<ol>
+<li>the public key of the certificate,</li>
+<li>a list of attributes, e.g. <code>O=Google LLC,CN=*.google.com</code>,</li>
+<li>a signature of (1)+(2) created using the certificate authority&rsquo;s
+private key.</li>
+</ol>
+<p>The CA certificate uses its private key to sign the concatenation of the
+attributes with the public key:</p>
+<div class="nohighlight">
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"> +------------------------------+  +-------------------------+
+ |        CA CERTIFICATE        |  |         CA KEY          |
+ |+----------------------------+|  |+-----------------------+|
+ || O=GlobalSign,CN=GlobalSign ||  ||      private key      ||
+ |+----------------------------+|  |+-----------------------+|
+ |+----------------------------+|  +-------------------------+
+ ||         public key         ||               |
+ |+----------------------------+|               |
+ +------------------------------+               |
+                                                |
+                                                |
+                                                |
+ +------------------------------+               |signs using
+ |         CERTIFICATE          |               |private key
+ |1----------------------------+|               |
+ ||O=Google LLC,CN=*.google.com||               |
+ |+----------------------------+|               |
+ |2----------------------------+|               |
+ ||         public key         ||               |
+ |+----------------------------+|               |
+ |+----------------------------+|               |
+ ||      signature of 1+2      ||&lt;--------------+
+ |+----------------------------+|
+ +------------------------------+
+</code></pre></div></div>
+<p>When someone connects to foo.google.com and wants to make sure this
+server can be trusted, they would use the CA certificates that are
+securely stored on their disk in order to verify the signature of the
+untrusted certificate that foo.google.com just sent them.</p>
+<div class="nohighlight">
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">                                  +------------------------------+
+                                  |   CA CERTIFICATE (trusted)   |
+Can I trust foo.google.com?       |+----------------------------+|
+            |                     || O=GlobalSign,CN=GlobalSign ||
+            |                     |+----------------------------+|
+            |                     |+----------------------------+|
+            |  +-----------------&gt;||         public key         ||
+            |  |                  |+----------------------------+|
+            |  |                  +------------------------------+
+            |  |check signature   (this cert is secure on my disk)
+            |  |using public key
+            |  |
+        (1) |  |(2)               +------------------------------+
+            |  |                  |    CERTIFICATE (untrusted)   |
+     verify |  |                  |1----------------------------+|
+  signature |  |                  ||O=Google LLC,CN=*.google.com||
+            |  |                  |+----------------------------+|
+            |  |                  |2----------------------------+|
+            |  |                  ||         public key         ||
+            |  +------------------|+----------------------------+|
+            |                     |+----------------------------+|
+            +--------------------&gt;||      signature of 1+2      ||
+                                  |+----------------------------+|
+                                  +------------------------------+
+                                  (this cert is sent to me by the
+                                            foo.google.com server)
+</code></pre></div></div>
+</blockquote>
+<!--
+https://textik.com/#d85b4624473ca862
+-->
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/gXz4cq3PKdg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+</div>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+</div></div>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>
