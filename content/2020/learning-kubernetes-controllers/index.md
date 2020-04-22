@@ -31,8 +31,8 @@ Let us begin with some terminology:
 - "CRD" is just a schema and doesn't carry any logic (except for the basic
   validation the apiserver does). The actual logic happens in controllers.
 - Many people also use the term "operator" to mean "controllers". I do not
-  make a distinction between an operator (e.g., elatic operator) or
-  controllers.
+  make a distinction between an operator (e.g., the [elastic
+  operator](https://github.com/elastic/cloud-on-k8s)) or controllers.
 
 ---
 
