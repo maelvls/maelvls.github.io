@@ -110,6 +110,8 @@ And a final note: CRDs are not necessary for writing a controller! You can
 write a tiny controller that watches the "standard" Kubernetes objects.
 That's exactly what ingress controllers do: they watch for Service objects.
 
+**Update 23 April 2020**: I added a quote from Kris Nova! 😁
+
 <script src="https://utteranc.es/client.js"
         repo="maelvls/maelvls.github.io"
         issue-term="pathname"
