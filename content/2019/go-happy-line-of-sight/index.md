@@ -10,6 +10,95 @@ url: /go-happy-line-of-sight
 images: [go-happy-line-of-sight/cover-happy-line-of-sight.png]
 ---
 
+Readability is a properly we all love about Go. In other languages, it
+might be fine to have a lot of nested if statements; in Go, it is a good
+practice to keep away from overly-nested logic. One of the [Go
+proverbs](https://www.reddit.com/r/ProgrammerTIL/comments/acweob/go_til_a_new_go_proverb_the_happy_path_is/)
+says:
+
+> The happy path is left-aligned.
+
+In this post, I attempt to show through two examples what we mean by
+"left-aligned happy path" and what are the benefits in terms of readibility
+and maintainability.
+
+## Simple example
+
+Let's see a quick example of what we mean by "happy path is left-aligned".
+The following snippet has two nested ifs. That would be the standard idiom
+for any language like Java:
+
+```go
+if authorizationHeader != "" {
+    // nested happy path
+    if len(bearerToken) != 2 {
+        // even more nested happy path
+    }
+    // error handling here
+}
+// error handling here
+```
+
+We see two things happening here:
+
+- nesting `if`s increases the cognitive weight; we have to think in order
+  to understand what the logic does.
+- nesting ifs often encourages the use of "fallthroughs" (reusing the same
+  code path for two different cases). It tends to obfuscate how and where
+  the function fails and returns.
+
+If we move the first `if` to its own "guard statement", then we end up with
+less nesting which translates to code easier to parse (parse as a human):
+
+```go
+if authorizationHeader == "" {
+    // unhappy path, error handling here
+    return
+}
+
+// happy path always stays (or almost always) unnested
+if len(bearerToken) != 2 {
+    // unhappy path, error handling here
+    return
+}
+```
+
+Notice how each code path is obvious. Parsing the code is fast and you have
+less chance of misunderstanding the logic.
+
+<!--
+
+## Business logic guards vs. data verification guards
+
+In the chapter "[Introducing Guard
+Clauses](https://www.pluralsight.com/courses/advanced-defensive-programming-techniques)"
+(pluralsight course), it says you should fail fast with guard clauses.
+That's pretty much what the left-aligned happy path idiom does. The author
+adds something interesting: we should avoid mixing the "business logic
+guards" with the "data verification (nil, err...) guards". It makes sense
+because it's easy to mix things and loose where the business logic is.
+Further on that: [Go Verifier
+library](https://itnext.io/clear-defensive-programming-with-go-using-verifier-library-6f648810b453).
+
+-->
+
+
+<!--
+## How does it fit with Defensive programming?
+
+defensive programming = logic must be nested in ifs so that it is protected and is only run when all if checks are OK
+
+You can write a program with the "deeply-nested ifs" and later change it to
+be "left-aligned with guard clauses". Both ways are very similar, it is
+just a different "style".
+
+Changing from one to the other will not make your code "more defensive" or
+"less defensive" in the sense that these two styles are just styles and do
+not prescribe a specific way of writing things like the input verification.
+-->
+
+## Real example
+
 While perusing how other Kubernetes developers are implementing their own
 reconciliation loop, I came across [an interesting piece of
 code](https://github.com/kubeflow/katib/blob/40f55b41c/pkg/controller.v1alpha3/trial/trial_controller.go#L259-L291).
@@ -139,10 +228,14 @@ func (r *ReconcileTrial) reconcileJob(instance *trialsv1alpha3.Trial, desiredJob
 }
 ```
 
-You can also take a look at Matt Ryer's _Idiomatic Go Tricks_ where he
-presents some ways of keeping your code as readable as possible:
+You can also take a look at Matt Ryer's _Idiomatic Go Tricks_ ([blog
+post](https://medium.com/@matryer/line-of-sight-in-code-186dd7cdea88))
+where he presents some ways of keeping your code as readable as possible:
 
 {{< youtube yeetIgNeIkc >}}
+
+**Update 23 April 2020:** added a proper introduction with a simple
+example.
 
 ---
 <!--
