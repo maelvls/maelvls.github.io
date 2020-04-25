@@ -10,8 +10,38 @@ url: /avoid-gke-lb-with-hostport
 images: [avoid-gke-lb-with-hostport/cover-external-dns.png]
 ---
 
-I like being able to keep my own GKE Kubernetes cluster for experimenting.
-But I realized that this _Network Load Balancer_ was way too expensive.
+> **⚠️ Update 25 April 2020**: Akrobateo has been EOL in January 2020 due
+> to the company going out of business. Their blog post regarding the EOL
+> isn't available anymore and was probably shut down. Fortunately, the
+> Wayback Machine [has a snapshot of the
+> post](https://web.archive.org/web/20200107111252/https://blog.kontena.io/farewell/)
+> (7th January 2020). Here is an excerpt:
+>
+> > This is a sad day for team Kontena. We tried to build something amazing
+> > but our plans of creating business around open source software has
+> > failed. We couldn't build a sustainable business. Despite all the
+> > effort, highs and lows, as of today, Kontena has ceased operations. The
+> > team is no more and the official support for Kontena products is no
+> > more available.
+>
+> This is so sad... 😢 Note that the Github repo
+> [kontena/akrobateo](https://github.com/kontena/akrobateo) is still there
+> (and has not been archived yet), but their Docker registry has been shut
+> down which means most of this post is broken.
+
+In my spare time, I maintain a tiny "playground" Kubernetes cluster on
+[GKE](https://cloud.google.com/kubernetes-engine). I quickly realized that
+realized using `Service type=LoadBalancer` in GKE was spawning a _[Network
+Load Balancer](https://cloud.google.com/load-balancing/docs/network)_ which
+costs approximately **$15 per month**! In this post, I present a way of
+avoiding the expensive Google Network Load Balancer by load balancing
+in-cluster using akrobateo, which acts as a Service type=LoadBalancer
+controller.
+
+> ✅ Since this method uses the worker node's external IPs, we can't really
+> say it is a real "load balancing" mechanism (i.e., this method doesn't
+> handle IP failover and doesn't even tolerate node failures). But in my
+> tiny setup, it makes a lot of sense to use that.
 
 ![Network Load Balancing: Forwarding Rule Minimum Service Charge in EMEA](cost-load-balancer-gke.png)
 
@@ -301,6 +331,9 @@ MetalLB implements something close to VRRP.
 
 **Update 22 April 2020:**
 
+- Akrobateo [is EOL](https://twitter.com/i/status/1219193625478881285)
+  since January 2020 😢 I added a note about that.
+- Better introduction.
 - Explain what I mean by `hostPort`;
 - In "Isn't `hostPort` a bad practice?", I replaced "I don't know" with a
   [link](https://kubernetes.io/docs/concepts/configuration/overview/#services)
