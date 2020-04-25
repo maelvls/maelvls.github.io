@@ -5,8 +5,30 @@ instead do the load balancing in-cluster using akrobateo, which
 acts as a LoadBalancer controller."><meta property="og:type" content="article"><meta property="og:url" content="https://maelvls.dev/avoid-gke-lb-with-hostport/"><meta property="og:image" content="https://maelvls.dev/avoid-gke-lb-with-hostport/cover-external-dns.png"><meta property="article:published_time" content="2020-01-20T00:00:00+00:00"><meta property="article:modified_time" content="2020-01-20T00:00:00+00:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://maelvls.dev/avoid-gke-lb-with-hostport/cover-external-dns.png"><meta name=twitter:title content="Avoid GKE's expensive load balancer by using hostPort"><meta name=twitter:description content="I want to avoid using the expensive Google Network Load Balancer and
 instead do the load balancing in-cluster using akrobateo, which
 acts as a LoadBalancer controller."><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/main.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/all.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/maelvls.css><title>Avoid GKE's expensive load balancer by using hostPort | maelvls dev blog</title></head><body><header><div id=avatar><a href=https://maelvls.dev/><img src=/img/mael.jpg alt="maelvls dev blog"></a></div><div id=titletext><h2 id=title><a href=https://maelvls.dev/>maelvls dev blog</a></h2></div><div id=title-description><p id=subtitle>Systems software engineer. I write mostly about Kubernetes and Go. <a href=/about>About</a></p><div id=social><nav><ul><li><a href=https://github.com/maelvls><i title=Github class="icons fab fa-github"></i></a></li><li><a href=https://twitter.com/maelvls><i title=Twitter class="icons fab fa-twitter"></i></a></li></ul></nav></div></div><div id=mainmenu></div></header><main><div class=post><div class=author></div><div class=post-header><div class=meta><div class=date><span class=day>20</span>
-<span class=rest>Jan 2020</span></div></div><div class=matter><h1 class=title>Avoid GKE's expensive load balancer by using hostPort</h1></div></div><div class=markdown><p>I like being able to keep my own GKE Kubernetes cluster for experimenting.
-But I realized that this <em>Network Load Balancer</em> was way too expensive.</p><p><img src=cost-load-balancer-gke.png alt="Network Load Balancing: Forwarding Rule Minimum Service Charge in EMEA"></p><p>What happens is that GKE has a LoadBalancer controller running (I can&rsquo;t see
+<span class=rest>Jan 2020</span></div></div><div class=matter><h1 class=title>Avoid GKE's expensive load balancer by using hostPort</h1></div></div><div class=markdown><blockquote><p><strong>⚠️ Update 25 April 2020</strong>: Akrobateo has been EOL in January 2020 due
+to the company going out of business. Their blog post regarding the EOL
+isn&rsquo;t available anymore and was probably shut down. Fortunately, the
+Wayback Machine <a href=https://web.archive.org/web/20200107111252/https://blog.kontena.io/farewell/>has a snapshot of the
+post</a>
+(7th January 2020). Here is an excerpt:</p><blockquote><p>This is a sad day for team Kontena. We tried to build something amazing
+but our plans of creating business around open source software has
+failed. We couldn&rsquo;t build a sustainable business. Despite all the
+effort, highs and lows, as of today, Kontena has ceased operations. The
+team is no more and the official support for Kontena products is no
+more available.</p></blockquote><p>This is so sad&mldr; 😢 Note that the Github repo
+<a href=https://github.com/kontena/akrobateo>kontena/akrobateo</a> is still there
+(and has not been archived yet), but their Docker registry has been shut
+down which means most of this post is broken.</p></blockquote><p>In my spare time, I maintain a tiny &ldquo;playground&rdquo; Kubernetes cluster on
+<a href=https://cloud.google.com/kubernetes-engine>GKE</a>. I quickly realized that
+realized using <code>Service type=LoadBalancer</code> in GKE was spawning a <em><a href=https://cloud.google.com/load-balancing/docs/network>Network
+Load Balancer</a></em> which
+costs approximately <strong>$15 per month</strong>! In this post, I present a way of
+avoiding the expensive Google Network Load Balancer by load balancing
+in-cluster using akrobateo, which acts as a Service type=LoadBalancer
+controller.</p><blockquote><p>✅ Since this method uses the worker node&rsquo;s external IPs, we can&rsquo;t really
+say it is a real &ldquo;load balancing&rdquo; mechanism (i.e., this method doesn&rsquo;t
+handle IP failover and doesn&rsquo;t even tolerate node failures). But in my
+tiny setup, it makes a lot of sense to use that.</p></blockquote><p><img src=cost-load-balancer-gke.png alt="Network Load Balancing: Forwarding Rule Minimum Service Charge in EMEA"></p><p>What happens is that GKE has a LoadBalancer controller running (I can&rsquo;t see
 it) and whenever I have a service with <code>type: LoadBalancer</code>, it will create
 a L4 load balancer that balances 80 and 443 traffic across the nodes. Here
 is a diagram of my current setup:</p><p><img src=how-service-controller-works-on-gke.png alt="ExternalDNS, GKE and Traefik"></p><p>I use Traefik as a reverse-proxy and terminates the end-user TLS
@@ -146,7 +168,8 @@ sudo iptables -t nat -I POSTROUTING -d 10.27.244.111/32 -p TCP -j MASQUERADE
 sudo iptables -t nat -I PREROUTING ! -s 10.27.244.111/32 -p TCP --dport <span class=m>443</span> -j DNAT --to 10.27.244.111:443
 sudo iptables -t nat -I POSTROUTING -d 10.27.244.111/32 -p TCP -j MASQUERADE
 </code></pre></div></li></ul><p>Here is a diagram that shows the whole picture:</p><p><img src=packet-routing-with-akrobateo.png alt="Packet routing using Akrobateo, Traefik and iptables"></p><h2 id=recap>Recap</h2><ul><li>Akrobateo is a controller that watches Services of <code>type: LoadBalancer</code></li><li>When it finds one, creates a deamonset of empty pods</li><li>The task of these empty pods is to set one iptable rule that redirects
-traffic to the ClusterIP of the <code>type: LoadBalancer</code> service</li><li>Akrobateo also sets the Service&rsquo;s status with the loadBalancer IP.</li><li>Benefit: since the loadBalancer IP is properly set, ExternalDNS works.</li></ul><p><strong>Update 22 April 2020:</strong></p><ul><li>Explain what I mean by <code>hostPort</code>;</li><li>In &ldquo;Isn&rsquo;t <code>hostPort</code> a bad practice?", I replaced &ldquo;I don&rsquo;t know&rdquo; with a
+traffic to the ClusterIP of the <code>type: LoadBalancer</code> service</li><li>Akrobateo also sets the Service&rsquo;s status with the loadBalancer IP.</li><li>Benefit: since the loadBalancer IP is properly set, ExternalDNS works.</li></ul><p><strong>Update 22 April 2020:</strong></p><ul><li>Akrobateo <a href=https://twitter.com/i/status/1219193625478881285>is EOL</a>
+since January 2020 😢 I added a note about that.</li><li>Better introduction.</li><li>Explain what I mean by <code>hostPort</code>;</li><li>In &ldquo;Isn&rsquo;t <code>hostPort</code> a bad practice?", I replaced &ldquo;I don&rsquo;t know&rdquo; with a
 <a href=https://kubernetes.io/docs/concepts/configuration/overview/#services>link</a>
 to the Kubernetes documentation that mention why I should avoid hostPort.</li><li>In &ldquo;What if I have many more nodes, can it scale?", I replaced &ldquo;I don&rsquo;t
 know&rdquo; with a proposition of solution.</li></ul><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/kubernetes/>kubernetes</a>

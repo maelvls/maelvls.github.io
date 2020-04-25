@@ -70,8 +70,40 @@ acts as a LoadBalancer controller.
 </div>
 </div>
 <div class="markdown">
-<p>I like being able to keep my own GKE Kubernetes cluster for experimenting.
-But I realized that this <em>Network Load Balancer</em> was way too expensive.</p>
+<blockquote>
+<p><strong>⚠️ Update 25 April 2020</strong>: Akrobateo has been EOL in January 2020 due
+to the company going out of business. Their blog post regarding the EOL
+isn&rsquo;t available anymore and was probably shut down. Fortunately, the
+Wayback Machine <a href="https://web.archive.org/web/20200107111252/https://blog.kontena.io/farewell/">has a snapshot of the
+post</a>
+(7th January 2020). Here is an excerpt:</p>
+<blockquote>
+<p>This is a sad day for team Kontena. We tried to build something amazing
+but our plans of creating business around open source software has
+failed. We couldn&rsquo;t build a sustainable business. Despite all the
+effort, highs and lows, as of today, Kontena has ceased operations. The
+team is no more and the official support for Kontena products is no
+more available.</p>
+</blockquote>
+<p>This is so sad&hellip; 😢 Note that the Github repo
+<a href="https://github.com/kontena/akrobateo">kontena/akrobateo</a> is still there
+(and has not been archived yet), but their Docker registry has been shut
+down which means most of this post is broken.</p>
+</blockquote>
+<p>In my spare time, I maintain a tiny &ldquo;playground&rdquo; Kubernetes cluster on
+<a href="https://cloud.google.com/kubernetes-engine">GKE</a>. I quickly realized that
+realized using <code>Service type=LoadBalancer</code> in GKE was spawning a <em><a href="https://cloud.google.com/load-balancing/docs/network">Network
+Load Balancer</a></em> which
+costs approximately <strong>$15 per month</strong>! In this post, I present a way of
+avoiding the expensive Google Network Load Balancer by load balancing
+in-cluster using akrobateo, which acts as a Service type=LoadBalancer
+controller.</p>
+<blockquote>
+<p>✅ Since this method uses the worker node&rsquo;s external IPs, we can&rsquo;t really
+say it is a real &ldquo;load balancing&rdquo; mechanism (i.e., this method doesn&rsquo;t
+handle IP failover and doesn&rsquo;t even tolerate node failures). But in my
+tiny setup, it makes a lot of sense to use that.</p>
+</blockquote>
 <p><img src="cost-load-balancer-gke.png" alt="Network Load Balancing: Forwarding Rule Minimum Service Charge in EMEA"></p>
 <p>What happens is that GKE has a LoadBalancer controller running (I can&rsquo;t see
 it) and whenever I have a service with <code>type: LoadBalancer</code>, it will create
@@ -305,6 +337,9 @@ MetalLB implements something close to VRRP.
 -->
 <p><strong>Update 22 April 2020:</strong></p>
 <ul>
+<li>Akrobateo <a href="https://twitter.com/i/status/1219193625478881285">is EOL</a>
+since January 2020 😢 I added a note about that.</li>
+<li>Better introduction.</li>
 <li>Explain what I mean by <code>hostPort</code>;</li>
 <li>In &ldquo;Isn&rsquo;t <code>hostPort</code> a bad practice?&quot;, I replaced &ldquo;I don&rsquo;t know&rdquo; with a
 <a href="https://kubernetes.io/docs/concepts/configuration/overview/#services">link</a>
