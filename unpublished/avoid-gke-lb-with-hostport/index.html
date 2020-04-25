@@ -309,14 +309,24 @@ sudo iptables -t nat -I POSTROUTING -d 10.27.244.111/32 -p TCP -j MASQUERADE
 </ul>
 <p>Here is a diagram that shows the whole picture:</p>
 <p><img src="packet-routing-with-akrobateo.png" alt="Packet routing using Akrobateo, Traefik and iptables"></p>
+<h2 id="akrobateo-vs-k3ss-servicelb-controller">Akrobateo vs. K3s&rsquo;s servicelb controller</h2>
+<p><a href="https://github.com/rancher/k3s">K3s</a> has this same idea of &ldquo;service type
+loadbalancer controller&rdquo; embedded to K3s itself. The controller, called
+&ldquo;servicelb&rdquo;
+(<a href="https://github.com/rancher/k3s/blob/master/pkg/servicelb/controller.go">servicelb/controller.go</a>)
+runs as a Deployment and a DeamonSet running
+<a href="https://github.com/rancher/klipper-lb">klipper-lb</a> that uses pod&rsquo;s
+<code>hostPort</code> and the pod&rsquo;s iptables to forward traffic to the cluster-ip of
+the service. I don&rsquo;t know yet what are the differences between Akrobateo
+and K3s&rsquo; servicelb. Note that Akrobateo itself is based on servicelb.</p>
 <h2 id="recap">Recap</h2>
 <ul>
-<li>Akrobateo is a controller that watches Services of <code>type: LoadBalancer</code></li>
-<li>When it finds one, creates a deamonset of empty pods</li>
+<li>Akrobateo is a controller that watches Services of <code>type: LoadBalancer</code>;</li>
+<li>When it finds one, creates a deamonset of empty pods.</li>
 <li>The task of these empty pods is to set one iptable rule that redirects
-traffic to the ClusterIP of the <code>type: LoadBalancer</code> service</li>
+traffic to the ClusterIP of the <code>type: LoadBalancer</code> service.</li>
 <li>Akrobateo also sets the Service&rsquo;s status with the loadBalancer IP.</li>
-<li>Benefit: since the loadBalancer IP is properly set, ExternalDNS works.</li>
+<li>Benefit: since the loadBalancer IP is properly set, ExternalDNS works!</li>
 </ul>
 <!--
 Want to drop a comment? Here is a Twitter thread:
@@ -341,12 +351,13 @@ MetalLB implements something close to VRRP.
 <li>Akrobateo <a href="https://twitter.com/i/status/1219193625478881285">is EOL</a>
 since January 2020 😢 I added a note about that.</li>
 <li>Better introduction.</li>
-<li>Explain what I mean by <code>hostPort</code>;</li>
+<li>Explain what I mean by <code>hostPort</code>.</li>
 <li>In &ldquo;Isn&rsquo;t <code>hostPort</code> a bad practice?&quot;, I replaced &ldquo;I don&rsquo;t know&rdquo; with a
 <a href="https://kubernetes.io/docs/concepts/configuration/overview/#services">link</a>
 to the Kubernetes documentation that mention why I should avoid hostPort.</li>
 <li>In &ldquo;What if I have many more nodes, can it scale?&quot;, I replaced &ldquo;I don&rsquo;t
 know&rdquo; with a proposition of solution.</li>
+<li>Detail how K3s&rsquo; servicelb is similar to Akrobateo.</li>
 </ul>
 <script src="https://utteranc.es/client.js"
         repo="maelvls/maelvls.github.io"
