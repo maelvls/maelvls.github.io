@@ -304,14 +304,26 @@ Here is a diagram that shows the whole picture:
 
 ![Packet routing using Akrobateo, Traefik and iptables](packet-routing-with-akrobateo.png)
 
+## Akrobateo vs. K3s's servicelb controller
+
+[K3s](https://github.com/rancher/k3s) has this same idea of "service type
+loadbalancer controller" embedded to K3s itself. The controller, called
+"servicelb"
+([servicelb/controller.go](https://github.com/rancher/k3s/blob/master/pkg/servicelb/controller.go))
+runs as a Deployment and a DeamonSet running
+[klipper-lb](https://github.com/rancher/klipper-lb) that uses pod's
+`hostPort` and the pod's iptables to forward traffic to the cluster-ip of
+the service. I don't know yet what are the differences between Akrobateo
+and K3s' servicelb. Note that Akrobateo itself is based on servicelb.
+
 ## Recap
 
-- Akrobateo is a controller that watches Services of `type: LoadBalancer`
-- When it finds one, creates a deamonset of empty pods
+- Akrobateo is a controller that watches Services of `type: LoadBalancer`;
+- When it finds one, creates a deamonset of empty pods.
 - The task of these empty pods is to set one iptable rule that redirects
-  traffic to the ClusterIP of the `type: LoadBalancer` service
+  traffic to the ClusterIP of the `type: LoadBalancer` service.
 - Akrobateo also sets the Service's status with the loadBalancer IP.
-- Benefit: since the loadBalancer IP is properly set, ExternalDNS works.
+- Benefit: since the loadBalancer IP is properly set, ExternalDNS works!
 
 <!--
 Want to drop a comment? Here is a Twitter thread:
@@ -335,12 +347,13 @@ MetalLB implements something close to VRRP.
 - Akrobateo [is EOL](https://twitter.com/i/status/1219193625478881285)
   since January 2020 😢 I added a note about that.
 - Better introduction.
-- Explain what I mean by `hostPort`;
+- Explain what I mean by `hostPort`.
 - In "Isn't `hostPort` a bad practice?", I replaced "I don't know" with a
   [link](https://kubernetes.io/docs/concepts/configuration/overview/#services)
   to the Kubernetes documentation that mention why I should avoid hostPort.
 - In "What if I have many more nodes, can it scale?", I replaced "I don't
   know" with a proposition of solution.
+- Detail how K3s' servicelb is similar to Akrobateo.
 
 <script src="https://utteranc.es/client.js"
         repo="maelvls/maelvls.github.io"
