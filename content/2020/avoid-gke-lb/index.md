@@ -30,7 +30,8 @@ images: [avoid-gke-lb-with-hostport/cover-external-dns.png]
 > down which means most of this post is broken.
 
 In my spare time, I maintain a tiny "playground" Kubernetes cluster on
-[GKE](https://cloud.google.com/kubernetes-engine). I quickly realized that
+[GKE](https://cloud.google.com/kubernetes-engine) (helm charts
+[here](https://github.com/maelvls/k.maelvls.dev)). I quickly realized that
 realized using `Service type=LoadBalancer` in GKE was spawning a _[Network
 Load Balancer](https://cloud.google.com/load-balancing/docs/network)_ which
 costs approximately **$15 per month**! In this post, I present a way of
