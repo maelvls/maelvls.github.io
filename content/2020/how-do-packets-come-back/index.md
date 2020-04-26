@@ -13,7 +13,7 @@ tags: [networking, gcp]
 ---
 
 In a previous post "[The Packet's-Eye View of a Kubernetes
-Service](/packets-eye-of-a-service)", I studied how traffic flows in when
+Service](/packets-eye-kubernetes-service/)", I studied how traffic flows in when
 using Kubernetes Services. In the last diagram of that post, I could not
 clearly see how traffic could make its way back to the user. In this
 article, I will try to understand how packets are able to flow back to the
@@ -118,8 +118,9 @@ Here is what I want to remember from this post:
    `hostPort` or `nodePort`). Some parts of Kubernetes rely on stateful
    SNAT rewritting, for example when you use `externalTrafficPolicy:
    Cluster` in a which is the default policy for a Service. The following
-   diagram shows where this rewriting happens (extracted from the diagram
-   shown at the beginning of the post):
+   diagram shows where this rewriting happens (extracted from the last
+   diagram in "[The Packet's-Eye View of a Kubernetes
+   Service](/packets-eye-kubernetes-service/)"):
 
    <img alt="Packet's source is rewritten (SNAT) because of the 'policy: Cluster' that is set in the Service." src="kubernetes-snat-cluster-ip.svg" width="50%"/>
 
