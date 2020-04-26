@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta property="og:title" content="The Client-go Transitive Hell" />
-<meta property="og:description" content="Looks like the Kubernetes people chose to break the client-go API without bumping the major version (with a new import path e.g k8s.io/client-go/v13) when adding support for context.Context that comes with Kubernetes v1.18. Darren Shepherd reported the issue in February 2020. We were warned:
- The v0.x.y tags indicate that go APIs may change in incompatible ways in different versions.
- At first, I thought that it would not affect us at Ori since we don’t use any extra dependency that rely on client-go — so no transitive dependencies on client-go, we are the sole user of it." />
+<meta property="og:description" content="⚠️ I&rsquo;m not sure this is a transitive issue. It might just not be due to transitivity at all!
+ Looks like the Kubernetes people chose to break the client-go API without bumping the major version (with a new import path e.g k8s.io/client-go/v13) when adding support for context.Context that comes with Kubernetes v1.18. Darren Shepherd reported the issue in February 2020. We were warned:
+ The v0.x.y tags indicate that go APIs may change in incompatible ways in different versions." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/unpublished/client-go-transitive-hell/" />
 <meta property="og:image" content="https://maelvls.dev/unpublished/title/cover.png" />
@@ -18,9 +18,9 @@
 <meta name="twitter:image" content="https://maelvls.dev/unpublished/title/cover.png"/>
 
 <meta name="twitter:title" content="The Client-go Transitive Hell"/>
-<meta name="twitter:description" content="Looks like the Kubernetes people chose to break the client-go API without bumping the major version (with a new import path e.g k8s.io/client-go/v13) when adding support for context.Context that comes with Kubernetes v1.18. Darren Shepherd reported the issue in February 2020. We were warned:
- The v0.x.y tags indicate that go APIs may change in incompatible ways in different versions.
- At first, I thought that it would not affect us at Ori since we don’t use any extra dependency that rely on client-go — so no transitive dependencies on client-go, we are the sole user of it."/>
+<meta name="twitter:description" content="⚠️ I&rsquo;m not sure this is a transitive issue. It might just not be due to transitivity at all!
+ Looks like the Kubernetes people chose to break the client-go API without bumping the major version (with a new import path e.g k8s.io/client-go/v13) when adding support for context.Context that comes with Kubernetes v1.18. Darren Shepherd reported the issue in February 2020. We were warned:
+ The v0.x.y tags indicate that go APIs may change in incompatible ways in different versions."/>
 
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/normalize.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/main.css" />
@@ -65,6 +65,10 @@
 </div>
 </div>
 <div class="markdown">
+<blockquote>
+<p>⚠️ I&rsquo;m not sure this is a transitive issue. It might just not be due to
+transitivity at all!</p>
+</blockquote>
 <p>Looks like the Kubernetes people chose to break the client-go API without
 bumping the major version (with a new import path e.g
 <code>k8s.io/client-go/v13</code>) when adding support for <code>context.Context</code> that

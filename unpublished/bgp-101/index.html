@@ -5,8 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta property="og:title" content="Bgp 101" />
-<meta property="og:description" content="% sudo mtr google.fr My traceroute [v0.93] macbook-pro-de-mael-2.home (2a01:cb19:86a2:8c00:20db:756d:83b3:8891) 2020-04-19T17:55:26&#43;0200 Keys: Help Display mode Restart statistics Order of fields quit Packets Pings Host Loss% Snt Last Avg Best Wrst StDev 1. livebox.home 0.0% 69 5.6 41.7 3.2 700.4 128.3 2. 2a01cb08a00402190193025300740181.ipv6.abo.wanadoo.fr 0.0% 69 18.5 61.2 9.8 1012. 158.1 3. 2a01:cfc4:0:d00::a 0.0% 69 42.9 55.9 16.5 957.9 137.9 4. bundle-ether103.pastr4.-.opentransit.net 76.5% 69 31.8 33.3 23.3 60.9 11.5 5. et-15-0-2-0.pastr3.-.opentransit.net 0.0% 69 59." />
+<meta property="og:title" content="BGP 101" />
+<meta property="og:description" content="whois $(curl ifconfig.me/ip) % Information related to &#39;90.76.0.0/16AS3215&#39; route: 90.76.0.0/16 descr: France Telecom IP2000-ADSL-BAS origin: AS3215 # ✳ mnt-by: FT-BRX created: 2018-08-16T14:22:19Z last-modified: 2018-08-16T14:22:19Z source: RIPE  AS3215 is my ISP&rsquo;s autonomous system.
+ % sudo mtr google.fr My traceroute [v0.93] macbook-pro-de-mael-2.home (2a01:cb19:86a2:8c00:20db:756d:83b3:8891) 2020-04-19T17:55:26&#43;0200 Keys: Help Display mode Restart statistics Order of fields quit Packets Pings Host Loss% Snt Last Avg Best Wrst StDev 1. livebox.home 0.0% 69 5.6 41.7 3." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/unpublished/bgp-101/" />
 <meta property="og:image" content="https://maelvls.dev/unpublished/bgp-101/cover-bgp-101.png" />
@@ -15,13 +16,14 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://maelvls.dev/unpublished/bgp-101/cover-bgp-101.png"/>
 
-<meta name="twitter:title" content="Bgp 101"/>
-<meta name="twitter:description" content="% sudo mtr google.fr My traceroute [v0.93] macbook-pro-de-mael-2.home (2a01:cb19:86a2:8c00:20db:756d:83b3:8891) 2020-04-19T17:55:26&#43;0200 Keys: Help Display mode Restart statistics Order of fields quit Packets Pings Host Loss% Snt Last Avg Best Wrst StDev 1. livebox.home 0.0% 69 5.6 41.7 3.2 700.4 128.3 2. 2a01cb08a00402190193025300740181.ipv6.abo.wanadoo.fr 0.0% 69 18.5 61.2 9.8 1012. 158.1 3. 2a01:cfc4:0:d00::a 0.0% 69 42.9 55.9 16.5 957.9 137.9 4. bundle-ether103.pastr4.-.opentransit.net 76.5% 69 31.8 33.3 23.3 60.9 11.5 5. et-15-0-2-0.pastr3.-.opentransit.net 0.0% 69 59."/>
+<meta name="twitter:title" content="BGP 101"/>
+<meta name="twitter:description" content="whois $(curl ifconfig.me/ip) % Information related to &#39;90.76.0.0/16AS3215&#39; route: 90.76.0.0/16 descr: France Telecom IP2000-ADSL-BAS origin: AS3215 # ✳ mnt-by: FT-BRX created: 2018-08-16T14:22:19Z last-modified: 2018-08-16T14:22:19Z source: RIPE  AS3215 is my ISP&rsquo;s autonomous system.
+ % sudo mtr google.fr My traceroute [v0.93] macbook-pro-de-mael-2.home (2a01:cb19:86a2:8c00:20db:756d:83b3:8891) 2020-04-19T17:55:26&#43;0200 Keys: Help Display mode Restart statistics Order of fields quit Packets Pings Host Loss% Snt Last Avg Best Wrst StDev 1. livebox.home 0.0% 69 5.6 41.7 3."/>
 
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/normalize.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/main.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/all.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/maelvls.css" /><title>Bgp 101 | maelvls dev blog</title></head>
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/maelvls.css" /><title>BGP 101 | maelvls dev blog</title></head>
 <body>
 
 <header>
@@ -57,10 +59,22 @@
 </div>
 
 <div class="matter">
-<h1 class="title">Bgp 101</h1>
+<h1 class="title">BGP 101</h1>
 </div>
 </div>
 <div class="markdown">
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">whois <span class="k">$(</span>curl ifconfig.me/ip<span class="k">)</span>
+% Information related to <span class="s1">&#39;90.76.0.0/16AS3215&#39;</span>
+route:          90.76.0.0/16
+descr:          France Telecom IP2000-ADSL-BAS
+origin:         AS3215                           <span class="c1"># ✳</span>
+mnt-by:         FT-BRX
+created:        2018-08-16T14:22:19Z
+last-modified:  2018-08-16T14:22:19Z
+source:         RIPE
+</code></pre></div><blockquote>
+<p><a href="https://bgp.he.net/AS5511">AS3215</a> is my ISP&rsquo;s autonomous system.</p>
+</blockquote>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% sudo mtr google.fr
                                         My traceroute  <span class="o">[</span>v0.93<span class="o">]</span>
 macbook-pro-de-mael-2.home <span class="o">(</span>2a01:cb19:86a2:8c00:20db:756d:83b3:8891<span class="o">)</span>         2020-04-19T17:55:26+0200

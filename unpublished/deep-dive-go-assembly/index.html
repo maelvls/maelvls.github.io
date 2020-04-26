@@ -85,7 +85,14 @@ everybody seems to avoid (including Google itself in
 <blockquote>
 <p>Given <code>v</code> a pointer to an interface, <code>v != nil</code> when <code>v</code> is <code>nil</code>.</p>
 </blockquote>
-<p>Oooh, let&rsquo;s see. Here is a short program:</p>
+<p>Oooh, let&rsquo;s see.</p>
+<blockquote>
+<p>Boxed type, fat pointer:</p>
+<p>Do Go use boxed types for map[string]string? No! It doesn&rsquo;t use
+interface{} boxing (boxed = fat pointer = one more level of indirection,
+less locality – same problem as linked lists).</p>
+</blockquote>
+<p>Here is a short program:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
