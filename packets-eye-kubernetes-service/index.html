@@ -51,7 +51,7 @@ might expect the external IP to be set there. But since Google&rsquo;s VPC NAT
 swaps the node&rsquo;s external IP to the node&rsquo;s internal IP, the incoming
 packets have the internal IP as source IP. So that&rsquo;s why 😁.</p><p>The following diagram shows a packet coming from a user being routed to the
 Service that has the ClusterIP <code>10.24.3.12</code>. Notice the number of packet
-rewritings:</p><ol><li>DNAT by the VPC firewall,</li><li>DNAT in the <code>hostPort</code> rule on node 1,</li><li>DNAT in the Akrobateo pod,</li><li>DNAT for the Service ClusterIP rule on node 1,</li><li>SNAT due to the <code>externalTrafficPolicy: Policy</code> rule on node 1
+rewritings:</p><ol><li>DNAT by the VPC firewall,</li><li>DNAT in the <code>hostPort</code> rule on node 1,</li><li>DNAT in the Akrobateo pod,</li><li>DNAT for the Service ClusterIP rule on node 1,</li><li>SNAT due to the <code>externalTrafficPolicy: Cluster</code> rule on node 1
 (service-level random load-balancing across nodes),</li><li>User-space TCP termination by Traefik (i.e., new dial to the pod-ip).</li></ol><p>That&rsquo;s a lot of hops and rewritings!</p><p><img alt="Packet coming from a user hitting one of the nodes directly
 through DNS resolution and forwarded to the right pod" src=kubernetes-traffic-with-akrobateo.svg width=70%></p><blockquote><p><strong>Update 28 April 2020</strong>: Fixed a mistake I made in this diagram. I had
 set the source port to 80 in the &ldquo;User&rsquo;s request&rdquo;. This example does not

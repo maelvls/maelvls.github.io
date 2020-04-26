@@ -151,7 +151,7 @@ rewritings:</p>
 <li>DNAT in the <code>hostPort</code> rule on node 1,</li>
 <li>DNAT in the Akrobateo pod,</li>
 <li>DNAT for the Service ClusterIP rule on node 1,</li>
-<li>SNAT due to the <code>externalTrafficPolicy: Policy</code> rule on node 1
+<li>SNAT due to the <code>externalTrafficPolicy: Cluster</code> rule on node 1
 (service-level random load-balancing across nodes),</li>
 <li>User-space TCP termination by Traefik (i.e., new dial to the pod-ip).</li>
 </ol>
