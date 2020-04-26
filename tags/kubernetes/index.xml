@@ -6,9 +6,9 @@ scattered everywhere. Here are some links to help you start.</description></item
 My free trial on GKE was ending in 2 days and I had to find a way to migrate away. I decided to switch to Civo's managed K3s.</description></item><item><title>The Packet's-Eye View of a Kubernetes Service</title><link>https://maelvls.dev/packets-eye-kubernetes-service/</link><pubDate>Sat, 14 Mar 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/packets-eye-kubernetes-service/</guid><description>
 The Service and Ingress respectively brings L4 and L7 traffics to your
 pods. In this article, I focus on how traffic flows in and what are the
-interactions between the ingress controller and the "service-lb" controller
-(the things that creates the external load balancer). I also detail how the
-'hostPort' approach shapes traffic.</description></item><item><title>Debugging Kubernetes Networking: my kube-dns is not working!</title><link>https://maelvls.dev/debugging-kubernetes-networking/</link><pubDate>Sun, 26 Jan 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/debugging-kubernetes-networking/</guid><description>
+interactions between the ingress controller and the "service-lb controller"
+(the thing that creates the external load balancer). I also detail how the
+`hostPort` approach shapes traffic.</description></item><item><title>Debugging Kubernetes Networking: my kube-dns is not working!</title><link>https://maelvls.dev/debugging-kubernetes-networking/</link><pubDate>Sun, 26 Jan 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/debugging-kubernetes-networking/</guid><description>
 Some pods were unable to connect to the kube-proxy pod on one of my GKE
 Kubernetes clusters. This post present an in-depth investigation using
 tcpdump, wireshark and iptables tracing.</description></item><item><title>Avoid GKE's expensive load balancer by using hostPort</title><link>https://maelvls.dev/avoid-gke-lb-with-hostport/</link><pubDate>Mon, 20 Jan 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/avoid-gke-lb-with-hostport/</guid><description>

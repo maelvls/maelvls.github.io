@@ -12,9 +12,9 @@ Here is what my home office looks like in 2020 and what changed between 2019 and
 My free trial on GKE was ending in 2 days and I had to find a way to migrate away. I decided to switch to Civo's managed K3s.</description></item><item><title>The Packet's-Eye View of a Kubernetes Service</title><link>https://maelvls.dev/packets-eye-kubernetes-service/</link><pubDate>Sat, 14 Mar 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/packets-eye-kubernetes-service/</guid><description>
 The Service and Ingress respectively brings L4 and L7 traffics to your
 pods. In this article, I focus on how traffic flows in and what are the
-interactions between the ingress controller and the "service-lb" controller
-(the things that creates the external load balancer). I also detail how the
-'hostPort' approach shapes traffic.</description></item><item><title>You should write comments</title><link>https://maelvls.dev/you-should-write-comments/</link><pubDate>Thu, 27 Feb 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/you-should-write-comments/</guid><description>
+interactions between the ingress controller and the "service-lb controller"
+(the thing that creates the external load balancer). I also detail how the
+`hostPort` approach shapes traffic.</description></item><item><title>You should write comments</title><link>https://maelvls.dev/you-should-write-comments/</link><pubDate>Thu, 27 Feb 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/you-should-write-comments/</guid><description>
 We often talk about avoiding unecessary comments that needlessly paraphrase
 what the code does. In this article, I gathered some thoughts about why
 writing comments is as important as writing the code itself.</description></item><item><title>Debugging Kubernetes Networking: my kube-dns is not working!</title><link>https://maelvls.dev/debugging-kubernetes-networking/</link><pubDate>Sun, 26 Jan 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/debugging-kubernetes-networking/</guid><description>
