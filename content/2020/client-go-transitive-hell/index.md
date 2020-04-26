@@ -7,6 +7,9 @@ url: /client-go-transitive-hell
 draft: true
 ---
 
+> ⚠️ I'm not sure this is a transitive issue. It might just not be due to
+> transitivity at all!
+
 Looks like the Kubernetes people chose to break the client-go API without
 bumping the major version (with a new import path e.g
 `k8s.io/client-go/v13`) when adding support for `context.Context` that

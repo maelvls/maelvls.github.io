@@ -31,7 +31,15 @@ But the issue Sylvain raised really bothered me: it felt like a bug.
 
 > Given `v` a pointer to an interface, `v != nil` when `v` is `nil`.
 
-Oooh, let's see. Here is a short program:
+Oooh, let's see.
+
+> Boxed type, fat pointer:
+>
+> Do Go use boxed types for map[string]string? No! It doesn't use
+> interface{} boxing (boxed = fat pointer = one more level of indirection,
+> less locality – same problem as linked lists).
+
+Here is a short program:
 
 ```go
 package main

@@ -1,11 +1,25 @@
 ---
-title: "Bgp 101"
+title: "BGP 101"
 description: ""
 date: 2020-04-19T17:51:55+02:00
 url: /bgp-101
 images: [bgp-101/cover-bgp-101.png]
 draft: true
 ---
+
+```sh
+whois $(curl ifconfig.me/ip)
+% Information related to '90.76.0.0/16AS3215'
+route:          90.76.0.0/16
+descr:          France Telecom IP2000-ADSL-BAS
+origin:         AS3215                           # ✳
+mnt-by:         FT-BRX
+created:        2018-08-16T14:22:19Z
+last-modified:  2018-08-16T14:22:19Z
+source:         RIPE
+```
+
+> [AS3215](https://bgp.he.net/AS5511) is my ISP's autonomous system.
 
 ```sh
 % sudo mtr google.fr

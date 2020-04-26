@@ -12,6 +12,20 @@ images: [how-do-packets-come-back/cover-how-can-packets-come-back.png]
 tags: [networking, gcp]
 ---
 
+<!--
+In a previous post "[The Packet's-Eye View of a Kubernetes
+Service](/packets-eye-of-a-service)", I studied how traffic flows in when
+using Kubernetes Services. While drawing the last diagram, I did not
+clearly see how traffic could make its way back to the user.
+
+In this post, I focus on how packets find their way back and what makes
+stateless rewritting interesting.
+
+In this article, I will expand on the last diagram I drew for my post 
+Here is the diagram:
+
+-->
+
 In this article, I will expand on the last diagram I drew for my post "[The
 Packet's-Eye View of a Kubernetes Service](/packets-eye-of-a-service)".
 Here is the diagram:
