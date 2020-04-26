@@ -12,41 +12,19 @@ images: [how-do-packets-come-back/cover-how-can-packets-come-back.png]
 tags: [networking, gcp]
 ---
 
-<!--
 In a previous post "[The Packet's-Eye View of a Kubernetes
 Service](/packets-eye-of-a-service)", I studied how traffic flows in when
-using Kubernetes Services. While drawing the last diagram, I did not
-clearly see how traffic could make its way back to the user.
+using Kubernetes Services. In the last diagram of that post, I could not
+clearly see how traffic could make its way back to the user. In this
+article, I will try to understand how packets are able to flow back to the
+user and why stateless rewritting is interesting.
 
-In this post, I focus on how packets find their way back and what makes
-stateless rewritting interesting.
-
-In this article, I will expand on the last diagram I drew for my post 
-Here is the diagram:
-
--->
-
-In this article, I will expand on the last diagram I drew for my post "[The
-Packet's-Eye View of a Kubernetes Service](/packets-eye-of-a-service)".
-Here is the diagram:
-
-<img alt="Packet coming from a user hitting one of the nodes directly
-through DNS resolution and forwarded to the right pod"
-src="../packets-eye-kubernetes-service/kubernetes-traffic-with-akrobateo.svg" width="70%"/>
-
-Notice one tiny mistake here: the port in `src: 1.2.3.4:80` is off! When
-connecting to a remote host, the TCP stack picks a random ephemeral IP
-above or equal 32768. The kernel calls it "local ports", see
-[inet_hash_connect](https://github.com/torvalds/linux/blob/c60174717544aa8959683d7e19d568309c3a0c65/net/ipv4/inet_hashtables.c#L739-L740),
-[secure_ipv4_port_ephemeral](https://github.com/torvalds/linux/blob/9c7db5004280767566e91a33445bf93aa479ef02/net/core/secure_seq.c)
-and
-[ip_local_port_range](https://github.com/torvalds/linux/blob/29d9f30d4ce6c7a38745a54a8cddface10013490/Documentation/networking/ip-sysctl.txt#L907-L914).
-Let us fix this mistake and use the local port 32345 for example. In the
-following diagram, we can see a packet coming from a user, then being
-re-written by Google's VPC firewalls and finally coming into a VM "node 1":
+In the following diagram, we can see a packet coming from a user, then
+being re-written by Google's VPC firewalls and finally coming into a VM
+"node 1".
 
 <img alt="Packet coming from a user hitting one going through Google's VPC"
-src="dnat-google-vpc.svg" width="90%"/>
+src="dnat-google-vpc-how-comes-back.svg" width="80%"/>
 
 So, how come the packet can come back ~~and does it use conntrack~~ and
 does Google's firewall have to remember some state?
@@ -125,6 +103,8 @@ As we can see on the diagram, the firewall does not need to remember
 anything: it is just a static one-to-one relation between `10.142.0.62` and
 `35.211.248.124`.
 
+---
+
 Here is what I want to remember from this post:
 
 1. Outgoing traffic from your broadband modem router has to be SNATed
@@ -135,10 +115,11 @@ Here is what I want to remember from this post:
    scalable since it only uses DNAT, which means no need to remember
    anything.
 3. Most packet forwarding in Kubernetes relies on stateless DNATing (e.g.
-   hostPorts). Some parts of Kubernetes rely on stateful SNAT rewritting,
-   for example when you use `policy: Cluster` in a which is the default
-   policy for a Service. The following diagram shows where this rewriting
-   happens (extracted from the diagram shown at the beginning of the post):
+   `hostPort` or `nodePort`). Some parts of Kubernetes rely on stateful
+   SNAT rewritting, for example when you use `externalTrafficPolicy:
+   Cluster` in a which is the default policy for a Service. The following
+   diagram shows where this rewriting happens (extracted from the diagram
+   shown at the beginning of the post):
 
    <img alt="Packet's source is rewritten (SNAT) because of the 'policy: Cluster' that is set in the Service." src="kubernetes-snat-cluster-ip.svg" width="50%"/>
 
