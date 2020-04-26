@@ -100,7 +100,7 @@ rewritings:
 2. DNAT in the `hostPort` rule on node 1,
 3. DNAT in the Akrobateo pod,
 4. DNAT for the Service ClusterIP rule on node 1,
-5. SNAT due to the `externalTrafficPolicy: Policy` rule on node 1
+5. SNAT due to the `externalTrafficPolicy: Cluster` rule on node 1
   (service-level random load-balancing across nodes),
 1. User-space TCP termination by Traefik (i.e., new dial to the pod-ip).
 
