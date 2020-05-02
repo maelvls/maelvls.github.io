@@ -72,6 +72,13 @@ EOF
 fly -t main set-pipeline -pmaster -c pipeline.yml
 ```
 
+> "[Configuring gdn
+> server](https://concourse-ci.org/concourse-worker.html#configuring-gdn-server)":
+> On Linux, the concourse binary is packaged alongside a `gdn` binary. This
+> binary is used for running Guardian, which is a Garden backend
+> implementation which runs containers via `runc` (the same technology
+> underlying tools like Docker).
+
 <script src="https://utteranc.es/client.js"
         repo="maelvls/maelvls.github.io"
         issue-term="pathname"
