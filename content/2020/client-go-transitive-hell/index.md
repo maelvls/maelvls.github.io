@@ -93,14 +93,7 @@ for a living) heavily rely on the “good will” of the Kubernetes team. These
 decisions as they might affect anyone relying on Kubernetes "as a
 platform"... 🤔
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+
 
 <!--
 https://ori-edge.slack.com/archives/C96DU1WDC/p1583851517147600?thread_ts=1582966579.027200&cid=C96DU1WDC

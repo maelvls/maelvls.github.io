@@ -355,11 +355,4 @@ MetalLB implements something close to VRRP.
   know" with a proposition of solution.
 - Detail how K3s' servicelb is similar to Akrobateo.
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+

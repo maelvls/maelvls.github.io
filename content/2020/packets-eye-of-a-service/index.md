@@ -146,11 +146,4 @@ not need any external load balancer.
 diagram. Added the list of DNAT and SNAT rewritings that happen in the last
 diagram. I also rewrote the introduction.
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+

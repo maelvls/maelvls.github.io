@@ -158,11 +158,4 @@ RPKI validation codes: V valid, I invalid, N Not found
 
 
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+

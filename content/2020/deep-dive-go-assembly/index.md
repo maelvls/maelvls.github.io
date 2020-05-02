@@ -387,11 +387,4 @@ From <https://golang.org/doc/asm#symbols>:
   0x10995b6		e805ffffff		CALL main.concrete.f(SB)
 ```
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+

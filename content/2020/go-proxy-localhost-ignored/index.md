@@ -8,6 +8,7 @@ description: |
     locally.
 url: /go-ignores-proxy-localhost
 images: [go-ignores-proxy-localhost/cover-go-proxy-ignored.png]
+disqus: true
 ---
 
 I use [Proxyman](https://proxyman.io) for inspecting the HTTP and HTTPS
@@ -198,12 +199,3 @@ Join the discussion [on
 Twitter](https://twitter.com/maelvls/status/1214242197119406080) or post a
 message here
 -->
-
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

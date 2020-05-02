@@ -84,11 +84,4 @@ Join the discussion on Twitter:
 {{< twitter 1233140530017644544 >}}
 -->
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+

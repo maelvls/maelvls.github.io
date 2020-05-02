@@ -124,11 +124,4 @@ Here is what I want to remember from this post:
 
    <img alt="Packet's source is rewritten (SNAT) because of the 'policy: Cluster' that is set in the Service." src="kubernetes-snat-cluster-ip.svg" width="50%"/>
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+

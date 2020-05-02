@@ -79,12 +79,5 @@ fly -t main set-pipeline -pmaster -c pipeline.yml
 > implementation which runs containers via `runc` (the same technology
 > underlying tools like Docker).
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+
 

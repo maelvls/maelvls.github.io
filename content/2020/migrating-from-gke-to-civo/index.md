@@ -114,11 +114,4 @@ sure that case never happens.
 The repo for my Kubernetes playground cluster (`*.k.maelvls.dev`) is
 available [here](https://github.com/maelvls/k.maelvls.dev).
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+

@@ -2,6 +2,7 @@
 title: About
 date: 1-02-08
 type: page
+disqus: false
 ---
 
 I currently work at [Ori](https://www.ori.co/), a Cloud infrastructure

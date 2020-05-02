@@ -49,11 +49,4 @@ Now, let's try with my multi-UTF-8 example "⚠️":
 My terminal (iTerm2) doesn't even allow me to paste "⚠️"?! It shows
 `⚠<fe0f>` instead.
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+

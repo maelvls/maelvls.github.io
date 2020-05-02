@@ -106,11 +106,4 @@ avoid it. We can't see the flow of data. Even worse: imagine that this function
 works with an interface, which means the `*` won't even help us guess that this
 data is shared.
 
-<script src="https://utteranc.es/client.js"
-        repo="maelvls/maelvls.github.io"
-        issue-term="pathname"
-        label="💬"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+
