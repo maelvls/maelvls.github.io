@@ -11,15 +11,22 @@ scattered everywhere. Here are some links to help you start."><link rel=styleshe
 <span class=rest>Apr 2020</span></div></div><div class=matter><h1 class=title>Learning Kubernetes Controllers</h1></div></div><div class=markdown><p>Kubernetes&rsquo; extensibility is probably its biggest strength. Controllers and
 CRDs are all over the place. But finding the right information to begin
 writing a controller isn&rsquo;t easy due to the sheer amount of tribal knowledge
-scattered everywhere. This post intends to help you start with controllers.</p><hr><p>Let us begin with some terminology:</p><ul><li>By &ldquo;controller&rdquo; (singular noun), I mean one single loop that watches some
-objects. I often call this loop &ldquo;controller loop&rdquo; or &ldquo;sync loop&rdquo; or even
-&ldquo;reconcile loop&rdquo;.</li><li>By &ldquo;controllers&rdquo; (plural), I mean one binary that runs multiple sync
-loops.</li><li>A CRD (custom resource definition) is a simple YAML manifest that
-describes a custom object. After applying it to a Kubernetes cluster, it
-will start accepting manifests of this custom kind.</li><li>&ldquo;CRD&rdquo; is just a schema and doesn&rsquo;t carry any logic (except for the basic
-validation the apiserver does). The actual logic happens in controllers.</li><li>Many people also use the term &ldquo;operator&rdquo; to mean &ldquo;controllers&rdquo;. I do not
-make a distinction between an operator (e.g., the <a href=https://github.com/elastic/cloud-on-k8s>elastic
-operator</a>) or controllers.</li></ul><hr><p>Here are the links that I would give to anyone interested in writing their
+scattered everywhere. This post intends to help you start with controllers.</p><hr><p>Let us begin with some terminology:</p><ul><li><p><strong>controller</strong>: a single loop that watches some objects. We often refer
+to this loop as &ldquo;controller loop&rdquo; or &ldquo;sync loop&rdquo; or &ldquo;reconcile loop&rdquo;.</p></li><li><p><strong>controller binary</strong> is a binary that runs one or multiple sync loops.
+We often refer to it as &ldquo;controllers&rdquo;.</p></li><li><p><strong>CRD</strong> (Custom Resource Definition) is a simple YAML manifest that
+describes a custom object, for example <a href=https://github.com/jetstack/cert-manager/blob/a04d2f0935/deploy/crds/crd-orders.yaml#L2>this
+CRD</a>
+defines the acme.cert-manager.io/v1alpha3 Order resource. After applying
+this CRD to a Kubernetes cluster, you can apply manifests that have the
+kind &ldquo;Order&rdquo;</p><blockquote><p>Note: CRDs and controllers are decoupled. You can apply a CRD manifest
+without having any controller binary running. It works in both ways:
+you can have a controller binary running that doesn&rsquo;t require any
+custom objects. Traefik is a controller binary which relies on built-in
+Service objects.</p></blockquote><blockquote><p>Note: the &ldquo;CRD&rdquo; manifest is just a schema. It doesn&rsquo;t carry any logic
+(except for the basic validation the apiserver does). The actual logic
+happens in the controller binary.</p></blockquote></li><li><p><strong>operator</strong>: the term &ldquo;operator&rdquo; is often used to mean a controller
+binary with its CRDs, for example the <a href=https://github.com/elastic/cloud-on-k8s>elastic
+operator</a>.</p></li></ul><hr><p>Here are the links that I would give to anyone interested in writing their
 own controller:</p><ul><li><p><a href=https://book.kubebuilder.io/quick-start.html>Kubebuilder book</a> is a
 nice starting point. Kubebuilder uses code generation a lot and that&rsquo;s
 what most controllers use nowadays (Rancher uses a somehow forked version

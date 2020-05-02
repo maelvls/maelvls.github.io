@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.64.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:title" content="Unicode" />
+<meta property="og:description" content="I take a look at &ldquo;whatisit&quot;:
+⚠️ U&#43;26A0 : WARNING SIGN U&#43;FE0F : VARIATION SELECTOR-16 [VS16] {emoji variation selector} But even better: runes is CLI for exploring these emojis! Let&rsquo;s install it:
+go get github.com/mna/runes Now, let&rsquo;s see with an emoji that I know displays correctly in my terminal (iTerm2):
+% runes - ✅ [S So] U&#43;2705 &#39;✅&#39; [E2 9C 85] [2705] WHITE HEAVY CHECK MARK [C Cc] U&#43;0000 [00] [0] &lt;control&gt; [C Cc] U&#43;0000 [00] [0] &lt;control&gt; Now, let&rsquo;s try with my multi-UTF-8 example &ldquo;⚠️&rdquo;:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/unpublished/unicode/" />
+<meta property="og:image" content="https://maelvls.dev/unpublished/unicode/cover-unicode.png" />
+<meta property="article:published_time" content="2020-04-27T17:59:01+02:00" />
+<meta property="article:modified_time" content="2020-04-27T17:59:01+02:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://maelvls.dev/unpublished/unicode/cover-unicode.png"/>
+
+<meta name="twitter:title" content="Unicode"/>
+<meta name="twitter:description" content="I take a look at &ldquo;whatisit&quot;:
+⚠️ U&#43;26A0 : WARNING SIGN U&#43;FE0F : VARIATION SELECTOR-16 [VS16] {emoji variation selector} But even better: runes is CLI for exploring these emojis! Let&rsquo;s install it:
+go get github.com/mna/runes Now, let&rsquo;s see with an emoji that I know displays correctly in my terminal (iTerm2):
+% runes - ✅ [S So] U&#43;2705 &#39;✅&#39; [E2 9C 85] [2705] WHITE HEAVY CHECK MARK [C Cc] U&#43;0000 [00] [0] &lt;control&gt; [C Cc] U&#43;0000 [00] [0] &lt;control&gt; Now, let&rsquo;s try with my multi-UTF-8 example &ldquo;⚠️&rdquo;:"/>
+
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/unpublished/css/maelvls.css" /><title>Unicode | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/unpublished/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/unpublished/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="meta">
+<div class="date">
+<span class="day">27</span>
+<span class="rest">Apr 2020</span>
+</div>
+</div>
+
+<div class="matter">
+<h1 class="title">Unicode</h1>
+</div>
+</div>
+<div class="markdown">
+<p>I take a look at
+&ldquo;<a href="https://www.babelstone.co.uk/Unicode/whatisit.html">whatisit</a>&quot;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">⚠️
+U+26A0 : WARNING SIGN
+U+FE0F : VARIATION SELECTOR-16 [VS16] {emoji variation selector}
+</code></pre></div><p>But even better: <a href="https://github.com/mna/runes">runes</a> is CLI for exploring
+these emojis! Let&rsquo;s install it:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go get github.com/mna/runes
+</code></pre></div><p>Now, let&rsquo;s see with an emoji that I know displays correctly in my terminal
+(iTerm2):</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% runes - ✅
+<span class="o">[</span>S So<span class="o">]</span> U+2705 <span class="s1">&#39;✅&#39;</span>    <span class="o">[</span>E2 9C 85<span class="o">]</span>    <span class="o">[</span>2705<span class="o">]</span>      WHITE HEAVY CHECK MARK
+<span class="o">[</span>C Cc<span class="o">]</span> U+0000         <span class="o">[</span>00<span class="o">]</span>          <span class="o">[</span>0<span class="o">]</span>         &lt;control&gt;
+<span class="o">[</span>C Cc<span class="o">]</span> U+0000         <span class="o">[</span>00<span class="o">]</span>          <span class="o">[</span>0<span class="o">]</span>         &lt;control&gt;
+</code></pre></div><p>Now, let&rsquo;s try with my multi-UTF-8 example &ldquo;⚠️&rdquo;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% runes - ⚠&lt;fe0f&gt;
+<span class="o">[</span>S So<span class="o">]</span> U+26A0 <span class="s1">&#39;⚠&#39;</span>     <span class="o">[</span>E2 9A A0<span class="o">]</span>    <span class="o">[</span>26A0<span class="o">]</span>      WARNING SIGN
+<span class="o">[</span>C Cc<span class="o">]</span> U+0000         <span class="o">[</span>00<span class="o">]</span>          <span class="o">[</span>0<span class="o">]</span>         &lt;control&gt;
+<span class="o">[</span>C Cc<span class="o">]</span> U+0000         <span class="o">[</span>00<span class="o">]</span>          <span class="o">[</span>0<span class="o">]</span>         &lt;control&gt;
+<span class="o">[</span>M Mn<span class="o">]</span> U+FE0F <span class="s1">&#39;️&#39;</span>     <span class="o">[</span>EF B8 8F<span class="o">]</span>    <span class="o">[</span>FE0F<span class="o">]</span>      VARIATION SELECTOR-16
+<span class="o">[</span>C Cc<span class="o">]</span> U+0000         <span class="o">[</span>00<span class="o">]</span>          <span class="o">[</span>0<span class="o">]</span>         &lt;control&gt;
+<span class="o">[</span>C Cc<span class="o">]</span> U+0000         <span class="o">[</span>00<span class="o">]</span>          <span class="o">[</span>0<span class="o">]</span>         &lt;control&gt;
+</code></pre></div><p>My terminal (iTerm2) doesn&rsquo;t even allow me to paste &ldquo;⚠️&rdquo;?! It shows
+<code>⚠&lt;fe0f&gt;</code> instead.</p>
+<script src="https://utteranc.es/client.js"
+        repo="maelvls/maelvls.github.io"
+        issue-term="pathname"
+        label="💬"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+</div>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+</div></div>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>
