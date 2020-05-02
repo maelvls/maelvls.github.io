@@ -16,23 +16,69 @@ CRDs are all over the place. But finding the right information to begin
 writing a controller isn't easy due to the sheer amount of tribal knowledge
 scattered everywhere. This post intends to help you start with controllers.
 
+<!--
+
+> A "Kubernetes controller" is a binary that runs reconciliation loops. A
+> reconciliation loop watches the objects stored in Kubernetes. When it
+> notices a discrepency between what the object specifies (e.g. 4 replicas)
+> and the observed reality (e.g., the reconcialiation loop asks kubelet,
+> and it answers there are only 2 replicas), the reconcialiation loop will
+> take actions in order to satisfy what is specified in the object. The
+> "controller" binary is run as a simple Kubernetes Deployment. Sometimes,
+> when the Kubernetes API is not enough, it may also come with some
+> CustomResourceDefinitions YAML files.
+
+I use interchangeably the term "sync loop" and "controller". The word
+"controller" is quite overloaded: we use to qualify the binary that runs in
+a pod and watches for objects ("Kubernetes controller"), but we also use it
+to mean "one sync loop" that is running inside this binary.
+
+Anyone writing Kubernetes controllers might want to take a look at the
+following resources.
+One controller
+
+**[Kubernetes API conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)**
+
+> When a new version of an object is POSTed or PUT, the "spec" is updated
+> and available immediately. Over time the system will work to bring the
+> "status" into line with the "spec". The system will drive toward the most
+> recent "spec" regardless of previous versions of that stanza. In other
+> words, if a value is changed from 2 to 5 in one PUT and then back down to
+> 3 in another PUT the system is not required to 'touch base' at 5 before
+> changing the "status" to 3. In other words, the system's behavior is
+> level-based rather than edge-based. This enables robust behavior in the
+> presence of missed intermediate state changes.
+
+-->
+
 ---
 
 Let us begin with some terminology:
 
-- By "controller" (singular noun), I mean one single loop that watches some
-  objects. I often call this loop "controller loop" or "sync loop" or even
-  "reconcile loop".
-- By "controllers" (plural), I mean one binary that runs multiple sync
-  loops.
-- A CRD (custom resource definition) is a simple YAML manifest that
-  describes a custom object. After applying it to a Kubernetes cluster, it
-  will start accepting manifests of this custom kind.
-- "CRD" is just a schema and doesn't carry any logic (except for the basic
-  validation the apiserver does). The actual logic happens in controllers.
-- Many people also use the term "operator" to mean "controllers". I do not
-  make a distinction between an operator (e.g., the [elastic
-  operator](https://github.com/elastic/cloud-on-k8s)) or controllers.
+- **controller**: a single loop that watches some objects. We often refer
+  to this loop as "controller loop" or "sync loop" or "reconcile loop".
+- **controller binary** is a binary that runs one or multiple sync loops.
+  We often refer to it as "controllers".
+- **CRD** (Custom Resource Definition) is a simple YAML manifest that
+  describes a custom object, for example [this
+  CRD](https://github.com/jetstack/cert-manager/blob/a04d2f0935/deploy/crds/crd-orders.yaml#L2)
+  defines the acme.cert-manager.io/v1alpha3 Order resource. After applying
+  this CRD to a Kubernetes cluster, you can apply manifests that have the
+  kind "Order"
+
+  > Note: CRDs and controllers are decoupled. You can apply a CRD manifest
+  > without having any controller binary running. It works in both ways:
+  > you can have a controller binary running that doesn't require any
+  > custom objects. Traefik is a controller binary which relies on built-in
+  > Service objects.
+
+  > Note: the "CRD" manifest is just a schema. It doesn't carry any logic
+  > (except for the basic validation the apiserver does). The actual logic
+  > happens in the controller binary.
+
+- **operator**: the term "operator" is often used to mean a controller
+  binary with its CRDs, for example the [elastic
+  operator](https://github.com/elastic/cloud-on-k8s).
 
 ---
 
