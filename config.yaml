@@ -3,7 +3,12 @@ languageCode: en-us
 title: maelvls dev blog
 theme: hugo-vitae
 googleAnalytics: "UA-88710120-3"
-# disqusShortname: maelvls-dev
+
+# NOTE: I'm not using disqus. I'm using utterance.us. The short name for
+# utterance.us is the Github repo slug, for example:
+# maelvls/maelvls.github.io.
+disqusShortname: maelvls/maelvls.github.io
+
 paginate: 1000
 pygmentsstyle: abap # will deprecate soon since we use goldmark now
 pygmentsUseClasses: true # hugo gen chromastyles --style=abap >> static/css/maelvls.css
@@ -71,3 +76,7 @@ markup:
     endLevel: 3
     ordered: true
     startLevel: 2
+
+services:
+  rss:
+    limit: 0

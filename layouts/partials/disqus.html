@@ -1,0 +1,19 @@
+<!--
+Copied over from the vitae discuss.html. I needed to add utteranc.es at the
+bottom ovf every post, so I hacked the disqus partial and replaced it with
+my own comment provider! :-)
+
+I'm reusing the disqusShortname that you can set in config.yaml. The short
+name for utterance.us is the Github repo slug, for example
+maelvls/maelvls.github.io.
+-->
+
+<script
+  src="https://utteranc.es/client.js"
+  repo="{{ .Site.DisqusShortname }}"
+  issue-term="pathname"
+  label="💬"
+  theme="github-light"
+  crossorigin="anonymous"
+  async
+></script>
