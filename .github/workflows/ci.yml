@@ -18,7 +18,7 @@ jobs:
           hugo-version: "0.64.0"
 
       - run: hugo -d ./public --minify
-      - run: hugo -d ./public/unpublished --baseURL "https://maelvls.dev/unpublished/" --buildDrafts --buildFuture
+      - run: hugo -d ./public/do-not-share-yet --baseURL "https://maelvls.dev/do-not-share-yet/" --buildDrafts --buildFuture
 
       # The GITHUB_TOKEN already given for running github actions is not
       # sufficient. It allows me to push to master but for some reason it
