@@ -6,22 +6,10 @@
     <description>Recent content in go on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 14 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 27 Feb 2020 00:00:00 +0000</lastBuildDate>
     
     <atom:link href="https://maelvls.dev/unpublished/tags/go/index.xml" rel="self" type="application/rss+xml" />
     
-    <item>
-      <title>Resources for learning how to write Kubernetes controllers</title>
-      <link>https://maelvls.dev/unpublished/resources-for-writing-controllers/</link>
-      <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://maelvls.dev/unpublished/resources-for-writing-controllers/</guid>
-      <description>
-      
-      
-      
-      </description>
-    </item>
     <item>
       <title>You should write comments</title>
       <link>https://maelvls.dev/unpublished/you-should-write-comments/</link>

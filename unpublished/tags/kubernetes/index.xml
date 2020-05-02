@@ -39,18 +39,6 @@ scattered everywhere. Here are some links to help you start.
       </description>
     </item>
     <item>
-      <title>Resources for learning how to write Kubernetes controllers</title>
-      <link>https://maelvls.dev/unpublished/resources-for-writing-controllers/</link>
-      <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://maelvls.dev/unpublished/resources-for-writing-controllers/</guid>
-      <description>
-      
-      
-      
-      </description>
-    </item>
-    <item>
       <title>Migrating from GKE to Civo&#39;s K3s</title>
       <link>https://maelvls.dev/unpublished/from-gke-to-civo-k3s/</link>
       <pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate>

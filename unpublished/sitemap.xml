@@ -4,17 +4,27 @@
   
   <url>
     <loc>https://maelvls.dev/unpublished/2020/</loc>
-    <lastmod>2020-04-27T17:59:01+02:00</lastmod>
+    <lastmod>2020-04-30T08:59:06+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/unpublished/everything-about-docker/</loc>
+    <lastmod>2020-04-30T08:59:06+02:00</lastmod>
   </url>
   
   <url>
     <loc>https://maelvls.dev/unpublished/</loc>
-    <lastmod>2020-04-27T17:59:01+02:00</lastmod>
+    <lastmod>2020-04-30T08:59:06+02:00</lastmod>
   </url>
   
   <url>
     <loc>https://maelvls.dev/unpublished/unicode/</loc>
     <lastmod>2020-04-27T17:59:01+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/unpublished/metallb-vs-k3s-servicelb/</loc>
+    <lastmod>2020-04-25T12:25:02+02:00</lastmod>
   </url>
   
   <url>
@@ -78,16 +88,6 @@
   </url>
   
   <url>
-    <loc>https://maelvls.dev/unpublished/tags/go/</loc>
-    <lastmod>2020-04-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/unpublished/resources-for-writing-controllers/</loc>
-    <lastmod>2020-04-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://maelvls.dev/unpublished/tags/gcp/</loc>
     <lastmod>2020-04-13T00:00:00+00:00</lastmod>
   </url>
@@ -130,6 +130,11 @@
   <url>
     <loc>https://maelvls.dev/unpublished/slack-guide/</loc>
     <lastmod>2020-03-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/unpublished/tags/go/</loc>
+    <lastmod>2020-02-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
