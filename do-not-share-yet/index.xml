@@ -170,7 +170,7 @@ scattered everywhere. Here are some links to help you start.
 Kubernetes Services. While drawing the last diagram, I did not clearly
 see how traffic could make its way back to the user. In this
 post, I focus on how packets find their way back and what makes stateless
-rewritting interesting.
+rewriting interesting.
 
       
       </description>

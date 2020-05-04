@@ -9,13 +9,13 @@
 Kubernetes Services. While drawing the last diagram, I did not clearly
 see how traffic could make its way back to the user. In this
 post, I focus on how packets find their way back and what makes stateless
-rewritting interesting.
+rewriting interesting.
 "><meta property="og:title" content="How do packets find their way back?" />
 <meta property="og:description" content="In one of my previous posts, I studied how traffic flows when using
 Kubernetes Services. While drawing the last diagram, I did not clearly
 see how traffic could make its way back to the user. In this
 post, I focus on how packets find their way back and what makes stateless
-rewritting interesting.
+rewriting interesting.
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/do-not-share-yet/how-do-packets-come-back/" />
@@ -30,7 +30,7 @@ rewritting interesting.
 Kubernetes Services. While drawing the last diagram, I did not clearly
 see how traffic could make its way back to the user. In this
 post, I focus on how packets find their way back and what makes stateless
-rewritting interesting.
+rewriting interesting.
 "/>
 
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -81,7 +81,7 @@ Service</a>&quot;, I studied how traffic flows in when
 using Kubernetes Services. In the last diagram of that post, I could not
 clearly see how traffic could make its way back to the user. In this
 article, I will try to understand how packets are able to flow back to the
-user and why stateless rewritting is interesting.</p>
+user and where stateless rewriting happens.</p>
 <p>In the following diagram, we can see a packet coming from a user, then
 being re-written by Google&rsquo;s VPC firewalls and finally coming into a VM
 &ldquo;node 1&rdquo;.</p>
@@ -141,8 +141,8 @@ tool.</p>
 </code></pre></div></div>
 <!-- https://textik.com/#0db10960397c06f5 -->
 <p>By reading through the diagram, we can see that the packet is re-written by
-the Google&rsquo;s firewall using DNAT: the destination is replaced by a fixed
-IP, the one of the VM.</p>
+Google&rsquo;s firewall using DNAT: the destination is replaced by a fixed IP,
+the one of the VM.</p>
 <blockquote>
 <p>Why do I say &ldquo;packets&rdquo; but what I should really say is &ldquo;segments&rdquo;? That&rsquo;s
 because I don&rsquo;t really know anyone using this strict terminology. Outside
@@ -166,14 +166,14 @@ connections using conntrack.</p>
 </li>
 <li>
 <p>Incoming traffic from the Internet to a Google Cloud VM has to go
-through the VPC firewall. The packet rewritting is very fast and very
+through the VPC firewall. The packet rewriting is very fast and very
 scalable since it only uses DNAT, which means no need to remember
 anything.</p>
 </li>
 <li>
 <p>Most packet forwarding in Kubernetes relies on stateless DNATing (e.g.
 <code>hostPort</code> or <code>nodePort</code>). Some parts of Kubernetes rely on stateful
-SNAT rewritting, for example when you use <code>externalTrafficPolicy: Cluster</code> in a which is the default policy for a Service. The following
+SNAT rewriting, for example when you use <code>externalTrafficPolicy: Cluster</code> in a which is the default policy for a Service. The following
 diagram shows where this rewriting happens (extracted from the last
 diagram in &ldquo;<a href="/packets-eye-kubernetes-service/">The Packet&rsquo;s-Eye View of a Kubernetes
 Service</a>&quot;):</p>

@@ -7,7 +7,7 @@ In one of my previous posts, I studied how traffic flows when using
 Kubernetes Services. While drawing the last diagram, I did not clearly
 see how traffic could make its way back to the user. In this
 post, I focus on how packets find their way back and what makes stateless
-rewritting interesting.</description></item><item><title>My home office setup in 2020</title><link>https://maelvls.dev/home-office-2020/</link><pubDate>Mon, 30 Mar 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/home-office-2020/</guid><description>
+rewriting interesting.</description></item><item><title>My home office setup in 2020</title><link>https://maelvls.dev/home-office-2020/</link><pubDate>Mon, 30 Mar 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/home-office-2020/</guid><description>
 Here is what my home office looks like in 2020 and what changed between 2019 and 2020!</description></item><item><title>Migrating from GKE to Civo's K3s</title><link>https://maelvls.dev/from-gke-to-civo-k3s/</link><pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/from-gke-to-civo-k3s/</guid><description>
 My free trial on GKE was ending in 2 days and I had to find a way to migrate away. I decided to switch to Civo's managed K3s.</description></item><item><title>The Packet's-Eye View of a Kubernetes Service</title><link>https://maelvls.dev/packets-eye-kubernetes-service/</link><pubDate>Sat, 14 Mar 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/packets-eye-kubernetes-service/</guid><description>
 The Service and Ingress respectively brings L4 and L7 traffics to your
