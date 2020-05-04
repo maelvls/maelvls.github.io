@@ -5,7 +5,7 @@ description: |
     Kubernetes Services. While drawing the last diagram, I did not clearly
     see how traffic could make its way back to the user. In this
     post, I focus on how packets find their way back and what makes stateless
-    rewritting interesting.
+    rewriting interesting.
 date: 2020-04-13
 url: /how-do-packets-come-back
 images: [how-do-packets-come-back/cover-how-can-packets-come-back.png]
@@ -17,7 +17,7 @@ Service](/packets-eye-kubernetes-service/)", I studied how traffic flows in when
 using Kubernetes Services. In the last diagram of that post, I could not
 clearly see how traffic could make its way back to the user. In this
 article, I will try to understand how packets are able to flow back to the
-user and why stateless rewritting is interesting.
+user and where stateless rewriting happens.
 
 In the following diagram, we can see a packet coming from a user, then
 being re-written by Google's VPC firewalls and finally coming into a VM
@@ -86,8 +86,8 @@ tool.
 <!-- https://textik.com/#0db10960397c06f5 -->
 
 By reading through the diagram, we can see that the packet is re-written by
-the Google's firewall using DNAT: the destination is replaced by a fixed
-IP, the one of the VM.
+Google's firewall using DNAT: the destination is replaced by a fixed IP,
+the one of the VM.
 
 > Why do I say "packets" but what I should really say is "segments"? That's
 > because I don't really know anyone using this strict terminology. Outside
@@ -111,17 +111,15 @@ Here is what I want to remember from this post:
    (source-based NAT). The router needs to keep track of outgoing
    connections using conntrack.
 2. Incoming traffic from the Internet to a Google Cloud VM has to go
-   through the VPC firewall. The packet rewritting is very fast and very
+   through the VPC firewall. The packet rewriting is very fast and very
    scalable since it only uses DNAT, which means no need to remember
    anything.
 3. Most packet forwarding in Kubernetes relies on stateless DNATing (e.g.
    `hostPort` or `nodePort`). Some parts of Kubernetes rely on stateful
-   SNAT rewritting, for example when you use `externalTrafficPolicy:
+   SNAT rewriting, for example when you use `externalTrafficPolicy:
    Cluster` in a which is the default policy for a Service. The following
    diagram shows where this rewriting happens (extracted from the last
    diagram in "[The Packet's-Eye View of a Kubernetes
    Service](/packets-eye-kubernetes-service/)"):
 
    <img alt="Packet's source is rewritten (SNAT) because of the 'policy: Cluster' that is set in the Service." src="kubernetes-snat-cluster-ip.svg" width="50%"/>
-
-
