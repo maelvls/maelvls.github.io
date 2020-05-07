@@ -61,7 +61,10 @@
 </div>
 </div>
 <div class="markdown">
-<p>A few days ago, reality hit me hard with this message:</p>
+<p>To learn and play with Kubernetes, I keep a &ldquo;playground&rdquo; cluster to try
+things on it. Since 2019, I have been using GKE (Google&rsquo;s managed
+Kubernetes service) which works great with the one-year $300 credit that
+you get initially. A few days ago, reality hit me hard with this message:</p>
 <img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="60%">
 <p>I had only 2 days to find a plan and migrate everything away from GKE! My
 current setup was only using a single <code>n1-standard-1</code> on <code>us-west-1</code> and
@@ -70,6 +73,25 @@ just didn&rsquo;t want to pay.</p>
 <p>Note that I will still use Google&rsquo;s CloudDNS service for now.</p>
 <p>I chose to migrate to Civo&rsquo;s managed K3s since they are in beta and I
 really wanted to try K3s.</p>
+<blockquote>
+<p>Civo is a company that offers a public cloud as well as managed
+Kubernetes clusters. Their managed Kubernetes offer, named
+&ldquo;<a href="https://www.civo.com/kube100">KUBE100</a>&quot;, is quite new (launched in
+mid-2019). Unlike most managed Kubernetes offerings like EKS or GKE, Civo
+went with Rancher&rsquo;s <a href="https://k3s.io/">K3s</a> Kubernetes distribution.</p>
+<p>Compared to the standard Kubernetes distribution, K3s is a way lighter:
+simple embedded database with sqlite, one single binary instead of four;
+a single VM can both host the control plane and run pods. With the
+traditional Kubernetes distribution, you have to run the control plane on
+a separate VM.</p>
+<p>This lightweight feature is what brings me here, and also the fact that
+K3s comes by default with Traefik &amp; their own tiny Service
+type=LoadBalancer controller, which means you don&rsquo;t even need an
+expensive network load balancer like on GKE when you want to expose a
+service to the internet.</p>
+<p>Of course, K3s has drawbacks and is probably meant for IoT-based
+clusters, but it&rsquo;s also perfect for playing around with Kubernetes!</p>
+</blockquote>
 <p>So I went ahead and create a two-nodes cluster:</p>
 <p><img src="civo-k3s.png" alt="My K3s cluster on Civo"></p>
 <p>Note that since this is K3s, the master can also be scheduled with pods. So
