@@ -10,14 +10,14 @@ tags: [kubernetes]
 
 To learn and play with Kubernetes, I keep a "playground" cluster to try
 things on it. Since 2019, I have been using GKE (Google's managed
-Kubernetes service) which works great with the one-year $300 credit that
+Kubernetes service), which works great with the one-year $300 credit that
 you get initially. A few days ago, reality hit me hard with this message:
 
 <img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="60%">
 
 I had only 2 days to find a plan and migrate everything away from GKE! My
 current setup was only using a single `n1-standard-1` on `us-west-1` and
-with no network load balancer. But that was still around €15 a month and I
+with no network load balancer. But that was still around €15 a month, and I
 just didn't want to pay.
 
 Note that I will still use Google's CloudDNS service for now.
@@ -117,27 +117,27 @@ and then I temporarily added the `MINIO_ACCESS_KEY_OLD` and
 kubectl -n minio edit deployment minio
 ```
 
-After that, the pods get recreated and MinIO picks up the new secret. Note:
-I also had to edit the deployment again in order to remove the temporary
-`_OLD` environment variables.
+After that, the pods get recreated, and MinIO picks up the new secret.
+Note: I also had to edit the deployment again in order to remove the
+temporary `_OLD` environment variables.
 
 ---
 
 To recap, the whole migration was painless. The only data I migrated was
 MinIO. Note that I didn't have any SLA to comply with, but if I had planned
-a bit better I could have moved over with almost zero downtime.
+a bit better, I could have moved over with almost zero downtime.
 
-In order to get a almost-zero-downtime, I would have made sure to keep the
+In order to get almost-zero-downtime, I would have made sure to keep the
 old and new MinIO instances replicated until the move was over. The only
-problem with the whole migration is the DNS change: I cannot precisely know
-how much time that will take: after the migration was over and the DNS
-entries propagated, if some people were hitting the old IP (e.g., old DNS
-entries), the old and new clusters would have become out-of-sync. To
-mitigate that, I could have chosen to "cut" the old cluster just to make
-sure that case never happens.
+problem with the whole migration is the DNS change. I cannot precisely know
+when the propagation will take. After completing the migration and assuming
+that all the DNS entries are propagated, if for some reason people keep
+hitting the old IP due to outdated DNS entries, the old and new clusters
+would have become out-of-sync. To mitigate that issue, I could have chosen
+to "cordon" the old cluster just to make sure that this case never happens.
 
 The repo for my Kubernetes playground cluster (`*.k.maelvls.dev`) is
 available [here](https://github.com/maelvls/k.maelvls.dev).
 
-- **Udpate 7 May 2020**: better introduction explaining why I use GKE,
-  explain what Civo and K3s are all about.
+- **Update 7 May 2020**: better introduction explaining why I use GKE,
+  tell what Civo and K3s are all about.
