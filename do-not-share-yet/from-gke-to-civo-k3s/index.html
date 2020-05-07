@@ -63,12 +63,12 @@
 <div class="markdown">
 <p>To learn and play with Kubernetes, I keep a &ldquo;playground&rdquo; cluster to try
 things on it. Since 2019, I have been using GKE (Google&rsquo;s managed
-Kubernetes service) which works great with the one-year $300 credit that
+Kubernetes service), which works great with the one-year $300 credit that
 you get initially. A few days ago, reality hit me hard with this message:</p>
 <img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="60%">
 <p>I had only 2 days to find a plan and migrate everything away from GKE! My
 current setup was only using a single <code>n1-standard-1</code> on <code>us-west-1</code> and
-with no network load balancer. But that was still around €15 a month and I
+with no network load balancer. But that was still around €15 a month, and I
 just didn&rsquo;t want to pay.</p>
 <p>Note that I will still use Google&rsquo;s CloudDNS service for now.</p>
 <p>I chose to migrate to Civo&rsquo;s managed K3s since they are in beta and I
@@ -138,26 +138,26 @@ I changed the secret stored in Kubernetes:</p>
 </code></pre></div><p>and then I temporarily added the <code>MINIO_ACCESS_KEY_OLD</code> and
 <code>MINIO_SECRET_KEY_OLD</code> to the deployment by editing it.</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">kubectl -n minio edit deployment minio
-</code></pre></div><p>After that, the pods get recreated and MinIO picks up the new secret. Note:
-I also had to edit the deployment again in order to remove the temporary
-<code>_OLD</code> environment variables.</p>
+</code></pre></div><p>After that, the pods get recreated, and MinIO picks up the new secret.
+Note: I also had to edit the deployment again in order to remove the
+temporary <code>_OLD</code> environment variables.</p>
 <hr>
 <p>To recap, the whole migration was painless. The only data I migrated was
 MinIO. Note that I didn&rsquo;t have any SLA to comply with, but if I had planned
-a bit better I could have moved over with almost zero downtime.</p>
-<p>In order to get a almost-zero-downtime, I would have made sure to keep the
+a bit better, I could have moved over with almost zero downtime.</p>
+<p>In order to get almost-zero-downtime, I would have made sure to keep the
 old and new MinIO instances replicated until the move was over. The only
-problem with the whole migration is the DNS change: I cannot precisely know
-how much time that will take: after the migration was over and the DNS
-entries propagated, if some people were hitting the old IP (e.g., old DNS
-entries), the old and new clusters would have become out-of-sync. To
-mitigate that, I could have chosen to &ldquo;cut&rdquo; the old cluster just to make
-sure that case never happens.</p>
+problem with the whole migration is the DNS change. I cannot precisely know
+when the propagation will take. After completing the migration and assuming
+that all the DNS entries are propagated, if for some reason people keep
+hitting the old IP due to outdated DNS entries, the old and new clusters
+would have become out-of-sync. To mitigate that issue, I could have chosen
+to &ldquo;cordon&rdquo; the old cluster just to make sure that this case never happens.</p>
 <p>The repo for my Kubernetes playground cluster (<code>*.k.maelvls.dev</code>) is
 available <a href="https://github.com/maelvls/k.maelvls.dev">here</a>.</p>
 <ul>
-<li><strong>Udpate 7 May 2020</strong>: better introduction explaining why I use GKE,
-explain what Civo and K3s are all about.</li>
+<li><strong>Update 7 May 2020</strong>: better introduction explaining why I use GKE,
+tell what Civo and K3s are all about.</li>
 </ul>
 
 </div>
