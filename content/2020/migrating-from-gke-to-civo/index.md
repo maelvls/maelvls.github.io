@@ -8,7 +8,10 @@ images: [from-gke-to-civo-k3s/civo-k3s.png]
 tags: [kubernetes]
 ---
 
-A few days ago, reality hit me hard with this message:
+To learn and play with Kubernetes, I keep a "playground" cluster to try
+things on it. Since 2019, I have been using GKE (Google's managed
+Kubernetes service) which works great with the one-year $300 credit that
+you get initially. A few days ago, reality hit me hard with this message:
 
 <img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="60%">
 
@@ -21,6 +24,27 @@ Note that I will still use Google's CloudDNS service for now.
 
 I chose to migrate to Civo's managed K3s since they are in beta and I
 really wanted to try K3s.
+
+> Civo is a company that offers a public cloud as well as managed
+> Kubernetes clusters. Their managed Kubernetes offer, named
+> "[KUBE100](https://www.civo.com/kube100)", is quite new (launched in
+> mid-2019). Unlike most managed Kubernetes offerings like EKS or GKE, Civo
+> went with Rancher's [K3s](https://k3s.io/) Kubernetes distribution.
+>
+> Compared to the standard Kubernetes distribution, K3s is a way lighter:
+> simple embedded database with sqlite, one single binary instead of four;
+> a single VM can both host the control plane and run pods. With the
+> traditional Kubernetes distribution, you have to run the control plane on
+> a separate VM.
+>
+> This lightweight feature is what brings me here, and also the fact that
+> K3s comes by default with Traefik & their own tiny Service
+> type=LoadBalancer controller, which means you don't even need an
+> expensive network load balancer like on GKE when you want to expose a
+> service to the internet.
+>
+> Of course, K3s has drawbacks and is probably meant for IoT-based
+> clusters, but it's also perfect for playing around with Kubernetes!
 
 So I went ahead and create a two-nodes cluster:
 
