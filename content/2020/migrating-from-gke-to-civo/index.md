@@ -9,9 +9,11 @@ tags: [kubernetes]
 ---
 
 To learn and play with Kubernetes, I keep a "playground" cluster to try
-things on it. Since 2019, I have been using GKE (Google's managed
-Kubernetes service), which works great with the one-year $300 credit that
-you get initially. A few days ago, reality hit me hard with this message:
+things on it (helm charts I use are
+[here](https://github.com/maelvls/k.maelvls.dev)). Since 2019, I have been
+using GKE (Google's managed Kubernetes service), which works great with the
+one-year $300 credit that you get initially. A few days ago, reality hit me
+hard with this message:
 
 <img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="60%">
 
