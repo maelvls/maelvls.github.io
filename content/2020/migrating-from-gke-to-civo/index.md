@@ -138,4 +138,5 @@ sure that case never happens.
 The repo for my Kubernetes playground cluster (`*.k.maelvls.dev`) is
 available [here](https://github.com/maelvls/k.maelvls.dev).
 
-
+- **Udpate 7 May 2020**: better introduction explaining why I use GKE,
+  explain what Civo and K3s are all about.
