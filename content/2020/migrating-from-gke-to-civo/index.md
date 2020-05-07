@@ -35,7 +35,8 @@ really wanted to try K3s.
 > simple embedded database with sqlite, one single binary instead of four;
 > a single VM can both host the control plane and run pods. With the
 > traditional Kubernetes distribution, you have to run the control plane on
-> a separate VM.
+> a separate VM. Note that Civo also has a whole blog post on "[Kubernetes
+> vs. K3s](https://www.civo.com/blog/k8s-vs-k3s)".
 >
 > This lightweight feature is what brings me here, and also the fact that
 > K3s comes by default with Traefik & their own tiny Service
