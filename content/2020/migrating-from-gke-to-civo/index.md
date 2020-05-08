@@ -15,54 +15,53 @@ using GKE (Google's managed Kubernetes service), which works great with the
 one-year $300 credit that you get initially. A few days ago, reality hit me
 hard with this message:
 
-<img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="60%">
+<img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="50%">
 
 I had only 2 days to find a plan and migrate everything away from GKE! My
 current setup was only using a single `n1-standard-1` on `us-west-1` and
 with no network load balancer. But that was still around €15 a month, and I
-just didn't want to pay.
+just didn't want to pay. I chose to migrate to Civo's managed K3s since
+they are in beta and I really wanted to try K3s.
 
-Note that I will still use Google's CloudDNS service for now.
+## Civo's Managed K3s
 
-I chose to migrate to Civo's managed K3s since they are in beta and I
-really wanted to try K3s.
+Civo is a company that offers a public cloud as well as managed Kubernetes
+clusters. Their managed Kubernetes offer, named
+"[KUBE100](https://www.civo.com/kube100)", is quite new (launched in
+mid-2019). Unlike most managed Kubernetes offerings like EKS or GKE, Civo
+went with Rancher's [K3s](https://k3s.io/) Kubernetes distribution.
 
-> Civo is a company that offers a public cloud as well as managed
-> Kubernetes clusters. Their managed Kubernetes offer, named
-> "[KUBE100](https://www.civo.com/kube100)", is quite new (launched in
-> mid-2019). Unlike most managed Kubernetes offerings like EKS or GKE, Civo
-> went with Rancher's [K3s](https://k3s.io/) Kubernetes distribution.
->
-> Compared to the standard Kubernetes distribution, K3s is a way lighter:
-> simple embedded database with sqlite, one single binary instead of four;
-> a single VM can both host the control plane and run pods. With the
-> traditional Kubernetes distribution, you have to run the control plane on
-> a separate VM. Note that Civo has a whole blog post on "[Kubernetes vs.
-> K3s](https://www.civo.com/blog/k8s-vs-k3s)".
->
-> This lightweight feature is what brings me here, and also the fact that
-> K3s comes by default with Traefik & their own tiny Service
-> type=LoadBalancer controller, which means you don't even need an
-> expensive network load balancer like on GKE when you want to expose a
-> service to the internet.
->
-> Of course, K3s has drawbacks and is probably meant for IoT-based
-> clusters, but it's also perfect for playing around with Kubernetes!
+Compared to the standard Kubernetes distribution, K3s is a way lighter:
+simple embedded database with sqlite, one single binary instead of four; a
+single VM can both host the control plane and run pods. With the
+traditional Kubernetes distribution, you have to run the control plane on a
+separate VM. Note that Civo has a whole blog post on "[Kubernetes vs.
+K3s](https://www.civo.com/blog/k8s-vs-k3s)".
 
-So I went ahead and create a two-nodes cluster:
+This lightweight feature is what brings me here, and also the fact that K3s
+comes by default with Traefik & their own tiny Service type=LoadBalancer
+controller, which means you don't even need an expensive network load
+balancer like on GKE when you want to expose a service to the internet.
+
+Of course, K3s has drawbacks and is probably meant for IoT-based clusters,
+but it's also perfect for playing around with Kubernetes! So I went ahead
+and create a two-nodes cluster:
 
 ![My K3s cluster on Civo](civo-k3s.png)
 
 Note that since this is K3s, the master can also be scheduled with pods. So
 I could have gone with a single node.
 
-## Migrating external-dns, cert-manager and traefik
+## Migrating ExternalDNS, cert-manager and Traefik
 
-That's the easy part. I just had to go through my README.md and play the
-`helm` commands one by one (I know I know, I should automate that 😁).
+That's the easy part. I just had to run
+[./helm_apply](https://github.com/maelvls/k.maelvls.dev) which runs `helm
+upgrade --install` for each helm chart I use.
 
 In the process, I decided to go with `*.k.maelvls.dev` instead of
-`*.k.maelvls.dev`. The shorter the better!
+`*.k.maelvls.dev`. The shorter, the better! I forgot to add that I still
+use Google's CloudDNS. I did not find an easy alternative yet. Maybe just
+Cloudflare for now?
 
 After creating Traefik, I knew that its service would automatically be
 populated with the `status.loadBalancer` field thanks to K3s'
@@ -79,15 +78,15 @@ Great! Now, Traefik will propagate this external IP to the ingresses, and
 ExternalDNS will use the `status.loadBalancer` from these ingresses in
 order to set `A` records.
 
-If you want to know more about how servicelb works, you can take a look at
-[The Packet's-Eye View of a Kubernetes
+If you want to know more about how "servicelb" works, you can take a look
+at [The Packet's-Eye View of a Kubernetes
 Service](https://maelvls.dev/packets-eye-kubernetes-service/) where I
 describe how Akrobateo works (K3s' servicelb has the exact same behavior).
 
-## Migrating MinIO
+## Migrating MinIO from the old to the new cluster
 
-I use minio for various uses. It is great if you want a S3-compatible
-storage solution. In order to migrate, I followed
+I use [minio](https://min.io/) for various uses. It is great if you want a
+S3-compatible storage solution. In order to migrate, I followed
 [this](https://www.scaleway.com/en/docs/how-to-migrate-object-storage-buckets-with-minio).
 It's quite painless:
 
