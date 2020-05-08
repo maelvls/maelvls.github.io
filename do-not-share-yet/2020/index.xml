@@ -6,10 +6,46 @@
     <description>Recent content in 2020s on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 30 Apr 2020 08:59:06 +0200</lastBuildDate>
+    <lastBuildDate>Fri, 08 May 2020 15:00:27 +0200</lastBuildDate>
     
     <atom:link href="https://maelvls.dev/do-not-share-yet/2020/index.xml" rel="self" type="application/rss+xml" />
     
+    <item>
+      <title>Writing a good Go SDK</title>
+      <link>https://maelvls.dev/do-not-share-yet/writing-a-good-go-sdk/</link>
+      <pubDate>Fri, 08 May 2020 15:00:27 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/writing-a-good-go-sdk/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
+    <item>
+      <title>ChatOps using Github Actions</title>
+      <link>https://maelvls.dev/do-not-share-yet/chatops-github-actions/</link>
+      <pubDate>Fri, 08 May 2020 14:40:31 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/chatops-github-actions/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
+    <item>
+      <title>Slack: don&#39;t miss any channels!</title>
+      <link>https://maelvls.dev/do-not-share-yet/slack-dont-miss-channels/</link>
+      <pubDate>Fri, 08 May 2020 10:37:20 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/slack-dont-miss-channels/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
     <item>
       <title>Everything About Docker</title>
       <link>https://maelvls.dev/do-not-share-yet/everything-about-docker/</link>
@@ -213,18 +249,6 @@ interactions between the ingress controller and the &#34;service-lb controller&#
 (the thing that creates the external load balancer). I also detail how the
 `hostPort` approach shapes traffic.
 
-      
-      </description>
-    </item>
-    <item>
-      <title>Slack Quick Guide</title>
-      <link>https://maelvls.dev/do-not-share-yet/slack-guide/</link>
-      <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://maelvls.dev/do-not-share-yet/slack-guide/</guid>
-      <description>
-      
-      
       
       </description>
     </item>
