@@ -67,43 +67,41 @@ things on it (helm files I use are
 using GKE (Google&rsquo;s managed Kubernetes service), which works great with the
 one-year $300 credit that you get initially. A few days ago, reality hit me
 hard with this message:</p>
-<img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="60%">
+<img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="50%">
 <p>I had only 2 days to find a plan and migrate everything away from GKE! My
 current setup was only using a single <code>n1-standard-1</code> on <code>us-west-1</code> and
 with no network load balancer. But that was still around €15 a month, and I
-just didn&rsquo;t want to pay.</p>
-<p>Note that I will still use Google&rsquo;s CloudDNS service for now.</p>
-<p>I chose to migrate to Civo&rsquo;s managed K3s since they are in beta and I
-really wanted to try K3s.</p>
-<blockquote>
-<p>Civo is a company that offers a public cloud as well as managed
-Kubernetes clusters. Their managed Kubernetes offer, named
+just didn&rsquo;t want to pay. I chose to migrate to Civo&rsquo;s managed K3s since
+they are in beta and I really wanted to try K3s.</p>
+<h2 id="civos-managed-k3s">Civo&rsquo;s Managed K3s</h2>
+<p>Civo is a company that offers a public cloud as well as managed Kubernetes
+clusters. Their managed Kubernetes offer, named
 &ldquo;<a href="https://www.civo.com/kube100">KUBE100</a>&quot;, is quite new (launched in
 mid-2019). Unlike most managed Kubernetes offerings like EKS or GKE, Civo
 went with Rancher&rsquo;s <a href="https://k3s.io/">K3s</a> Kubernetes distribution.</p>
 <p>Compared to the standard Kubernetes distribution, K3s is a way lighter:
-simple embedded database with sqlite, one single binary instead of four;
-a single VM can both host the control plane and run pods. With the
-traditional Kubernetes distribution, you have to run the control plane on
-a separate VM. Note that Civo has a whole blog post on &ldquo;<a href="https://www.civo.com/blog/k8s-vs-k3s">Kubernetes vs.
+simple embedded database with sqlite, one single binary instead of four; a
+single VM can both host the control plane and run pods. With the
+traditional Kubernetes distribution, you have to run the control plane on a
+separate VM. Note that Civo has a whole blog post on &ldquo;<a href="https://www.civo.com/blog/k8s-vs-k3s">Kubernetes vs.
 K3s</a>&quot;.</p>
-<p>This lightweight feature is what brings me here, and also the fact that
-K3s comes by default with Traefik &amp; their own tiny Service
-type=LoadBalancer controller, which means you don&rsquo;t even need an
-expensive network load balancer like on GKE when you want to expose a
-service to the internet.</p>
-<p>Of course, K3s has drawbacks and is probably meant for IoT-based
-clusters, but it&rsquo;s also perfect for playing around with Kubernetes!</p>
-</blockquote>
-<p>So I went ahead and create a two-nodes cluster:</p>
+<p>This lightweight feature is what brings me here, and also the fact that K3s
+comes by default with Traefik &amp; their own tiny Service type=LoadBalancer
+controller, which means you don&rsquo;t even need an expensive network load
+balancer like on GKE when you want to expose a service to the internet.</p>
+<p>Of course, K3s has drawbacks and is probably meant for IoT-based clusters,
+but it&rsquo;s also perfect for playing around with Kubernetes! So I went ahead
+and create a two-nodes cluster:</p>
 <p><img src="civo-k3s.png" alt="My K3s cluster on Civo"></p>
 <p>Note that since this is K3s, the master can also be scheduled with pods. So
 I could have gone with a single node.</p>
-<h2 id="migrating-external-dns-cert-manager-and-traefik">Migrating external-dns, cert-manager and traefik</h2>
-<p>That&rsquo;s the easy part. I just had to go through my README.md and play the
-<code>helm</code> commands one by one (I know I know, I should automate that 😁).</p>
+<h2 id="migrating-externaldns-cert-manager-and-traefik">Migrating ExternalDNS, cert-manager and Traefik</h2>
+<p>That&rsquo;s the easy part. I just had to run
+<a href="https://github.com/maelvls/k.maelvls.dev">./helm_apply</a> which runs <code>helm upgrade --install</code> for each helm chart I use.</p>
 <p>In the process, I decided to go with <code>*.k.maelvls.dev</code> instead of
-<code>*.k.maelvls.dev</code>. The shorter the better!</p>
+<code>*.k.maelvls.dev</code>. The shorter, the better! I forgot to add that I still
+use Google&rsquo;s CloudDNS. I did not find an easy alternative yet. Maybe just
+Cloudflare for now?</p>
 <p>After creating Traefik, I knew that its service would automatically be
 populated with the <code>status.loadBalancer</code> field thanks to K3s&rsquo;
 <a href="https://github.com/rancher/k3s/blob/master/pkg/servicelb/controller.go">servicelb</a>.
@@ -114,13 +112,13 @@ traefik  LoadBalancer  192.168.255.134   91.211.152.190   443:32164/TCP,80:32684
 </code></pre></div><p>Great! Now, Traefik will propagate this external IP to the ingresses, and
 ExternalDNS will use the <code>status.loadBalancer</code> from these ingresses in
 order to set <code>A</code> records.</p>
-<p>If you want to know more about how servicelb works, you can take a look at
-<a href="https://maelvls.dev/packets-eye-kubernetes-service/">The Packet&rsquo;s-Eye View of a Kubernetes
+<p>If you want to know more about how &ldquo;servicelb&rdquo; works, you can take a look
+at <a href="https://maelvls.dev/packets-eye-kubernetes-service/">The Packet&rsquo;s-Eye View of a Kubernetes
 Service</a> where I
 describe how Akrobateo works (K3s&rsquo; servicelb has the exact same behavior).</p>
-<h2 id="migrating-minio">Migrating MinIO</h2>
-<p>I use minio for various uses. It is great if you want a S3-compatible
-storage solution. In order to migrate, I followed
+<h2 id="migrating-minio-from-the-old-to-the-new-cluster">Migrating MinIO from the old to the new cluster</h2>
+<p>I use <a href="https://min.io/">minio</a> for various uses. It is great if you want a
+S3-compatible storage solution. In order to migrate, I followed
 <a href="https://www.scaleway.com/en/docs/how-to-migrate-object-storage-buckets-with-minio">this</a>.
 It&rsquo;s quite painless:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">$ kubectl -n minio run a --generator<span class="o">=</span>run-pod/v1 -it --rm --restart<span class="o">=</span>Never --image<span class="o">=</span>alpine
