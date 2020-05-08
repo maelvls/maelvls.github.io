@@ -78,6 +78,3 @@ fly -t main set-pipeline -pmaster -c pipeline.yml
 > binary is used for running Guardian, which is a Garden backend
 > implementation which runs containers via `runc` (the same technology
 > underlying tools like Docker).
-
-
-
