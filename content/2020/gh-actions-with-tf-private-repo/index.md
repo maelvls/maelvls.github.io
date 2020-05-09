@@ -36,12 +36,12 @@ a secret and have the public key known by Github (or Gitlab)?
 Using SSH key pairs is not ideal. The key pair is tied to an individual and
 can't be linked to a Github App like `github-bot`. Plus, the key pair
 mechanism doesn't offer access to a specific repo, which means all your
-company's repositories are exposed. Using a Github App means that you can
-use a token (using `git+https`) and select which repositories can be
-accessed by this token.
+company's repositories are exposed. And finally, some companies do not have
+port 22 open for security reasons, which means `git+https` is their only
+option.
 
-To use HTTPS instead of git over SSH, we start by changing the way we
-import these modules:
+To use https instead of ssh, we start by changing the way we import these
+modules:
 
 ```diff
  module "some_instance_of_this_module" {
@@ -50,7 +50,7 @@ import these modules:
  }
 ```
 
-## Local development & git over HTTPS
+## Local development & git over https
 
 Locally, you will have to make sure you can `git clone` this private repo,
 for example, the following should work:
@@ -72,6 +72,10 @@ There are two main solutions:
 1. using `url.insteadof`,
 2. or using `credential.helper`.
 
+For both options, you will need a PAT (personal access token) linked your
+own account. I refer to this token as `GH_TOKEN`. To create a PAT, you can
+go [to your Github settings](https://github.com/settings/tokens).
+
 > ⚠️ NOTE: around April 2020, Github decided to prevent users from using
 > Github Secrets names that begin with `GITHUB_`. We used to use the name
 > `GITHUB_PAT` frequently in Github Actions readmes, I guess we will all
@@ -84,11 +88,11 @@ There are two main solutions:
    `GITHUB_TOKEN` which is limited to the current repository. And since we
    want to access another private repo, we have to disable that.
 2. instead, you can use `git config --global url.insteadof`. The `GH_TOKEN`
-   Github Secret is a Github personal token
-   (<https://github.com/settings/tokens>) that has the 'repo' scope (full
-   control of private repositories).
+   Github Secret is a [Github personal
+   token](https://github.com/settings/tokens) that has the 'repo' scope
+   (full control of private repositories).
 
-> Note: when using git over HTTPS with a token on `https://github.com`, the
+> Note: when using git over https with a token on `https://github.com`, the
 username doesn't matter, that's why we put `foo` here.
 
 ```yaml
