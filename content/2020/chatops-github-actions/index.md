@@ -24,4 +24,4 @@ tags: []
   mostly read-only (except for re-running jobs). It is API-only and the
   main way of configuring and running CI is to use the `fly` CLI.
 
-
+Example: <https://github.com/maelvls/gh-actions-chatops>
