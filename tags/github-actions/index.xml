@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>github-actions on maelvls dev blog</title><link>https://maelvls.dev/tags/github-actions/</link><description>Recent content in github-actions on maelvls.dev</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 09 May 2020 16:02:26 +0200</lastBuildDate><atom:link href="https://maelvls.dev/tags/github-actions/index.xml" rel="self" type="application/rss+xml"/><item><title>Github Actions with a private Terraform module</title><link>https://maelvls.dev/gh-actions-with-tf-private-repo/</link><pubDate>Sat, 09 May 2020 16:02:26 +0200</pubDate><guid>https://maelvls.dev/gh-actions-with-tf-private-repo/</guid><description>
+Terraform makes it easy to manage infrastructure at scale; you
+might want to share code between modules, and that's where it becomes tricky.
+In this post, I try to give some clues on how to use terraform across private
+Github repos.</description></item></channel></rss>

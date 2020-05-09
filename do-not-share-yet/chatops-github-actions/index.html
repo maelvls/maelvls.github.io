@@ -78,61 +78,7 @@ things like <code>kubectl</code>.</li>
 mostly read-only (except for re-running jobs). It is API-only and the
 main way of configuring and running CI is to use the <code>fly</code> CLI.</li>
 </ul>
-<h2 id="appendix-and-what-if-you-have-modules-in-private-repos">Appendix: and what if you have modules in private repos?</h2>
-<p>Here are some ways to make <code>terraform init</code> work when the module source is
-a private Github repo, which means <code>git clone</code> will fail.</p>
-<blockquote>
-<p>⚠️ Warning: around April 2020, Github decided to prevent users from using
-Github Secrets names that begin with <code>GITHUB_</code>. We used to use the name
-<code>GITHUB_PAT</code> frequently in Github Actions readmes, I guess we will all
-have to update everything!</p>
-</blockquote>
-<h3 id="solution-1">Solution 1</h3>
-<ol>
-<li>actions/checkout@v2 sets the &lsquo;Authorization&rsquo; for any git command issued
-from the checked out repo. But since this uses the Github Actions
-<code>GITHUB_TOKEN</code> which is limited to the current repository. And since we
-want to access another private repo, we have to disable that.</li>
-<li>instead, you can use <code>git config --global url.insteadof</code>. The <code>GH_TOKEN</code>
-Github Secret is a Github personal token
-(<a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a>) that has the &lsquo;repo&rsquo; scope (full
-control of private repositories).</li>
-</ol>
-<blockquote>
-<p>Note: when using github over https with a token, the username doesn&rsquo;t
-matter, that&rsquo;s why we put <code>foo</code> here.</p>
-</blockquote>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">- <span class="k">run</span><span class="p">:</span><span class="w"> </span><span class="sd">|
-</span><span class="sd">   </span><span class="sd"> </span><span class="sd">git config --local --remove-section http.&#34;https://github.com/&#34;</span><span class="w">
-</span><span class="w">    </span>git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>url.<span class="s2">&#34;https://foo:${GH_TOKEN}@github.com/your-org&#34;</span>.insteadOf<span class="w"> </span><span class="s2">&#34;https://github.com/your-org&#34;</span><span class="w">
-</span><span class="w">  </span><span class="k">env</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">GH_TOKEN</span><span class="p">:</span><span class="w"> </span>${{<span class="w"> </span>secrets.GH_TOKEN<span class="w"> </span>}}<span class="w">
-</span></code></pre></div><h3 id="solution-2">Solution 2</h3>
-<p>When <code>git config url.insteadof</code> does not work, you can try using <code>git credential.helper</code> instead. For example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">- <span class="k">run</span><span class="p">:</span><span class="w"> </span><span class="sd">|
-</span><span class="sd">   </span><span class="sd"> </span><span class="sd">cat &lt;&lt;EOF &gt; creds</span><span class="w">
-</span><span class="w">      </span><span class="c">#!/bin/sh</span><span class="w">
-</span><span class="w">      </span>echo<span class="w"> </span>protocol=https<span class="w">
-</span><span class="w">      </span>echo<span class="w"> </span>host=github.com<span class="w">
-</span><span class="w">      </span>echo<span class="w"> </span>username=foo<span class="w">
-</span><span class="w">      </span>echo<span class="w"> </span>password=${GH_TOKEN}<span class="w">
-</span><span class="w">    </span>EOF<span class="w">
-</span><span class="w">    </span>sudo<span class="w"> </span>install<span class="w"> </span>creds<span class="w"> </span>/usr/local/bin/creds<span class="w">
-</span><span class="w">    </span>git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>credential.helper<span class="w"> </span><span class="s2">&#34;creds&#34;</span><span class="w">
-</span><span class="w">  </span><span class="k">env</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">GH_TOKEN</span><span class="p">:</span><span class="w"> </span>${{<span class="w"> </span>secrets.GH_TOKEN<span class="w"> </span>}}<span class="w">
-</span></code></pre></div><h3 id="solution-3">Solution 3</h3>
-<p>Same as solution 2 but wrapped in a neat Github Action
-<a href="https://github.com/marketplace/actions/setup-git-credentials">setup-git-credentials</a>.</p>
-<p>This action stores the credentials in the file
-<code>$XDG_CONFIG_HOME/git/credentials</code> and configures git to use it by calling:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">git config --global credential.helper store/
-</code></pre></div><p>The actions also makes sure all <code>ssh</code> calls are rewritten to <code>https</code>. The
-&lsquo;credentials&rsquo; field must be of the form <a href="https://foo:$GH_TOKEN@github.com/">https://foo:$GH_TOKEN@github.com/</a></p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">- <span class="k">uses</span><span class="p">:</span><span class="w"> </span>fusion-engineering/setup-git-credentials@v2<span class="w">
-</span><span class="w">  </span><span class="k">with</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">credentials</span><span class="p">:</span><span class="w"> </span>https<span class="p">:</span>//foo<span class="p">:</span>{{secrets.GH_TOKEN}}@github.com<span class="w">
-</span></code></pre></div>
+
 </div>
 <div class="tags">
 
