@@ -19,10 +19,12 @@ different repo would look something like:</p><div class=highlight><pre class=chr
 </code></pre></div><p>Using <code>git+ssh</code> as a way of fetching this private module will work great
 locally since you might probably have a private key that Github knows
 about. Locally, <code>terraform init</code> will work.</p><p>But what about CI, should I create a key pair and store the private key as
-a secret and have the public key known by Github (or Gitlab)?</p><p>This method is not great: this key pair is tied to an individual and can&rsquo;t
-be tied to a Github App like <code>github-bot</code>. A better way of doing is using
-<code>git+https</code> by relying on a token. The ssh key pair mechanistm doesn&rsquo;t
-offer access to a specific repo either but a Github App token can.</p><p>To use HTTPS instead of git over SSH, we start by changing the way we
+a secret and have the public key known by Github (or Gitlab)?</p><p>Using SSH key pairs is not ideal. The key pair is tied to an individual and
+can&rsquo;t be linked to a Github App like <code>github-bot</code>. Plus, the key pair
+mechanism doesn&rsquo;t offer access to a specific repo, which means all your
+company&rsquo;s repositories are exposed. Using a Github App means that you can
+use a token (using <code>git+https</code>) and select which repositories can be
+accessed by this token.</p><p>To use HTTPS instead of git over SSH, we start by changing the way we
 import these modules:</p><div class=highlight><pre class=chroma><code class=language-diff data-lang=diff> module &#34;some_instance_of_this_module&#34; {
 <span class=gd>-   source = &#34;git@github.com:your-org/terraform-modules.git//path/to/module?ref=master&#34;
 </span><span class=gd></span><span class=gi>+   source = &#34;git::https://github.com/your-org/terraform-modules.git//path/to/module?ref=master&#34;
