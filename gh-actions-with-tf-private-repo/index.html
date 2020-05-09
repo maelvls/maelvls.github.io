@@ -22,29 +22,31 @@ about. Locally, <code>terraform init</code> will work.</p><p>But what about CI, 
 a secret and have the public key known by Github (or Gitlab)?</p><p>Using SSH key pairs is not ideal. The key pair is tied to an individual and
 can&rsquo;t be linked to a Github App like <code>github-bot</code>. Plus, the key pair
 mechanism doesn&rsquo;t offer access to a specific repo, which means all your
-company&rsquo;s repositories are exposed. Using a Github App means that you can
-use a token (using <code>git+https</code>) and select which repositories can be
-accessed by this token.</p><p>To use HTTPS instead of git over SSH, we start by changing the way we
-import these modules:</p><div class=highlight><pre class=chroma><code class=language-diff data-lang=diff> module &#34;some_instance_of_this_module&#34; {
+company&rsquo;s repositories are exposed. And finally, some companies do not have
+port 22 open for security reasons, which means <code>git+https</code> is their only
+option.</p><p>To use https instead of ssh, we start by changing the way we import these
+modules:</p><div class=highlight><pre class=chroma><code class=language-diff data-lang=diff> module &#34;some_instance_of_this_module&#34; {
 <span class=gd>-   source = &#34;git@github.com:your-org/terraform-modules.git//path/to/module?ref=master&#34;
 </span><span class=gd></span><span class=gi>+   source = &#34;git::https://github.com/your-org/terraform-modules.git//path/to/module?ref=master&#34;
 </span><span class=gi></span> }
-</code></pre></div><h2 id=local-development--git-over-https>Local development & git over HTTPS</h2><p>Locally, you will have to make sure you can <code>git clone</code> this private repo,
+</code></pre></div><h2 id=local-development--git-over-https>Local development & git over https</h2><p>Locally, you will have to make sure you can <code>git clone</code> this private repo,
 for example, the following should work:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>git clone https://github.com/your-org/terraform-modules.git
 </code></pre></div><p>If it doesn&rsquo;t work, Github has a helpful page &ldquo;<a href=https://help.github.com/en/github/using-git/caching-your-github-password-in-git>Caching your GitHub
 password in
 Git</a>".</p><h2 id=continous-integration--git-over-https>Continous integration & git over HTTPS</h2><p>It is a bit trickier to get HTTPS working on the CI. In the following, I&rsquo;ll
 take the example of Github Actions but that will work for any CI provider.
-There are two main solutions:</p><ol><li>using <code>url.insteadof</code>,</li><li>or using <code>credential.helper</code>.</li></ol><blockquote><p>⚠️ NOTE: around April 2020, Github decided to prevent users from using
+There are two main solutions:</p><ol><li>using <code>url.insteadof</code>,</li><li>or using <code>credential.helper</code>.</li></ol><p>For both options, you will need a PAT (personal access token) linked your
+own account. I refer to this token as <code>GH_TOKEN</code>. To create a PAT, you can
+go <a href=https://github.com/settings/tokens>to your Github settings</a>.</p><blockquote><p>⚠️ NOTE: around April 2020, Github decided to prevent users from using
 Github Secrets names that begin with <code>GITHUB_</code>. We used to use the name
 <code>GITHUB_PAT</code> frequently in Github Actions readmes, I guess we will all
 have to update everything!</p></blockquote><h3 id=solution-1-urlinsteadof>Solution 1: <code>url.insteadof</code></h3><ol><li>actions/checkout@v2 sets the &lsquo;Authorization&rsquo; for any git command issued
 from the checked out repo. But since this uses the Github Actions
 <code>GITHUB_TOKEN</code> which is limited to the current repository. And since we
 want to access another private repo, we have to disable that.</li><li>instead, you can use <code>git config --global url.insteadof</code>. The <code>GH_TOKEN</code>
-Github Secret is a Github personal token
-(<a href=https://github.com/settings/tokens>https://github.com/settings/tokens</a>) that has the &lsquo;repo&rsquo; scope (full
-control of private repositories).</li></ol><blockquote><p>Note: when using git over HTTPS with a token on <code>https://github.com</code>, the
+Github Secret is a <a href=https://github.com/settings/tokens>Github personal
+token</a> that has the &lsquo;repo&rsquo; scope
+(full control of private repositories).</li></ol><blockquote><p>Note: when using git over https with a token on <code>https://github.com</code>, the
 username doesn&rsquo;t matter, that&rsquo;s why we put <code>foo</code> here.</p></blockquote><div class=highlight><pre class=chroma><code class=language-yaml data-lang=yaml>- <span class=k>run</span><span class=p>:</span><span class=w> </span><span class=sd>|
 </span><span class=sd>   </span><span class=sd> </span><span class=sd>git config --local --remove-section http.&#34;https://github.com/&#34;</span><span class=w>
 </span><span class=w>    </span>git<span class=w> </span>config<span class=w> </span>--global<span class=w> </span>url.<span class=s2>&#34;https://foo:${GH_TOKEN}@github.com/your-org&#34;</span>.insteadOf<span class=w> </span><span class=s2>&#34;https://github.com/your-org&#34;</span><span class=w>
