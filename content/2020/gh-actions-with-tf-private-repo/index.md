@@ -33,10 +33,12 @@ about. Locally, `terraform init` will work.
 But what about CI, should I create a key pair and store the private key as
 a secret and have the public key known by Github (or Gitlab)?
 
-This method is not great: this key pair is tied to an individual and can't
-be tied to a Github App like `github-bot`. A better way of doing is using
-`git+https` by relying on a token. The ssh key pair mechanistm doesn't
-offer access to a specific repo either but a Github App token can.
+Using SSH key pairs is not ideal. The key pair is tied to an individual and
+can't be linked to a Github App like `github-bot`. Plus, the key pair
+mechanism doesn't offer access to a specific repo, which means all your
+company's repositories are exposed. Using a Github App means that you can
+use a token (using `git+https`) and select which repositories can be
+accessed by this token.
 
 To use HTTPS instead of git over SSH, we start by changing the way we
 import these modules:
