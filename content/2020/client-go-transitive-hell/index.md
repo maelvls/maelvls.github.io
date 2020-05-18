@@ -14,7 +14,7 @@ Looks like the Kubernetes people chose to break the client-go API without
 bumping the major version (with a new import path e.g
 `k8s.io/client-go/v13`) when adding support for `context.Context` that
 comes with Kubernetes v1.18. Darren Shepherd reported the
-[issue](issues.k8s.io/88472) in February 2020. We [were warned](https://github.com/kubernetes/client-go#compatibility-your-code---client-go):
+[issue](https://issues.k8s.io/88472) in February 2020. We [were warned](https://github.com/kubernetes/client-go#compatibility-your-code---client-go):
 
 > The v0.x.y tags indicate that go APIs may change in incompatible ways in
 > different versions.
