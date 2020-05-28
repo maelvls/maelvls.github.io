@@ -1,13 +1,15 @@
 ---
 title: Migrating from GKE to Civo's K3s
-description: "My free trial on GKE was ending in 2 days and I had to find a
-way to migrate away. I decided to switch to Civo's managed K3s."
+description: My free trial on GKE was ending in 2 days and I had to find a way to
+  migrate away. I decided to switch to Civo's managed K3s.
 date: 2020-03-22
-url: /from-gke-to-civo-k3s
-images: [from-gke-to-civo-k3s/civo-k3s.png]
-tags: [kubernetes]
----
+url: "/from-gke-to-civo-k3s"
+images:
+- from-gke-to-civo-k3s/civo-k3s.png
+tags:
+- kubernetes
 
+---
 To learn and play with Kubernetes, I keep a "playground" cluster to try
 things on it (helm files I use are
 [here](https://github.com/maelvls/k.maelvls.dev)). Since 2019, I have been
@@ -55,11 +57,9 @@ I could have gone with a single node.
 ## Migrating ExternalDNS, cert-manager and Traefik
 
 That's the easy part. I just had to run
-[./helm_apply](https://github.com/maelvls/k.maelvls.dev) which runs `helm
-upgrade --install` for each helm chart I use.
+[./helm_apply](https://github.com/maelvls/k.maelvls.dev) which runs `helm upgrade --install` for each helm chart I use.
 
-In the process, I decided to go with `*.k.maelvls.dev` instead of
-`*.k.maelvls.dev`. The shorter, the better! I forgot to add that I still
+In the process, I decided to go with `*.k.maelvls.dev` instead of `*.kube.maelvls.dev`. The shorter, the better! I forgot to add that I still
 use Google's CloudDNS. I did not find an easy alternative yet. Maybe just
 Cloudflare for now?
 
@@ -122,7 +122,7 @@ After that, the pods get recreated, and MinIO picks up the new secret.
 Note: I also had to edit the deployment again in order to remove the
 temporary `_OLD` environment variables.
 
----
+***
 
 To recap, the whole migration was painless. The only data I migrated was
 MinIO. Note that I didn't have any SLA to comply with, but if I had planned
@@ -140,5 +140,5 @@ to "cordon" the old cluster just to make sure that this case never happens.
 The repo for my Kubernetes playground cluster (`*.k.maelvls.dev`) is
 available [here](https://github.com/maelvls/k.maelvls.dev).
 
-- **Update 7 May 2020**: better introduction explaining why I use GKE,
+* **Update 7 May 2020**: better introduction explaining why I use GKE,
   tell what Civo and K3s are all about.
