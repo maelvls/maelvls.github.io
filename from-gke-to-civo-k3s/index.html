@@ -24,8 +24,7 @@ balancer like on GKE when you want to expose a service to the internet.</p><p>Of
 but it&rsquo;s also perfect for playing around with Kubernetes! So I went ahead
 and create a two-nodes cluster:</p><p><img src=civo-k3s.png alt="My K3s cluster on Civo"></p><p>Note that since this is K3s, the master can also be scheduled with pods. So
 I could have gone with a single node.</p><h2 id=migrating-externaldns-cert-manager-and-traefik>Migrating ExternalDNS, cert-manager and Traefik</h2><p>That&rsquo;s the easy part. I just had to run
-<a href=https://github.com/maelvls/k.maelvls.dev>./helm_apply</a> which runs <code>helm upgrade --install</code> for each helm chart I use.</p><p>In the process, I decided to go with <code>*.k.maelvls.dev</code> instead of
-<code>*.k.maelvls.dev</code>. The shorter, the better! I forgot to add that I still
+<a href=https://github.com/maelvls/k.maelvls.dev>./helm_apply</a> which runs <code>helm upgrade --install</code> for each helm chart I use.</p><p>In the process, I decided to go with <code>*.k.maelvls.dev</code> instead of <code>*.kube.maelvls.dev</code>. The shorter, the better! I forgot to add that I still
 use Google&rsquo;s CloudDNS. I did not find an easy alternative yet. Maybe just
 Cloudflare for now?</p><p>After creating Traefik, I knew that its service would automatically be
 populated with the <code>status.loadBalancer</code> field thanks to K3s&rsquo;
