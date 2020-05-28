@@ -153,6 +153,22 @@ operator</a>.</p>
 own controller:</p>
 <ul>
 <li>
+<p><a href="https://github.com/kubernetes/community/blob/712590c108bd4533b80e8f2753cadaa617d9bdf2/contributors/devel/sig-api-machinery/controllers.md">sig-api-machinery/controllers.md</a>
+gives a good intuition as to what a &ldquo;controller&rdquo; is:</p>
+<blockquote>
+<p>A Kubernetes controller is an active reconciliation process. That is,
+it watches some object for the world&rsquo;s desired state, and it watches
+the world&rsquo;s actual state, too. Then, it sends instructions to try and
+make the world&rsquo;s current state be more like the desired state.</p>
+</blockquote>
+<p>Note: the client-go&rsquo;s informers and listers and workqueue are not
+mandatory for writing a controller: you can just rely on client-go&rsquo;s
+<code>Watch</code> primitive to reconcile state. The informers and workqueue add
+important scalability and reliability features but these also come with
+the cost of heavy abstractions. Use client-go&rsquo;s <code>Watch</code> first to have a
+sense of what it can offer, and then try out informers and workqueue.</p>
+</li>
+<li>
 <p><a href="https://book.kubebuilder.io/quick-start.html">Kubebuilder book</a> is a
 nice starting point. Kubebuilder uses code generation a lot and that&rsquo;s
 what most controllers use nowadays (Rancher uses a somehow forked version
