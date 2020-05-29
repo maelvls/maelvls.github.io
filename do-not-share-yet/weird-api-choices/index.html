@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.64.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:title" content="Weird Api Choices" />
+<meta property="og:description" content="Map vs. discriminative arrays (map key -&gt; discriminative name) From docker inspect:
+{ Networks: { &#34;bridge&#34;: { IPAddress: &#34;172.17.0.2&#34; }, &#34;kind&#34;: { IPAddress: &#34;172.18.0.2&#34; } } } versus:
+{ Networks: [ { Name: &#34;bridge&#34; IPAddress: &#34;172.17.0.2&#34; }, { Name: &#34;kind&#34;, IPAddress: &#34;172.18.0.2&#34; } ] } Polymorphic vs. discriminative array (polymorphic object -&gt; discriminative type) From the Service type in Kubernetes:
+status:loadBalancer:ingress:- ip:35.67.89.10- ip:35.67.89.11- hostname:nginx-test.gcp-1.helix.engineeringIt is confusing: can we have an object with both &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; set?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/weird-api-choices/" />
+<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/weird-api-choices/cover-weird-api-choices.png" />
+<meta property="article:published_time" content="2020-05-29T08:35:36+02:00" />
+<meta property="article:modified_time" content="2020-05-29T08:35:36+02:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/weird-api-choices/cover-weird-api-choices.png"/>
+
+<meta name="twitter:title" content="Weird Api Choices"/>
+<meta name="twitter:description" content="Map vs. discriminative arrays (map key -&gt; discriminative name) From docker inspect:
+{ Networks: { &#34;bridge&#34;: { IPAddress: &#34;172.17.0.2&#34; }, &#34;kind&#34;: { IPAddress: &#34;172.18.0.2&#34; } } } versus:
+{ Networks: [ { Name: &#34;bridge&#34; IPAddress: &#34;172.17.0.2&#34; }, { Name: &#34;kind&#34;, IPAddress: &#34;172.18.0.2&#34; } ] } Polymorphic vs. discriminative array (polymorphic object -&gt; discriminative type) From the Service type in Kubernetes:
+status:loadBalancer:ingress:- ip:35.67.89.10- ip:35.67.89.11- hostname:nginx-test.gcp-1.helix.engineeringIt is confusing: can we have an object with both &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; set?"/>
+
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/maelvls.css" /><title>Weird Api Choices | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/do-not-share-yet/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="meta">
+<div class="date">
+<span class="day">29</span>
+<span class="rest">May 2020</span>
+</div>
+</div>
+
+<div class="matter">
+<h1 class="title">Weird Api Choices</h1>
+</div>
+</div>
+<div class="markdown">
+<h1 id="map-vs-discriminative-arrays-map-key---discriminative-name">Map vs. discriminative arrays (map key -&gt; discriminative name)</h1>
+<p>From <code>docker inspect</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="err">N</span><span class="err">e</span><span class="err">t</span><span class="err">w</span><span class="err">o</span><span class="err">r</span><span class="err">k</span><span class="err">s</span><span class="err">:</span> <span class="err">{</span>
+        <span class="nt">&#34;bridge&#34;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="err">I</span><span class="err">P</span><span class="err">A</span><span class="err">d</span><span class="err">d</span><span class="err">r</span><span class="err">e</span><span class="err">s</span><span class="err">s</span><span class="err">:</span> <span class="nt">&#34;172.17.0.2&#34;</span>
+        <span class="p">}</span><span class="p">,</span>
+        <span class="nt">&#34;kind&#34;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="err">I</span><span class="err">P</span><span class="err">A</span><span class="err">d</span><span class="err">d</span><span class="err">r</span><span class="err">e</span><span class="err">s</span><span class="err">s</span><span class="err">:</span> <span class="nt">&#34;172.18.0.2&#34;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="err">}</span>
+</code></pre></div><p>versus:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="err">N</span><span class="err">e</span><span class="err">t</span><span class="err">w</span><span class="err">o</span><span class="err">r</span><span class="err">k</span><span class="err">s</span><span class="err">:</span> <span class="err">[</span>
+        <span class="err">{</span>
+            <span class="err">N</span><span class="err">a</span><span class="err">m</span><span class="err">e</span><span class="err">:</span> <span class="nt">&#34;bridge&#34;</span>
+            <span class="err">I</span><span class="err">P</span><span class="err">A</span><span class="err">d</span><span class="err">d</span><span class="err">r</span><span class="err">e</span><span class="err">s</span><span class="err">s</span><span class="p">:</span> <span class="s2">&#34;172.17.0.2&#34;</span>
+        <span class="p">}</span><span class="err">,</span>
+        <span class="p">{</span>
+            <span class="err">N</span><span class="err">a</span><span class="err">m</span><span class="err">e</span><span class="err">:</span> <span class="nt">&#34;kind&#34;</span><span class="p">,</span>
+            <span class="err">I</span><span class="err">P</span><span class="err">A</span><span class="err">d</span><span class="err">d</span><span class="err">r</span><span class="err">e</span><span class="err">s</span><span class="err">s</span><span class="err">:</span> <span class="nt">&#34;172.18.0.2&#34;</span>
+        <span class="p">}</span>
+    <span class="err">]</span>
+<span class="err">}</span>
+</code></pre></div><h1 id="polymorphic-vs-discriminative-array-polymorphic-object---discriminative-type">Polymorphic vs. discriminative array (polymorphic object -&gt; discriminative type)</h1>
+<p>From the Service type in Kubernetes:</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">status</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">loadBalancer</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="k">ingress</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">    </span>- <span class="k">ip</span><span class="p">:</span><span class="w"> </span><span class="m">35.67</span><span class="m">.89</span><span class="m">.10</span><span class="w">
+</span><span class="w">    </span>- <span class="k">ip</span><span class="p">:</span><span class="w"> </span><span class="m">35.67</span><span class="m">.89</span><span class="m">.11</span><span class="w">
+</span><span class="w">    </span>- <span class="k">hostname</span><span class="p">:</span><span class="w"> </span>nginx-test.gcp<span class="m">-1.</span>helix.engineering<span class="w">
+</span></code></pre></div><p>It is confusing: can we have an object with both &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; set? Using a discriminative type helps:</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">status</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">loadBalancer</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="k">ingress</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">    </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span>ip<span class="w">
+</span><span class="w">      </span><span class="k">address</span><span class="p">:</span><span class="w"> </span><span class="m">35.67</span><span class="m">.89</span><span class="m">.10</span><span class="w">
+</span><span class="w">    </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span>ip<span class="w">
+</span><span class="w">      </span><span class="k">address</span><span class="p">:</span><span class="w"> </span><span class="m">35.67</span><span class="m">.89</span><span class="m">.11</span><span class="w">
+</span><span class="w">    </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span>hostname<span class="w">
+</span><span class="w">      </span><span class="k">address</span><span class="p">:</span><span class="w"> </span>nginx-test.gcp<span class="m">-1.</span>helix.engineering<span class="w">
+</span></code></pre></div>
+</div>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+</div>
+
+<script
+  src="https://utteranc.es/client.js"
+  repo="maelvls/maelvls.github.io"
+  issue-term="pathname"
+  label="💬"
+  theme="github-light"
+  crossorigin="anonymous"
+  async
+></script>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>
