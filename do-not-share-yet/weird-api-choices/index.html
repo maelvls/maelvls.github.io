@@ -93,14 +93,18 @@ status:loadBalancer:ingress:- ip:35.67.89.10- ip:35.67.89.11- hostname:nginx-tes
     <span class="err">]</span>
 <span class="err">}</span>
 </code></pre></div><h1 id="polymorphic-vs-discriminative-array-polymorphic-object---discriminative-type">Polymorphic vs. discriminative array (polymorphic object -&gt; discriminative type)</h1>
-<p>From the Service type in Kubernetes:</p>
+<p>From the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#loadbalanceringress-v1-core">Service</a> type in Kubernetes:</p>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">status</span><span class="p">:</span><span class="w">
 </span><span class="w"></span><span class="w">  </span><span class="k">loadBalancer</span><span class="p">:</span><span class="w">
 </span><span class="w"></span><span class="w">    </span><span class="k">ingress</span><span class="p">:</span><span class="w">
 </span><span class="w"></span><span class="w">    </span>- <span class="k">ip</span><span class="p">:</span><span class="w"> </span><span class="m">35.67</span><span class="m">.89</span><span class="m">.10</span><span class="w">
 </span><span class="w">    </span>- <span class="k">ip</span><span class="p">:</span><span class="w"> </span><span class="m">35.67</span><span class="m">.89</span><span class="m">.11</span><span class="w">
 </span><span class="w">    </span>- <span class="k">hostname</span><span class="p">:</span><span class="w"> </span>nginx-test.gcp<span class="m">-1.</span>helix.engineering<span class="w">
-</span></code></pre></div><p>It is confusing: can we have an object with both &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; set? Using a discriminative type helps:</p>
+</span></code></pre></div><p>It is confusing: can we have an object with both &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; set?
+The answer is no: the <code>kubectl describe</code> code
+<a href="https://github.com/kubernetes/kubectl/blob/9effcd79b3974fde2098571dfd3d0446f0c86d78/pkg/describe/describe.go#L4907-L4911">here</a>
+makes it clear that &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; are mutually exclusive.</p>
+<p>Using a discriminative &ldquo;type&rdquo; field helps:</p>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">status</span><span class="p">:</span><span class="w">
 </span><span class="w"></span><span class="w">  </span><span class="k">loadBalancer</span><span class="p">:</span><span class="w">
 </span><span class="w"></span><span class="w">    </span><span class="k">ingress</span><span class="p">:</span><span class="w">
