@@ -42,7 +42,7 @@ versus:
 
 # Polymorphic vs. discriminative array (polymorphic object -> discriminative type)
 
-From the Service type in Kubernetes:
+From the [Service](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#loadbalanceringress-v1-core) type in Kubernetes:
 
 ```yaml
 status:
