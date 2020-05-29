@@ -53,7 +53,12 @@ status:
     - hostname: nginx-test.gcp-1.helix.engineering
 ```
 
-It is confusing: can we have an object with both "ip" and "hostname" set? Using a discriminative type helps:
+It is confusing: can we have an object with both "ip" and "hostname" set?
+The answer is no: the `kubectl describe` code
+[here](https://github.com/kubernetes/kubectl/blob/9effcd79b3974fde2098571dfd3d0446f0c86d78/pkg/describe/describe.go#L4907-L4911)
+makes it clear that "ip" and "hostname" are mutually exclusive.
+
+Using a discriminative "type" field helps:
 
 ```yaml
 status:
