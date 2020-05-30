@@ -1,0 +1,28 @@
+<!doctype html><html lang=en><head><meta name=generator content="Hugo 0.64.0"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta property="og:title" content="Using Matlab at IRIT"><meta property="og:description" content="Token server at IRIT:
+matlab -nodecktop -nodisplay -c 27000@licence.irit.fr  or
+SERVER licence.irit.fr 0050568A1251 27000 USE_SERVER  in /Applications/MATLAB_R2016a.app/licenses/irit.lic
+What toolbox can I access? ver Know what licence file is used: matlab -e or matlab -n
+Which licenses at IRIT connecto to bali and do
+ /usr/local/matlab/etc/lmstat -a  On cauchy.math.ups-tlse.fr /opt/MATLABR2016a/toolbox/distcomp/bin ./mdce start ./admincenter ./nodestatus  Matlab R2015a hangs at startup Edit the shell script and go to line"><meta property="og:type" content="article"><meta property="og:url" content="https://maelvls.dev/notes/matlab/"><meta name=twitter:card content="summary"><meta name=twitter:title content="Using Matlab at IRIT"><meta name=twitter:description content="Token server at IRIT:
+matlab -nodecktop -nodisplay -c 27000@licence.irit.fr  or
+SERVER licence.irit.fr 0050568A1251 27000 USE_SERVER  in /Applications/MATLAB_R2016a.app/licenses/irit.lic
+What toolbox can I access? ver Know what licence file is used: matlab -e or matlab -n
+Which licenses at IRIT connecto to bali and do
+ /usr/local/matlab/etc/lmstat -a  On cauchy.math.ups-tlse.fr /opt/MATLABR2016a/toolbox/distcomp/bin ./mdce start ./admincenter ./nodestatus  Matlab R2015a hangs at startup Edit the shell script and go to line"><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/main.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/all.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/maelvls.css><title>Using Matlab at IRIT | maelvls dev blog</title></head><body><header><div id=avatar><a href=https://maelvls.dev/><img src=/img/mael.jpg alt="maelvls dev blog"></a></div><div id=titletext><h2 id=title><a href=https://maelvls.dev/>maelvls dev blog</a></h2></div><div id=title-description><p id=subtitle>Systems software engineer. I write mostly about Kubernetes and Go. <a href=/about>About</a></p><div id=social><nav><ul><li><a href=https://github.com/maelvls><i title=Github class="icons fab fa-github"></i></a></li><li><a href=https://twitter.com/maelvls><i title=Twitter class="icons fab fa-twitter"></i></a></li></ul></nav></div></div><div id=mainmenu></div></header><main><div class=post><div class=author></div><div class=post-header><div class=matter><h1 class=title>Using Matlab at IRIT</h1></div></div><div class=markdown><p>Token server at IRIT:</p><pre><code>matlab -nodecktop -nodisplay -c 27000@licence.irit.fr
+</code></pre><p>or</p><pre><code>SERVER licence.irit.fr 0050568A1251 27000
+USE_SERVER
+</code></pre><p>in <code>/Applications/MATLAB_R2016a.app/licenses/irit.lic</code></p><p>What toolbox can I access? <code>ver</code>
+Know what licence file is used: <code>matlab -e</code> or <code>matlab -n</code></p><h2 id=which-licenses-at-irit>Which licenses at IRIT</h2><p>connecto to bali and do</p><pre><code> /usr/local/matlab/etc/lmstat -a
+</code></pre><h2 id=on-cauchymathups-tlsefr>On cauchy.math.ups-tlse.fr</h2><pre><code>/opt/MATLABR2016a/toolbox/distcomp/bin
+
+./mdce start
+./admincenter
+./nodestatus
+</code></pre><h2 id=matlab-r2015a-hangs-at-startup>Matlab R2015a hangs at startup</h2><p>Edit the shell script and go to line</p><pre><code>cd /Applications/MATLAB_R2015a.app/bin/
+</code></pre><p>I did a <code>diff matlab matlab_patched</code>; you can patch it:</p><div class=highlight><pre class=chroma><code class=language-shell data-lang=shell>patch matlab <span class=s>&lt;&lt; EOF
+</span><span class=s>497c497
+</span><span class=s>&lt;     arglist=&#34;&#34;
+</span><span class=s>---
+</span><span class=s>&gt;     arglist=&#34;-c \$MATLABdefault/licenses/license.lic&#34;
+</span><span class=s>EOF</span>
+</code></pre></div><p>Note the <code>\$</code> because of the shell treatment.</p></div><div class=tags></div><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div></main><footer><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></footer></body></html>

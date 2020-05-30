@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.64.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:title" content="What I know about shells" />
+<meta property="og:description" content="General information Sed Shell, terminal, console, command line .bash_profile vs .bashrc Tty, pty, interactive vs non-interactive Login vs. non-login shells Use bashrc also on login shell Parallelize xargs  General information   Xargs for creating positionnals through stdin included_figures.sh | xargs git add
+  Avoid the sub-shell problem when while read a while read a; do ...; done &lt; &lt;(ls) pour éviter d&rsquo;avoir le while dans un sous-shell C." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/shell/" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="What I know about shells"/>
+<meta name="twitter:description" content="General information Sed Shell, terminal, console, command line .bash_profile vs .bashrc Tty, pty, interactive vs non-interactive Login vs. non-login shells Use bashrc also on login shell Parallelize xargs  General information   Xargs for creating positionnals through stdin included_figures.sh | xargs git add
+  Avoid the sub-shell problem when while read a while read a; do ...; done &lt; &lt;(ls) pour éviter d&rsquo;avoir le while dans un sous-shell C."/>
+
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/maelvls.css" /><title>What I know about shells | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/do-not-share-yet/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="matter">
+<h1 class="title">What I know about shells</h1>
+</div>
+</div>
+<div class="markdown">
+<ol>
+<li><a href="#general-information">General information</a></li>
+<li><a href="#sed">Sed</a></li>
+<li><a href="#shell-terminal-console-command-line">Shell, terminal, console, command line</a></li>
+<li><a href="#bash_profile-vs-bashrc"><code>.bash_profile</code> vs <code>.bashrc</code></a></li>
+<li><a href="#tty-pty-interactive-vs-non-interactive">Tty, pty, interactive vs non-interactive</a></li>
+<li><a href="#login-vs-non-login-shells">Login vs. non-login shells</a></li>
+<li><a href="#use-bashrc-also-on-login-shell">Use <code>bashrc</code> also on login shell</a></li>
+<li><a href="#parallelize-xargs">Parallelize xargs</a></li>
+</ol>
+<h2 id="general-information">General information</h2>
+<ul>
+<li>
+<p>Xargs for creating positionnals through stdin
+<code>included_figures.sh | xargs git add</code></p>
+</li>
+<li>
+<p>Avoid the sub-shell problem when <code>while read a</code>
+<code>while read a; do ...; done &lt; &lt;(ls)</code>
+pour éviter d&rsquo;avoir le while dans un sous-shell
+C.f. Process Substitution dans man bash</p>
+</li>
+<li>
+<p>Parameter Expansion (man bash -&gt; /Parameter Expansion)
+<code>${a:-text}</code> if $a isn&rsquo;t set, the${} expression returns &ldquo;text&rdquo;
+<code>${a:+text}</code> if $a isn&rsquo;t set, the${} expression returns nothing
+<code>${a:=text}</code> same but $a is also set to &ldquo;text&rdquo;
+<code>${a// /_/}</code> substitutes all spaces to <code>_</code> in the content of a</p>
+</li>
+<li>
+<p>iterate on each space-separated elements of a list
+for e in <code>echo &quot;a b c d e&quot;</code>; do
+echo $e
+done</p>
+</li>
+<li>
+<p>To know if a variable is empty or not (<code>man test</code>):
+-n STRING
+the length of STRING is nonzero
+-z STRING
+the length of STRING is zero</p>
+</li>
+</ul>
+<h2 id="sed">Sed</h2>
+<p>Substitute dots to <code>_</code> in filenames:</p>
+<pre><code>for f in *; do mv &quot;$f&quot; &quot;`echo $f | sed 's/\(.*\)\.\(.*\)\(\.[a-z]*\)$/\1_\2\3/g'`&quot;; done
+</code></pre>
+<h2 id="shell-terminal-console-command-line">Shell, terminal, console, command line</h2>
+<ul>
+<li>Terminal
+text input/output environment (also means a specific file in Unix world)
+ttys001, ttys002&hellip; are Unix &ldquo;terminal&rdquo; files. These are provided by the
+kernel</li>
+<li>Virtual/emulated terminal
+layer over the plain Unix terminal (iTerm2,
+etc)</li>
+<li>Console
+local physical terminal (with screen and keyboard)</li>
+<li>Shell
+when launching a terminal (ttys001&hellip;), it is the program that allows to
+launch other programs (commands like <code>ls</code>)</li>
+<li>Command-line shell
+A shell specialized for interpreting commands</li>
+<li>Bash
+one of the many command-line shells</li>
+<li><code>tty</code>: Teletype, meaning interactive terminal, as opposed to
+tty-less/headless terminal.</li>
+<li><code>pty</code>: pseudo-teletype is a tty that does not directly talk to a end-user
+terminal but instead talks to another terminal. Most terminal emulators
+such as iTerm2, xterm&hellip; use a pty instead of a tty.</li>
+</ul>
+<p>What happens when I want to launch some bourne-shell commands:</p>
+<ol>
+<li>Open a terminal emulator</li>
+<li>The terminal emulator will open a ttys001 for me</li>
+<li>The terminal emulator will then execute a command-line shell (/bin/sh)</li>
+<li>then I can type my commands</li>
+</ol>
+<h2 id="bash_profile-vs-bashrc"><code>.bash_profile</code> vs <code>.bashrc</code></h2>
+<ul>
+<li><code>.bash_profile</code> (and <code>.profile</code>) when login shell</li>
+<li><code>.bashrc</code> when interactive shell (tty/pty)</li>
+</ul>
+<p>A login shell is a shell where $0 == &ldquo;-&rdquo;</p>
+<h2 id="tty-pty-interactive-vs-non-interactive">Tty, pty, interactive vs non-interactive</h2>
+<pre><code>node -p -e &quot;Boolean(process.stdout.isTTY)&quot;
+[ -t 1 ]
+</code></pre>
+<h2 id="login-vs-non-login-shells">Login vs. non-login shells</h2>
+<p>An interactive login shell is the shell launched when using ssh, iTerm2 or
+xterm. In interactive login shell, <code>.profile</code> and <code>.bash_profile</code> are used.
+To know if you are in a login shell:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">$ <span class="nb">echo</span> <span class="nv">$0</span>
+-bash
+</code></pre></div><p>Interactive non-login shell: <code>.bashrc</code> is used</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">$ <span class="nb">echo</span> <span class="nv">$0</span>
+bash
+</code></pre></div><h2 id="use-bashrc-also-on-login-shell">Use <code>bashrc</code> also on login shell</h2>
+<p>What I did was to add a simple thing to <code>.profile</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="k">if</span> <span class="o">[</span> -f ~/.bashrc <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    . ~/.bashrc
+<span class="k">fi</span>
+</code></pre></div><h2 id="parallelize-xargs">Parallelize xargs</h2>
+<pre><code>/usr/local/bin/code --list-extensions | xargs -L 1 -P 4 /usr/local/bin/code-insiders --install-extension
+</code></pre>
+
+</div>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+</div>
+
+<script
+  src="https://utteranc.es/client.js"
+  repo="maelvls/maelvls.github.io"
+  issue-term="pathname"
+  label="💬"
+  theme="github-light"
+  crossorigin="anonymous"
+  async
+></script>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.64.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:title" content="Using mutt and msmtp with Gmail" />
+<meta property="og:description" content="On macOS, install msmtp:
+brew install mutt msmtp  I read this thread: https://www.engadget.com/2010/05/04/msmtp-a-free-tool-to-send-email-from-terminal/
+In order to use msmtp from command-line &lsquo;mail&rsquo;
+  add to ~/.mailrc:
+set sendmail=/usr/local/bin/msmtp   In Keychain Access.app, go to File &gt; New Password Item (Cmd&#43;N) and fill it with
+smtp://smtp.gmail.com email@gmail.com mypassword   In Keychain Access.app, select System Roots, select all certificates and File &gt; Export Items (Shift&#43;Cmd&#43;E) &gt; Privacy Enhanced Mail (." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/msmtp_mutt/" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Using mutt and msmtp with Gmail"/>
+<meta name="twitter:description" content="On macOS, install msmtp:
+brew install mutt msmtp  I read this thread: https://www.engadget.com/2010/05/04/msmtp-a-free-tool-to-send-email-from-terminal/
+In order to use msmtp from command-line &lsquo;mail&rsquo;
+  add to ~/.mailrc:
+set sendmail=/usr/local/bin/msmtp   In Keychain Access.app, go to File &gt; New Password Item (Cmd&#43;N) and fill it with
+smtp://smtp.gmail.com email@gmail.com mypassword   In Keychain Access.app, select System Roots, select all certificates and File &gt; Export Items (Shift&#43;Cmd&#43;E) &gt; Privacy Enhanced Mail (."/>
+
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/maelvls.css" /><title>Using mutt and msmtp with Gmail | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/do-not-share-yet/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="matter">
+<h1 class="title">Using mutt and msmtp with Gmail</h1>
+</div>
+</div>
+<div class="markdown">
+<p>On macOS, install msmtp:</p>
+<pre><code>brew install mutt msmtp
+</code></pre>
+<p>I read this thread:
+<a href="https://www.engadget.com/2010/05/04/msmtp-a-free-tool-to-send-email-from-terminal/">https://www.engadget.com/2010/05/04/msmtp-a-free-tool-to-send-email-from-terminal/</a></p>
+<p>In order to use msmtp from command-line &lsquo;mail&rsquo;</p>
+<ol>
+<li>
+<p>add to <code>~/.mailrc</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">set sendmail=/usr/local/bin/msmtp
+</code></pre></div></li>
+<li>
+<p>In Keychain Access.app, go to File &gt; New Password Item (Cmd+N)
+and fill it with</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">    smtp://smtp.gmail.com
+    email@gmail.com
+    mypassword
+</code></pre></div></li>
+<li>
+<p>In Keychain Access.app, select System Roots, select all certificates
+and File &gt; Export Items (Shift+Cmd+E) &gt; Privacy Enhanced Mail (.pem)
+and save it as &lsquo;Certificates.pem&rsquo; in your $HOME.</p>
+</li>
+<li>
+<p>Test the configuration with</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">echo</span> <span class="s2">&#34;Hello world&#34;</span> <span class="p">|</span> mail -s <span class="s2">&#34;msmtp test at `date`&#34;</span> cheprugeph@qwfox.com
+</code></pre></div></li>
+</ol>
+<p>Troubleshooting:</p>
+<ul>
+<li>
+<p>Check in keychain Access.app that there is only ONE Internet password using the
+<a href="mailto:email@gmail.com">email@gmail.com</a> and smtp://smtp.gmail.com.</p>
+</li>
+<li>
+<p>If the SMTP of Google says that you should go to some adress, with the error:</p>
+<pre><code>send-mail: server message: 534-5.7.14 &lt;https://accounts.google.com/signin/continue?sarp=1&amp;scc=1&amp;plt=AKgnsbtk
+send-mail: server message: 534-5.7.14 z36uL0SoqtWkRHK4lg9Q60tKoOB5B_vNgRZ04wP0SbjkVSvkI3ByYM3aNcsUhrxrskG2Vf
+send-mail: server message: 534-5.7.14 DEQUXboD5d_Px9ehRUYcaOhSdjo2hgTeUvPFDt7PuYRIZTv9CZ8RSybOQ84OAZAPNkbqhd
+send-mail: server message: 534-5.7.14 LWOrMuYScmxwWyjg9PsUoUal67TvV2TYMyM9L_9-KcSyp5aZ-SRDH45cKU1vjGMdi7g7yn
+send-mail: server message: 534-5.7.14 OARlP4_M6aIDqqDF2vbvirlleKMQs&gt; Please log in via your web browser and
+send-mail: server message: 534-5.7.14 then try again.
+send-mail: server message: 534-5.7.14  Learn more at
+send-mail: server message: 534 5.7.14  https://support.google.com/mail/answer/78754 m62sm13851787wmi.19 - gsmtp
+send-mail: could not send mail (account default from /Users/mvalais/.msmtprc)
+</code></pre>
+<p>then you need to go to <a href="https://accounts.google.com/b/0/DisplayUnlockCaptcha">https://accounts.google.com/b/0/DisplayUnlockCaptcha</a></p>
+</li>
+</ul>
+<h2 id="set-up-mutt">Set up Mutt</h2>
+<p>I followed the instructions of <a href="https://gist.github.com/chrismytton/3976435">https://gist.github.com/chrismytton/3976435</a> except
+for the keychain stuff:</p>
+<ol>
+<li>
+<p>We are going to re-use the Keychain thing we created earlier. In order to show
+the password, use</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">security find-internet-password -s smtp.gmail.com -a email@gmail.com -w
+</code></pre></div><p>where &lsquo;-w&rsquo; tells him to only show the password, &lsquo;-s&rsquo; means server (in my case I
+had used &lsquo;smtp://smtp.gmail.com&rsquo; but you must remove the protocol smtp://) and
+&lsquo;-a&rsquo; means account.</p>
+</li>
+</ol>
+
+</div>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+</div>
+
+<script
+  src="https://utteranc.es/client.js"
+  repo="maelvls/maelvls.github.io"
+  issue-term="pathname"
+  label="💬"
+  theme="github-light"
+  crossorigin="anonymous"
+  async
+></script>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>

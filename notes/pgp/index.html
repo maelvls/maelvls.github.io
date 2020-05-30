@@ -1,0 +1,36 @@
+<!doctype html><html lang=en><head><meta name=generator content="Hugo 0.64.0"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta property="og:title" content="Some stuff about gpg"><meta property="og:description" content="Sign my message Things on securiry Public-key protocol is slow Errors I got  To list the keys I have in my keyring, use gpg --list-key. Here, I can see one public key in the file pubring.pgp:
+> gpg --list-key /Users/mvalais/.gnupg/pubring.gpg ------------------------------- pub 4096R/27F4C016 2016-03-04 uid Maël Valais <mael.valais@gmail.com> sub 4096R/A3D4828E 2016-03-04 The identifier for my public key is 27F4C016 and the sub identifier A3D4828E. 4096R = 4096-bits RSA encrypted."><meta property="og:type" content="article"><meta property="og:url" content="https://maelvls.dev/notes/pgp/"><meta name=twitter:card content="summary"><meta name=twitter:title content="Some stuff about gpg"><meta name=twitter:description content="Sign my message Things on securiry Public-key protocol is slow Errors I got  To list the keys I have in my keyring, use gpg --list-key. Here, I can see one public key in the file pubring.pgp:
+> gpg --list-key /Users/mvalais/.gnupg/pubring.gpg ------------------------------- pub 4096R/27F4C016 2016-03-04 uid Maël Valais <mael.valais@gmail.com> sub 4096R/A3D4828E 2016-03-04 The identifier for my public key is 27F4C016 and the sub identifier A3D4828E. 4096R = 4096-bits RSA encrypted."><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/main.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/all.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/maelvls.css><title>Some stuff about gpg | maelvls dev blog</title></head><body><header><div id=avatar><a href=https://maelvls.dev/><img src=/img/mael.jpg alt="maelvls dev blog"></a></div><div id=titletext><h2 id=title><a href=https://maelvls.dev/>maelvls dev blog</a></h2></div><div id=title-description><p id=subtitle>Systems software engineer. I write mostly about Kubernetes and Go. <a href=/about>About</a></p><div id=social><nav><ul><li><a href=https://github.com/maelvls><i title=Github class="icons fab fa-github"></i></a></li><li><a href=https://twitter.com/maelvls><i title=Twitter class="icons fab fa-twitter"></i></a></li></ul></nav></div></div><div id=mainmenu></div></header><main><div class=post><div class=author></div><div class=post-header><div class=matter><h1 class=title>Some stuff about gpg</h1></div></div><div class=markdown><ol><li><a href=#sign-my-message>Sign my message</a></li><li><a href=#things-on-securiry>Things on securiry</a></li><li><a href=#public-key-protocol-is-slow>Public-key protocol is slow</a></li><li><a href=#errors-i-got>Errors I got</a></li></ol><p>To list the keys I have in my keyring, use <code>gpg --list-key</code>. Here, I can
+see one public key in the file <code>pubring.pgp</code>:</p><div class=highlight><pre class=chroma><code class=language-plain data-lang=plain>&gt; gpg --list-key
+/Users/mvalais/.gnupg/pubring.gpg
+-------------------------------
+pub   4096R/27F4C016 2016-03-04
+uid                  Maël Valais &lt;mael.valais@gmail.com&gt;
+sub   4096R/A3D4828E 2016-03-04
+</code></pre></div><p>The identifier for my public key is <code>27F4C016</code> and the sub identifier
+<code>A3D4828E</code>. 4096R = 4096-bits RSA encrypted.</p><p>When seeing the whole primary key fingerprint:</p><div class=highlight><pre class=chroma><code class=language-plain data-lang=plain>F105 E235 8FEB FC3D A4A4 9499 0075 8A3D 27F4 C016
+                                        ^^^^^^^^^
+                                        identifier
+</code></pre></div><p>To export my public key to the keys server:</p><div class=highlight><pre class=chroma><code class=language-plain data-lang=plain>&gt; gpg --send-keys 27F4C016
+gpg: envoi de la clef 27F4C016 au serveur hkp keys.gnupg.net
+</code></pre></div><p>Check that my public key has been pushed to the keys server:</p><div class=highlight><pre class=chroma><code class=language-plain data-lang=plain>&gt; gpg --search-keys &#34;mael.valais@gmail.com&#34;
+gpg: recherche de « mael.valais@gmail.com » sur le serveur hkp
+keys.gnupg.net
+(1) Maël Valais &lt;mael.valais@gmail.com&gt;
+To  4096 bit RSA key 27F4C016, créé : 2016-03-04
+</code></pre></div><h2 id=sign-my-message>Sign my message</h2><p>Say I have writen the message in <code>message.txt</code>. Now I want to sign it and I want
+the signature to be in ASCII-format <code>.asc</code> (not a binary mess <code>.sig</code>).</p><pre><code>gpg2 --armor --detach-sign message.txt
+</code></pre><p>This signature will be in text format in <code>message.asc</code>.</p><h2 id=things-on-securiry>Things on securiry</h2><p>encrypt: AES 256 (symetric)
+salting: hash(pwd+salt), salt is dynamically generated
+key derivation: PBKDF2
+hash: MD5, SHA-1, SHA-256</p><h2 id=public-key-protocol-is-slow>Public-key protocol is slow</h2><p>With gpg, the public-key protocol is only used for encrypting
+the symmetric key and the hash of the message (hash with SHA-256).
+The message is then encrypted using the symmetric encryption.</p><div class=highlight><pre class=chroma><code class=language-plain data-lang=plain>gpg:
+    rsa public key ---encrypts--&gt; symmetric key --encrpyts--&gt; message
+                   ---encrypts--&gt; SHA-256 hash
+</code></pre></div><p>With SSL protocol, the only purpose of the public-key encryption is to
+encrypt the AES symmetric key.</p><div class=highlight><pre class=chroma><code class=language-plain data-lang=plain>ssl:
+    &lt;---client---&gt;             &lt;-----server----&gt;
+    rsa public key ---sends--&gt; AES symmetric key
+</code></pre></div><p>What about ssh? Two pairs of pub/priv keys?</p><h2 id=errors-i-got>Errors I got</h2><ul><li>Error message with pinentry<ol><li>Install <code>brew install pinentry-mac</code></li><li>edit ~/.gnupg/gpg-agent.conf to use pinentry-mac instead of pinentry:
+pinentry-program /usr/local/bin/pinentry-mac</li></ol></li></ul></div><div class=tags></div><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div></main><footer><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></footer></body></html>

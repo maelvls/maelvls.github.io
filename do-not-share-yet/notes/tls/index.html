@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.64.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:title" content="Nice diagram about TLS, certificates and keys" />
+<meta property="og:description" content="cert = (1) pub key, (2) information (3) signature of (1)&#43;(2) self-signed cert = only (1) and (2) &#43;--------------------------&#43; &#43;-------------------------&#43; | CA CERTIFICATE | | ca cert key | |&#43;------------------------&#43;| |&#43;-----------------------&#43;| || information || || private key || |&#43;------------------------&#43;| |&#43;-----------------------&#43;| |&#43;------------------------&#43;| &#43;-------------------------&#43; || public key || | || || | |&#43;------------------------&#43;| | &#43;--------------------------&#43; | | | &#43;--------------------------&#43; | | CERTIFICATE | | |&#43;------------------------&#43;| | ||1 information || | |&#43;------------------------&#43;| | |&#43;------------------------&#43;| | ||2 public key || | || || | |&#43;------------------------&#43;| | |&#43;------------------------&#43;| | || signature of 1&#43;2 ||&lt;--------------&#43; |&#43;------------------------&#43;| &#43;--------------------------&#43;   " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/tls/" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Nice diagram about TLS, certificates and keys"/>
+<meta name="twitter:description" content="cert = (1) pub key, (2) information (3) signature of (1)&#43;(2) self-signed cert = only (1) and (2) &#43;--------------------------&#43; &#43;-------------------------&#43; | CA CERTIFICATE | | ca cert key | |&#43;------------------------&#43;| |&#43;-----------------------&#43;| || information || || private key || |&#43;------------------------&#43;| |&#43;-----------------------&#43;| |&#43;------------------------&#43;| &#43;-------------------------&#43; || public key || | || || | |&#43;------------------------&#43;| | &#43;--------------------------&#43; | | | &#43;--------------------------&#43; | | CERTIFICATE | | |&#43;------------------------&#43;| | ||1 information || | |&#43;------------------------&#43;| | |&#43;------------------------&#43;| | ||2 public key || | || || | |&#43;------------------------&#43;| | |&#43;------------------------&#43;| | || signature of 1&#43;2 ||&lt;--------------&#43; |&#43;------------------------&#43;| &#43;--------------------------&#43;   "/>
+
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/maelvls.css" /><title>Nice diagram about TLS, certificates and keys | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/do-not-share-yet/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="matter">
+<h1 class="title">Nice diagram about TLS, certificates and keys</h1>
+</div>
+</div>
+<div class="markdown">
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"> cert = (1) pub key, (2) information (3) signature of (1)+(2)
+ self-signed cert = only (1) and (2)
+
+   +--------------------------+ +-------------------------+
+   |      CA CERTIFICATE      | |       ca cert key       |
+   |+------------------------+| |+-----------------------+|
+   ||      information       || ||      private key      ||
+   |+------------------------+| |+-----------------------+|
+   |+------------------------+| +-------------------------+
+   ||       public key       ||               |
+   ||                        ||               |
+   |+------------------------+|               |
+   +--------------------------+               |
+                                              |
+                                              |
+   +--------------------------+               |
+   |       CERTIFICATE        |               |
+   |+------------------------+|               |
+   ||1     information       ||               |
+   |+------------------------+|               |
+   |+------------------------+|               |
+   ||2      public key       ||               |
+   ||                        ||               |
+   |+------------------------+|               |
+   |+------------------------+|               |
+   ||    signature of 1+2    ||&lt;--------------+
+   |+------------------------+|
+   +--------------------------+
+</code></pre></div><!--
+https://textik.com/#d85b4624473ca862
+--><blockquote>
+</blockquote>
+
+</div>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+</div>
+
+<script
+  src="https://utteranc.es/client.js"
+  repo="maelvls/maelvls.github.io"
+  issue-term="pathname"
+  label="💬"
+  theme="github-light"
+  crossorigin="anonymous"
+  async
+></script>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>
