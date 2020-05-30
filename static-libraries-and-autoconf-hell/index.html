@@ -497,18 +497,7 @@ For shared library:
 </code></pre></div><p>A final word about the <code>Makefile</code>: since all the build configuration is
 handled by <code>./configure</code>, you don&rsquo;t have to pass any variables at <code>make</code>
 time anymore, which really helps when you need to <code>make</code> multiple times in
-a row and don&rsquo;t want to type the variables every single time.</p><h2 id=contributing-the-new-yices-build-system-to-upstream>Contributing the new Yices build system to upstream</h2><p>On 16 June 2016, I sent an email to Bruno Dutertre, one of the developers
-at SRI (the company behind the Yices SMT solver). I proposed all these
-changes with links to the various patches on GitHub. Unfortunately, it
-didn&rsquo;t work out, and the reason might be that the whole patch was enormous
-and very hard to review.</p><blockquote><p>Hi Maël,</p><p>Thanks for the message and for your efforts. We&rsquo;ll look into your updates.</p><p>We know that the Yices build system is unconventional because most of the
-work is done in the Makefiles rather that in the configure script. There
-are historical reason for this (and it should be able to build PIC
-libraries without problems).</p><p>By the way, Yices is now open-source (GPL) on github:
-<a href=https://github.com/SRI-CSL/yices2>https://github.com/SRI-CSL/yices2</a>. Take a look when you have time,</p><p>Thanks again,</p><p>Bruno</p></blockquote><p>I wish we had a unit-test framework for <code>autoconf</code>. The <code>autoconf</code>
-ecosystem generates very fragile scripts and the only way to test them is
-to run them with all possible flag combinations, which is pretty much
-impossible.</p><h2 id=inpecting-static-and-dynamic-libraries>Inpecting static and dynamic libraries</h2><p>Here are two tips that I learned along the way. First, I very often need to
+a row and don&rsquo;t want to type the variables every single time.</p><h2 id=inpecting-static-and-dynamic-libraries>Inpecting static and dynamic libraries</h2><p>Here are two tips that I learned along the way. First, I very often need to
 know what libraries an executable is depending on:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=c1># macOS</span>
 % otool -L /bin/ls
 /bin/ls:
@@ -554,7 +543,25 @@ ext/libyices_pic_no_gmp/lib/libyices.a<span class=o>(</span>libyices.o<span clas
 0000000000109ae0 T ___gmp_default_free
 0000000000109a90 T ___gmp_default_reallocate
 <span class=m>0000000000145290</span> S ___gmp_digit_value_tab
-</code></pre></div></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/autotools/>autotools</a>
+</code></pre></div><p>The letter before the symbol is the &ldquo;symbol type&rdquo; (from <code>man nm</code>):</p><blockquote><p>Each symbol name is preceded by its value (blanks if undefined). This
+value is followed by one of the following characters, representing the
+symbol type:</p><ul><li>U = undefined,</li><li>T (text section symbol),</li><li>D (data section symbol),</li><li>S (symbol in a section other than those above).</li></ul><p>If the symbol is local (non-external), the symbol&rsquo;s type is instead
+represented by the corresponding lowercase letter. A lower case u in a
+dynamic shared library indicates a undefined reference to a private
+external in another module in the same library.</p></blockquote><p>For example, the symbol <code>_yices_parse_float</code> is an external symbol, meaning
+that this symbol isn&rsquo;t static to <code>libyices.a</code>. On the other side,
+<code>_convert_simple_value</code> is statically defined (<code>t</code>).</p><h2 id=contributing-the-new-yices-build-system-to-upstream>Contributing the new Yices build system to upstream</h2><p>On 16 June 2016, I sent an email to Bruno Dutertre, one of the developers
+at SRI (the company behind the Yices SMT solver). I proposed all these
+changes with links to the various patches on GitHub. Unfortunately, it
+didn&rsquo;t work out, and the reason might be that the whole patch was enormous
+and very hard to review.</p><blockquote><p>Hi Maël,</p><p>Thanks for the message and for your efforts. We&rsquo;ll look into your updates.</p><p>We know that the Yices build system is unconventional because most of the
+work is done in the Makefiles rather that in the configure script. There
+are historical reason for this (and it should be able to build PIC
+libraries without problems).</p><p>By the way, Yices is now open-source (GPL) on github:
+<a href=https://github.com/SRI-CSL/yices2>https://github.com/SRI-CSL/yices2</a>. Take a look when you have time,</p><p>Thanks again,</p><p>Bruno</p></blockquote><p>I wish we had a unit-test framework for <code>autoconf</code>. The <code>autoconf</code>
+ecosystem generates very fragile scripts and the only way to test them is
+to run them with all possible flag combinations, which is pretty much
+impossible.</p></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/autotools/>autotools</a>
 <a href=/tags/c/>c</a>
 <a href=/tags/c++/>c++</a>
 <a href=/tags/ocaml/>ocaml</a></div><div class=clearit></div></div><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div></main><footer><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></footer></body></html>
