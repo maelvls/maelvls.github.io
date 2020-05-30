@@ -1,6 +1,6 @@
 # Personal website
 
-[![Build and deploy to github pages](https://github.com/maelvls/maelvls.github.io/workflows/Build%20and%20deploy%20to%20github%20pages/badge.svg?branch=source)](https://github.com/maelvls/maelvls.github.io/workflows/Build%20and%20deploy%20to%20github%20pages)
+[![Build and deploy to github pages](https://github.com/maelvls/maelvls.github.io/workflows/Build%20and%20deploy%20to%20github%20pages/badge.svg?branch=source)](https://github.com/maelvls/maelvls.github.io/actions?query=workflow%3A%22Build+and+deploy+to+github+pages%22)
 
 Code is in the branch `source`, gp-pages are in `master`.
 
