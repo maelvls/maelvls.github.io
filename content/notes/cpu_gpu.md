@@ -1,6 +1,6 @@
 ---
-title: Checking info on CPU and GPU
-date: 00-00-00
+title: Checking info about CPU and Nvidia GPU on Linux
+date: 2018-11-01
 ---
 
 If there is a Nvidia card:

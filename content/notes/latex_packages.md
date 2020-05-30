@@ -1,6 +1,6 @@
 ---
 title: Managing Basic Texlive instead of Full Texlive/Mactex
-date: 00-00-00
+date: 2017-05-25
 ---
 
 ```shell

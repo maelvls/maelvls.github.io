@@ -1,6 +1,6 @@
 ---
 title: Some kubectl stuff
-date: 00-00-00
+date: 2019-01-03
 ---
 
 ```sh

@@ -1,6 +1,6 @@
 ---
-title: Remote docker
-date: 00-00-00
+title: Remote Docker using docker-machine
+date: 2018-09-13
 ---
 
 ## Use docker-machine for remoting docker

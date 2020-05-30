@@ -1,6 +1,6 @@
 ---
 title: Run the test suite of the Gitlab projet
-date: 00-00-00
+date: 2018-07-09
 ---
 
 From <https://docs.gitlab.com/runner/install/linux-manually.html>

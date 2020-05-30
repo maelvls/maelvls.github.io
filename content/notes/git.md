@@ -1,6 +1,6 @@
 ---
 title: git stash vs. git reset --hard
-date: 00-00-00
+date: 2017-12-20
 ---
 
 Many times, I used `git reset --hard` and found out later that all my changes had disappeared.
