@@ -60,10 +60,8 @@ a student.
 
 My first patch to the ocamlyices2 project took over a month of intense
 work. The stake was immense: I aimed at revamping the whole Yices2 build
-system.
-
-The original build system didn't allow developers to statically build
-`libyices.a`. More generally, it was a pain to work with: most
+system. The original build system didn't allow developers to statically
+build `libyices.a`. More generally, it was a pain to work with: most
 configuration was happening at `./configure` time, but a ton of things had
 still to be passed at make time (e.g., `make VAR=value`).
 
