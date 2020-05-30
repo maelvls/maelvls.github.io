@@ -213,6 +213,16 @@
   </url>
   
   <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/tls/</loc>
+    <lastmod>2020-01-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/</loc>
+    <lastmod>2020-01-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://maelvls.dev/do-not-share-yet/tags/proxyman/</loc>
     <lastmod>2020-01-06T00:00:00+00:00</lastmod>
   </url>
@@ -248,8 +258,13 @@
   </url>
   
   <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/</loc>
-    <lastmod>2019-04-20T00:00:00+00:00</lastmod>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/wireshark/</loc>
+    <lastmod>2019-11-06T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/ssh/</loc>
+    <lastmod>2019-05-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -258,8 +273,18 @@
   </url>
   
   <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/oauth/</loc>
+    <lastmod>2019-02-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://maelvls.dev/do-not-share-yet/notes/kubectl/</loc>
     <lastmod>2019-01-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/tmux/</loc>
+    <lastmod>2018-11-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -283,8 +308,33 @@
   </url>
   
   <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/msmtp_mutt/</loc>
+    <lastmod>2018-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/tcp_ports/</loc>
+    <lastmod>2018-02-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://maelvls.dev/do-not-share-yet/notes/git/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/pgp/</loc>
+    <lastmod>2017-11-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/pdf/</loc>
+    <lastmod>2017-09-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/ssh-agent/</loc>
+    <lastmod>2017-06-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -293,75 +343,41 @@
   </url>
   
   <url>
-    <loc>https://maelvls.dev/do-not-share-yet/about/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/ssh-agent/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/pdf/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/tcp_ports/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/lighter_pdfs/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/ssh/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/mac_commands/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/tmux/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/tls/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/oauth/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/series/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/pgp/</loc>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/matlab/</loc>
+    <lastmod>2017-03-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/notes/ruby/</loc>
+    <lastmod>2017-02-05T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/wireshark/</loc>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/lighter_pdfs/</loc>
+    <lastmod>2017-01-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/notes/linuxbrew/</loc>
+    <lastmod>2016-12-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/matlab/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/msmtp_mutt/</loc>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/mac_commands/</loc>
+    <lastmod>2016-10-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/notes/shell/</loc>
+    <lastmod>2016-07-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/about/</loc>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/series/</loc>
   </url>
   
 </urlset>

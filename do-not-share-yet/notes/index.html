@@ -9,7 +9,7 @@
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/" />
-<meta property="og:updated_time" content="2019-04-20T00:00:00+00:00" />
+<meta property="og:updated_time" content="2020-01-20T00:00:00+00:00" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Notes"/>
 <meta name="twitter:description" content=""/>
@@ -47,6 +47,57 @@
 <div class="meta">
 <div class="date">
 <span class="day">20</span>
+<span class="rest">Jan 2020</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/tls/">Nice diagram about TLS, certificates and keys</a></h3>
+<span class="description">
+
+cert = (1) pub key, (2) information (3) signature of (1)&#43;(2) self-signed cert = only (1) and (2) &#43;----------------------...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">06</span>
+<span class="rest">Nov 2019</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/wireshark/">Stuff about Wireshark</a></h3>
+<span class="description">
+
+tcpdump -i eth0 -U -w - &#39;not port 22&#39; | wireshark -k -i - wireshark -i en9 -k -Y &#34;ip.addr == 35.211.248.124 ...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">28</span>
+<span class="rest">May 2019</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/ssh/">How client-server SSH authentication works</a></h3>
+<span class="description">
+
+ Difference between CA and cert Ssh authentication themes  Case A: unknown host Case B: host already in known_host but i...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">20</span>
 <span class="rest">Apr 2019</span>
 </div>
 </div>
@@ -64,6 +115,24 @@ First, find w...
 <div class="post-header">
 <div class="meta">
 <div class="date">
+<span class="day">17</span>
+<span class="rest">Feb 2019</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/oauth/">Notes on OAuth</a></h3>
+<span class="description">
+
+I know two main ways of using OAuth2
+  password-based client grant (2-leg oauth flow: on the project I worked on, the OA...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
 <span class="day">03</span>
 <span class="rest">Jan 2019</span>
 </div>
@@ -73,6 +142,24 @@ First, find w...
 <span class="description">
 
 kubectl run --generator=run-pod/v1 tmp-shell --rm -i --tty --image nicolaka/netshoot -- /bin/bash gcloud ssh ... docker ...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">03</span>
+<span class="rest">Nov 2018</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/tmux/">Memo for Tmux</a></h3>
+<span class="description">
+
+I installed https://gist.github.com/cybic/6375457 in ~/.bash_completion (file) to get the bash completion.
+General short...
 
 </span>
 </div>
@@ -152,6 +239,42 @@ sudo wget -O /usr/local/bin/gitlab-runner https://gitlab...
 <div class="post-header">
 <div class="meta">
 <div class="date">
+<span class="day">30</span>
+<span class="rest">Jun 2018</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/msmtp_mutt/">Using mutt and msmtp with Gmail</a></h3>
+<span class="description">
+
+On macOS, install msmtp:
+brew install mutt msmtp  I read this thread: https://www.engadget.com/2010/05/04/msmtp-a-free-t...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">19</span>
+<span class="rest">Feb 2018</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/tcp_ports/">Everything I know about TCP</a></h3>
+<span class="description">
+
+How is a TCP connection uniquely identified Kill a process that is using a TCP port you need:
+lsof -n -i :8001 # copy PI...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
 <span class="day">20</span>
 <span class="rest">Dec 2017</span>
 </div>
@@ -161,6 +284,58 @@ sudo wget -O /usr/local/bin/gitlab-runner https://gitlab...
 <span class="description">
 
 Many times, I used git reset --hard and found out later that all my changes had disappeared. I think this is because I d...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">08</span>
+<span class="rest">Nov 2017</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/pgp/">Some stuff about gpg</a></h3>
+<span class="description">
+
+ Sign my message Things on securiry Public-key protocol is slow Errors I got  To list the keys I have in my keyring, use...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">12</span>
+<span class="rest">Sep 2017</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/pdf/">Epson scanner, large PDFs and ImageMagick (convert CLI)</a></h3>
+<span class="description">
+
+The Epson iPrint soft is producing PDFs in 300dpi but the 300 information does not seem to be stored in the PDF metadata...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">01</span>
+<span class="rest">Jun 2017</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/ssh-agent/">Avoid typing the SSH passphrase on Ubuntu using ssh-agent</a></h3>
+<span class="description">
+
+Here: https://unix.stackexchange.com/questions/12195/how-to-avoid-being-asked-passphrase-each-time-i-push-to-bitbucket
+T...
 
 </span>
 </div>
@@ -187,235 +362,8 @@ To f...
 <div class="post-header">
 <div class="meta">
 <div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/ssh-agent/">Avoid typing the SSH passphrase on Ubuntu using ssh-agent</a></h3>
-<span class="description">
-
-Here: https://unix.stackexchange.com/questions/12195/how-to-avoid-being-asked-passphrase-each-time-i-push-to-bitbucket
-T...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/pdf/">Epson scanner, large PDFs and ImageMagick (convert CLI)</a></h3>
-<span class="description">
-
-The Epson iPrint soft is producing PDFs in 300dpi but the 300 information does not seem to be stored in the PDF metadata...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/tcp_ports/">Everything I know about TCP</a></h3>
-<span class="description">
-
-How is a TCP connection uniquely identified Kill a process that is using a TCP port you need:
-lsof -n -i :8001 # copy PI...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/lighter_pdfs/">Get lighter PDFs</a></h3>
-<span class="description">
-
-convert -resample 72x72 -compress JPEG -quality 20 a.jpg a.pdf convert -resample 72x72 -compress JPEG -quality 20 a.jpg ...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/ssh/">How client-server SSH authentication works</a></h3>
-<span class="description">
-
- Difference between CA and cert Ssh authentication themes  Case A: unknown host Case B: host already in known_host but i...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/mac_commands/">Interesting macOS-specific commands</a></h3>
-<span class="description">
-
-open -a MacDown README.md # open README.md in MacDown mdfind # spotlight pbcopy # copy from stdin to pb pbpaste # paste ...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/tmux/">Memo for Tmux</a></h3>
-<span class="description">
-
-I installed https://gist.github.com/cybic/6375457 in ~/.bash_completion (file) to get the bash completion.
-General short...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/tls/">Nice diagram about TLS, certificates and keys</a></h3>
-<span class="description">
-
-cert = (1) pub key, (2) information (3) signature of (1)&#43;(2) self-signed cert = only (1) and (2) &#43;----------------------...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/oauth/">Notes on OAuth</a></h3>
-<span class="description">
-
-I know two main ways of using OAuth2
-  password-based client grant (2-leg oauth flow: on the project I worked on, the OA...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/pgp/">Some stuff about gpg</a></h3>
-<span class="description">
-
- Sign my message Things on securiry Public-key protocol is slow Errors I got  To list the keys I have in my keyring, use...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/ruby/">Stuff about managing Ruby &amp; rvm</a></h3>
-<span class="description">
-
-Warning ‘Ignoring… because its extensions are not built’ The message is:
-Ignoring atomic-1.1.101 beca...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/wireshark/">Stuff about Wireshark</a></h3>
-<span class="description">
-
-tcpdump -i eth0 -U -w - &#39;not port 22&#39; | wireshark -k -i - wireshark -i en9 -k -Y &#34;ip.addr == 35.211.248.124 ...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/linuxbrew/">Using Linyxbrew on university servers</a></h3>
-<span class="description">
-
-On the university server azteca or inca (must use vpn or sassh through-pass)
-export http_proxy=proxy.univ-tlse3.fr:3128 ...
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
+<span class="day">20</span>
+<span class="rest">Mar 2017</span>
 </div>
 </div>
 <div class="matter">
@@ -433,16 +381,16 @@ SERVER licence.irit.fr 0050568A1251 2700...
 <div class="post-header">
 <div class="meta">
 <div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
+<span class="day">05</span>
+<span class="rest">Feb 2017</span>
 </div>
 </div>
 <div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/notes/msmtp_mutt/">Using mutt and msmtp with Gmail</a></h3>
+<h3 class="title small"><a href="/do-not-share-yet/notes/ruby/">Stuff about managing Ruby &amp; rvm</a></h3>
 <span class="description">
 
-On macOS, install msmtp:
-brew install mutt msmtp  I read this thread: https://www.engadget.com/2010/05/04/msmtp-a-free-t...
+Warning ‘Ignoring… because its extensions are not built’ The message is:
+Ignoring atomic-1.1.101 beca...
 
 </span>
 </div>
@@ -451,8 +399,60 @@ brew install mutt msmtp  I read this thread: https://www.engadget.com/2010/05/04
 <div class="post-header">
 <div class="meta">
 <div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
+<span class="day">30</span>
+<span class="rest">Jan 2017</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/lighter_pdfs/">Get lighter PDFs</a></h3>
+<span class="description">
+
+convert -resample 72x72 -compress JPEG -quality 20 a.jpg a.pdf convert -resample 72x72 -compress JPEG -quality 20 a.jpg ...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">15</span>
+<span class="rest">Dec 2016</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/linuxbrew/">Using Linyxbrew on university servers</a></h3>
+<span class="description">
+
+On the university server azteca or inca (must use vpn or sassh through-pass)
+export http_proxy=proxy.univ-tlse3.fr:3128 ...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">20</span>
+<span class="rest">Oct 2016</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/notes/mac_commands/">Interesting macOS-specific commands</a></h3>
+<span class="description">
+
+open -a MacDown README.md # open README.md in MacDown mdfind # spotlight pbcopy # copy from stdin to pb pbpaste # paste ...
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">09</span>
+<span class="rest">Jul 2016</span>
 </div>
 </div>
 <div class="matter">
