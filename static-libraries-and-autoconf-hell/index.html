@@ -1,0 +1,560 @@
+<!doctype html><html lang=en><head><meta name=generator content="Hugo 0.64.0"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=keywords content="autotools,c++,c,ocaml"><meta name=description content="Dynamic libraries and PIC (position-independant code) are great features of modern systems. But trying to get the right library built can become a nightmare as soon as you rely on other libraries that may or may not have these features in the first place... In this post, I detail the hacks I made to the ./configure-based build system of Yices, a C++ library."><meta property="og:title" content="Epic journey with statically and dynamically-linked libraries (.a, .so)"><meta property="og:description" content="Dynamic libraries and PIC (position-independant code) are great features of modern systems. But trying to get the right library built can become a nightmare as soon as you rely on other libraries that may or may not have these features in the first place... In this post, I detail the hacks I made to the ./configure-based build system of Yices, a C++ library."><meta property="og:type" content="article"><meta property="og:url" content="https://maelvls.dev/static-libraries-and-autoconf-hell/"><meta property="og:image" content="https://maelvls.dev/static-libraries-and-autoconf-hell/cover-static-libraries-and-autoconf-hell.png"><meta property="article:published_time" content="2020-05-30T20:45:06+02:00"><meta property="article:modified_time" content="2020-05-30T20:45:06+02:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://maelvls.dev/static-libraries-and-autoconf-hell/cover-static-libraries-and-autoconf-hell.png"><meta name=twitter:title content="Epic journey with statically and dynamically-linked libraries (.a, .so)"><meta name=twitter:description content="Dynamic libraries and PIC (position-independant code) are great features of modern systems. But trying to get the right library built can become a nightmare as soon as you rely on other libraries that may or may not have these features in the first place... In this post, I detail the hacks I made to the ./configure-based build system of Yices, a C++ library."><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/main.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/all.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/maelvls.css><title>Epic journey with statically and dynamically-linked libraries (.a, .so) | maelvls dev blog</title></head><body><header><div id=avatar><a href=https://maelvls.dev/><img src=/img/mael.jpg alt="maelvls dev blog"></a></div><div id=titletext><h2 id=title><a href=https://maelvls.dev/>maelvls dev blog</a></h2></div><div id=title-description><p id=subtitle>Systems software engineer. I write mostly about Kubernetes and Go. <a href=/about>About</a></p><div id=social><nav><ul><li><a href=https://github.com/maelvls><i title=Github class="icons fab fa-github"></i></a></li><li><a href=https://twitter.com/maelvls><i title=Twitter class="icons fab fa-twitter"></i></a></li></ul></nav></div></div><div id=mainmenu></div></header><main><div class=post><div class=author></div><div class=post-header><div class=meta><div class=date><span class=day>30</span>
+<span class=rest>May 2020</span></div></div><div class=matter><h1 class=title>Epic journey with statically and dynamically-linked libraries (.a, .so)</h1></div></div><div class=markdown><p>Between May and June 2016, I worked with
+<a href=https://github.com/polazarus/ocamlyices>ocamlyices2</a>, an OCaml package
+that binds to the <a href=https://github.com/SRI-CSL/yices2>Yices</a> C++ library.
+Both projects (as well as many Linux projects) are built using the
+&ldquo;Autotools&rdquo; suite.</p><p>The Autotools suite includes tools like
+<a href=https://www.gnu.org/software/autoconf/>autoconf</a>,
+<a href=https://www.gnu.org/software/automake>automake</a> and
+<a href=https://www.gnu.org/software/libtool/>libtool</a>. These tools generate a
+bunch of shell scripts and Makefiles using shell scripts and the M4 macro
+language. The user of your projects ends up two simple commands to build
+your project:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>./configure
+make
+</code></pre></div><blockquote><p>Why did I bother with this? As part of my PhD, I worked on a tool,
+<a href=https://github.com/touist/touist>touist</a>, which uses SMT solvers like
+Yices. The <code>touist</code> CLI was written in OCaml (a popular language among
+academics, including my supervisor), which meant I had to go through
+hoops to interoperate with C/C++ solvers like Yices.</p></blockquote><p>My first challenge with ocamlyices2 was the fact that I needed a
+statically-linked <code>libyices.a</code>. And since Yices depends on
+<a href=https://gmplib.org/>GMP</a>, I had to dive deep into Yices2&rsquo;s <code>configure.ac</code>
+and find a way to select the static version of GMP.</p><p>But building a static library <code>libyices.a</code> was not enough. I was to build
+in PIC mode (position-independant code, enabled with <code>-fPIC</code> in gcc). The
+position-independant code is required when you want to embed a static
+library into a dynamically-linked library. That&rsquo;s due to the fact that
+OCaml requires both the <code>.so</code> and <code>.a</code> versions of the &ldquo;stub&rdquo; library (a
+stub library is a C library that wraps another C library using OCaml C
+primitives). And naturally, Yices&rsquo; build system had not been written to
+support building a static PIC <code>libyices.a</code>.</p><p>I remember these days as an epic struggle against old build systems. This
+experience taught me everything about <code>autoconf</code>, Makefiles,
+position-independant code, <code>gcc</code>, <code>ldd</code> and <code>libtool</code>. And in this post, I
+want to share these discoveries and how I progressed into contributing to
+the <a href=https://github.com/polazarus/ocamlyices>ocamlyices2</a> project.</p><h2 id=yices2-and-my-first-attempt-at-fixing-a-poorly-designed-build-system>Yices2: and my first attempt at fixing a poorly designed build system</h2><p>I remember the warmth that we had in May 2016. My daughter had turned three
+and we were still living in a tiny appartment since I was technically still
+a student.</p><p>My first patch to the ocamlyices2 project took over a month of intense
+work. The stake was immense: I aimed at revamping the whole Yices2 build
+system.</p><p>The original build system didn&rsquo;t allow developers to statically build
+<code>libyices.a</code>. More generally, it was a pain to work with: most
+configuration was happening at <code>./configure</code> time, but a ton of things had
+still to be passed at make time (e.g., <code>make VAR=value</code>).</p><p>This change
+(<a href=https://github.com/polazarus/ocamlyices2/commit/25f5eb15>25f5eb15</a>)
+brought a ton of features. But the most important ones were:</p><ol><li><p><strong>Better <code>./configure && make</code> experience</strong>. Instead of having some
+parts of the build configuration being passed as Makefile variables, I
+moved everything to nice flags that you would pass to <code>./configure</code>.</p></li><li><p><strong>Proper PIC support</strong>. Sometimes, Yices&rsquo; <code>./configure</code> would pick up a
+<code>libgmp.a</code> that would not be &ldquo;PIC&rdquo;. So I wrote a new
+<a href=https://en.wikipedia.org/wiki/M4_(computer_language)>M4</a> macro,
+<code>CSL_CHECK_STATIC_GMP_HAS_PIC</code>, that would do the PIC check using
+libtool. For example, the developer would be able to ask for a static
+library with PIC support:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>./configure --with-pic --enable-static --disable-shared --with-pic-gmp<span class=o>=</span><span class=nv>$PWD</span>/with-pic/libgmp.a
+</code></pre></div></li><li><p><strong>Static <code>libyices.a</code></strong>. The original build system did not</p></li><li><p><strong>Using <code>libtool</code></strong>. Instead of hand-crafted targets for building the static
+& dynamic libraries, <code>libtool</code> allowed me to build both with very
+little effort (at the cost of slightly longer build times). I remember
+trying to fiddle with the Makefile to be able to get PIC/non-PIC as well
+as dynamic/static <code>.o</code> units. Using <code>libtool</code> made it so easier to build
+simultanously the static and dynamic versions of <code>libyices</code>
+(<code>libyices.a</code> and <code>libyices.so</code>).</p></li><li><p><strong>Cross-compilation</strong>. I wanted to be able to release binaries for
+Windows users, which meant that I needed to cross-compile from a Cygwin
+environment to a Win32 executable.</p></li></ol><p>I also fixed weird bugs like a failure on Alpine 3.5 due to a race
+condition in <code>ltmain.sh</code>. Yes, you heard well! A race condition in a build
+system!</p><p>Not sure, but
+<a href=https://github.com/polazarus/ocamlyices2/commit/25f5eb15>25f5eb15</a> might
+be my biggest commit ever:</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>Author: Maël Valais &lt;mael.valais@gmail.com&gt;
+Date:   Fri May 5 10:31:37 2017 +0200
+Commit: 25f5eb15
+
+    libyices: build system: moved all config from Makefile to ./configure
+
+    What I tried to fix:
+    * Impossible to produces static archive libyices.a for the mingw32 host.
+    * So much configuration done in Makefile instead of ./configure.
+    * The &#39;make build OPTION= MODE=&#39; is kind of unexpected and not really standard.
+    * As an end-user builder, it is hard to guess that my system-installed libgmp.a
+      is not PIC. The build system should help me with that.
+    * CFLAGS and CPPFLAGS cannot be overritten by the end-user builder at &#39;make&#39;
+      time. See &#39;Preset Output Variables&#39; in the autoconf manual.
+    * `smt2_commands.c`, `smt2_parser.c` and `smt2_term_stack.c` are all including
+      `smt2_commands.h`, and in `smt2_commands.h` there is a definition of a type,
+      so there is a clash of symbols at link time. Solution 1: use &#39;extern&#39; in .h
+      and definition in .c. Solution 2: typedef the enum.
+    * The build system should be fully parallel-proof. Note that &#39;make -j&#39; is a
+      thread bomb; prefer using &#39;make -j4&#39; if you have 4 processors.
+    * Why removing libyices.a when using &#39;dist&#39;? (rm -f $(distdir)/lib/libyices.a)
+      libyices.a should be distributed to the end-users along with the shared lib.
+    * Why does libgmp.a contain more than libgmp.so? I guess it is because some
+      function are needed by the tests and the tests are never dynamically linked
+      to the shared libyices.so... For example, the test `test_type_matching` calls
+      a function &#39;delete_pstore&#39; that is not exported. This means we cannot use the
+      created libyices.so! We must instead use the object files directly.
+
+    Features of the new build system:
+    * It is now possible to select what you want to build using --enable-static
+      and --enable-shared. By default, both are built. You can speed up the build
+      by disabling one of the modes, for example --disable-shared.
+    * Running ./configure will tell you if the libgmp.a found/given with
+      --with-static-gmp or --with-pic-gmp is PIC or not.
+    * Libtool now handles all shared library naming with version number and symbolic
+      links. on linux, .so, on mac os .dylib, on windows .a, .dll.a and .dll...
+    * It is now possible to choose if you want PIC-only code in the static
+      library libyices.a using --with-pic.
+    * The ./configure now configures and the Makefile makes; moved all the
+      configuration steps that were done in the Makefile.
+    * It is not required anymore to pass OPTION when using make. OPTION is now
+      handled by passing for example --host=i686-w64-mingw32 when running
+      ./configure, instead of &#39;make OPTION=mingw32&#39;,
+    * It is not required anymore to pass MODE in make. MODE is now handled by
+      the argument --with-mode=release (for example) when running ./configure.
+    * Removed the confusing mess of build/&lt;host&gt;/... and configs/make.&lt;host&gt;.
+      Build objects are simply put in build/.
+    * Merged the many Makefiles that were sharing a lot of code in common.
+    * Standardized the &#39;make&#39; target and experience:
+      - make build for building binaries and library (no need for OPTION or MODE)
+      - make dist (non-standard) for showing the results of the build as it would
+        be distributed
+      - make distclean for removing any files created by ./configure
+      - make lib if you only want the library
+      - make install and uninstall for installing/uninstalling (DESTDIR supported)
+    * On Windows, we can now build a static library libyices.a.
+    * On Windows, shared and static libraries can be built at once. The static
+      version of libyices.a can be renamed using --with-static-name.
+    * DESTDIR works as expected: it will reproduce the hierarchy using the prefix
+      when running &#39;make install DESTDIR=/path&#39;
+    * A nice summary of the configuration is now printed when running ./configure.
+      It allows to check if libgmp.a is PIC or not, and helps to have a clear
+      view of what is going to happen.
+    * Moved version number of Yices in configure.ac
+    * If the user wants to use --with-pic-gmp but his libgmp.a is not PIC, give him
+      an indication of what command to run to build the with-PIC libgmp.a.
+    * Moved the gmaketest into configure; warn the user if &#39;make&#39; is not gnu make.
+    * Parallel build is now fully supported (make -j)
+    * when using --with-static-gmp (and other similar flags), try to find gmp.h
+      in . and ../include automatically, and fall back with the system-wide gmp.h
+    * check for gmp.h even when no --with-static-gmp-include-dir is given
+    * moved all csl_* functions into autoconf/m4/csl_check_libs.m4 so that they
+      can be reused somewhere else
+    * compute dependencies only if not in release mode and at compile time
+      instead of ahead of time. This saves time during compilation, because deps
+      are not necessary if the .c or .h files are not changed (i.e., if the builder
+      is the end-user). If the builder is a developer, then he will set
+      --with-mode={debug,profile...} and this will trigger the deps to be computed.
+    * &#39;make test&#39; compiles and runs all tests in tests/unit
+    * &#39;make test_api12&#39; will compile and run the test tests/unit/test_api12.c
+    * removed version_*.c file as it is rebuilt at make time
+    * gperf is now only necessary when changing the tokens.txt or keywords.txt files,
+      the end-user builder does not have to have gperf installed.
+
+    Side notes:
+    * CPPFLAGS, CFLAGS, LDFLAGS and any other makefile variable can be overwritten
+      using &#39;make LDFLAGS=...&#39; (was already the case with the previous version of the
+      build system)
+
+    Known issues:
+    * on Mac OS X, linking executables agains non-PIC libgmp.a will throw the
+      following warning:
+      ld: warning: PIE disabled. Absolute addressing (perhaps -mdynamic-no-pic)
+      not allowed in code signed PIE, but used in ___gmpn_mul_1 from libgmp.a(mul_1.o).
+      To fix this warning, don&#39;t compile with -mdynamic-no-pic or link with -Wl,-no_pie
+
+    Todo:
+    * produce libyices.def on Windows
+    * make sure the test on libgmp-10.dll is future-proof (remove the &#39;-10&#39;)
+    * fix the &#39;echo summary&#39;
+    * I did not test the checks made configure.ac on mcsat and libpoly; we should
+      do the same tests as done on libgmp.a (for checking that it is PIC) and
+      add a helping message at the end of configure.ac.
+    * For the tests, I read that two kind of tests were compiled:
+      - &#39;tests&#39; where the tests are linked to the non-PIC libgmp.a and static libgmp.a
+      - &#39;tests-static&#39; where the tests are linked to the PIC libgmp.a and shared
+        GMP library.
+      I changed the second one: it links to the shared version of libyices and shared
+      version of GMP. But building the with-PIC libyices.a would be really easy
+      (and it is still possible using the flag --with-pic).
+    * &#39;make dist&#39; is not a staging area (for now) for &#39;make install&#39;. They both
+      install from built objects.
+    * it is not possible to compile the tests against the shared library
+      because many symbols which are used in the tests are not exported (&#39;export&#39;
+      in the C code). They exist if we do &#39;nm&#39; but they are just not usable.
+
+    * pstore issue:
+
+    The visibility is T (visible) in static mode and t (hidden) in shared mode. This
+    is because &#39;abstract_values.c&#39; has not been &#39;exported&#39; (=added in `yices_api.c`).
+    Here is an example of the difference (functions from )
+    ```
+    # nm build/lib/libyices.a | grep pstore
+    0000000000000090 T _delete_pstore
+    0000000000000000 T _init_pstore
+    # nm build/lib/.libs/libyices.2.dylib | grep pstore
+    0000000000037e10 t _delete_pstore
+    0000000000037d80 t _init_pstore
+    ```
+
+    I tweaked the ltmain.sh to be able to pass different CPPFLAGS for the compilation
+    of static and shared objects by the `%.o: %.c` rule. CPPFLAGS must be different
+    because of Windows dlls: `-DNOYICES_DLL -D__GMP_LIBGMP_DLL=0` for example.
+
+    I added two variables LT_STATIC_CFLAGS and LT_SHARED_CFLAGS. They allow me
+    to pass CFLAGS to libtool for .c -&gt; .o targets. It allows me to pass things
+    like -DYICES_STATIC, -DNOYICES_DLL and -D_LIBGMP_DLL.
+
+    ``` diff
+    diff --git a/ext/yices/autoconf/ltmain.sh b/ext/yices/autoconf/ltmain.sh
+    index bf5d83b..7b7dd3a 100644
+    --- a/ext/yices/autoconf/ltmain.sh
+    +++ b/ext/yices/autoconf/ltmain.sh
+    @@ -3500,10 +3500,10 @@ compiler.&#34;
+           fbsd_hideous_sh_bug=$base_compile
+
+           if test no != &#34;$pic_mode&#34;; then
+    -       command=&#34;$base_compile $qsrcfile $pic_flag&#34;
+    +       command=&#34;$base_compile $LT_SHARED_CFLAGS $qsrcfile $pic_flag&#34;
+           else
+            # Don&#39;t build PIC code
+    -       command=&#34;$base_compile $qsrcfile&#34;
+    +       command=&#34;$base_compile $LT_SHARED_CFLAGS $qsrcfile&#34;
+           fi
+
+           func_mkdir_p &#34;$xdir$objdir&#34;
+    @@ -3552,9 +3552,9 @@ compiler.&#34;
+         if test yes = &#34;$build_old_libs&#34;; then
+           if test yes != &#34;$pic_mode&#34;; then
+            # Don&#39;t build PIC code
+    -       command=&#34;$base_compile $qsrcfile$pie_flag&#34;
+    +       command=&#34;$base_compile $LT_STATIC_CFLAGS $qsrcfile$pie_flag&#34;
+           else
+    -       command=&#34;$base_compile $qsrcfile $pic_flag&#34;
+    +       command=&#34;$base_compile $LT_STATIC_CFLAGS $qsrcfile $pic_flag&#34;
+           fi
+           if test yes = &#34;$compiler_c_o&#34;; then
+            func_append command &#34; -o $obj&#34;
+    ```
+</code></pre></div><p>What a massive commit message, right?!</p><p>Oviously, I still needed to use all the new features that I had just addeed
+to the Yices <code>./configure</code>. So I proposed a second patch
+(<a href=https://github.com/polazarus/ocamlyices2/commit/ccb5a563>ccb5a563</a>) with
+changes to the ocamlyices2&rsquo;s own <code>./configure</code>; that took the form of new
+flags so that I would be able to build a static <code>libyices.a</code> by specifying
+the static version of the GMP library <code>libgmp.a</code>.</p><p>I also used the new cross-compilation capability of the Yices <code>./configure</code>
+so that it would be possible to build ocamlyices2 on Windows. The
+compilation would rely on the POSIX-compliant
+<a href=https://www.cygwin.com/>Cygwin</a> suite and cross-compile to a native Win32
+executable using <a href=http://www.mingw.org/>MinGW32</a> (which a port of GCC).</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=nx>Author</span><span class=p>:</span> <span class=nx>Maël</span> <span class=nx>Valais</span> <span class=p>&lt;</span><span class=nx>mael</span><span class=p>.</span><span class=nx>valais</span><span class=err>@</span><span class=nx>gmail</span><span class=p>.</span><span class=nx>com</span><span class=p>&gt;</span>
+<span class=nx>Date</span><span class=p>:</span>   <span class=nx>Fri</span> <span class=nx>May</span> <span class=mi>5</span> <span class=mi>16</span><span class=p>:</span><span class=mi>18</span><span class=p>:</span><span class=mi>46</span> <span class=mi>2017</span> <span class=o>+</span><span class=mo>0200</span>
+<span class=nx>Commit</span><span class=p>:</span> <span class=nx>ccb5a563</span>
+
+    <span class=nx>ocamlyices2</span><span class=p>:</span> <span class=nx>only</span> <span class=nx>build</span> <span class=nx>the</span> <span class=nx>static</span> <span class=nx>stub</span> <span class=nx>using</span> <span class=nx>static</span> <span class=nx>libgmp</span><span class=p>.</span><span class=nx>a</span><span class=p>.</span>
+
+    <span class=nx>The</span> <span class=nx>library</span> <span class=nx>libgmp</span><span class=p>.</span><span class=nx>a</span> <span class=nx>will</span> <span class=nx>be</span> <span class=nx>searched</span> <span class=nx>in</span> <span class=nx>system</span> <span class=nx>dirs</span> <span class=nx>or</span> <span class=nx>you</span> <span class=nx>can</span> <span class=nx>use</span> <span class=nx>the</span> <span class=nx>flag</span>
+    <span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>static</span><span class=o>-</span><span class=nx>gmp</span><span class=p>=</span> <span class=nx>when</span> <span class=nx>running</span> <span class=p>.</span><span class=o>/</span><span class=nx>configure</span> <span class=k>for</span> <span class=nx>setting</span> <span class=nx>your</span> <span class=nx>own</span> <span class=nx>libgmp</span><span class=p>.</span><span class=nx>a</span><span class=p>.</span> <span class=nx>If</span>
+    <span class=nx>no</span> <span class=nx>libgmp</span><span class=p>.</span><span class=nx>a</span> <span class=nx>is</span> <span class=nx>found</span><span class=p>,</span> <span class=nx>the</span> <span class=nx>shared</span> <span class=nx>library</span> <span class=nx>is</span> <span class=nx>used</span><span class=p>.</span> <span class=nx>You</span> <span class=nx>can</span> <span class=nx>force</span> <span class=nx>the</span> <span class=nx>use</span> <span class=nx>of</span>
+    <span class=nx>shared</span> <span class=nx>gmp</span> <span class=nx>library</span> <span class=nx>with</span> <span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>shared</span><span class=o>-</span><span class=nx>gmp</span><span class=p>.</span>
+
+    <span class=nx>If</span> <span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>shared</span><span class=o>-</span><span class=nx>gmp</span> <span class=nx>is</span> <span class=nx>not</span> <span class=nx>given</span><span class=p>,</span> <span class=nx>the</span> <span class=nx>libgmp</span><span class=p>.</span><span class=nx>a</span> <span class=nx>that</span> <span class=nx>has</span> <span class=nx>been</span> <span class=nx>found</span>
+    <span class=nx>will</span> <span class=nx>be</span> <span class=nx>included</span> <span class=nx>in</span> <span class=nx>the</span> <span class=nx>list</span> <span class=nx>of</span> <span class=nx>installed</span> <span class=nx>files</span><span class=p>.</span> <span class=nx>The</span> <span class=nx>reason</span> <span class=nx>is</span> <span class=nx>because</span>
+    <span class=k>if</span> <span class=nx>we</span> <span class=nx>want</span> <span class=nx>to</span> <span class=nx>build</span> <span class=nx>a</span> <span class=nx>shared</span><span class=o>-</span><span class=nx>gmp</span><span class=o>-</span><span class=nx>free</span> <span class=nx>binary</span><span class=p>,</span> <span class=nx>zarith</span> <span class=nx>will</span> <span class=nx>sometimes</span> <span class=nx>pick</span> <span class=nx>the</span>
+    <span class=nx>shared</span> <span class=nf>library</span> <span class=p>(</span><span class=nx>with</span> <span class=o>-</span><span class=nx>lgmp</span><span class=p>)</span> <span class=nx>over</span> <span class=nx>the</span> <span class=nx>static</span> <span class=nx>lbirary</span> <span class=nx>libgmp</span><span class=p>.</span><span class=nx>a</span><span class=p>.</span>
+
+    <span class=nx>Including</span> <span class=nx>libgmp</span><span class=p>.</span><span class=nx>a</span> <span class=nx>in</span> <span class=nx>the</span> <span class=nx>distribution</span> <span class=nx>of</span> <span class=nx>ocamlyices2</span> <span class=nx>is</span> <span class=nx>a</span> <span class=nx>convenience</span> <span class=k>for</span>
+    <span class=nx>creating</span> <span class=nx>gmp</span><span class=o>-</span><span class=nx>shared</span><span class=o>-</span><span class=nx>free</span> <span class=nx>binaries</span><span class=p>.</span>
+
+    <span class=nx>Why</span> <span class=nx>do</span> <span class=nx>we</span> <span class=nx>prefer</span> <span class=nx>using</span> <span class=nx>a</span> <span class=nx>static</span> <span class=nx>version</span> <span class=nx>of</span> <span class=nx>libgmp</span><span class=p>.</span><span class=nx>a</span><span class=err>?</span>
+    <span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=p>=</span>
+
+    <span class=nx>This</span> <span class=nx>is</span> <span class=nx>because</span> <span class=nx>we</span> <span class=nx>build</span> <span class=nx>a</span> <span class=nx>non</span><span class=o>-</span><span class=nx>PIC</span> <span class=nx>static</span> <span class=nx>version</span> <span class=nx>of</span> <span class=nx>libyices</span><span class=p>.</span><span class=nx>a</span><span class=p>.</span> <span class=nx>If</span>
+    <span class=nx>we</span> <span class=nx>wanted</span> <span class=nx>to</span> <span class=nx>build</span> <span class=nx>both</span> <span class=nx>static</span> <span class=nx>and</span> <span class=nx>shared</span> <span class=nx>stubs</span><span class=p>,</span> <span class=nx>we</span> <span class=nx>should</span> <span class=nx>either</span>
+    <span class=o>-</span> <span class=nx>build</span> <span class=nx>a</span> <span class=nx>PIC</span> <span class=nx>libyices</span><span class=p>.</span><span class=nx>a</span> <span class=nx>but</span> <span class=nx>it</span> <span class=nx>would</span> <span class=nx>conflict</span> <span class=nx>with</span> <span class=nx>the</span> <span class=nx>non</span><span class=o>-</span><span class=nx>PIC</span> <span class=nx>one</span>
+    <span class=o>-</span> <span class=nx>build</span> <span class=nx>a</span> <span class=nx>shared</span> <span class=nx>library</span> <span class=nx>libyices</span><span class=p>.</span><span class=nx>so</span><span class=p>.</span>
+
+    <span class=nx>For</span> <span class=nx>now</span><span class=p>,</span> <span class=nx>I</span> <span class=nx>chose</span> <span class=nx>to</span> <span class=nx>just</span> <span class=nx>skip</span> <span class=nx>the</span> <span class=nx>shared</span> <span class=nf>stubs</span> <span class=p>(</span><span class=nx>dllyices2_stubs</span><span class=p>.</span><span class=nx>so</span><span class=p>)</span><span class=p>.</span>
+
+    <span class=nx>Also</span><span class=p>:</span>
+
+    <span class=o>*</span> <span class=nx>turn</span> <span class=nx>on</span> <span class=o>-</span><span class=nf>fPIC</span> <span class=p>(</span><span class=nx>in</span> <span class=nx>configure</span><span class=p>.</span><span class=nx>ac</span><span class=p>)</span> <span class=nx>only</span> <span class=k>if</span> <span class=nx>non</span><span class=o>-</span><span class=nx>static</span> <span class=nx>gmp</span>
+    <span class=o>*</span> <span class=nx>added</span> <span class=nx>a</span> <span class=nx>way</span> <span class=nx>to</span> <span class=nx>link</span> <span class=nx>statically</span> <span class=nx>to</span> <span class=nx>libgmp</span><span class=p>.</span><span class=nf>a</span> <span class=p>(</span><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>static</span><span class=o>-</span><span class=nx>gmp</span><span class=p>)</span>
+    <span class=o>*</span> <span class=nx>use</span> <span class=o>-</span><span class=kn>package</span> <span class=nx>instead</span> <span class=nx>of</span> <span class=o>-</span><span class=nx>I</span><span class=o>/</span><span class=nx>lib</span> <span class=k>for</span> <span class=nx>compiling</span> <span class=o>*</span><span class=p>.</span><span class=nx>c</span> <span class=nx>in</span> <span class=nx>ocamlc</span>
+
+    <span class=nx>This</span> <span class=nx>option</span> <span class=nx>uses</span> <span class=nx>the</span> <span class=nx>change</span> <span class=nx>I</span> <span class=nx>made</span> <span class=nx>to</span> <span class=nx>the</span> <span class=nx>build</span> <span class=nx>system</span> <span class=nx>of</span> <span class=nx>libyices</span><span class=p>.</span>
+    <span class=nx>Why</span><span class=err>?</span> <span class=nx>Because</span> <span class=nx>I</span> <span class=nx>want</span> <span class=nx>the</span> <span class=nx>possibility</span> <span class=nx>of</span> <span class=nx>producing</span> <span class=nx>binaries</span> <span class=nx>that</span> <span class=nx>do</span>
+    <span class=nx>not</span> <span class=nx>need</span> <span class=nx>any</span> <span class=nx>dll</span> <span class=nx>alongside</span><span class=p>.</span>
+
+    <span class=nx>Guess</span> <span class=nx>the</span> <span class=nx>host</span> <span class=nx>system</span> <span class=nx>and</span> <span class=nx>pass</span> <span class=nx>it</span> <span class=nx>to</span> <span class=nx>libyices</span> <span class=p>.</span><span class=o>/</span><span class=nx>configure</span>
+    <span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=o>==</span><span class=p>=</span>
+    <span class=nx>It</span> <span class=nx>is</span> <span class=nx>now</span> <span class=nx>possible</span> <span class=nx>to</span> <span class=nx>use</span> <span class=p>.</span><span class=o>/</span><span class=nx>configure</span> <span class=k>for</span> <span class=nx>mingw32</span> <span class=nx>cross</span><span class=o>-</span><span class=nx>compilation</span><span class=p>.</span>
+</code></pre></div><p>A month past and I soon realized that GMP was not embedded at all in
+<code>libyices.a</code>. I could see the symbols as undefined (<code>U</code>) when running <code>nm libyices.a</code>. It took me a while to figure this out&mldr; back to tweaking the
+fragile Yices <code>./configure</code>!</p><p>Along the way, I also realized how different Linux distributions are. Arch
+Linux is notably lacking support for partial linking (<code>ld -r</code>). Which meant
+I had to add a flag for this specific purpose in commit
+<a href=https://github.com/polazarus/ocamlyices2/commit/38200b0a>38200b0a</a>:</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>Author: Maël Valais &lt;mael.valais@gmail.com&gt;
+Date:   Fri Jun 16 21:18:37 2017 +0200
+Commit: 38200b0a
+
+    libyices: added option --without-gmp-embedded
+
+    This option will disable the partial linking that allows to embed
+    GMP into libyices.a (only with --enable-static).
+
+    For example, on Arch linux, the partial linking command
+
+        ld -r -lgmp *.o -o libyices.o
+
+    would fail even if libgmp.so is correclty installed. It seems that &#39;ld -r&#39;
+    would only work with a static libgmp.a (but the arch linux repo only installs
+    the shared gmp library).
+
+    Why this `ld -r`? This command is the only way I found to compile a
+    static libyices.a from either a shared or a static libgmp and produce
+    a gmp-depend-free libyices.a.
+
+    Two solutions:
+
+    1. Drop the necessity for building a libyices.a free of gmp dependency.
+       In this case, I could remove the `ld -r`.
+       It would then create a libyices.a that depends on libgmp.a/so.
+    2. Separate the gmp-dependency-free libyices.a from the normal
+       gmp-dependent libyices.a. For example, I could use the option
+       `--without-gmp-embedded`
+
+    So I went with solution (2).
+
+    This option disables the embedding of GMP inside libyices.a. This
+    &#39;embedding&#39; is made using partial linking (ld -r) which seems to
+    be failing on Arch Linux when using the shared GMP library.
+</code></pre></div><p>Although I had already added a check (<code>CSL_CHECK_STATIC_GMP_HAS_PIC</code> in
+<a href=https://github.com/polazarus/ocamlyices2/commit/25f5eb15>25f5eb15</a>) to
+make sure that the user-provided libgmp was PIC when using <code>--with-pic</code>, I
+realized that it was trickier that what I thought in
+<a href=https://github.com/polazarus/ocamlyices2/commit/55c8e92a>55c8e92a</a>&mldr;</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>Author: Maël Valais &lt;mael.valais@gmail.com&gt;
+Date:   Sat Jun 17 14:09:12 2017 +0200
+Commit: 55c8e92a
+
+    libyices: with --enable-static and --with-pic, enforce PIC libgmp.a
+
+    One problem I came across was that most of the time, when I was doing
+
+        ./configure --enable-static --with-pic
+
+    the produced libyices.a would still contain non-PIC libgmp.a, although
+    being itself PIC. In this commit, I enforce that if --with-pic is given,
+    then:
+
+    1) either --with-pic-gmp has been given, in this case we use that for
+       creating the PIC libyices.a;
+    2) or --with-pic-gmp has not been given and thus we try to simply use the
+       shared gmp through -lgmp.
+
+    Reminder: we also check that the system libgmp.a or the libgmp.a given with
+    --with-static-gmp is PIC. If it is the case, the PIC libgmp.a will be used
+    for --with-pic.
+</code></pre></div><p>Now, I also had to fix ocamlyices2&rsquo;s <code>./configure</code> since <code>ld -r</code> (partial
+linking) was not supported on Arch Linux (see [PR&rsquo;s CI failure](pull
+request](<a href=https://github.com/ocaml/opam-repository/pull/9086)>https://github.com/ocaml/opam-repository/pull/9086)</a>. I remember
+waiting for hours for the CI to run on all imaginable systems: Debian,
+Ubuntu, Suse, Arch Linux, Alpine, CentOS, Fedora, macOS and Windows&mldr;</p><p>Commits
+<a href=https://github.com/polazarus/ocamlyices2/commit/df7c89a1>df7c89a1</a> and
+<a href=https://github.com/polazarus/ocamlyices2/commit/70dc5de5>70dc5de5</a>) fix
+the partial linking issue on Arch Linux:</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>Author: Maël Valais &lt;mael.valais@gmail.com&gt;
+Date:   Sat Jun 17 16:52:59 2017 +0200
+Commit: df7c89a1
+
+    ocamlyices2: added --with-libyices and --with-libyices-include-dir
+
+    These options allow to give your own libyices.a and the include directory
+    where the libyices headers are.
+
+Author: Maël Valais &lt;mael.valais@gmail.com&gt;
+Date:   Sat Jun 17 17:01:58 2017 +0200
+Commit: 70dc5de5
+
+    ocamlyices2: use --without-gmp-embedded by default
+
+    After giving it some thoughts, the need for having a self-contained libyices.a
+    (which would only need -lyices, no -lgmp needed) in ocamlyices2 is pointless
+    as &#39;zarith&#39; will still need &#39;-lgmp&#39; anyway.
+
+    The Makefile will still put libgmp.a and libyices.a inside src/ so that
+    the static version of gmp is used (with -L.) instead of the shared version.
+
+    Rationale: disabling the partial linking fixes the build on Arch Linux, which
+    (I re-tested on a docker image) cannot accept partial linking with -lgmp when
+    only libgmp.so is available. Here is the failing command:
+
+        ld -r *.o -lgmp -o libyices.o
+</code></pre></div><h2 id=final-result-of-the-yices2-build-system>Final result of the Yices2 build system</h2><p>The experience with the re-written <code>./configure</code>
+(<a href=https://github.com/polazarus/ocamlyices2/tree/master/ext/yices>here</a>) is
+very different from the original one. When the user wants to compile the
+library with PIC, they get a warning if one of the dependencies is not PIC.
+There is a much finer control over what the user wants: dynamic vs. static,
+PIC vs. non-PIC. But also more control over dependencies like GMP, since
+the user must be able to pass a static or dynamic version of libgmp.</p><p>The <code>./configure</code> that you can see
+<a href=https://github.com/polazarus/ocamlyices2/tree/master/ext/yices>here</a>
+gained many features like <code>--with-shared-gmp</code> or <code>--with-pic</code>.</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% ./configure --help
+<span class=sb>`</span>configure<span class=err>&#39;</span> configures Yices 2.5.2 to adapt to many kinds of systems.
+
+Usage: ./configure <span class=o>[</span>OPTION<span class=o>]</span>... <span class=o>[</span><span class=nv>VAR</span><span class=o>=</span>VALUE<span class=o>]</span>...
+
+System types:
+  --build<span class=o>=</span>BUILD     configure <span class=k>for</span> building on BUILD <span class=o>[</span>guessed<span class=o>]</span>
+  --host<span class=o>=</span>HOST       cross-compile to build programs to run on HOST <span class=o>[</span>BUILD<span class=o>]</span>
+
+Optional Features:
+  --enable-shared<span class=o>[</span><span class=o>=</span>PKGS<span class=o>]</span>  build shared libraries <span class=o>[</span><span class=nv>default</span><span class=o>=</span>yes<span class=o>]</span>
+  --enable-static<span class=o>[</span><span class=o>=</span>PKGS<span class=o>]</span>  build static libraries <span class=o>[</span><span class=nv>default</span><span class=o>=</span>yes<span class=o>]</span>
+  --disable-libtool-lock  avoid locking <span class=o>(</span>might <span class=nb>break</span> parallel builds<span class=o>)</span>
+  --enable-mcsat          Enable support <span class=k>for</span> MCSAT. This requires the libpoly
+                          library.
+
+Optional Packages:
+  --with-pic<span class=o>[</span><span class=o>=</span>PKGS<span class=o>]</span>       try to use only PIC/non-PIC objects <span class=o>[</span><span class=nv>default</span><span class=o>=</span>use
+                          both<span class=o>]</span>
+  --with-static-gmp<span class=o>=</span>&lt;path&gt;
+                          Full path to a static GMP library <span class=o>(</span>e.g., libgmp.a<span class=o>)</span>
+  --with-static-gmp-include-dir<span class=o>=</span>&lt;directory&gt;
+                          Directory of include file <span class=s2>&#34;gmp.h&#34;</span> compatible with
+                          static GMP library
+  --with-pic-gmp<span class=o>=</span>&lt;path&gt;   Full path to a relocatable GMP library <span class=o>(</span>e.g.,
+                          libgmp.a<span class=o>)</span>
+  --with-pic-gmp-include-dir<span class=o>=</span>&lt;directory&gt;
+                          Directory of include file <span class=s2>&#34;gmp.h&#34;</span> compatible with
+                          relocatable GMP library
+  --with-static-libpoly<span class=o>=</span>&lt;path&gt;
+                          Full path to libpoly.a
+  --with-static-libpoly-include-dir<span class=o>=</span>&lt;directory&gt;
+                          Path to include files compatible with libpoly.a
+                          <span class=o>(</span>e.g., /usr/local/include<span class=o>)</span>
+  --with-pic-libpoly<span class=o>=</span>&lt;path&gt;
+                          Full path to a relocatable libpoly.a
+  --with-pic-libpoly-include-dir<span class=o>=</span>&lt;directory&gt;
+                          Path to include files compatible with the
+                          relocatable libpoly.a
+  --with-shared-gmp       By default, a static version of the GMP library will
+                          be searched. This option forces the use of the
+                          shared version. This applies <span class=k>for</span> both shared and
+                          static libraries.
+  --without-gmp-embedded  <span class=o>(</span>Only when --enable-static<span class=o>)</span> By default, the static
+                          library libyices.a created will be partially linked
+                          <span class=o>(</span>ld -r<span class=o>)</span> so that the GMP library is not needed
+                          afterwards <span class=o>(</span>i.e., only -lyices is needed<span class=o>)</span>. If you
+                          want to disable the partial linking <span class=o>(</span>and thus -lgmp
+                          and -lyices will be needed<span class=o>)</span>, you can use this flag.
+  --with-mode<span class=o>=</span>MODE        The mode used during compilation/distribution. It
+                          can be one of release, debug, devel, profile, gcov,
+                          valgrind, purify, quantify or gperftools. <span class=o>(</span>default:
+                          release<span class=o>)</span>
+  --with-static-name<span class=o>=</span>name <span class=o>(</span>Windows only<span class=o>)</span> when building simultanously shared
+                          and static libraries, allows you to give a different
+                          name <span class=k>for</span> the static version of libyices.a.
+</code></pre></div><p>I also added a ton of diagnostic information that appears at the end of
+<code>./configure</code>. That&rsquo;s very useful when you want to make sure that
+<code>./configure</code> has picked up the right version of <code>libgmp</code>:</p><div class=highlight><pre class=chroma><code class=language-plain data-lang=plain>configure: Summary of the configuration:
+EXEEXT:
+SED:                        /usr/bin/sed
+LN_S:                       ln -s
+MKDIR_P:                    /usr/local/opt/coreutils/libexec/gnubin/mkdir -p
+CC:                         gcc
+LD:                         /Library/Developer/CommandLineTools/usr/bin/ld
+AR:                         ar
+RANLIB:                     ranlib
+STRIP:                      strip
+GPERF:                      gperf
+NO_STACK_PROTECTOR:         -fno-stack-protector
+STATIC_GMP:                 /usr/local/lib/libgmp.a
+STATIC_GMP_INCLUDE_DIR:
+PIC_GMP:                    /usr/local/lib/libgmp.a
+PIC_GMP_INCLUDE_DIR:
+ENABLE_MCSAT:               no
+STATIC_LIBPOLY:
+STATIC_LIBPOLY_INCLUDE_DIR:
+PIC_LIBPOLY:
+PIC_LIBPOLY_INCLUDE_DIR:
+
+Version:                    Yices 2.5.2
+Host type:                  x86_64-apple-darwin19.4.0
+Install prefix:             /Users/mvalais/code/ocamlyices2/ext/yices
+Build mode:                 release
+
+For both static and shared library:
+  CPPFLAGS:                  -DMACOSX -DNDEBUG
+  CFLAGS:                    -fvisibility=hidden -Wall -Wredundant-decls -O3 -fomit-frame-pointer -fno-stack-protector
+  LDFLAGS:
+
+For static library          libyices.a:
+  Enable:                   yes
+  STATIC_CPPFLAGS:           -DYICES_STATIC
+  STATIC_LIBS:
+  Libgmp.a found:           yes
+  Libgmp.a path:            /usr/local/lib/libgmp.a
+  Libgmp.a is pic:          yes     (non-PIC is faster for the static library)
+  PIC mode for libyices.a:  default
+  Use shared gmp instead of libgmp.a:  no
+  Embed gmp in libyices.a:  yes
+
+For shared library:
+  Enable:                   yes
+  SHARED_CPPFLAGS:
+  SHARED_LIBS:
+  Libgmp.a with PIC found:  yes
+  Libgmp.a path:            /usr/local/lib/libgmp.a
+  Use shared gmp instead of libgmp.a: no
+</code></pre></div><p>A final word about the <code>Makefile</code>: since all the build configuration is
+handled by <code>./configure</code>, you don&rsquo;t have to pass any variables at <code>make</code>
+time anymore, which really helps when you need to <code>make</code> multiple times in
+a row and don&rsquo;t want to type the variables every single time.</p><h2 id=contributing-the-new-yices-build-system-to-upstream>Contributing the new Yices build system to upstream</h2><p>On 16 June 2016, I sent an email to Bruno Dutertre, one of the developers
+at SRI (the company behind the Yices SMT solver). I proposed all these
+changes with links to the various patches on GitHub. Unfortunately, it
+didn&rsquo;t work out, and the reason might be that the whole patch was enormous
+and very hard to review.</p><blockquote><p>Hi Maël,</p><p>Thanks for the message and for your efforts. We&rsquo;ll look into your updates.</p><p>We know that the Yices build system is unconventional because most of the
+work is done in the Makefiles rather that in the configure script. There
+are historical reason for this (and it should be able to build PIC
+libraries without problems).</p><p>By the way, Yices is now open-source (GPL) on github:
+<a href=https://github.com/SRI-CSL/yices2>https://github.com/SRI-CSL/yices2</a>. Take a look when you have time,</p><p>Thanks again,</p><p>Bruno</p></blockquote><p>I wish we had a unit-test framework for <code>autoconf</code>. The <code>autoconf</code>
+ecosystem generates very fragile scripts and the only way to test them is
+to run them with all possible flag combinations, which is pretty much
+impossible.</p><h2 id=inpecting-static-and-dynamic-libraries>Inpecting static and dynamic libraries</h2><p>Here are two tips that I learned along the way. First, I very often need to
+know what libraries an executable is depending on:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=c1># macOS</span>
+% otool -L /bin/ls
+/bin/ls:
+    /usr/lib/libutil.dylib <span class=o>(</span>compatibility version 1.0.0, current version 1.0.0<span class=o>)</span>
+    /usr/lib/libncurses.5.4.dylib <span class=o>(</span>compatibility version 5.4.0, current version 5.4.0<span class=o>)</span>
+    /usr/lib/libSystem.B.dylib <span class=o>(</span>compatibility version 1.0.0, current version 1281.100.1<span class=o>)</span>
+
+<span class=c1># Linux (Alpine Linux 3.9)</span>
+ldd /bin/ls
+    /lib/ld-musl-x86_64.so.1 <span class=o>(</span>0x7fc9b2c84000<span class=o>)</span>
+    libc.musl-x86_64.so.1 <span class=o>=</span>&gt; /lib/ld-musl-x86_64.so.1 <span class=o>(</span>0x7fc9b2c84000<span class=o>)</span>
+</code></pre></div><p>I also had to dig into the symbols of libraries in order to make sure that
+static libraries contained all the needed symbols:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% nm ext/libyices_pic_no_gmp/lib/libyices.a
+ext/libyices_pic_no_gmp/lib/libyices.a<span class=o>(</span>libyices.o<span class=o>)</span>:
+00000000000ef6c0 t _convert_rba_tree
+0000000000049a20 t _convert_simple_value
+00000000000c2f70 t _convert_term_to_bit
+00000000000d97e0 t _convert_term_to_conditional
+<span class=m>0000000000049700</span> t _convert_term_to_val
+0000000000049b30 t _convert_val
+00000000000028b0 T _yices_or
+0000000000002fa0 T _yices_or2
+0000000000002ca0 T _yices_or3
+<span class=m>0000000000003480</span> T _yices_pair
+000000000002ad30 t _yices_parse
+<span class=m>0000000000006420</span> T _yices_parse_bvbin
+00000000000064b0 T _yices_parse_bvhex
+<span class=m>0000000000004200</span> T _yices_parse_float
+<span class=m>0000000000004180</span> T _yices_parse_rational
+000000000000b150 T _yices_parse_term
+000000000000b090 T _yices_parse_type
+                 U _memcpy
+                 U _memset
+                 U _memset_pattern16
+                 U ___error
+<span class=m>0000000000145280</span> S ___gmp_0
+000000000017dcf0 D ___gmp_allocate_func
+00000000001099e0 T ___gmp_assert_fail
+<span class=m>0000000000109980</span> T ___gmp_assert_header
+<span class=m>0000000000145460</span> S ___gmp_binvert_limb_table
+000000000014527c S ___gmp_bits_per_limb
+0000000000109a60 T ___gmp_default_allocate
+0000000000109ae0 T ___gmp_default_free
+0000000000109a90 T ___gmp_default_reallocate
+<span class=m>0000000000145290</span> S ___gmp_digit_value_tab
+</code></pre></div></div><div class=tags><div class=taxosfloating_left><p>Tags</p></div><div class=termsfloating_right><p><a href=/tags/autotools/>autotools</a>
+<a href=/tags/c/>c</a>
+<a href=/tags/c++/>c++</a>
+<a href=/tags/ocaml/>ocaml</a></div><div class=clearit></div></div><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div></main><footer><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></footer></body></html>
