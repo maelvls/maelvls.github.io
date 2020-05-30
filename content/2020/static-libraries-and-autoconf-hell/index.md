@@ -593,35 +593,6 @@ handled by `./configure`, you don't have to pass any variables at `make`
 time anymore, which really helps when you need to `make` multiple times in
 a row and don't want to type the variables every single time.
 
-## Contributing the new Yices build system to upstream
-
-On 16 June 2016, I sent an email to Bruno Dutertre, one of the developers
-at SRI (the company behind the Yices SMT solver). I proposed all these
-changes with links to the various patches on GitHub. Unfortunately, it
-didn't work out, and the reason might be that the whole patch was enormous
-and very hard to review.
-
-> Hi Maël,
->
-> Thanks for the message and for your efforts. We'll look into your updates.
->
->We know that the Yices build system is unconventional because most of the
->work is done in the Makefiles rather that in the configure script. There
->are historical reason for this (and it should be able to build PIC
->libraries without problems).
->
->By the way, Yices is now open-source (GPL) on github:
->https://github.com/SRI-CSL/yices2. Take a look when you have time,
->
->Thanks again,
->
->Bruno
-
-I wish we had a unit-test framework for `autoconf`. The `autoconf`
-ecosystem generates very fragile scripts and the only way to test them is
-to run them with all possible flag combinations, which is pretty much
-impossible.
-
 ## Inpecting static and dynamic libraries
 
 Here are two tips that I learned along the way. First, I very often need to
@@ -679,3 +650,52 @@ ext/libyices_pic_no_gmp/lib/libyices.a(libyices.o):
 0000000000109a90 T ___gmp_default_reallocate
 0000000000145290 S ___gmp_digit_value_tab
 ```
+
+The letter before the symbol is the "symbol type" (from `man nm`):
+
+> Each symbol name is preceded by its value (blanks if undefined). This
+> value is followed by one of the following characters, representing the
+> symbol type:
+>
+> - U = undefined,
+> - T (text section symbol),
+> - D (data section symbol),
+> - S (symbol in a section other than those above).
+>
+> If the symbol is local (non-external), the symbol's type is instead
+> represented by the corresponding lowercase letter. A lower case u in a
+> dynamic shared library indicates a undefined reference to a private
+> external in another module in the same library.
+
+For example, the symbol `_yices_parse_float` is an external symbol, meaning
+that this symbol isn't static to `libyices.a`. On the other side,
+`_convert_simple_value` is statically defined (`t`).
+
+## Contributing the new Yices build system to upstream
+
+On 16 June 2016, I sent an email to Bruno Dutertre, one of the developers
+at SRI (the company behind the Yices SMT solver). I proposed all these
+changes with links to the various patches on GitHub. Unfortunately, it
+didn't work out, and the reason might be that the whole patch was enormous
+and very hard to review.
+
+> Hi Maël,
+>
+> Thanks for the message and for your efforts. We'll look into your updates.
+>
+>We know that the Yices build system is unconventional because most of the
+>work is done in the Makefiles rather that in the configure script. There
+>are historical reason for this (and it should be able to build PIC
+>libraries without problems).
+>
+>By the way, Yices is now open-source (GPL) on github:
+>https://github.com/SRI-CSL/yices2. Take a look when you have time,
+>
+>Thanks again,
+>
+>Bruno
+
+I wish we had a unit-test framework for `autoconf`. The `autoconf`
+ecosystem generates very fragile scripts and the only way to test them is
+to run them with all possible flag combinations, which is pretty much
+impossible.
