@@ -1,6 +1,6 @@
 ---
 title: What I know about shells
-date: 00-00-00
+date: 2016-07-09
 ---
 
 1. [General information](#general-information)

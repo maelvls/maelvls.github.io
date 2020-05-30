@@ -1,6 +1,6 @@
 ---
 title: Get lighter PDFs
-date: 00-00-00
+date: 2017-01-30
 ---
 
 ```shell

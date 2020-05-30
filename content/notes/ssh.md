@@ -1,6 +1,6 @@
 ---
 title: How client-server SSH authentication works
-date: 00-00-00
+date: 2019-05-28
 ---
 
 1. [Difference between CA and cert](#difference-between-ca-and-cert)

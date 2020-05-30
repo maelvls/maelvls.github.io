@@ -1,6 +1,6 @@
 ---
 title: Memo for Tmux
-date: 00-00-00
+date: 2018-11-03
 ---
 
 I installed <https://gist.github.com/cybic/6375457> in `~/.bash_completion` (file)

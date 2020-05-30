@@ -1,6 +1,6 @@
 ---
 title: Interesting macOS-specific commands
-date: 00-00-00
+date: 2016-10-20
 ---
 
 ```shell

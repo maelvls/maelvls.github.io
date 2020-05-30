@@ -1,6 +1,6 @@
 ---
 title: Avoid typing the SSH passphrase on Ubuntu using ssh-agent
-date: 00-00-00
+date: 2017-06-01
 ---
 
 Here:

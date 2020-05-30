@@ -1,6 +1,6 @@
 ---
 title: Stuff about managing Ruby & rvm
-date: 00-00-00
+date: 2017-02-05
 ---
 
 ## Warning 'Ignoring... because its extensions are not built'

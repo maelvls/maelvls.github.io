@@ -1,6 +1,6 @@
 ---
 title: Notes on OAuth
-date: 00-00-00
+date: 2019-02-17
 ---
 
 I know two main ways of using OAuth2

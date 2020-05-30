@@ -1,6 +1,6 @@
 ---
 title: Some stuff about gpg
-date: 00-00-00
+date: 2017-11-08
 ---
 
 1. [Sign my message](#sign-my-message)

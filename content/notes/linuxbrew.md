@@ -1,6 +1,6 @@
 ---
 title: Using Linyxbrew on university servers
-date: 00-00-00
+date: 2016-12-15
 ---
 
 On the university server azteca or inca (must use vpn or sassh through-pass)
