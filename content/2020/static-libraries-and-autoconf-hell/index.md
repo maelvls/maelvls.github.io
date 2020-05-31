@@ -17,9 +17,10 @@ The Autotools suite includes tools like
 [autoconf](https://www.gnu.org/software/autoconf/),
 [automake](https://www.gnu.org/software/automake) and
 [libtool](https://www.gnu.org/software/libtool/). These tools generate a
-bunch of shell scripts and Makefiles using shell scripts and the M4 macro
-language. The user of your projects ends up two simple commands to build
-your project:
+bunch of shell scripts and Makefiles using shell scripts and the
+[M4](https://en.wikipedia.org/wiki/M4_(computer_language)) macro language.
+The user of your projects ends up two simple commands to build your
+project:
 
 ```sh
 ./configure
@@ -52,7 +53,62 @@ position-independant code, `gcc`, `ldd` and `libtool`. And in this post, I
 want to share these discoveries and how I progressed into contributing to
 the [ocamlyices2](https://github.com/polazarus/ocamlyices) project.
 
-## Yices2: and my first attempt at fixing a poorly designed build system
+Here is a diagram showing the dependencies between libraries. Ocamlyices2
+depends on Yices and Yices depends on GMP.
+
+<div class="nohighlight">
+
+```plain
+                            build:   dune
+             touist         lang:    ocaml
+                |           output:  touist binary (statically linked)
+                |
+                |
+                |depends on
+                |
+                |
+                |
+                v
+           ocamlyices2      build:   autoconf + make
+                |           lang:    ocaml + C
+                |           output:  libyices2_stubs.a
+                |
+                |depends on
+                |
+                |
+                |
+                v           build:   autoconf + hacky make
+              yices         lang:    C++
+                |           output:  libyices.a (with PIC enabled)
+                |
+                |
+                |depends on
+                |
+                |
+                |
+                v           build:   autoconf + automake + libtool
+               gmp          lang:    C, assembly
+                            output:  libgmp.a (with PIC enabled)
+```
+
+</div>
+
+<!-- https://textik.com/#23689eecb0630a77 -->
+
+The most important thing about this diagram is that since we need a
+PIC-enabled static library `libyices.a` in order to build the "binding
+libraries": the shared library `yices2.cmxs` and the static library
+`libyices2_stubs.a`.
+
+And in order to get this PIC-enabled `libyices.a`, I needed to make sure
+that the GMP library picked by the Yices `./configure` would be static and
+PIC-enabled.
+
+In early 2016, the Yices build system was limited to building a shared
+library with no support for cross-compilation (a requirement to build on
+Windows) and no support for enforcing PIC in `libgmp.a` and `libyices.a`.
+
+## Yices2 & autoconf: an attempt at fixing a limited build system
 
 I remember the warmth that we had in May 2016. My daughter had turned three
 and we were still living in a tiny appartment since I was technically still
