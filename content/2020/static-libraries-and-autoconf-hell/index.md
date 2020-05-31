@@ -753,3 +753,6 @@ I wish we had a unit-test framework for `autoconf`. The `autoconf`
 ecosystem generates very fragile scripts and the only way to test them is
 to run them with all possible flag combinations, which is pretty much
 impossible.
+
+- **Update 31 May 2020**: added the ascii "dependency" diagram to give a
+  better sense of what the challenge was.
