@@ -1,8 +1,9 @@
 ---
 title: About
-date: 1-02-08
+date: 00-00-00
 type: page
 disqus: false
+author: Maël Valais
 ---
 
 I currently work at [Ori](https://www.ori.co/), a Cloud infrastructure

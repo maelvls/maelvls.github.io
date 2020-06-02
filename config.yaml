@@ -34,6 +34,7 @@ taxonomies:
   series: series
 
 params:
+  description: "Maël Valais comes here to mumble about Go, Kubernetes and networking"
   algolia:
     vars: [title, summary, date, publishdate, expirydate, permalink]
     params: [categories, tags]
