@@ -10,6 +10,7 @@ date: 2020-03-14
 url: /packets-eye-kubernetes-service
 images: [packets-eye-kubernetes-service/cover-packets-eye-kubernetes-service.png]
 tags: [kubernetes, networking, traefik]
+author: Maël Valais
 ---
 
 <!--

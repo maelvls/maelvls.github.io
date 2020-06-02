@@ -6,6 +6,7 @@ url: /writing-a-good-go-sdk
 images: [writing-a-good-go-sdk/cover-writing-a-good-go-sdk.png]
 draft: true
 tags: []
+author: Maël Valais
 ---
 
 The typical way of building a client in Go is to pass a `*http.Client` in

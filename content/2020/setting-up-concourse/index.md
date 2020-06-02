@@ -6,6 +6,7 @@ url: /setting-up-concourse
 images: [setting-up-concourse/cover-setting-up-concourse.png]
 draft: true
 tags: []
+author: Maël Valais
 ---
 
 ```sh

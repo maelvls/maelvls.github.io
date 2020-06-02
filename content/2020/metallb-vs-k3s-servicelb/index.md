@@ -6,6 +6,7 @@ url: /metallb-vs-k3s-servicelb
 images: [metallb-vs-k3s-servicelb/cover-metallb-vs-k3s-servicelb.png]
 draft: true
 tags: []
+author: Maël Valais
 ---
 
 Great post by Duffie Cooley in Apr 2019 "[Using MetalLb with

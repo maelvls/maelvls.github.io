@@ -1,6 +1,8 @@
 ---
 title: Interesting macOS-specific commands
 date: 2016-10-20
+tags: []
+author: Maël Valais
 ---
 
 ```shell

@@ -9,6 +9,7 @@ date: 2020-05-09T16:02:26+02:00
 url: /gh-actions-with-tf-private-repo
 images: [gh-actions-with-tf-private-repo/cover-gh-actions-with-tf-private-repo.png]
 tags: [terraform, github-actions]
+author: Maël Valais
 ---
 
 A common way of sharing terraform modules is to move them in a separate

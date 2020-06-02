@@ -11,7 +11,7 @@ images:
 tags:
 - go
 - software-engineering
-
+author: Maël Valais
 ---
 Comments are one of these topics that we seem to never agree on ([stackoverflow](https://softwareengineering.stackexchange.com/questions/1/comments-are-a-code-smell) says so). I often hear that comments add noise to the code and that comments never get properly updated.
 

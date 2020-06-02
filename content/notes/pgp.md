@@ -1,6 +1,8 @@
 ---
 title: Some stuff about gpg
 date: 2017-11-08
+tags: []
+author: Maël Valais
 ---
 
 1. [Sign my message](#sign-my-message)

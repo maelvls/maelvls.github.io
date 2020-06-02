@@ -1,3 +1,4 @@
+---
 baseURL: https://maelvls.dev/
 languageCode: en-us
 title: maelvls dev blog
@@ -9,6 +10,20 @@ googleAnalytics: "UA-88710120-3"
 # maelvls/maelvls.github.io.
 disqusShortname: maelvls/maelvls.github.io
 
+algolia:
+  index: "maelvls.dev"
+  appID: "3XE19IWIB0"
+  # key: "" (set in .envrc using ALGOLIA_WRITE_KEY)
+
+outputs:
+  home: [HTML, RSS, algolia]
+outputFormats:
+  algolia:
+    baseName: algolia # _default/something.algolia.json
+    isPlainText: true
+    mediaType: application/json
+    notAlternative: true
+
 paginate: 1000
 pygmentsstyle: abap # will deprecate soon since we use goldmark now
 pygmentsUseClasses: true # hugo gen chromastyles --style=abap >> static/css/maelvls.css
@@ -17,7 +32,12 @@ pygmentscodefencesguesssyntax: true
 taxonomies:
   tag: tags
   series: series
+
 params:
+  algolia:
+    vars: [title, summary, date, publishdate, expirydate, permalink]
+    params: [categories, tags]
+
   mainSections: ["2020", "2019"]
 
   # Custom css is expected to be in static/css/.

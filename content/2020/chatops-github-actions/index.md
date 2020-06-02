@@ -6,6 +6,7 @@ url: /chatops-github-actions
 images: [chatops-github-actions/cover-chatops-github-actions.png]
 draft: true
 tags: []
+author: Maël Valais
 ---
 
 - ChatOps takes the GitOps to the next level and uses a chat interface

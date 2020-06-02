@@ -1,6 +1,8 @@
 ---
 title: How client-server SSH authentication works
 date: 2019-05-28
+tags: []
+author: Maël Valais
 ---
 
 1. [Difference between CA and cert](#difference-between-ca-and-cert)

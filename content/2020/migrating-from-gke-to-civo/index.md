@@ -8,7 +8,7 @@ images:
 - from-gke-to-civo-k3s/civo-k3s.png
 tags:
 - kubernetes
-
+author: Maël Valais
 ---
 To learn and play with Kubernetes, I keep a "playground" cluster to try
 things on it (helm files I use are

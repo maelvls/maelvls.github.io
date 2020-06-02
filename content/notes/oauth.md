@@ -1,6 +1,8 @@
 ---
 title: Notes on OAuth
 date: 2019-02-17
+tags: []
+author: Maël Valais
 ---
 
 I know two main ways of using OAuth2

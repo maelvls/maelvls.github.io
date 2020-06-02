@@ -1,6 +1,8 @@
 ---
 title: git stash vs. git reset --hard
 date: 2017-12-20
+tags: []
+author: Maël Valais
 ---
 
 Many times, I used `git reset --hard` and found out later that all my changes had disappeared.

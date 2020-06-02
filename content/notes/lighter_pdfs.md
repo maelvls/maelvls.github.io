@@ -1,6 +1,8 @@
 ---
 title: Get lighter PDFs
 date: 2017-01-30
+tags: []
+author: Maël Valais
 ---
 
 ```shell

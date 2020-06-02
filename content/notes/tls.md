@@ -1,6 +1,8 @@
 ---
 title: Nice diagram about TLS, certificates and keys
 date: 2020-01-20
+tags: []
+author: Maël Valais
 ---
 
 ```plain

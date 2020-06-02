@@ -1,6 +1,8 @@
 ---
 title: Using mutt and msmtp with Gmail
 date: 2018-06-30
+tags: []
+author: Maël Valais
 ---
 
 On macOS, install msmtp:

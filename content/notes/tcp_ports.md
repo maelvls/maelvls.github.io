@@ -1,6 +1,8 @@
 ---
 title: Everything I know about TCP
 date: 2018-02-19
+tags: []
+author: Maël Valais
 ---
 
 ## How is a TCP connection uniquely identified

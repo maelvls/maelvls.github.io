@@ -5,6 +5,8 @@ date: 2020-03-30
 url: /home-office-2020
 images: [home-office-2020/mael-home-office-desk-2020.jpg]
 tags: [home-office]
+author: Maël Valais
+tags: [setup, home-office]
 ---
 
 Here is my current setup:

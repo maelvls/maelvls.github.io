@@ -5,6 +5,7 @@ date: 2020-04-19T17:51:55+02:00
 url: /bgp-101
 images: [bgp-101/cover-bgp-101.png]
 draft: true
+author: Maël Valais
 ---
 
 ```sh

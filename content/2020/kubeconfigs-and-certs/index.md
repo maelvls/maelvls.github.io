@@ -5,6 +5,7 @@ date: 2020-04-18T22:14:07+02:00
 url: /kubeconfigs-and-certs
 images: [kubeconfigs-and-certs/cover-kubeconfigs-and-certs.png]
 draft: true
+author: Maël Valais
 ---
 
 Let's go through the client-certificate in my kube config. This kube config

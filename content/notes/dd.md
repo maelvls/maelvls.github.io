@@ -1,6 +1,8 @@
 ---
 title: Using dd
 date: 2018-10-08
+tags: []
+author: Maël Valais
 ---
 
 ```shell

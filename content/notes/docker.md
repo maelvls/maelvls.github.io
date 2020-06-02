@@ -1,6 +1,8 @@
 ---
 title: Remote Docker using docker-machine
 date: 2018-09-13
+tags: []
+author: Maël Valais
 ---
 
 ## Use docker-machine for remoting docker

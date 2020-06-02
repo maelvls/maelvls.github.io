@@ -6,5 +6,6 @@ url: /{{ .Name }}
 images: [{{ .Name }}/cover-{{ .Name }}.png]
 draft: true
 tags: []
+author: Maël Valais
 ---
 

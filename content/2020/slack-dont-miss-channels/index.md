@@ -6,6 +6,7 @@ url: /slack-dont-miss-channels
 images: [slack-dont-miss-channels/cover-slack-dont-miss-channels.png]
 draft: true
 tags: []
+author: Maël Valais
 ---
 
 Given $U$ the set of users and a pair of users $(u, v) \in U^2$, we denote

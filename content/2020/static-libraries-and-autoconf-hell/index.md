@@ -5,6 +5,7 @@ date: 2020-05-30T20:45:06+02:00
 url: /static-libraries-and-autoconf-hell
 images: [static-libraries-and-autoconf-hell/cover-static-libraries-and-autoconf-hell.png]
 tags: [autotools, c++, c, ocaml]
+author: Maël Valais
 ---
 
 Between May and June 2016, I worked with

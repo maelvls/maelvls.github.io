@@ -10,6 +10,7 @@ date: 2020-04-13
 url: /how-do-packets-come-back
 images: [how-do-packets-come-back/cover-how-can-packets-come-back.png]
 tags: [networking, gcp]
+author: Maël Valais
 ---
 
 In a previous post "[The Packet's-Eye View of a Kubernetes

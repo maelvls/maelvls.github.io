@@ -5,6 +5,7 @@ date: 2020-04-20
 url: /proper-prompt
 draft: true
 images: []
+author: Maël Valais
 ---
 
 - Go (powerline/bullettrain-like) https://github.com/jtyr/gbt

@@ -1,6 +1,8 @@
 ---
 title: Managing Basic Texlive instead of Full Texlive/Mactex
 date: 2017-05-25
+tags: []
+author: Maël Valais
 ---
 
 ```shell

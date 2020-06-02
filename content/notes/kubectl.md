@@ -1,6 +1,8 @@
 ---
 title: Some kubectl stuff
 date: 2019-01-03
+tags: []
+author: Maël Valais
 ---
 
 ```sh

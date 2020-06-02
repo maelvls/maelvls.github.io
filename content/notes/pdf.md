@@ -1,6 +1,8 @@
 ---
 title: Epson scanner, large PDFs and ImageMagick (convert CLI)
 date: 2017-09-12
+tags: []
+author: Maël Valais
 ---
 
 The Epson iPrint soft is producing PDFs in 300dpi but the 300 information does

@@ -5,6 +5,7 @@ date: 2020-04-16T15:42:35+02:00
 url: /deep-dive-go-assembly
 images: []
 draft: true
+author: Maël Valais
 ---
 
 Last month, Sylvain Wallez, author of the excellent "[Go: the Good, the Bad

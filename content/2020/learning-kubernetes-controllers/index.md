@@ -9,6 +9,7 @@ date: 2020-04-22T11:58:26+02:00
 url: /learning-kubernetes-controllers
 images: [learning-kubernetes-controllers/cover-learning-kubernetes-controllers.png]
 tags: [kubernetes, controllers]
+author: Maël Valais
 ---
 
 Kubernetes' extensibility is probably its biggest strength. Controllers and

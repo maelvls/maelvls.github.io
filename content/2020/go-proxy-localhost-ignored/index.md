@@ -9,6 +9,7 @@ description: |
 url: /go-ignores-proxy-localhost
 images: [go-ignores-proxy-localhost/cover-go-proxy-ignored.png]
 disqus: true
+author: Maël Valais
 ---
 
 I use [Proxyman](https://proxyman.io) for inspecting the HTTP and HTTPS

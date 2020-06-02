@@ -1,6 +1,8 @@
 ---
 title: What I know about shells
 date: 2016-07-09
+tags: []
+author: Maël Valais
 ---
 
 1. [General information](#general-information)

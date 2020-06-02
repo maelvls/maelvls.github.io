@@ -5,6 +5,7 @@ date: 2020-04-21T08:17:37+02:00
 url: /go-pointers-and-ownership
 images: [go-pointers-and-ownership/cover-go-pointers-and-ownership.png]
 draft: true
+author: Maël Valais
 ---
 
 After reading the venerable "[Using Pointers In Go

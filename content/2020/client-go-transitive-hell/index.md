@@ -5,6 +5,7 @@ date: 2020-04-15
 images: [title/cover.png]
 url: /client-go-transitive-hell
 draft: true
+author: Maël Valais
 ---
 
 > ⚠️ I'm not sure this is a transitive issue. It might just not be due to

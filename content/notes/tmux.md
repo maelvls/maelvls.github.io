@@ -1,6 +1,8 @@
 ---
 title: Memo for Tmux
 date: 2018-11-03
+tags: []
+author: Maël Valais
 ---
 
 I installed <https://gist.github.com/cybic/6375457> in `~/.bash_completion` (file)

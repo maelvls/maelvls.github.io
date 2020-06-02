@@ -6,6 +6,7 @@ url: /weird-api-choices
 images: [weird-api-choices/cover-weird-api-choices.png]
 draft: true
 tags: []
+author: Maël Valais
 ---
 
 # Map vs. discriminative arrays (map key -> discriminative name)

@@ -8,6 +8,7 @@ description: |
     acts as a LoadBalancer controller.
 url: /avoid-gke-lb-with-hostport
 images: [avoid-gke-lb-with-hostport/cover-external-dns.png]
+author: Maël Valais
 ---
 
 > **⚠️ Update 25 April 2020**: Akrobateo has been EOL in January 2020 due
