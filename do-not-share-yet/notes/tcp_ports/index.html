@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta property="og:title" content="Everything I know about TCP" />
+<meta name="author" content="Maël Valais"><meta property="og:title" content="Everything I know about TCP" />
 <meta property="og:description" content="How is a TCP connection uniquely identified Kill a process that is using a TCP port you need:
 lsof -n -i :8001 # copy PID kill 43903 A TCP connection is identified by four things:
  source port source ip dest port dest ip  This is why there is no confusion between two requests to a web server on 80 port.

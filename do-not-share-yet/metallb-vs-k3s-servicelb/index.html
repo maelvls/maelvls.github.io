@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta property="og:title" content="MetalLB vs. K3s servicelb" />
+<meta name="author" content="Maël Valais"><meta property="og:title" content="MetalLB vs. K3s servicelb" />
 <meta property="og:description" content="Great post by Duffie Cooley in Apr 2019 &ldquo;Using MetalLb with Kind&quot;:
 % kind create cluster --name metallb --config - &lt;&lt;EOF heredoc&gt; kind: Cluster apiVersion: kind.sigs.k8s.io/v1alpha3 nodes: - role: control-plane - role: worker heredoc&gt; EOF % k get nodes NAME STATUS ROLES AGE VERSION metallb-control-plane Ready master 42s v1.17.2 metallb-worker NotReady &lt;none&gt; 9s v1.17.2 % docker network inspect bridge | jq -r &#39;.[].IPAM.Config[].Subnet&#39; 172.17.0.0/16 % arp -a -n ? (192.168.1.1) at a4:3e:51:cf:e7:96 on en9 ifscope [ethernet] ?" />
 <meta property="og:type" content="article" />

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta property="og:title" content="git stash vs. git reset --hard" />
+<meta name="author" content="Maël Valais"><meta property="og:title" content="git stash vs. git reset --hard" />
 <meta property="og:description" content="Many times, I used git reset --hard and found out later that all my changes had disappeared. I think this is because I do not fully understand what git reset --hard does:
  move the branch ref pointer to the given reference set HEAD to this ref Depending on the option:   &ndash;soft: working dir and stage are not touched, useful when git reset --hard HEAD^ to change the content of the commit without having to re-add everything &ndash;mixed: working dir is not touched, but the stage is set to match the HEAD &ndash;hard: stage &#43; working dir are set to match the HEAD  On the other side, git stash will set stage &#43; working dir to match the HEAD." />
 <meta property="og:type" content="article" />

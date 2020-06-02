@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta property="og:title" content="Kubeconfigs and Certs" />
+<meta name="author" content="Maël Valais"><meta property="og:title" content="Kubeconfigs and Certs" />
 <meta property="og:description" content="Let&rsquo;s go through the client-certificate in my kube config. This kube config contains one user, &ldquo;kind-kind&rdquo;. Instead of inspecting the certificate PEM with openssl, I use certigo (much nicer experience!)
 kubectl config view -ojson --flatten \  | jq &#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39; -r \  | base64 -d \  | certigo dump That gives us:
 ** CERTIFICATE 1 ** Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC Subject: O=system:masters, CN=kubernetes-admin Issuer: CN=kubernetes Warnings: Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set The common name (CN=) is &ldquo;kubernetes-admin&rdquo;, that&rsquo;s the name of the user." />

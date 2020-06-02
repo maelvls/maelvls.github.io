@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta property="og:title" content="The Client-go Transitive Hell" />
+<meta name="author" content="Maël Valais"><meta property="og:title" content="The Client-go Transitive Hell" />
 <meta property="og:description" content="⚠️ I&rsquo;m not sure this is a transitive issue. It might just not be due to transitivity at all!
  Looks like the Kubernetes people chose to break the client-go API without bumping the major version (with a new import path e.g k8s.io/client-go/v13) when adding support for context.Context that comes with Kubernetes v1.18. Darren Shepherd reported the issue in February 2020. We were warned:
  The v0.x.y tags indicate that go APIs may change in incompatible ways in different versions." />
