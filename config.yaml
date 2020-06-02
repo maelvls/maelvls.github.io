@@ -36,6 +36,8 @@ taxonomies:
 params:
   description: "I come here to mumble about Go, Kubernetes and networking"
   author: Maël Valais
+  image: adzadz
+  favicon: true # see static/favicon-{32x32,16x16}.png
   algolia:
     vars: [title, summary, date, publishdate, expirydate, permalink]
     params: [categories, tags]
