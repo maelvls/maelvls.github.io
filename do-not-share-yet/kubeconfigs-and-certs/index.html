@@ -21,7 +21,8 @@ kubectl config view -ojson --flatten \  | jq &#39;.users[] | .user.&#34;client-c
 <meta name="twitter:description" content="Let&rsquo;s go through the client-certificate in my kube config. This kube config contains one user, &ldquo;kind-kind&rdquo;. Instead of inspecting the certificate PEM with openssl, I use certigo (much nicer experience!)
 kubectl config view -ojson --flatten \  | jq &#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39; -r \  | base64 -d \  | certigo dump That gives us:
 ** CERTIFICATE 1 ** Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC Subject: O=system:masters, CN=kubernetes-admin Issuer: CN=kubernetes Warnings: Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set The common name (CN=) is &ldquo;kubernetes-admin&rdquo;, that&rsquo;s the name of the user."/>
-
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />

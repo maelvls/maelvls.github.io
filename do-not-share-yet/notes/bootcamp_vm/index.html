@@ -18,7 +18,8 @@ diskutil list diskutil unmount /Volumes/BOOTCAMP sudo chmod 777 /dev/disk0s1 sud
 <meta name="twitter:description" content="From: https://apple.stackexchange.com/questions/220670/run-boot-camp-windows10-partition-inside-virtualbox
 First, find which disks are EFI and BOOTCAMP with diskutil list.
 diskutil list diskutil unmount /Volumes/BOOTCAMP sudo chmod 777 /dev/disk0s1 sudo chmod 777 /dev/disk0s3 sudo VBoxManage internalcommands createrawvmdk -rawdisk /dev/disk0 -filename win10raw.vmdk -partitions 1,3 Uncheck &ldquo;Enable EFI&rdquo;, uncheck &ldquo;Enable VT-x/AMD-V&rdquo;"/>
-
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />
