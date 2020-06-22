@@ -237,7 +237,7 @@ right version of a package’s file.
 **Solution 2**: add a 'replace' line at the end of your `go.mod`:
 
 ```plain
-use replace github.com/maelvls/beers => ../beers
+replace github.com/maelvls/beers => ../beers
 ```
 
 where `../beers` is a local copy I made of the dependency I want to inspect
@@ -304,5 +304,7 @@ export GOPRIVATE=github.com/company/\*
 ```
 
 _Illustration by Bailey Beougher, from The Illustrated Children's Guide to Kubernetes._
+
+**Update 22 June 2020:** it said `use replace` instead of just `replace`
 
 
