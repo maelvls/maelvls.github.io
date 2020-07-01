@@ -50,11 +50,24 @@ For example, mitmproxy relies on a specific dir structure and filenames:
 └── mitmproxy-ca.pem                 # ca      = cert + key
 ```
 
-That's the kind of directory structure that `--client-dir` would expect.
-
-- https://ahmet.im/blog/kubectl-man-in-the-middle/
+That's the kind of directory structure that `--set client_dir=...` would
+expect (in mitmproxy).
 
 ## Using `mitmproxy` + `kubectl` locally (Kind cluster) + client cert
+
+In Oct 2019, Ahmet Alp Balkan wrote [this blog
+post](https://ahmet.im/blog/kubectl-man-in-the-middle) that explains how to
+use `mitmproxy` to observe the requests made by `kubectl`. But I couldn't
+use the tutorial for two reasons:
+
+- I use `kind` to create local clusters which means I hit the Go `net/http`
+  limitation (skips proxying for hosts `localhost` and `127.0.0.1`, see
+  [this blog post]((https://maelvls.dev/go-ignores-proxy-localhost/)))
+- I use client certs authentication, which can't work with the method
+  presented by Ahmet; it can only work for header-based authentication
+  (e.g. token) but not for client certs.
+
+In the following, I detail how I managed to make all that work.
 
 ```sh
 # Let's use a separate kubeconfig file to avoid messing with ~/.kube/config.
