@@ -8,7 +8,7 @@ tags: [kubernetes, mitmproxy, networking, kind]
 author: Maël Valais
 ---
 
-{{< youtube JwT1tZAYq4E >}}
+{{< youtube 30a0WrfaS2A >}}
 
 In Oct 2019, Ahmet Alp Balkan wrote [this blog
 post](https://ahmet.im/blog/kubectl-man-in-the-middle) that explains how to
