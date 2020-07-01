@@ -116,9 +116,30 @@ HTTPS_PROXY=:9000 kubectl get pods --kubeconfig=<(sed "s|127.0.0.1|local|" $KUBE
 Let's see if it works for things like `kubectl exec` and `kubectl logs`:
 
 ```sh
-% HTTPS_PROXY=:9000 kubectl --kubeconfig=<(sed "s|127.0.0.1|local|" $KUBECONFIG) --insecure-skip-tls-verify logs -n kube-system kindnet-6h8pm
-I0701 11:11:22.156979       1 main.go:64] hostIP = 172.17.0.2
-podIP = 172.17.0.2
-I0701 11:11:33.239138       1 main.go:104] Failed to get nodes, retrying after error: Get https://10.96.0.1:443/api/v1/nodes: net/http: TLS handshake timeout
-I0701 11:11:33.328698       1 main.go:150] handling current node
+% HTTPS_PROXY=:9000 kubectl --kubeconfig=<(sed "s|127.0.0.1|local|" $KUBECONFIG) --insecure-skip-tls-verify logs -n kube-system kube-scheduler-helix-control-plane
+I0701 11:11:11.585249       1 registry.go:150] Registering EvenPodsSpread predicate and priority function
+I0701 11:11:11.585329       1 registry.go:150] Registering EvenPodsSpread predicate and priority function
+I0701 11:11:12.976581       1 serving.go:313] Generated self-signed cert in-memory
+W0701 11:11:17.407371       1 authentication.go:349] Unable to get configmap/extension-apiserver-authentication in kube-system.  Usually fixed by 'kubectl create rolebinding -n kube-system ROLEBINDING_NAME --role=extension-apiserver-authentication-reader --serviceaccount=YOUR_NS:YOUR_SA'
+W0701 11:11:17.407465       1 authentication.go:297] Error looking up in-cluster authentication configuration: configmaps "extension-apiserver-authentication" is forbidden: User "system:kube-scheduler" cannot get resource "configmaps" in API group "" in the namespace "kube-system"
+W0701 11:11:17.407483       1 authentication.go:298] Continuing without authentication configuration. This may treat all requests as anonymous.
+W0701 11:11:17.407513       1 authentication.go:299] To require authentication configuration lookup to succeed, set --authentication-tolerate-lookup-failure=false
+I0701 11:11:17.478349       1 registry.go:150] Registering EvenPodsSpread predicate and priority function
+I0701 11:11:17.478483       1 registry.go:150] Registering EvenPodsSpread predicate and priority function
+W0701 11:11:17.491616       1 authorization.go:47] Authorization is disabled
+W0701 11:11:17.491729       1 authentication.go:40] Authentication is disabled
+I0701 11:11:17.491883       1 deprecated_insecure_serving.go:51] Serving healthz insecurely on [::]:10251
+I0701 11:11:17.500576       1 secure_serving.go:178] Serving securely on 127.0.0.1:10259
+I0701 11:11:17.500678       1 tlsconfig.go:240] Starting DynamicServingCertificateController
+I0701 11:11:17.500919       1 configmap_cafile_content.go:202] Starting client-ca::kube-system::extension-apiserver-authentication::client-ca-file
+I0701 11:11:17.500931       1 shared_informer.go:223] Waiting for caches to sync for client-ca::kube-system::extension-apiserver-authentication::client-ca-file
+I0701 11:11:17.718085       1 shared_informer.go:230] Caches are synced for client-ca::kube-system::extension-apiserver-authentication::client-ca-file
+I0701 11:11:17.801300       1 leaderelection.go:242] attempting to acquire leader lease  kube-system/kube-scheduler...
+I0701 11:11:34.659176       1 leaderelection.go:252] successfully acquired lease kube-system/kube-scheduler
+```
+
+It works!! Here is what mitmproxy is showing:
+
+```  18:17:42 GET  HTTPS               local /api/v1/namespaces/kube-system/pods/kube-scheduler-helix-control-plane      200 …plication/json  5.2k 119ms
+> 18:17:42 GET  HTTPS               local /api/v1/namespaces/kube-system/pods/kube-scheduler-helix-control-plane/log  200      text/plain 2.46k 227ms
 ```
