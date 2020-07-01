@@ -30,7 +30,15 @@
 </code></pre></div><h2 id=whats-a-certificate-in-the-openssl-jargon>What&rsquo;s a &ldquo;certificate&rdquo; in the openssl jargon</h2><p>For example, mitmproxy relies on a specific dir structure and filenames:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>/Users/mvalais/.mitmproxy
 ├── mitmproxy-ca-cert.pem            <span class=c1># ca-cert = cert</span>
 └── mitmproxy-ca.pem                 <span class=c1># ca      = cert + key</span>
-</code></pre></div><p>That&rsquo;s the kind of directory structure that <code>--client-dir</code> would expect.</p><ul><li><a href=https://ahmet.im/blog/kubectl-man-in-the-middle/>https://ahmet.im/blog/kubectl-man-in-the-middle/</a></li></ul><h2 id=using-mitmproxy--kubectl-locally-kind-cluster--client-cert>Using <code>mitmproxy</code> + <code>kubectl</code> locally (Kind cluster) + client cert</h2><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=c1># Let&#39;s use a separate kubeconfig file to avoid messing with ~/.kube/config.</span>
+</code></pre></div><p>That&rsquo;s the kind of directory structure that <code>--set client_dir=...</code> would
+expect (in mitmproxy).</p><h2 id=using-mitmproxy--kubectl-locally-kind-cluster--client-cert>Using <code>mitmproxy</code> + <code>kubectl</code> locally (Kind cluster) + client cert</h2><p>In Oct 2019, Ahmet Alp Balkan wrote <a href=https://ahmet.im/blog/kubectl-man-in-the-middle>this blog
+post</a> that explains how to
+use <code>mitmproxy</code> to observe the requests made by <code>kubectl</code>. But I couldn&rsquo;t
+use the tutorial for two reasons:</p><ul><li>I use <code>kind</code> to create local clusters which means I hit the Go <code>net/http</code>
+limitation (skips proxying for hosts <code>localhost</code> and <code>127.0.0.1</code>, see
+<a href=(https://maelvls.dev/go-ignores-proxy-localhost/)>this blog post</a>)</li><li>I use client certs authentication, which can&rsquo;t work with the method
+presented by Ahmet; it can only work for header-based authentication
+(e.g. token) but not for client certs.</li></ul><p>In the following, I detail how I managed to make all that work.</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=c1># Let&#39;s use a separate kubeconfig file to avoid messing with ~/.kube/config.</span>
 <span class=nb>export</span> <span class=nv>KUBECONFIG</span><span class=o>=</span>~/.kube/kind-kind
 
 <span class=c1># Now, let&#39;s create a cluster.</span>
