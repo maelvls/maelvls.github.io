@@ -4,7 +4,6 @@ description: "Mitmproxy is an excellent tool that helps us understand what netwo
 date: 2020-07-01T19:17:24+02:00
 url: /mitmproxy-kubectl
 images: [mitmproxy-kubectl/cover-mitmproxy-kubectl.png]
-draft: true
 tags: [kubernetes, mitmproxy, networking, kind]
 author: Maël Valais
 ---
