@@ -6,10 +6,58 @@
     <description>Recent content in Tags on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 May 2020 20:45:06 +0200</lastBuildDate>
+    <lastBuildDate>Wed, 01 Jul 2020 19:17:24 +0200</lastBuildDate>
     
     <atom:link href="https://maelvls.dev/do-not-share-yet/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    <item>
+      <title>kind</title>
+      <link>https://maelvls.dev/do-not-share-yet/tags/kind/</link>
+      <pubDate>Wed, 01 Jul 2020 19:17:24 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/tags/kind/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
+    <item>
+      <title>kubernetes</title>
+      <link>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</link>
+      <pubDate>Wed, 01 Jul 2020 19:17:24 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
+    <item>
+      <title>mitmproxy</title>
+      <link>https://maelvls.dev/do-not-share-yet/tags/mitmproxy/</link>
+      <pubDate>Wed, 01 Jul 2020 19:17:24 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/tags/mitmproxy/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
+    <item>
+      <title>networking</title>
+      <link>https://maelvls.dev/do-not-share-yet/tags/networking/</link>
+      <pubDate>Wed, 01 Jul 2020 19:17:24 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/tags/networking/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
     <item>
       <title>autotools</title>
       <link>https://maelvls.dev/do-not-share-yet/tags/autotools/</link>
@@ -95,35 +143,11 @@
       </description>
     </item>
     <item>
-      <title>kubernetes</title>
-      <link>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</link>
-      <pubDate>Wed, 22 Apr 2020 11:58:26 +0200</pubDate>
-      
-      <guid>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</guid>
-      <description>
-      
-      
-      
-      </description>
-    </item>
-    <item>
       <title>gcp</title>
       <link>https://maelvls.dev/do-not-share-yet/tags/gcp/</link>
       <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
       
       <guid>https://maelvls.dev/do-not-share-yet/tags/gcp/</guid>
-      <description>
-      
-      
-      
-      </description>
-    </item>
-    <item>
-      <title>networking</title>
-      <link>https://maelvls.dev/do-not-share-yet/tags/networking/</link>
-      <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://maelvls.dev/do-not-share-yet/tags/networking/</guid>
       <description>
       
       

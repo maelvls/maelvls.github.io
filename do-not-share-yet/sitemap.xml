@@ -4,7 +4,42 @@
   
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/2020/</loc>
-    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
+    <lastmod>2020-07-01T19:17:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/kind/</loc>
+    <lastmod>2020-07-01T19:17:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</loc>
+    <lastmod>2020-07-01T19:17:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/</loc>
+    <lastmod>2020-07-01T19:17:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/mitmproxy/</loc>
+    <lastmod>2020-07-01T19:17:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/networking/</loc>
+    <lastmod>2020-07-01T19:17:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/</loc>
+    <lastmod>2020-07-01T19:17:24+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/mitmproxy-kubectl/</loc>
+    <lastmod>2020-07-01T19:17:24+02:00</lastmod>
   </url>
   
   <url>
@@ -28,17 +63,7 @@
   </url>
   
   <url>
-    <loc>https://maelvls.dev/do-not-share-yet/</loc>
-    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://maelvls.dev/do-not-share-yet/tags/ocaml/</loc>
-    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/</loc>
     <lastmod>2020-05-30T20:45:06+02:00</lastmod>
   </url>
   
@@ -103,11 +128,6 @@
   </url>
   
   <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</loc>
-    <lastmod>2020-04-22T11:58:26+02:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://maelvls.dev/do-not-share-yet/learning-kubernetes-controllers/</loc>
     <lastmod>2020-04-22T11:58:26+02:00</lastmod>
   </url>
@@ -154,11 +174,6 @@
   
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/how-do-packets-come-back/</loc>
-    <lastmod>2020-04-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/networking/</loc>
     <lastmod>2020-04-13T00:00:00+00:00</lastmod>
   </url>
   

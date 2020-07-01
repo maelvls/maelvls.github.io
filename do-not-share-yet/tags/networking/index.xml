@@ -6,10 +6,22 @@
     <description>Recent content in networking on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 13 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 01 Jul 2020 19:17:24 +0200</lastBuildDate>
     
     <atom:link href="https://maelvls.dev/do-not-share-yet/tags/networking/index.xml" rel="self" type="application/rss+xml" />
     
+    <item>
+      <title>Using mitmproxy to understand what kubectl does under the hood</title>
+      <link>https://maelvls.dev/do-not-share-yet/mitmproxy-kubectl/</link>
+      <pubDate>Wed, 01 Jul 2020 19:17:24 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/mitmproxy-kubectl/</guid>
+      <description>
+      
+      Mitmproxy is an excellent tool that helps us understand what network calls are made by programs. And kubectl is one of these interesting programs, but it uses a mutual TLS authentication which is tricky to get right.
+      
+      </description>
+    </item>
     <item>
       <title>How do packets find their way back?</title>
       <link>https://maelvls.dev/do-not-share-yet/how-do-packets-come-back/</link>
