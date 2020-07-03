@@ -65,6 +65,23 @@
 <!--
 Diagram on macOS + Docker: https://textik.com/#b185c1a72a6e782d
 -->
+<p><strong>TL;DR:</strong></p>
+<ul>
+<li>in case you often create &amp; delete Kind clusters, using a local registry
+that serves as a proxy avoids redundant downloads</li>
+<li><code>KIND_EXPERIMENTAL_DOCKER_NETWORK</code> is useful but remember that the
+default network (<code>bridge</code>) doesn&rsquo;t have DNS resolution for container
+hostnames</li>
+<li>the Docker default network (<code>bridge</code>) <a href="https://stackoverflow.com/questions/41400603/dockers-embedded-dns-on-the-default-bridged-network">has
+limitations</a>
+as <a href="https://docs.docker.com/network/bridge/#use-the-default-bridge-network">detailed by Docker</a>.</li>
+<li>If you play with <a href="https://cluster-api.sigs.k8s.io/">ClusterAPI</a> with its
+<a href="https://github.com/kubernetes-sigs/cluster-api/tree/master/test/infrastructure/docker">Docker provider</a>, you might not be able to use a local
+registry due to the clusters being created on the default network, which
+means the &ldquo;registry&rdquo; hostname won&rsquo;t be resolved (but we could work around
+that).</li>
+</ul>
+<hr>
 <p><a href="https://kind.sigs.k8s.io/">Kind</a> is an awesome tool that allows you to
 spin up local Kubernetes clusters locally in seconds. It is perfect for
 Kubernetes developers or anyone who wants to play with controllers.</p>
@@ -265,6 +282,17 @@ it had /dev/stdin open? not sure). To disable the pager I removed <code>-t</code
 </blockquote>
 <p>I guess contained picks the first mirror (<code>docker.io</code>); so let&rsquo;s override
 the <code>docker.io</code> key:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">docker rm -f registry
+docker run -d --name registry --restart<span class="o">=</span>always --net<span class="o">=</span>kind registry:2
+kind create cluster --config /dev/stdin <span class="s">&lt;&lt;EOF
+</span><span class="s">kind: Cluster
+</span><span class="s">apiVersion: kind.x-k8s.io/v1alpha4
+</span><span class="s">containerdConfigPatches:
+</span><span class="s">  - |-
+</span><span class="s">    [plugins.&#34;io.containerd.grpc.v1.cri&#34;.registry.mirrors.&#34;docker.io&#34;]
+</span><span class="s">      endpoint = [&#34;http://registry:5000&#34;]
+</span><span class="s">EOF</span>
+</code></pre></div><p>And here is the actual configuration given to containerd:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% docker <span class="nb">exec</span> -it kind-control-plane cat /etc/containerd/config.toml
 <span class="nv">version</span> <span class="o">=</span> <span class="m">2</span>
 <span class="o">[</span>plugins<span class="o">]</span>
@@ -281,8 +309,7 @@ the <code>docker.io</code> key:</p>
       <span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.registry.mirrors<span class="o">]</span>
 registry<span class="s2">&#34;]
 </span><span class="s2">          endpoint = [&#34;</span>http://registry:5000<span class="s2">&#34;</span><span class="s2">]
-</span></code></pre></div><p>Now it works! We can see the registry serving images by creating a
-deployment:</p>
+</span></code></pre></div><p>We can see the registry serving images by creating a deployment:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% kubectl create deployment <span class="nb">test</span> --image alpine
 % docker logs registry <span class="p">|</span> tail
 172.18.0.3 - - <span class="o">[</span>03/Jul/2020:12:18:21 +0000<span class="o">]</span> <span class="s2">&#34;HEAD /v2/library/alpine/manifests/latest HTTP/1.1&#34;</span> <span class="m">404</span> <span class="m">96</span> <span class="s2">&#34;&#34;</span> <span class="s2">&#34;containerd/v1.3.3-14-g449e9269&#34;</span>

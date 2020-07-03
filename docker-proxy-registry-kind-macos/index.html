@@ -1,5 +1,14 @@
 <!doctype html><html lang=en><head><meta name=generator content="Hugo 0.64.0"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=author content="Maël Valais"><meta name=keywords content="kubernetes,kind,docker,networking"><meta name=description content="Kind offers an excellent UX to Kubernetes developers but lacks support for caching images; each time you recreate a new cluster, all the previous downloaded images are gone. In this post, I explain why the default Docker network is a trap and how to set up a registry & make sure that it actually works."><meta property="og:title" content="Pull-through Docker registry on Kind clusters on macOS"><meta property="og:description" content="Kind offers an excellent UX to Kubernetes developers but lacks support for caching images; each time you recreate a new cluster, all the previous downloaded images are gone. In this post, I explain why the default Docker network is a trap and how to set up a registry & make sure that it actually works."><meta property="og:type" content="article"><meta property="og:url" content="https://maelvls.dev/docker-proxy-registry-kind-macos/"><meta property="og:image" content="https://maelvls.dev/docker-proxy-registry-kind-macos/cover-docker-proxy-registry-kind-macos.png"><meta property="article:published_time" content="2020-07-03T15:13:39+02:00"><meta property="article:modified_time" content="2020-07-03T15:13:39+02:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://maelvls.dev/docker-proxy-registry-kind-macos/cover-docker-proxy-registry-kind-macos.png"><meta name=twitter:title content="Pull-through Docker registry on Kind clusters on macOS"><meta name=twitter:description content="Kind offers an excellent UX to Kubernetes developers but lacks support for caching images; each time you recreate a new cluster, all the previous downloaded images are gone. In this post, I explain why the default Docker network is a trap and how to set up a registry & make sure that it actually works."><link rel=icon type=image/png href=/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/favicon-16x16.png sizes=16x16><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/main.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/all.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/maelvls.css><title>Pull-through Docker registry on Kind clusters on macOS | maelvls dev blog</title></head><body><header><div id=avatar><a href=https://maelvls.dev/><img src=/img/mael.jpg alt="maelvls dev blog"></a></div><div id=titletext><h2 id=title><a href=https://maelvls.dev/>maelvls dev blog</a></h2></div><div id=title-description><p id=subtitle>Systems software engineer. I write mostly about Kubernetes and Go. <a href=/about>About</a></p><div id=social><nav><ul><li><a href=https://github.com/maelvls><i title=Github class="icons fab fa-github"></i></a></li><li><a href=https://twitter.com/maelvls><i title=Twitter class="icons fab fa-twitter"></i></a></li></ul></nav></div></div><div id=mainmenu></div></header><main><div class=post><div class=author></div><div class=post-header><div class=meta><div class=date><span class=day>03</span>
-<span class=rest>Jul 2020</span></div></div><div class=matter><h1 class=title>Pull-through Docker registry on Kind clusters on macOS</h1></div></div><div class=markdown><p><a href=https://kind.sigs.k8s.io/>Kind</a> is an awesome tool that allows you to
+<span class=rest>Jul 2020</span></div></div><div class=matter><h1 class=title>Pull-through Docker registry on Kind clusters on macOS</h1></div></div><div class=markdown><p><strong>TL;DR:</strong></p><ul><li>in case you often create & delete Kind clusters, using a local registry
+that serves as a proxy avoids redundant downloads</li><li><code>KIND_EXPERIMENTAL_DOCKER_NETWORK</code> is useful but remember that the
+default network (<code>bridge</code>) doesn&rsquo;t have DNS resolution for container
+hostnames</li><li>the Docker default network (<code>bridge</code>) <a href=https://stackoverflow.com/questions/41400603/dockers-embedded-dns-on-the-default-bridged-network>has
+limitations</a>
+as <a href=https://docs.docker.com/network/bridge/#use-the-default-bridge-network>detailed by Docker</a>.</li><li>If you play with <a href=https://cluster-api.sigs.k8s.io/>ClusterAPI</a> with its
+<a href=https://github.com/kubernetes-sigs/cluster-api/tree/master/test/infrastructure/docker>Docker provider</a>, you might not be able to use a local
+registry due to the clusters being created on the default network, which
+means the &ldquo;registry&rdquo; hostname won&rsquo;t be resolved (but we could work around
+that).</li></ul><hr><p><a href=https://kind.sigs.k8s.io/>Kind</a> is an awesome tool that allows you to
 spin up local Kubernetes clusters locally in seconds. It is perfect for
 Kubernetes developers or anyone who wants to play with controllers.</p><p>One thing I hate about Kind is that images are not cached between two Kind
 containers. Even worse: when deleting and re-creating a cluster, all the
@@ -173,7 +182,17 @@ containerd[129]: Start cri plugin with config {Registry:{Mirrors:map[
 </code></pre></div><blockquote><p>✅ I had to remove <code>-t</code> (tty) from the above command. That&rsquo;s because
 <code>journalctl</code> was using a pager because this terminal was TTY (which means
 it had /dev/stdin open? not sure). To disable the pager I removed <code>-t</code>.</p></blockquote><p>I guess contained picks the first mirror (<code>docker.io</code>); so let&rsquo;s override
-the <code>docker.io</code> key:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% docker <span class=nb>exec</span> -it kind-control-plane cat /etc/containerd/config.toml
+the <code>docker.io</code> key:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>docker rm -f registry
+docker run -d --name registry --restart<span class=o>=</span>always --net<span class=o>=</span>kind registry:2
+kind create cluster --config /dev/stdin <span class=s>&lt;&lt;EOF
+</span><span class=s>kind: Cluster
+</span><span class=s>apiVersion: kind.x-k8s.io/v1alpha4
+</span><span class=s>containerdConfigPatches:
+</span><span class=s>  - |-
+</span><span class=s>    [plugins.&#34;io.containerd.grpc.v1.cri&#34;.registry.mirrors.&#34;docker.io&#34;]
+</span><span class=s>      endpoint = [&#34;http://registry:5000&#34;]
+</span><span class=s>EOF</span>
+</code></pre></div><p>And here is the actual configuration given to containerd:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% docker <span class=nb>exec</span> -it kind-control-plane cat /etc/containerd/config.toml
 <span class=nv>version</span> <span class=o>=</span> <span class=m>2</span>
 <span class=o>[</span>plugins<span class=o>]</span>
   <span class=o>[</span>plugins.<span class=s2>&#34;io.containerd.grpc.v1.cri&#34;</span><span class=o>]</span>
@@ -189,8 +208,7 @@ the <code>docker.io</code> key:</p><div class=highlight><pre class=chroma><code 
       <span class=o>[</span>plugins.<span class=s2>&#34;io.containerd.grpc.v1.cri&#34;</span>.registry.mirrors<span class=o>]</span>
 registry<span class=s2>&#34;]
 </span><span class=s2>          endpoint = [&#34;</span>http://registry:5000<span class=s2>&#34;</span><span class=s2>]
-</span></code></pre></div><p>Now it works! We can see the registry serving images by creating a
-deployment:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% kubectl create deployment <span class=nb>test</span> --image alpine
+</span></code></pre></div><p>We can see the registry serving images by creating a deployment:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% kubectl create deployment <span class=nb>test</span> --image alpine
 % docker logs registry <span class=p>|</span> tail
 172.18.0.3 - - <span class=o>[</span>03/Jul/2020:12:18:21 +0000<span class=o>]</span> <span class=s2>&#34;HEAD /v2/library/alpine/manifests/latest HTTP/1.1&#34;</span> <span class=m>404</span> <span class=m>96</span> <span class=s2>&#34;&#34;</span> <span class=s2>&#34;containerd/v1.3.3-14-g449e9269&#34;</span>
 172.18.0.3 - - <span class=o>[</span>03/Jul/2020:12:18:50 +0000<span class=o>]</span> <span class=s2>&#34;HEAD /v2/library/alpine/manifests/latest HTTP/1.1&#34;</span> <span class=m>404</span> <span class=m>96</span> <span class=s2>&#34;&#34;</span> <span class=s2>&#34;containerd/v1.3.3-14-g449e9269&#34;</span>
