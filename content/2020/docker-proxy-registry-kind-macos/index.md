@@ -12,6 +12,26 @@ author: Maël Valais
 Diagram on macOS + Docker: https://textik.com/#b185c1a72a6e782d
 -->
 
+**TL;DR:**
+
+- in case you often create & delete Kind clusters, using a local registry
+  that serves as a proxy avoids redundant downloads
+- `KIND_EXPERIMENTAL_DOCKER_NETWORK` is useful but remember that the
+  default network (`bridge`) doesn't have DNS resolution for container
+  hostnames
+- the Docker default network (`bridge`) [has
+  limitations](https://stackoverflow.com/questions/41400603/dockers-embedded-dns-on-the-default-bridged-network)
+  as [detailed by Docker][default-bridge].
+- If you play with [ClusterAPI](https://cluster-api.sigs.k8s.io/) with its
+  [Docker provider][docker-provider], you might not be able to use a local
+  registry due to the clusters being created on the default network, which
+  means the "registry" hostname won't be resolved (but we could work around
+  that).
+
+[docker-provider]: https://github.com/kubernetes-sigs/cluster-api/tree/master/test/infrastructure/docker
+
+---
+
 [Kind](https://kind.sigs.k8s.io/) is an awesome tool that allows you to
 spin up local Kubernetes clusters locally in seconds. It is perfect for
 Kubernetes developers or anyone who wants to play with controllers.
@@ -276,6 +296,21 @@ I guess contained picks the first mirror (`docker.io`); so let's override
 the `docker.io` key:
 
 ```sh
+docker rm -f registry
+docker run -d --name registry --restart=always --net=kind registry:2
+kind create cluster --config /dev/stdin <<EOF
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+containerdConfigPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+      endpoint = ["http://registry:5000"]
+EOF
+```
+
+And here is the actual configuration given to containerd:
+
+```sh
 % docker exec -it kind-control-plane cat /etc/containerd/config.toml
 version = 2
 [plugins]
@@ -294,8 +329,7 @@ registry"]
           endpoint = ["http://registry:5000"]
 ```
 
-Now it works! We can see the registry serving images by creating a
-deployment:
+We can see the registry serving images by creating a deployment:
 
 ```sh
 % kubectl create deployment test --image alpine
