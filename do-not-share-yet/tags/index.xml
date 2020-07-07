@@ -6,10 +6,34 @@
     <description>Recent content in Tags on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 03 Jul 2020 15:13:39 +0200</lastBuildDate>
+    <lastBuildDate>Tue, 07 Jul 2020 16:33:55 +0200</lastBuildDate>
     
     <atom:link href="https://maelvls.dev/do-not-share-yet/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    <item>
+      <title>conditions</title>
+      <link>https://maelvls.dev/do-not-share-yet/tags/conditions/</link>
+      <pubDate>Tue, 07 Jul 2020 16:33:55 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/tags/conditions/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
+    <item>
+      <title>kubernetes</title>
+      <link>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</link>
+      <pubDate>Tue, 07 Jul 2020 16:33:55 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
     <item>
       <title>docker</title>
       <link>https://maelvls.dev/do-not-share-yet/tags/docker/</link>
@@ -28,18 +52,6 @@
       <pubDate>Fri, 03 Jul 2020 15:13:39 +0200</pubDate>
       
       <guid>https://maelvls.dev/do-not-share-yet/tags/kind/</guid>
-      <description>
-      
-      
-      
-      </description>
-    </item>
-    <item>
-      <title>kubernetes</title>
-      <link>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</link>
-      <pubDate>Fri, 03 Jul 2020 15:13:39 +0200</pubDate>
-      
-      <guid>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</guid>
       <description>
       
       
