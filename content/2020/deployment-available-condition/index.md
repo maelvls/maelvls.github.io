@@ -8,11 +8,6 @@ tags: [kubernetes, conditions]
 author: Maël Valais
 ---
 
-TODO:
-
-- [ ] default for [maxUnavailable][max-unavailable]
-- [ ] I mixed unavailableReplicas with maxUnavailable!
-
 The various conditions that may appear in a deployment status are not
 documented in the [API reference][api-ref]. For example, we can see what are the
 fields for [DeploymentConditions][deploy-cond-doc], but it lacks the
@@ -86,27 +81,69 @@ holds:
 | -------------------------: | :---: | :------------------------------------------: | :---: | :-------------: |
 | `status.availableReplicas` |       | `spec.strategy.rollingUpdate.maxUnavailable` |       | `spec.replicas` |
 
+Let's take an example:
 
 ```yaml
 kind: Deployment
 spec:
-  replicas: 10                # (Des)
+  replicas: 10                # Desired
   strategy:
     rollingUpdate:
-      maxUnavailable: 2       # Acceptable unavailable number.
+      maxUnavailable: 2       # Acceptable unavailable
 status:
-  availableReplicas: 8        # Avai
+  availableReplicas: 8        # Available
   conditions:
   - type: "Available"
     status: "True"
 ```
 
-In this example, we have:
+In this example, the inequality holds which means this deployment has
+"minimum availability" (= `Available = True`):
 
 | `status.availableReplicas` |   +   | `spec.strategy.rollingUpdate.maxUnavailable` |   ≥   | `spec.replicas` |
 | -------------------------: | :---: | :------------------------------------------: | :---: | :-------------: |
-|                            |       |                                              |       |       10        |
+|                          8 |       |                      2                       |       |       10        |
 
+## Default value for `maxUnavailable` is 25%
+
+Now, what happens when `maxUnavailable` is not set? The official
+documentation [maxUnavailable][max-unavailable] says:
+
+> `maxUnavailable` is an optional field that specifies the maximum number
+> of Pods that can be unavailable during the update process. The value can
+> be an absolute number (for example, 5) or a percentage of desired Pods
+> (for example, 10%). The absolute number is calculated from percentage by
+> rounding down. The value cannot be 0 if `maxSurge` is 0. **The default
+> value is 25%**.
+>
+> For example, when this value is set to 30%, the old ReplicaSet can be
+> scaled down to 70% of desired Pods immediately when the rolling update
+> starts. Once new Pods are ready, old ReplicaSet can be scaled down
+> further, followed by scaling up the new ReplicaSet, ensuring that the
+> total number of Pods available at all times during the update is at least
+> 70% of the desired Pods.
+
+Let's take an example with a deployment that has no `maxUnavailable` field
+set, and imagine that 4 pods are unavailable due to a resource quota that
+only allows for 5 pods to start:
+
+```yaml
+kind: Deployment
+spec:
+  replicas: 10                
+status:
+  availableReplicas: 5        
+  unavailableReplicas: 5       
+  conditions:
+  - type: "Available"
+    status: "False"
+```
+
+This time, the inequality does not hold:
+
+| `status.availableReplicas` |   +   | `spec.strategy.rollingUpdate.maxUnavailable` |   ≱   | `spec.replicas` |
+| -------------------------: | :---: | :------------------------------------------: | :---: | :-------------: |
+|                          5 |       |             lower(25% * 10) = 2              |       |       10        |
 
 Let's dig a bit more and see how [`MaxAvailable`][deploy-max-unavail] is
 defined:
@@ -146,7 +183,6 @@ func ResolveFenceposts(maxSurge, maxUnavailable *instr.IntOrString, desired int)
     return surge, unavailable, nil
 }
 ```
-
 
 The `false` boolean turns the integer rounding "up", which means `0.5` will
 be rounded to `0` instead of `1`.
@@ -231,8 +267,12 @@ After a few seconds, the `Available` condition stabilizes to `False`:
 ```yaml
 # kubectl -n restricted get deploy test -oyaml
 kind: Deployment
+spec:
+  replicas: 5
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0          # 🔰
 status:
-  availableReplicas: 4
   conditions:
   - lastTransitionTime: "2020-07-07T14:04:27Z"
     lastUpdateTime: "2020-07-07T14:04:27Z"
@@ -253,18 +293,22 @@ status:
     reason: ReplicaSetUpdated
     status: "True"
     type: Progressing
-  observedGeneration: 1
-  readyReplicas: 4
   replicas: 4
+  availableReplicas: 4
+  readyReplicas: 4
   unavailableReplicas: 1
   updatedReplicas: 4
 ```
 
 We are asking for at most 0 unavailable replicas and there is 1 unavailable
-replica (due to the resource quota). Thus, the inequality
+replica (due to the resource quota). Thus, the "minimum availability"
+inequality does not hold which means the deployment has the condition
+`Available = False`:
 
-| available count |   +   | max unavailable number |   ≥   | desired number |
-| --------------: | :---: | :--------------------: | :---: | :------------: |
+| `status.availableReplicas` |   +   | `spec.strategy.rollingUpdate.maxUnavailable` |   ≱   | `spec.replicas` |
+| -------------------------: | :---: | :------------------------------------------: | :---: | :-------------: |
+|                          4 |       |                      0                       |       |        5        |
 
-does not hold which means the deployment does not have minimum
-availability.
+**Update 9 July 2020:** added a paragraph on the default value for
+[maxUnavailable][max-unavailable], and fixed the yaml example where I had
+mixed `unavailableReplicas` with `maxUnavailable`.
