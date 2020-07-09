@@ -14,6 +14,21 @@ Diagram on macOS + Docker: https://textik.com/#b185c1a72a6e782d
 
 **TL;DR:**
 
+- to create a local pull-through registry to speed up image pulling in a
+  [Kind](https://kind.sigs.k8s.io/) cluster, run:
+
+  ```sh
+  docker run -d --name registry --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io registry:2
+  kind create cluster --config /dev/stdin <<EOF
+  kind: Cluster
+  apiVersion: kind.x-k8s.io/v1alpha4
+  containerdConfigPatches:
+    - |-
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+        endpoint = ["http://registry:5000"]
+  EOF
+  ```
+
 - in case you often create & delete Kind clusters, using a local registry
   that serves as a proxy avoids redundant downloads
 - `KIND_EXPERIMENTAL_DOCKER_NETWORK` is useful but remember that the
