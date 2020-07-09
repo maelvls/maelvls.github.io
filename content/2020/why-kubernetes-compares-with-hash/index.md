@@ -14,9 +14,10 @@ compare objects. In this post, I want to present the advantages and
 limitations of using a hash function in this context.
 
 - **advantage**: works around the fact that child object might get mutated
-  or defaulted, which means the `reflect.DeepEqual` can't work
+  or defaulted, which means the `reflect.DeepEqual` can't work (**what about performance???**)
 - **disadvantage**: if the child gets updated, the parent cannot know that
-  it has been changed since the hash only works in one way.
+  it has been changed since the hash only works in one way. (**talk about
+  ReplicaSet mapping to multiple pods**)
 - why is it a label and not an annotation?
 
 ```yaml
@@ -138,6 +139,6 @@ func DeepHashObject(hasher hash.Hash, objectToWrite interface{}) {
 goos: darwin
 goarch: amd64
 pkg: test
-BenchmarkMitchellhHashstructure-8         368101              3127 ns/op
-BenchmarkKubernetesComputeHash-8          456028              2704 ns/op
+BenchmarkMitchellhHashstructure-8         368101              3.127 µs/op
+BenchmarkKubernetesComputeHash-8          456028              2.704 µs/op
 ```

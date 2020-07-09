@@ -37,6 +37,8 @@ author: Maël Valais
       |+----------------------------+|
       +------------------------------+
 
+
+
    ROLE OF THE END-USER               +------------------------------+
                                       |   CA CERTIFICATE (trusted)   |
     Can I trust foo.google.com?       |+----------------------------+|

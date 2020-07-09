@@ -8,6 +8,11 @@ tags: [kubernetes, conditions]
 author: Maël Valais
 ---
 
+TODO:
+
+- [ ] default for [maxUnavailable][max-unavailable]
+- [ ] I mixed unavailableReplicas with maxUnavailable!
+
 The various conditions that may appear in a deployment status are not
 documented in the [API reference][api-ref]. For example, we can see what are the
 fields for [DeploymentConditions][deploy-cond-doc], but it lacks the
@@ -77,22 +82,31 @@ replicas is greater or equal to the number of replicas in the spec; the
 deployment has minimum availability if and only if the following inequality
 holds:
 
-> `available_count` + `acceptable_unavailable_number` ≥ `desired_number`
+|                  available |   +   |            acceptable unavailable            |   ≥   |     desired     |
+| -------------------------: | :---: | :------------------------------------------: | :---: | :-------------: |
+| `status.availableReplicas` |       | `spec.strategy.rollingUpdate.maxUnavailable` |       | `spec.replicas` |
 
-In the following example, the deployment has minimum availability since the
-inequality holds:
 
 ```yaml
 kind: Deployment
 spec:
-  replicas: 10
+  replicas: 10                # (Des)
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 2       # Acceptable unavailable number.
 status:
-  unavailableReplicas: 2
-  availableReplicas: 8
+  availableReplicas: 8        # Avai
   conditions:
   - type: "Available"
-    status: "True"        # 🔰 True since 8 + 2 >= 10
+    status: "True"
 ```
+
+In this example, we have:
+
+| `status.availableReplicas` |   +   | `spec.strategy.rollingUpdate.maxUnavailable` |   ≥   | `spec.replicas` |
+| -------------------------: | :---: | :------------------------------------------: | :---: | :-------------: |
+|                            |       |                                              |       |       10        |
+
 
 Let's dig a bit more and see how [`MaxAvailable`][deploy-max-unavail] is
 defined:
@@ -159,6 +173,7 @@ spec:
 [deploy-sync]: https://github.com/kubernetes/kubernetes/blob/3615291/pkg/controller/deployment/sync.go#L513-L516
 [deploy-max-unavail]: https://github.com/kubernetes/kubernetes/blob/3615291/pkg/controller/deployment/util/deployment_util.go#L434-L445
 [deploy-fenceposts]: https://github.com/kubernetes/kubernetes/blob/3615291/pkg/controller/deployment/util/deployment_util.go#L874-L902
+[max-unavailable]: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#max-unavailable
 
 ## Hands-on example with the `Available` condition
 
@@ -245,10 +260,11 @@ status:
   updatedReplicas: 4
 ```
 
-Since we are asking for at most 0 unavailable replicas and there is 1
-unavailable replica (due to the resource quota), the deployment doesn't
-have "minimum availability" since the inequality
+We are asking for at most 0 unavailable replicas and there is 1 unavailable
+replica (due to the resource quota). Thus, the inequality
 
-> `available_count` + `acceptable_unavailable_number` ≥ `desired_number`
+| available count |   +   | max unavailable number |   ≥   | desired number |
+| --------------: | :---: | :--------------------: | :---: | :------------: |
 
-does not hold.
+does not hold which means the deployment does not have minimum
+availability.

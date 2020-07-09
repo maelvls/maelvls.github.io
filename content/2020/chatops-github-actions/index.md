@@ -1,5 +1,5 @@
 ---
-title: "ChatOps using Github Actions"
+title: "A ChatOps bot using Github Actions"
 description: ""
 date: 2020-05-08T14:40:31+02:00
 url: /chatops-github-actions
@@ -8,6 +8,8 @@ draft: true
 tags: []
 author: Maël Valais
 ---
+
+
 
 - ChatOps takes the GitOps to the next level and uses a chat interface
   (such as Slack or Github PR comments) to bring more transparency and
