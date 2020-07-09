@@ -9,16 +9,10 @@ tags: []
 author: Maël Valais
 ---
 
-In Kubernetes, the ReplicaSet controller uses a hashing mechanism to
-compare objects. In this post, I want to present the advantages and
-limitations of using a hash function in this context.
-
-- **advantage**: works around the fact that child object might get mutated
-  or defaulted, which means the `reflect.DeepEqual` can't work (**what about performance???**)
-- **disadvantage**: if the child gets updated, the parent cannot know that
-  it has been changed since the hash only works in one way. (**talk about
-  ReplicaSet mapping to multiple pods**)
-- why is it a label and not an annotation?
+In Kubernetes, the replica set controller uses a hashing mechanism to
+compare objects. Pods that are owned by a replica set have a label that is
+used to remember what the hash of the pod template that led to this pod
+spec:
 
 ```yaml
 kind: Pod
@@ -26,6 +20,19 @@ metadata:
   labels:
     pod-template-hash: 775855699b
 ```
+
+In this post, I want to present the advantages and limitations of using a
+hash function in this context.
+
+✅ **Pros**: works around the fact that child object might get mutated or
+defaulted, which means the `reflect.DeepEqual` can't work (**what about
+performance???**)
+
+❌ **Cons**: if the child gets updated, the parent cannot know that it has
+been changed since the hash only works in one way. (**talk about
+replica set mapping to multiple pods**)
+
+- why is it a label and not an annotation?
 
 Looks like the hash is created [in the replicaset sync func][rs-sync] and
 it uses the [`ComputeHash`][ComputeHash] func which uses
