@@ -62,11 +62,6 @@
 </div>
 </div>
 <div class="markdown">
-<p>TODO:</p>
-<ul>
-<li><input disabled="" type="checkbox">default for <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#max-unavailable">maxUnavailable</a></li>
-<li><input disabled="" type="checkbox">I mixed unavailableReplicas with maxUnavailable!</li>
-</ul>
 <p>The various conditions that may appear in a deployment status are not
 documented in the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/">API reference</a>. For example, we can see what are the
 fields for <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#deploymentcondition-v1-apps">DeploymentConditions</a>, but it lacks the
@@ -141,18 +136,20 @@ holds:</p>
 </tr>
 </tbody>
 </table>
+<p>Let&rsquo;s take an example:</p>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">kind</span><span class="p">:</span><span class="w"> </span>Deployment<span class="w">
 </span><span class="w"></span><span class="k">spec</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">10</span><span class="w">                </span><span class="c"># (Des)</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">10</span><span class="w">                </span><span class="c"># Desired</span><span class="w">
 </span><span class="w">  </span><span class="k">strategy</span><span class="p">:</span><span class="w">
 </span><span class="w"></span><span class="w">    </span><span class="k">rollingUpdate</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">      </span><span class="k">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">       </span><span class="c"># Acceptable unavailable number.</span><span class="w">
+</span><span class="w"></span><span class="w">      </span><span class="k">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">       </span><span class="c"># Acceptable unavailable</span><span class="w">
 </span><span class="w"></span><span class="k">status</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">availableReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">8</span><span class="w">        </span><span class="c"># Avai</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">availableReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">8</span><span class="w">        </span><span class="c"># Available</span><span class="w">
 </span><span class="w">  </span><span class="k">conditions</span><span class="p">:</span><span class="w">
 </span><span class="w"></span><span class="w">  </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Available&#34;</span><span class="w">
 </span><span class="w">    </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
-</span></code></pre></div><p>In this example, we have:</p>
+</span></code></pre></div><p>In this example, the inequality holds which means this deployment has
+&ldquo;minimum availability&rdquo; (= <code>Available = True</code>):</p>
 <table>
 <thead>
 <tr>
@@ -165,9 +162,59 @@ holds:</p>
 </thead>
 <tbody>
 <tr>
-<td align="right"></td>
+<td align="right">8</td>
 <td align="center"></td>
+<td align="center">2</td>
 <td align="center"></td>
+<td align="center">10</td>
+</tr>
+</tbody>
+</table>
+<h2 id="default-value-for-maxunavailable-is-25">Default value for <code>maxUnavailable</code> is 25%</h2>
+<p>Now, what happens when <code>maxUnavailable</code> is not set? The official
+documentation <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#max-unavailable">maxUnavailable</a> says:</p>
+<blockquote>
+<p><code>maxUnavailable</code> is an optional field that specifies the maximum number
+of Pods that can be unavailable during the update process. The value can
+be an absolute number (for example, 5) or a percentage of desired Pods
+(for example, 10%). The absolute number is calculated from percentage by
+rounding down. The value cannot be 0 if <code>maxSurge</code> is 0. <strong>The default
+value is 25%</strong>.</p>
+<p>For example, when this value is set to 30%, the old ReplicaSet can be
+scaled down to 70% of desired Pods immediately when the rolling update
+starts. Once new Pods are ready, old ReplicaSet can be scaled down
+further, followed by scaling up the new ReplicaSet, ensuring that the
+total number of Pods available at all times during the update is at least
+70% of the desired Pods.</p>
+</blockquote>
+<p>Let&rsquo;s take an example with a deployment that has no <code>maxUnavailable</code> field
+set, and imagine that 4 pods are unavailable due to a resource quota that
+only allows for 5 pods to start:</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">kind</span><span class="p">:</span><span class="w"> </span>Deployment<span class="w">
+</span><span class="w"></span><span class="k">spec</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">10</span><span class="w">                
+</span><span class="w"></span><span class="k">status</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">availableReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">        
+</span><span class="w">  </span><span class="k">unavailableReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">       
+</span><span class="w">  </span><span class="k">conditions</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">  </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Available&#34;</span><span class="w">
+</span><span class="w">    </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;False&#34;</span><span class="w">
+</span></code></pre></div><p>This time, the inequality does not hold:</p>
+<table>
+<thead>
+<tr>
+<th align="right"><code>status.availableReplicas</code></th>
+<th align="center">+</th>
+<th align="center"><code>spec.strategy.rollingUpdate.maxUnavailable</code></th>
+<th align="center">≱</th>
+<th align="center"><code>spec.replicas</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">5</td>
+<td align="center"></td>
+<td align="center">lower(25% * 10) = 2</td>
 <td align="center"></td>
 <td align="center">10</td>
 </tr>
@@ -264,9 +311,13 @@ created, but the fifth one will fail.</p>
 </span></code></pre></div><p>After a few seconds, the <code>Available</code> condition stabilizes to <code>False</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># kubectl -n restricted get deploy test -oyaml</span><span class="w">
 </span><span class="w"></span><span class="k">kind</span><span class="p">:</span><span class="w"> </span>Deployment<span class="w">
+</span><span class="w"></span><span class="k">spec</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span><span class="w">  </span><span class="k">strategy</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="k">rollingUpdate</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">      </span><span class="k">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="w">          </span><span class="c"># 🔰</span><span class="w">
 </span><span class="w"></span><span class="k">status</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">availableReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">4</span><span class="w">
-</span><span class="w">  </span><span class="k">conditions</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">conditions</span><span class="p">:</span><span class="w">
 </span><span class="w"></span><span class="w">  </span>- <span class="k">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2020-07-07T14:04:27Z&#34;</span><span class="w">
 </span><span class="w">    </span><span class="k">lastUpdateTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2020-07-07T14:04:27Z&#34;</span><span class="w">
 </span><span class="w">    </span><span class="k">message</span><span class="p">:</span><span class="w"> </span>Deployment<span class="w"> </span>does<span class="w"> </span>not<span class="w"> </span>have<span class="w"> </span>minimum<span class="w"> </span>availability.<span class="w">
@@ -286,26 +337,38 @@ created, but the fifth one will fail.</p>
 </span><span class="w">    </span><span class="k">reason</span><span class="p">:</span><span class="w"> </span>ReplicaSetUpdated<span class="w">
 </span><span class="w">    </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
 </span><span class="w">    </span><span class="k">type</span><span class="p">:</span><span class="w"> </span>Progressing<span class="w">
-</span><span class="w">  </span><span class="k">observedGeneration</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
-</span><span class="w">  </span><span class="k">readyReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">4</span><span class="w">
 </span><span class="w">  </span><span class="k">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">4</span><span class="w">
+</span><span class="w">  </span><span class="k">availableReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">4</span><span class="w">
+</span><span class="w">  </span><span class="k">readyReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">4</span><span class="w">
 </span><span class="w">  </span><span class="k">unavailableReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
 </span><span class="w">  </span><span class="k">updatedReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">4</span><span class="w">
 </span></code></pre></div><p>We are asking for at most 0 unavailable replicas and there is 1 unavailable
-replica (due to the resource quota). Thus, the inequality</p>
+replica (due to the resource quota). Thus, the &ldquo;minimum availability&rdquo;
+inequality does not hold which means the deployment has the condition
+<code>Available = False</code>:</p>
 <table>
 <thead>
 <tr>
-<th align="right">available count</th>
+<th align="right"><code>status.availableReplicas</code></th>
 <th align="center">+</th>
-<th align="center">max unavailable number</th>
-<th align="center">≥</th>
-<th align="center">desired number</th>
+<th align="center"><code>spec.strategy.rollingUpdate.maxUnavailable</code></th>
+<th align="center">≱</th>
+<th align="center"><code>spec.replicas</code></th>
 </tr>
 </thead>
+<tbody>
+<tr>
+<td align="right">4</td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center"></td>
+<td align="center">5</td>
+</tr>
+</tbody>
 </table>
-<p>does not hold which means the deployment does not have minimum
-availability.</p>
+<p><strong>Update 9 July 2020:</strong> added a paragraph on the default value for
+<a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#max-unavailable">maxUnavailable</a>, and fixed the yaml example where I had
+mixed <code>unavailableReplicas</code> with <code>maxUnavailable</code>.</p>
 
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/deployment-available-condition/index.md">📝 Edit this page and propose a change!</a>
