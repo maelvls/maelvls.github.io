@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Why Kubernetes Compares With Hash" />
-<meta property="og:description" content="In Kubernetes, the ReplicaSet controller uses a hashing mechanism to compare objects. In this post, I want to present the advantages and limitations of using a hash function in this context.
- advantage: works around the fact that child object might get mutated or defaulted, which means the reflect.DeepEqual can&rsquo;t work (what about performance???) disadvantage: if the child gets updated, the parent cannot know that it has been changed since the hash only works in one way." />
+<meta property="og:description" content="In Kubernetes, the replica set controller uses a hashing mechanism to compare objects. Pods that are owned by a replica set have a label that is used to remember what the hash of the pod template that led to this pod spec:
+kind:Podmetadata:labels:pod-template-hash:775855699bIn this post, I want to present the advantages and limitations of using a hash function in this context.
+✅ Pros: works around the fact that child object might get mutated or defaulted, which means the reflect." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/do-not-share-yet/why-kubernetes-compares-with-hash/" />
 <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/why-kubernetes-compares-with-hash/cover-why-kubernetes-compares-with-hash.png" />
@@ -17,8 +18,9 @@
 <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/why-kubernetes-compares-with-hash/cover-why-kubernetes-compares-with-hash.png"/>
 
 <meta name="twitter:title" content="Why Kubernetes Compares With Hash"/>
-<meta name="twitter:description" content="In Kubernetes, the ReplicaSet controller uses a hashing mechanism to compare objects. In this post, I want to present the advantages and limitations of using a hash function in this context.
- advantage: works around the fact that child object might get mutated or defaulted, which means the reflect.DeepEqual can&rsquo;t work (what about performance???) disadvantage: if the child gets updated, the parent cannot know that it has been changed since the hash only works in one way."/>
+<meta name="twitter:description" content="In Kubernetes, the replica set controller uses a hashing mechanism to compare objects. Pods that are owned by a replica set have a label that is used to remember what the hash of the pod template that led to this pod spec:
+kind:Podmetadata:labels:pod-template-hash:775855699bIn this post, I want to present the advantages and limitations of using a hash function in this context.
+✅ Pros: works around the fact that child object might get mutated or defaulted, which means the reflect."/>
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -64,22 +66,26 @@
 </div>
 </div>
 <div class="markdown">
-<p>In Kubernetes, the ReplicaSet controller uses a hashing mechanism to
-compare objects. In this post, I want to present the advantages and
-limitations of using a hash function in this context.</p>
-<ul>
-<li><strong>advantage</strong>: works around the fact that child object might get mutated
-or defaulted, which means the <code>reflect.DeepEqual</code> can&rsquo;t work (<strong>what about performance???</strong>)</li>
-<li><strong>disadvantage</strong>: if the child gets updated, the parent cannot know that
-it has been changed since the hash only works in one way. (<strong>talk about
-ReplicaSet mapping to multiple pods</strong>)</li>
-<li>why is it a label and not an annotation?</li>
-</ul>
+<p>In Kubernetes, the replica set controller uses a hashing mechanism to
+compare objects. Pods that are owned by a replica set have a label that is
+used to remember what the hash of the pod template that led to this pod
+spec:</p>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">kind</span><span class="p">:</span><span class="w"> </span>Pod<span class="w">
 </span><span class="w"></span><span class="k">metadata</span><span class="p">:</span><span class="w">
 </span><span class="w"></span><span class="w">  </span><span class="k">labels</span><span class="p">:</span><span class="w">
 </span><span class="w"></span><span class="w">    </span><span class="k">pod-template-hash</span><span class="p">:</span><span class="w"> </span>775855699b<span class="w">
-</span></code></pre></div><p>Looks like the hash is created <a href="https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/deployment/sync.go#L189">in the replicaset sync func</a> and
+</span></code></pre></div><p>In this post, I want to present the advantages and limitations of using a
+hash function in this context.</p>
+<p>✅ <strong>Pros</strong>: works around the fact that child object might get mutated or
+defaulted, which means the <code>reflect.DeepEqual</code> can&rsquo;t work (<strong>what about
+performance???</strong>)</p>
+<p>❌ <strong>Cons</strong>: if the child gets updated, the parent cannot know that it has
+been changed since the hash only works in one way. (<strong>talk about
+replica set mapping to multiple pods</strong>)</p>
+<ul>
+<li>why is it a label and not an annotation?</li>
+</ul>
+<p>Looks like the hash is created <a href="https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/deployment/sync.go#L189">in the replicaset sync func</a> and
 it uses the <a href="https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/controller_utils.go#L1130-L1145"><code>ComputeHash</code></a> func which uses
 <a href="https://golang.org/pkg/hash/fnv/#New32">fnv.New32a</a> from the std lib:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// ComputeHash returns a hash value calculated from pod template and
