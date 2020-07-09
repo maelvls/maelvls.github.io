@@ -32,7 +32,7 @@ tcpdump, wireshark and iptables tracing.</description></item><item><title>Avoid 
 I want to avoid using the expensive Google Network Load Balancer and
 instead do the load balancing in-cluster using akrobateo, which
 acts as a LoadBalancer controller.</description></item><item><title>Nice diagram about TLS, certificates and keys</title><link>https://maelvls.dev/notes/tls/</link><pubDate>Mon, 20 Jan 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/notes/tls/</guid><description>
-cert = (1) pub key, (2) information (3) signature of (1)+(2) self-signed cert = only (1) and (2) +----------------------...</description></item><item><title>What to do when Go ignores HTTP_PROXY for 127.0.0.1</title><link>https://maelvls.dev/go-ignores-proxy-localhost/</link><pubDate>Mon, 06 Jan 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/go-ignores-proxy-localhost/</guid><description>
+ROLE OF THE CERTIFICATE AUTHORITY +------------------------------+ +-----------------+ CERTIFICATE AUTHORITY (NOT A CERT...</description></item><item><title>What to do when Go ignores HTTP_PROXY for 127.0.0.1</title><link>https://maelvls.dev/go-ignores-proxy-localhost/</link><pubDate>Mon, 06 Jan 2020 00:00:00 +0000</pubDate><guid>https://maelvls.dev/go-ignores-proxy-localhost/</guid><description>
 At some point, the Go team chose to disable the proxy for requests coming
 from localhost or 127.0.0.1. This is annoying when debugging services
 locally.</description></item><item><title>Go Happy Path: the Unindented Line of Sight</title><link>https://maelvls.dev/go-happy-line-of-sight/</link><pubDate>Sat, 23 Nov 2019 00:00:00 +0000</pubDate><guid>https://maelvls.dev/go-happy-line-of-sight/</guid><description>
