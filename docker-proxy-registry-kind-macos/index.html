@@ -14,7 +14,8 @@ Kubernetes developers or anyone who wants to play with controllers.</p><p>One th
 containers. Even worse: when deleting and re-creating a cluster, all the
 downloaded images disappear.</p><p>And since I install ClusterAPI on my Kind cluster, it means all the (quite
 heavy) images have to be re-downloaded every single time. Just take a look
-at all the images that get re-downloaded:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% docker <span class=nb>exec</span> -it helix-control-plane crictl images
+at all the images that get re-downloaded:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=c1># That&#39;s the cluster created using &#39;kind create cluster&#39;</span>
+% docker <span class=nb>exec</span> -it kind-control-plane crictl images
 IMAGE                                                                      TAG      SIZE
 quay.io/jetstack/cert-manager-cainjector                                   v0.11.0  11.1MB
 quay.io/jetstack/cert-manager-controller                                   v0.11.0  14MB
@@ -23,7 +24,17 @@ us.gcr.io/k8s-staging-capi-docker/capd-manager/capd-manager-amd64          dev  
 us.gcr.io/k8s-artifacts-prod/cluster-api/cluster-api-controller            v0.3.0   20.3MB
 us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-bootstrap-controller      v0.3.0   19.6MB
 us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-control-plane-controller  v0.3.0   21.1MB
-</code></pre></div><p>One solution to this problem is to <a href=https://kind.sigs.k8s.io/docs/user/local-registry/>spin up an intermediary Docker
+
+<span class=c1># I also use a ClusterAPI-created cluster (relying on CAPD):</span>
+% docker <span class=nb>exec</span> -it capd-capd-control-plane-l4tx7 crictl images ls
+docker.io/calico/cni                  v3.12.2             8b42391a46731       77.5MB
+docker.io/calico/kube-controllers     v3.12.2             5ca01eb356b9a       23.1MB
+docker.io/calico/node                 v3.12.2             4d501404ee9fa       89.7MB
+docker.io/calico/pod2daemon-flexvol   v3.12.2             2abcc890ae54f       37.5MB
+docker.io/metallb/controller          v0.9.3              4715cbeb69289       17.1MB
+docker.io/metallb/speaker             v0.9.3              f241be9dae666       19.2MB
+</code></pre></div><p>That&rsquo;s a total of 418 MB that get re-downloaded every time I restart both
+clusters!</p><p>One solution to this problem is to <a href=https://kind.sigs.k8s.io/docs/user/local-registry/>spin up an intermediary Docker
 registry</a> in a side
 container; as long as this container exists, all the images that have
 already been downloaded once can be served from cache. Let&rsquo;s spin up this

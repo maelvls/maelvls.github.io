@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Everything About Docker" />
-<meta property="og:description" content=" Linux kernel 3.10 or higher required   " />
+<meta property="og:description" content="Linux kernel 3.10 or higher required   % cat /etc/containerd/config.toml # explicitly use v2 config format version = 2 # set default runtime handler to v2, which has a per-pod shim [plugins.&#34;io.containerd.grpc.v1.cri&#34;.containerd] default_runtime_name = &#34;runc&#34; [plugins.&#34;io.containerd.grpc.v1.cri&#34;.containerd.runtimes.runc] runtime_type = &#34;io.containerd.runc.v2&#34; # Setup a runtime with the magic name (&#34;test-handler&#34;) used for Kubernetes # runtime class tests ... [plugins.&#34;io.containerd.grpc.v1.cri&#34;.containerd.runtimes.test-handler] runtime_type = &#34;io.containerd.runc.v2&#34; # ensure the sandbox image matches kubeadm # TODO: probably we should instead just use the containerd default # Implementing the pod sandbox is a CRI implementation detail ." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/do-not-share-yet/everything-about-docker/" />
 <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/everything-about-docker/cover-everything-about-docker.png" />
@@ -16,7 +16,7 @@
 <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/everything-about-docker/cover-everything-about-docker.png"/>
 
 <meta name="twitter:title" content="Everything About Docker"/>
-<meta name="twitter:description" content=" Linux kernel 3.10 or higher required   "/>
+<meta name="twitter:description" content="Linux kernel 3.10 or higher required   % cat /etc/containerd/config.toml # explicitly use v2 config format version = 2 # set default runtime handler to v2, which has a per-pod shim [plugins.&#34;io.containerd.grpc.v1.cri&#34;.containerd] default_runtime_name = &#34;runc&#34; [plugins.&#34;io.containerd.grpc.v1.cri&#34;.containerd.runtimes.runc] runtime_type = &#34;io.containerd.runc.v2&#34; # Setup a runtime with the magic name (&#34;test-handler&#34;) used for Kubernetes # runtime class tests ... [plugins.&#34;io.containerd.grpc.v1.cri&#34;.containerd.runtimes.test-handler] runtime_type = &#34;io.containerd.runc.v2&#34; # ensure the sandbox image matches kubeadm # TODO: probably we should instead just use the containerd default # Implementing the pod sandbox is a CRI implementation detail ."/>
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -66,6 +66,49 @@
 <li>Linux kernel 3.10 or higher required</li>
 <li></li>
 </ul>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% cat /etc/containerd/config.toml
+<span class="c1"># explicitly use v2 config format</span>
+<span class="nv">version</span> <span class="o">=</span> <span class="m">2</span>
+
+<span class="c1"># set default runtime handler to v2, which has a per-pod shim</span>
+<span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.containerd<span class="o">]</span>
+<span class="nv">default_runtime_name</span> <span class="o">=</span> <span class="s2">&#34;runc&#34;</span>
+<span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.containerd.runtimes.runc<span class="o">]</span>
+<span class="nv">runtime_type</span> <span class="o">=</span> <span class="s2">&#34;io.containerd.runc.v2&#34;</span>
+
+<span class="c1"># Setup a runtime with the magic name (&#34;test-handler&#34;) used for Kubernetes</span>
+<span class="c1"># runtime class tests ...</span>
+<span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.containerd.runtimes.test-handler<span class="o">]</span>
+<span class="nv">runtime_type</span> <span class="o">=</span> <span class="s2">&#34;io.containerd.runc.v2&#34;</span>
+
+<span class="c1"># ensure the sandbox image matches kubeadm</span>
+<span class="c1"># TODO: probably we should instead just use the containerd default</span>
+<span class="c1"># Implementing the pod sandbox is a CRI implementation detail ..</span>
+<span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span><span class="o">]</span>
+<span class="nv">sandbox_image</span> <span class="o">=</span> <span class="s2">&#34;k8s.gcr.io/pause:3.2&#34;</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% cat /etc/crictl.yaml
+runtime-endpoint: unix:///var/run/containerd/containerd.sock
+</code></pre></div><h2 id="containerd-vs-runc">Containerd vs. RunC</h2>
+<p>As detailed <a href="https://stackoverflow.com/questions/41645665/how-containerd-compares-to-runc#:~:text=runc%20is%20used%20by%20containerd,specification%20for%20runtime%20and%20images.">here</a>:</p>
+<blockquote>
+<ul>
+<li><a href="https://github.com/containerd/containerd"><code>containerd</code></a> is a container
+runtime which can manage a complete container lifecycle &ndash; from image
+transfer/storage (locally and from/to registries) to container
+execution, supervision and networking. Containerd abides by the
+client-side of the <a href="https://github.com/opencontainers/distribution-spec/blob/master/spec.md">OCI Distribution
+spec</a>.</li>
+<li><a href="http://alexander.holbreich.org/docker-components-explained#containerdshim"><code>containerd-shim</code></a>
+handles headless containers, meaning once <code>runc</code> initializes the
+containers, it exits handing the containers over to the container-shim
+which acts as some middleman.</li>
+<li><a href="https://github.com/opencontainers/runc"><code>runc</code></a> is a lightweight
+universal container runtime, which abides by the OCI specification.
+runc is used by containerd for spawning and running containers
+according to OCI spec. It is also the repackaging of Docker&rsquo;s
+libcontainer.</li>
+</ul>
+</blockquote>
 
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/everything-about-docker/index.md">📝 Edit this page and propose a change!</a>
