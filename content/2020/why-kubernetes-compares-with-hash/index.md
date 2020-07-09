@@ -134,11 +134,12 @@ func DeepHashObject(hasher hash.Hash, objectToWrite interface{}) {
 }
 ```
 
+The winner seems to be the Kubernetes' ComputeHash function, although it
+relies on spew to generate a string. I guess most of the time spent by
+hashstructure.Hash is due to the reflect package?
+
 ```sh
 % go test -bench .
-goos: darwin
-goarch: amd64
-pkg: test
 BenchmarkMitchellhHashstructure-8         368101              3.127 µs/op
 BenchmarkKubernetesComputeHash-8          456028              2.704 µs/op
 ```

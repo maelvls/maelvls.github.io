@@ -45,7 +45,8 @@ heavy) images have to be re-downloaded every single time. Just take a look
 at all the images that get re-downloaded:
 
 ```sh
-% docker exec -it helix-control-plane crictl images
+# That's the cluster created using 'kind create cluster'
+% docker exec -it kind-control-plane crictl images
 IMAGE                                                                      TAG      SIZE
 quay.io/jetstack/cert-manager-cainjector                                   v0.11.0  11.1MB
 quay.io/jetstack/cert-manager-controller                                   v0.11.0  14MB
@@ -54,7 +55,19 @@ us.gcr.io/k8s-staging-capi-docker/capd-manager/capd-manager-amd64          dev  
 us.gcr.io/k8s-artifacts-prod/cluster-api/cluster-api-controller            v0.3.0   20.3MB
 us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-bootstrap-controller      v0.3.0   19.6MB
 us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-control-plane-controller  v0.3.0   21.1MB
+
+# I also use a ClusterAPI-created cluster (relying on CAPD):
+% docker exec -it capd-capd-control-plane-l4tx7 crictl images ls
+docker.io/calico/cni                  v3.12.2             8b42391a46731       77.5MB
+docker.io/calico/kube-controllers     v3.12.2             5ca01eb356b9a       23.1MB
+docker.io/calico/node                 v3.12.2             4d501404ee9fa       89.7MB
+docker.io/calico/pod2daemon-flexvol   v3.12.2             2abcc890ae54f       37.5MB
+docker.io/metallb/controller          v0.9.3              4715cbeb69289       17.1MB
+docker.io/metallb/speaker             v0.9.3              f241be9dae666       19.2MB
 ```
+
+That's a total of 418 MB that get re-downloaded every time I restart both
+clusters!
 
 One solution to this problem is to [spin up an intermediary Docker
 registry](https://kind.sigs.k8s.io/docs/user/local-registry/) in a side
