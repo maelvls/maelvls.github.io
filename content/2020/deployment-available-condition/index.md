@@ -77,21 +77,21 @@ replicas is greater or equal to the number of replicas in the spec; the
 deployment has minimum availability if and only if the following inequality
 holds:
 
-|                  available |   +   |            acceptable unavailable            |   ≥   |     desired     |
-| -------------------------: | :---: | :------------------------------------------: | :---: | :-------------: |
-| `status.availableReplicas` |       | `spec.strategy.rollingUpdate.maxUnavailable` |       | `spec.replicas` |
+| available |   +   | acceptable unavailable |   ≥   | desired |
+| :-------: | :---: | :--------------------: | :---: | :-----: |
+|     1️⃣     |       |           2️⃣            |       |    3️⃣    |
 
 Let's take an example:
 
 ```yaml
 kind: Deployment
 spec:
-  replicas: 10                # Desired
+  replicas: 10                # 3️⃣ desired
   strategy:
     rollingUpdate:
-      maxUnavailable: 2       # Acceptable unavailable
+      maxUnavailable: 2       # 2️⃣ acceptable unavailable
 status:
-  availableReplicas: 8        # Available
+  availableReplicas: 8        # 1️⃣ available
   conditions:
   - type: "Available"
     status: "True"
@@ -100,9 +100,9 @@ status:
 In this example, the inequality holds which means this deployment has
 "minimum availability" (= `Available = True`):
 
-| `status.availableReplicas` |   +   | `spec.strategy.rollingUpdate.maxUnavailable` |   ≥   | `spec.replicas` |
-| -------------------------: | :---: | :------------------------------------------: | :---: | :-------------: |
-|                          8 |       |                      2                       |       |       10        |
+| `availableReplicas` |   +   | `maxUnavailable` |   ≥   | `replicas` |
+| :-----------------: | :---: | :--------------: | :---: | :--------: |
+|          8          |       |        2         |       |     10     |
 
 ## Default value for `maxUnavailable` is 25%
 
@@ -305,9 +305,9 @@ replica (due to the resource quota). Thus, the "minimum availability"
 inequality does not hold which means the deployment has the condition
 `Available = False`:
 
-| `status.availableReplicas` |   +   | `spec.strategy.rollingUpdate.maxUnavailable` |   ≱   | `spec.replicas` |
-| -------------------------: | :---: | :------------------------------------------: | :---: | :-------------: |
-|                          4 |       |                      0                       |       |        5        |
+| `availableReplicas` |   +   | `rollingUpdate.maxUnavailable` |   ≱   | `replicas` |
+| :-----------------: | :---: | :----------------------------: | :---: | :--------: |
+|          4          |       |               0                |       |     5      |
 
 **Update 9 July 2020:** added a paragraph on the default value for
 [maxUnavailable][max-unavailable], and fixed the yaml example where I had
