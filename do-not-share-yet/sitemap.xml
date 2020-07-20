@@ -198,6 +198,16 @@
   </url>
   
   <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/client-go/</loc>
+    <lastmod>2020-04-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/go-modules/</loc>
+    <lastmod>2020-04-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://maelvls.dev/do-not-share-yet/client-go-transitive-hell/</loc>
     <lastmod>2020-04-15T00:00:00+00:00</lastmod>
   </url>

@@ -302,7 +302,7 @@ scattered everywhere. Here are some links to help you start.
       <guid>https://maelvls.dev/do-not-share-yet/client-go-transitive-hell/</guid>
       <description>
       
-      
+      Client-go is the client library that allows anyone (including Kubernetes itself) to talk to the Kubernetes apiserver. Recently, the Kubernetes team chose to release a breaking version of client-go that adds support for context.Context, without really giving anyone notice. In this post, I detail the workaround and what that happened.
       
       </description>
     </item>
