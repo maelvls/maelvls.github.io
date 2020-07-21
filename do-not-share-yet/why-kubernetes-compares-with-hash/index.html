@@ -180,7 +180,11 @@ hashstructure.Hash is due to the reflect package?</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% go <span class="nb">test</span> -bench .
 BenchmarkMitchellhHashstructure-8         <span class="m">368101</span>              3.127 µs/op
 BenchmarkKubernetesComputeHash-8          <span class="m">456028</span>              2.704 µs/op
-</code></pre></div>
+</code></pre></div><h2 id="other-clues">Other clues</h2>
+<pre><code>  controller-revision-hash: 6f7768f569
+  k8s-app: kube-proxy
+  pod-template-generation: &quot;7&quot;</code></pre>
+
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/why-kubernetes-compares-with-hash/index.md">📝 Edit this page and propose a change!</a>
 <div class="tags">

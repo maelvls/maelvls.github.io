@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.64.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="What Are Proxies" />
+<meta property="og:description" content="A proxy is something (most of the time software, but sometimes also hardware like a dedicated FPGA) that forwards traffic from a place to another.
+Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an HTTP proxy that would allow this person to access the internet behind a corporate firewall.
+   Layer Proxies     L7 plain HTTP, HTTP CONNECT, SOCKS, SOCKS5, HTTPS/SNI proxies   L4 TCP proxies   L3 VPNs    Terms:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/what-are-proxies/" />
+<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/what-are-proxies/cover-what-are-proxies.png" />
+<meta property="article:published_time" content="2020-07-13T14:18:40+02:00" />
+<meta property="article:modified_time" content="2020-07-13T14:18:40+02:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/what-are-proxies/cover-what-are-proxies.png"/>
+
+<meta name="twitter:title" content="What Are Proxies"/>
+<meta name="twitter:description" content="A proxy is something (most of the time software, but sometimes also hardware like a dedicated FPGA) that forwards traffic from a place to another.
+Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an HTTP proxy that would allow this person to access the internet behind a corporate firewall.
+   Layer Proxies     L7 plain HTTP, HTTP CONNECT, SOCKS, SOCKS5, HTTPS/SNI proxies   L4 TCP proxies   L3 VPNs    Terms:"/>
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/maelvls.css" /><title>What Are Proxies | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/do-not-share-yet/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="meta">
+<div class="date">
+<span class="day">13</span>
+<span class="rest">Jul 2020</span>
+</div>
+</div>
+
+<div class="matter">
+<h1 class="title">What Are Proxies</h1>
+</div>
+</div>
+<div class="markdown">
+<p>A proxy is something (most of the time software, but sometimes also
+hardware like a dedicated FPGA) that forwards traffic from a place to
+another.</p>
+<p>Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an HTTP
+proxy that would allow this person to access the internet behind a
+corporate firewall.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Proxies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L7</td>
+<td>plain HTTP, HTTP <code>CONNECT</code>, SOCKS, SOCKS5, HTTPS/SNI proxies</td>
+</tr>
+<tr>
+<td>L4</td>
+<td>TCP proxies</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>VPNs</td>
+</tr>
+</tbody>
+</table>
+<p>Terms:</p>
+<ul>
+<li>tunnel</li>
+<li>transparent proxy = doesn&rsquo;t temper with packets; only redirects them</li>
+<li>VPN</li>
+<li>forwarding</li>
+<li>reverse proxy</li>
+</ul>
+<h2 id="layer-7-http-connect-tcp-tunnel">Layer 7: HTTP CONNECT (TCP tunnel)</h2>
+<div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="nf">CONNECT</span> <span class="nn">streamline.t-mobile.com:22</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="n">Proxy-Authorization</span><span class="o">:</span> <span class="l">Basic encoded-credentials</span>
+</code></pre></div><h2 id="layer-3-the-vpn">Layer 3: the VPN</h2>
+<p>A VPN often acts at L3. For example, Telepresence sets a packet filter on
+BSD (or iptable rule on Linux) which redirects all packets to a given TCP
+proxy which then forwards traffic to into the pod.</p>
+<p>Some VPNs have to use a higher protocol in order to work around network
+limitations (e.g., corporate firewall or country-wide censorship), such as
+OpenVPN which opens a TLS connection (L7) and then use the ciphered TCP
+connection to forward all TCP traffic; that&rsquo;s L3-into-L7 tunneling (watch
+out for the MTU!)</p>
+<h2 id="layer-4-the-tcp-proxy">Layer 4: the TCP proxy</h2>
+<p>I am particularly interested in two different kinds of TCP proxies.</p>
+<h2 id="layer-7-the-standard-http-proxy">Layer 7: the standard HTTP proxy</h2>
+<p>There are many available HTTP proxies like Squid, tinyproxy, cntlm and
+mitmproxy. Let&rsquo;s try mitmproxy and handcraft an HTTP request:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># Open that in one shell session:</span>
+mitmproxy -p <span class="m">9000</span>
+
+<span class="c1"># And this in another shell session:</span>
+nc 127.0.0.1 <span class="m">9000</span> <span class="o">&lt;&lt;&lt;</span> <span class="s1">$&#39;\
+</span><span class="s1">GET http://httpbin.org/ HTTP/1.1\r
+</span><span class="s1">Host: httpbin.org\r
+</span><span class="s1">\r
+</span><span class="s1">&#39;</span>
+</code></pre></div><details>
+<summary>Note on escaping <code>\r\n</code> in your shell</summary>
+<blockquote>
+<p>The tricky part when crafting an HTTP request for <code>nc</code> in the shell is
+the backslash-escaped charaters expansion. Using a here-document does not
+work since backslash-escaped characters like <code>\r</code> and <code>\n</code> are not
+replaced with their actual value as per the ANSI C standard (<a href="http://www.open-std.org/JTC1/SC22/WG14/www/docs/n1539.pdf#page=42">ISO/IEC
+9899:201x</a> § 5.2.2 Character display semantics, p. 23)</p>
+<p>I use <code>$'text'</code> which is a feature of bash that replaces <code>\</code> sequences
+with their byte representation. Another possibility is to use <code>printf</code> or
+<code>echo -e</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nb">printf</span> <span class="s1">&#39;GET http://httpbin.org/ HTTP/1.1\r
+</span><span class="s1">Host: httpbin.org\r
+</span><span class="s1">\r
+</span><span class="s1">&#39;</span> <span class="p">|</span> nc 127.0.0.1 <span class="m">9000</span>
+</code></pre></div></blockquote>
+</details>
+<p>The HTTP proxy uses the exact same protocol as HTTP; you can pass some
+special headers like <code>Proxy-Authorization: Basic ...</code> which are not going
+to be forwarded.</p>
+<h2 id="layer-7-the-https--sni-proxy">Layer 7: the HTTPS + SNI proxy</h2>
+<p>tbd</p>
+<h2 id="layer-7-the-reverse-http-proxy">Layer 7: the reverse HTTP proxy</h2>
+
+</div>
+<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/what-are-proxies/index.md">📝 Edit this page and propose a change!</a>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+</div>
+
+<script
+  src="https://utteranc.es/client.js"
+  repo="maelvls/maelvls.github.io"
+  issue-term="pathname"
+  label="💬"
+  theme="github-light"
+  crossorigin="anonymous"
+  async
+></script>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>
