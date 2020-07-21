@@ -150,3 +150,9 @@ hashstructure.Hash is due to the reflect package?
 BenchmarkMitchellhHashstructure-8         368101              3.127 µs/op
 BenchmarkKubernetesComputeHash-8          456028              2.704 µs/op
 ```
+
+## Other clues
+
+      controller-revision-hash: 6f7768f569
+      k8s-app: kube-proxy
+      pod-template-generation: "7"
