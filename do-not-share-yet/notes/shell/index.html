@@ -169,7 +169,27 @@ bash
 </code></pre></div><h2 id="parallelize-xargs">Parallelize xargs</h2>
 <pre><code>/usr/local/bin/code --list-extensions | xargs -L 1 -P 4 /usr/local/bin/code-insiders --install-extension
 </code></pre>
+<h2 id="discrepencies-between-binsh-versions">Discrepencies between /bin/sh versions</h2>
+<p>On Ubuntu, <code>/bin/sh</code> is hard-linked to <code>/bin/dash</code>. On macOS, <code>/bin/sh</code> is
+hard-linked to <code>/bin/bash</code>. None of them are the original &ldquo;Bourne shell&rdquo;!</p>
+<p>On top of that, <code>make</code> always uses <code>/bin/sh</code>, which means there are
+discrepancies between Ubuntu and macOS:</p>
+<ul>
+<li>bash knows about <code>&lt;&lt;&lt;</code> (here-string), but dash doesn&rsquo;t</li>
+<li>bash knows about <code>&lt;()</code> (process substitution), but dash doesn&rsquo;t</li>
+<li>bash knows about <code>${a/b/c}</code> (glob variable content replace) but dash doesn&rsquo;t
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">  % bash -c <span class="s1">&#39;A=foo; echo ${A/foo/bar}&#39;</span>
+bar
+% dash -c <span class="s1">&#39;A=foo; echo ${A/foo/bar}&#39;</span>
+dash: 1: Bad substitution
+</code></pre></div></li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">
+**Workaround**: force `make` to use a well known shell, e.g. in your Makefile:
 
+```sh
+SHELL := /bin/bash
+</code></pre></div>
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/notes/shell.md">📝 Edit this page and propose a change!</a>
 <div class="tags">
