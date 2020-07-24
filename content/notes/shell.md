@@ -119,3 +119,30 @@ fi
 ## Parallelize xargs
 
     /usr/local/bin/code --list-extensions | xargs -L 1 -P 4 /usr/local/bin/code-insiders --install-extension
+
+
+## Discrepencies between /bin/sh versions
+
+On Ubuntu, `/bin/sh` is hard-linked to `/bin/dash`. On macOS, `/bin/sh` is
+hard-linked to `/bin/bash`. None of them are the original "Bourne shell"!
+
+On top of that, `make` always uses `/bin/sh`, which means there are
+discrepancies between Ubuntu and macOS:
+
+- bash knows about `<<<` (here-string), but dash doesn't
+- bash knows about `<()` (process substitution), but dash doesn't
+- bash knows about `${a/b/c}` (glob variable content replace) but dash doesn't
+  ```sh
+	% bash -c 'A=foo; echo ${A/foo/bar}'
+  bar
+  % dash -c 'A=foo; echo ${A/foo/bar}'
+  dash: 1: Bad substitution
+```
+
+**Workaround**: force `make` to use a well known shell, e.g. in your Makefile:
+
+```sh
+SHELL := /bin/bash
+```
+
+
