@@ -83,6 +83,11 @@
   </url>
   
   <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/dns/</loc>
+    <lastmod>2020-07-03T15:13:39+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://maelvls.dev/do-not-share-yet/tags/docker/</loc>
     <lastmod>2020-07-03T15:13:39+02:00</lastmod>
   </url>
@@ -93,7 +98,7 @@
   </url>
   
   <url>
-    <loc>https://maelvls.dev/do-not-share-yet/docker-proxy-registry-kind-macos/</loc>
+    <loc>https://maelvls.dev/do-not-share-yet/docker-proxy-registry-kind/</loc>
     <lastmod>2020-07-03T15:13:39+02:00</lastmod>
   </url>
   
