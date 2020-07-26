@@ -18,13 +18,35 @@ Diagram on macOS + Docker: https://textik.com/#b185c1a72a6e782d
   [Kind](https://kind.sigs.k8s.io/) cluster, run:
 
   ```sh
-  docker run -d --name registry --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io registry:2
+  docker run -d --name proxy --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io registry:2
   kind create cluster --config /dev/stdin <<EOF
   kind: Cluster
   apiVersion: kind.x-k8s.io/v1alpha4
   containerdConfigPatches:
     - |-
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+        endpoint = ["http://proxy:5000"]
+  EOF
+  ```
+
+- [you can't](https://docs.docker.com/registry/configuration/#proxy) use
+  this pull-through proxy registry to push your own images (e.g. to [speed
+  up Tilt builds](https://github.com/tilt-dev/kind-local)), but you can
+  create two registries (one for caching, the other for local images). See
+  [this section](#docker-proxy-vs-local-registry) for more context; the
+  lines are:
+
+  ```sh
+  docker run -d --name proxy --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io registry:2
+  docker run -d --name registry --restart=always -p 5000:5000 --net=kind registry:2
+  kind create cluster --config /dev/stdin <<EOF
+  kind: Cluster
+  apiVersion: kind.x-k8s.io/v1alpha4
+  containerdConfigPatches:
+    - |-
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+        endpoint = ["http://proxy:5000"]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
         endpoint = ["http://registry:5000"]
   EOF
   ```
@@ -40,7 +62,7 @@ Diagram on macOS + Docker: https://textik.com/#b185c1a72a6e782d
 - If you play with [ClusterAPI](https://cluster-api.sigs.k8s.io/) with its
   [Docker provider][docker-provider], you might not be able to use a local
   registry due to the clusters being created on the default network, which
-  means the "registry" hostname won't be resolved (but we could work around
+  means the "proxy" hostname won't be resolved (but we could work around
   that).
 
 [docker-provider]: https://github.com/kubernetes-sigs/cluster-api/tree/master/test/infrastructure/docker
@@ -55,9 +77,20 @@ One thing I hate about Kind is that images are not cached between two Kind
 containers. Even worse: when deleting and re-creating a cluster, all the
 downloaded images disappear.
 
-And since I install ClusterAPI on my Kind cluster, it means all the (quite
-heavy) images have to be re-downloaded every single time. Just take a look
-at all the images that get re-downloaded:
+In this post, I detail my discoveries around local registries and why the
+default Docker network is a trap.
+
+1. [The registry pain with Kind](#the-registry-pain-with-kind)
+2. [Docker proxy vs. local registry](#docker-proxy-vs-local-registry)
+3. [Improving the ClusterAPI docker provider to use a given network](#improving-the-clusterapi-docker-provider-to-use-a-given-network)
+
+---
+
+## The registry pain with Kind
+
+Whenever I re-create a Kind cluster and try to install ClusterAPI, all the
+(quite heavy) images have to be re-downloaded. Just take a look at all the
+images that get re-downloaded:
 
 ```sh
 # That's the cluster created using 'kind create cluster'
@@ -91,7 +124,7 @@ already been downloaded once can be served from cache. Let's spin up this
 registry:
 
 ```sh
-docker run -d --net=other --restart=always --name registry registry:2
+docker run -d --net=other --restart=always --name proxy registry:2
 ```
 
 Now, let's tell `kind` that we want the created node to be using this
@@ -103,8 +136,8 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
   - |-
-    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry"]
-      endpoint = ["http://registry:5000"]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."proxy"]
+      endpoint = ["http://proxy:5000"]
 EOF
 ```
 
@@ -113,7 +146,7 @@ on the default network (named [`bridge`][default-bridge]) but my cluster
 was created with a separate network (named `kind`):
 
 ```sh
-% docker inspect registry --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
+% docker inspect proxy --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
 bridge 172.17.0.2
 
 % docker inspect kind-control-plane --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
@@ -137,7 +170,7 @@ apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
   - |-
     [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry"]
-      endpoint = ["http://registry:5000"]
+      endpoint = ["http://proxy:5000"]
 EOF
 
 Creating cluster "kind" ...
@@ -156,7 +189,7 @@ Perfect! My local cluster is now on the same network as my tiny registry
 cache:
 
 ```sh
-% docker inspect registry --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
+% docker inspect proxy --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
 bridge 172.17.0.2
 
 % docker inspect kind-control-plane --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
@@ -167,7 +200,7 @@ But... it doesn't seem to work... The registry is still empty, no cached
 blobs:
 
 ```sh
-% docker exec -it registry ls /var/lib/registry
+% docker exec -it proxy ls /var/lib/registry
 # Nothing!
 ```
 
@@ -186,19 +219,19 @@ network due to the fact that the default "bridge" has limitations and
 
 Let's try to reproduce this issue. I first run a registry with the default
 network, and I then try to connect to it from a second container using the
-hostname `registry`:
+hostname `proxy`:
 
 ```sh
-% docker run -d --rm --name registry registry:2
-% docker run -it --rm alpine nslookup registry
+% docker run -d --rm --name proxy registry:2
+% docker run -it --rm alpine nslookup proxy
 Server:         127.0.0.11
 Address:        127.0.0.11:53
 Non-authoritative answer:
-Name:   registry
+Name:   proxy
 Address: 172.18.0.7
 
 # Let's cleanup:
-% docker kill registry
+% docker kill proxy
 ```
 
 Now, let's do the same but a custom network named "other" instead of the
@@ -206,16 +239,16 @@ default network:
 
 ```sh
 % docker network create other
-% docker run -d --rm --net=other --name registry registry:2
-% docker run -it --rm --net=other alpine nslookup registry
+% docker run -d --rm --net=other --name proxy registry:2
+% docker run -it --rm --net=other alpine nslookup proxy
 Server:         127.0.0.11
 Address:        127.0.0.11:53
 Non-authoritative answer:
-Name:   registry
+Name:   proxy
 Address: 172.18.0.7
 
 # Let's cleanup:
-% docker kill registry
+% docker kill proxy
 ```
 
 I thought I could first start the container on the default network and then
@@ -223,17 +256,17 @@ move the containers to the "other" network (so that DNS with container
 names works) but it does not seem to work either:
 
 ```sh
-% docker run -d --rm --name registry registry:2
+% docker run -d --rm --name proxy registry:2
 % docker run -d --rm --name alpine alpine sleep 1d
 
 % docker network create other
-% docker network disconnect bridge registry
+% docker network disconnect bridge proxy
 % docker network disconnect bridge alpine
-% docker network connect other registry
+% docker network connect other proxy
 % docker network connect other alpine
 
-# Now, let's see if 'alpine' can resolve 'registry':
-% docker exec -it alpine nslookup registry
+# Now, let's see if 'alpine' can resolve 'proxy':
+% docker exec -it alpine nslookup proxy
 ```
 
 I also tried to understand the difference between containers with the
@@ -283,21 +316,21 @@ cluster without the `KIND_EXPERIMENTAL_DOCKER_NETWORK=bridge` option:
 
 ```sh
 docker network create kind
-docker run -d --name registry --restart=always --net=kind registry:2
+docker run -d --name proxy --restart=always --net=kind registry:2
 kind create cluster --config /dev/stdin <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
   - |-
-    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry"]
-      endpoint = ["http://registry:5000"]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."proxy"]
+      endpoint = ["http://proxy:5000"]
 EOF
 ```
 
 Both are now on the same subnet:
 
 ```sh
-% docker inspect registry --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
+% docker inspect proxy --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
 kind 172.18.0.2
 
 % docker inspect kind-control-plane --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
@@ -309,10 +342,10 @@ registry logs, we see no activity at all. Let's see what `containerd` is up
 to:
 
 ```log
-% docker exec -i kind-control-plane journalctl -u containerd | grep 'registry:5000'
+% docker exec -i kind-control-plane journalctl -u containerd | grep 'proxy:5000'
 containerd[129]: Start cri plugin with config {Registry:{Mirrors:map[
   docker.io: {Endpoints:[https://registry-1.docker.io]}
-  registry:  {Endpoints:[http://registry:5000]}
+  proxy:  {Endpoints:[http://proxy:5000]}
 ]}}
 ```
 
@@ -325,14 +358,14 @@ the `docker.io` key:
 
 ```sh
 docker rm -f registry
-docker run -d --name registry --restart=always --net=kind registry:2
+docker run -d --name proxy --restart=always --net=kind registry:2
 kind create cluster --config /dev/stdin <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
   - |-
     [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-      endpoint = ["http://registry:5000"]
+      endpoint = ["http://proxy:5000"]
 EOF
 ```
 
@@ -353,15 +386,17 @@ version = 2
           runtime_type = "io.containerd.runc.v2"
     [plugins."io.containerd.grpc.v1.cri".registry]
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-registry"]
-          endpoint = ["http://registry:5000"]
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+          endpoint = ["https://registry-1.docker.io"]
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."proxy"]
+          endpoint = ["http://proxy:5000"]
 ```
 
 We can see the registry serving images by creating a deployment:
 
 ```sh
 % kubectl create deployment test --image alpine
-% docker logs registry | tail
+% docker logs proxy | tail
 172.18.0.3 - - [03/Jul/2020:12:18:21 +0000] "HEAD /v2/library/alpine/manifests/latest HTTP/1.1" 404 96 "" "containerd/v1.3.3-14-g449e9269"
 172.18.0.3 - - [03/Jul/2020:12:18:50 +0000] "HEAD /v2/library/alpine/manifests/latest HTTP/1.1" 404 96 "" "containerd/v1.3.3-14-g449e9269"
 172.18.0.3 - - [03/Jul/2020:12:19:40 +0000] "HEAD /v2/library/alpine/manifests/latest HTTP/1.1" 404 96 "" "containerd/v1.3.3-14-g449e9269"
@@ -373,16 +408,16 @@ feature](https://docs.docker.com/registry/configuration/#proxy) which turns
 the registry into an "image proxy":
 
 ```sh
-docker rm -f registry
-docker run -d --name registry --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io registry:2
+docker rm -f proxy
+docker run -d --name proxy --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io registry:2
 ```
 
 And... It works!!
 
 ```sh
-% docker logs registry | tail
+% docker logs proxy | tail
 172.18.0.3 - - [03/Jul/2020:12:51:24 +0000] "HEAD /v2/library/alpine/manifests/latest HTTP/1.1" 200 1638 "" "containerd/v1.3.3-14-g449e9269"
-time="2020-07-03T12:51:38.728711481Z" level=info msg="response completed" go.version=go1.11.2 http.request.host="registry:5000" http.request.id=89341304-f38b-4ce3-9364-429709311783 http.request.method=HEAD http.request.remoteaddr="172.18.0.3:54188" http.request.uri="/v2/library/alpine/manifests/latest" http.request.useragent="containerd/v1.3.3-14-g449e9269" http.response.contenttype="application/vnd.docker.distribution.manifest.list.v2+json" http.response.duration=271.043848ms http.response.status=200 http.response.written=1638
+time="2020-07-03T12:51:38.728711481Z" level=info msg="response completed" go.version=go1.11.2 http.request.host="proxy:5000" http.request.id=89341304-f38b-4ce3-9364-429709311783 http.request.method=HEAD http.request.remoteaddr="172.18.0.3:54188" http.request.uri="/v2/library/alpine/manifests/latest" http.request.useragent="containerd/v1.3.3-14-g449e9269" http.response.contenttype="application/vnd.docker.distribution.manifest.list.v2+json" http.response.duration=271.043848ms http.response.status=200 http.response.written=1638
 172.18.0.3 - - [03/Jul/2020:12:51:38 +0000] "HEAD /v2/library/alpine/manifests/latest HTTP/1.1" 200 1638 "" "containerd/v1.3.3-14-g449e9269"
 ```
 
@@ -401,6 +436,63 @@ time="2020-07-03T12:51:38.728711481Z" level=info msg="response completed" go.ver
 > ```sh
 > REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io
 > ```
+
+## Docker proxy vs. local registry
+
+A bit later, I discovered that [you
+can't](https://docs.docker.com/registry/configuration/#proxy) push to a
+proxy registry. [Tilt](https://tilt.dev/) is a tool I use to ease the
+process of developping in a containerized environment (and it works best
+with Kubernetes); it [relies on a local
+registry](https://github.com/tilt-dev/kind-local) in order to cache build
+containers even when restarting the Kind cluster.
+
+Either the registry is used as a "local registry" (where you can push
+images), or it is used as a pull-through proxy. So instead of configuring
+one single "proxy" registry, I configure two registries: one for local
+images, one for caching.
+
+```sh
+docker run -d --name proxy --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io registry:2
+docker run -d --name registry --restart=always -p 5000:5000 --net=kind registry:2
+kind create cluster --config /dev/stdin <<EOF
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+containerdConfigPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+      endpoint = ["http://proxy:5000"]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
+      endpoint = ["http://registry:5000"]
+EOF
+```
+
+Note that we do use a port-forwarding proxy (`-p 5000:5000`) so that we can
+push images "from the host", e.g.:
+
+```sh
+% docker tag alpine localhost:5000/alpine
+% docker push localhost:5000/alpine
+The push refers to repository [localhost:5000/alpine]
+50644c29ef5a: Pushed
+latest: digest: sha256:a15790640a6690aa1730c38cf0a440e2aa44aaca9b0e8931a9f2b0d7cc90fd65 size: 528
+```
+
+If you use Tilt, you might also want to tell Tilt that it can use the local
+registry. I find it a bit weird to have to set an annotation (hidden Tilt
+API?) but whatever. If you set this:
+
+```sh
+kind get nodes | xargs -L1 -I% kubectl annotate node % tilt.dev/registry=localhost:5000 --overwrite
+kind get nodes | xargs -L1 -I% kubectl annotate node % tilt.dev/registry-from-cluster=registry:5000 --overwrite
+```
+
+then Tilt [will use](legacy-annotation-based-registry-discovery) `docker
+push localhost:5000/you-image` (from your host, not from the cluster
+container) in order to speed up things. Note that there is a proposal ([KEP
+1755](https://github.com/kubernetes/enhancements/tree/master/keps/sig-cluster-lifecycle/generic/1755-communicating-a-local-registry))
+that aims at standardizing the discovery of local registries using a
+configmap. Tilt already supports it, so you may use it!
 
 ## Improving the ClusterAPI docker provider to use a given network
 
