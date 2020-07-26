@@ -80,14 +80,14 @@ downloaded images disappear.
 In this post, I detail my discoveries around local registries and why the
 default Docker network is a trap.
 
-1. [The registry pain with Kind](#the-registry-pain-with-kind)
-2. [The mysteries of the Docker default network](#the-mysteries-of-the-docker-default-network)
+1. [Kind has no image caching mechanism](#kind-has-no-image-caching-mechanism)
+2. [The DNS mysteries of the Docker default network (`bridge`)](#the-dns-mysteries-of-the-docker-default-network-bridge)
 3. [Docker proxy vs. local registry](#docker-proxy-vs-local-registry)
 4. [Improving the ClusterAPI docker provider to use a given network](#improving-the-clusterapi-docker-provider-to-use-a-given-network)
 
 ---
 
-## The registry pain with Kind
+## Kind has no image caching mechanism
 
 Whenever I re-create a Kind cluster and try to install ClusterAPI, all the
 (quite heavy) images have to be re-downloaded. Just take a look at all the
@@ -118,32 +118,136 @@ docker.io/metallb/speaker             v0.9.3              f241be9dae666       19
 That's a total of 418 MB that get re-downloaded every time I restart both
 clusters!
 
-One solution to this problem is to [spin up an intermediary Docker
-registry](https://kind.sigs.k8s.io/docs/user/local-registry/) in a side
-container; as long as this container exists, all the images that have
+Unfortunately, there is no way to re-use the image registry built into
+Docker for Mac. One solution to this problem is to [spin up an intermediary
+Docker registry](https://kind.sigs.k8s.io/docs/user/local-registry/) in a
+side container; as long as this container exists, all the images that have
 already been downloaded once can be served from cache.
 
-## The mysteries of the Docker default network
+## The DNS mysteries of the Docker default network (`bridge`)
 
-Let's see if we can do that by just creating a simple proxy registry with a
-simple Kind cluster in which we tell it that any image starting with
-`proxy/` will have to hit `http://proxy:5000`:
+We want to create a registry with a simple Kind cluster; let's start with
+the registry:
 
 ```sh
-docker run -d --restart=always --name proxy registry:2
+docker run -d --name proxy --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io registry:2
+```
+
+Details:
+
+- `--net kind` is required because Kind creates its containers in a
+  separate network; it does that the because the "bridge" has
+  [limitations][default-bridge] and [doesn't allow you][dns-services] to
+  use container names as DNS names:
+
+  > By default, a container inherits the DNS settings of the host, as
+  > defined in the `/etc/resolv.conf` configuration file. Containers that
+  > use the default bridge network get a copy of this file, whereas
+  > containers that use a custom network use Docker’s embedded DNS server,
+  > which forwards external DNS lookups to the DNS servers configured on
+  > the host.
+
+  which means that the container runtime (containerd) that runs our Kind
+  cluster won't be able to resove the address `proxy:5000`.
+
+- `REGISTRY_PROXY_REMOTEURL` is required due to the fact that by default,
+  the registry won't forward requests. It simply tries to find the image in
+  `/var/lib/registry/docker/registry/v2/repositories` and returns 404 if it
+  doesn't find it.
+
+  > Using the
+  > [pull-through](https://docs.docker.com/registry/configuration/#proxy)
+  > feature (I call it "caching proxy"), the registry will proxy all
+  > requests coming from all mirror prefixes and cache the blobs and
+  > manifests locally. To enable this feature, we set
+  > `REGISTRY_PROXY_REMOTEURL`.
+  >
+  > Other interesting bit about `REGISTRY_PROXY_REMOTEURL`: this
+  > environement variable name is mapped from [the registry YAML config
+  > API](https://docs.docker.com/registry/configuration/#proxy). The
+  > variable
+  >
+  > ```sh
+  > REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io
+  > ```
+  >
+  > is equivalent to the following YAML config:
+  >
+  > ```yaml
+  > proxy:
+  >   remoteurl: https://registry-1.docker.io
+  > ```
+
+  ⚠️ The registry can't be both in normal mode ("local proxy") and in
+  caching proxy mode at the same time, see
+  [below](#docker-proxy-vs-local-registry).
+
+[default-bridge]: https://docs.docker.com/network/bridge/#use-the-default-bridge-network
+[dns-services]: https://docs.docker.com/config/containers/container-networking/#dns-services
+
+The second step is to create a Kind cluster and tell the container runtime
+to use a specific registry; here is the command to create it:
+
+```sh
 kind create cluster --config /dev/stdin <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
   - |-
-    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."proxy"]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
       endpoint = ["http://proxy:5000"]
 EOF
 ```
 
-And... it doesn't work! The first thing to notice is that the registry runs
-on the default network (named [`bridge`][default-bridge]) but my cluster
-was created with a separate network (named `kind`):
+Details:
+
+- `containerdConfigPatches` is a way to semantically patch
+  `/etc/containerd/config.conf`. By default, this file looks like:
+
+  ```sh
+  % docker exec -it kind-control-plane cat /etc/containerd/config.toml
+  [plugins]
+    [plugins."io.containerd.grpc.v1.cri"]
+      [plugins."io.containerd.grpc.v1.cri".registry]
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+          [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+            endpoint = ["https://registry-1.docker.io"]
+  ```
+
+  For information, the mirror prefix (`docker.io`) can be omitted for
+  images stored on Docker Hub. For other registries such as `gcr.io`, this
+  mirror prefix has to be given. Here is a table with some examples of
+  image names that are first prepended with "docker.io" if the mirror
+  prefix is not present, and we get the final address by mapping these
+  mirror prefixes with mirror entries:
+
+  | image name                  | "actual" image name         | registry address w.r.t. mirrors        |
+  | --------------------------- | --------------------------- | -------------------------------------- |
+  | alpine                      | docker.io/alpine            | https://registry-1.docker.io/v2/alpine |
+  | gcr.io/istio-release/galley | gcr.io/istio-release/galley | https://gcr.io/v2/istio-release/galley |
+  | something/someimage         | something/someimage         | https://something/v2/someimage         |
+
+Let's see if the proxy registry works by running a pod:
+
+```sh
+% kubectl run foo -it --rm --image=nicolaka/netshoot
+% docker exec -it proxy ls /var/lib/registry/docker/registry/v2/repositories
+nicolaka
+```
+
+We can also see through the registry logs that everything is going well:
+
+```log
+# docker logs proxy | tail
+time="2020-07-26T14:52:44.2624761Z" level=info msg="Challenge established with upstream : {https   registry-1.docker.io /v2/  %!s(bool=false)  } &{{{%!s(int32=0) %!s(uint32=0)} %!s(uint32=0) %!s(uint32=0) %!s(int32=0) %!s(int32=0)} map[https://registry-1.docker.io:443/v2/:[{bearer map[realm:https://auth.docker.io/token service:registry.docker.io]}]]}" go.version=go1.11.2 http.request.host="proxy:5000" http.request.id=15e9ac86-7d79-4883-a8ce-861a7484887c http.request.method=HEAD http.request.remoteaddr="172.18.0.2:57588" http.request.uri="/v2/nicolaka/netshoot/manifests/latest" http.request.useragent="containerd/v1.4.0-beta.1-34-g49b0743c" vars.name="nicolaka/netshoot" vars.reference=latest
+time="2020-07-26T14:52:45.4195817Z" level=info msg="Adding new scheduler entry for nicolaka/netshoot@sha256:04786602e5a9463f40da65aea06fe5a825425c7df53b307daa21f828cfe40bf8 with ttl=167h59m59.9999793s" go.version=go1.11.2 instance.id=ba959eb9-2fa3-47c0-beb7-91480c8a31ee service=registry version=v2.7.1
+172.18.0.2 - - [26/Jul/2020:14:52:43 +0000] "HEAD /v2/nicolaka/netshoot/manifests/latest HTTP/1.1" 200 1999 "" "containerd/v1.4.0-beta.1-34-g49b0743c"
+time="2020-07-26T14:52:45.4204299Z" level=info msg="response completed" go.version=go1.11.2 http.request.host="proxy:5000" http.request.id=15e9ac86-7d79-4883-a8ce-861a7484887c http.request.method=HEAD http.request.remoteaddr="172.18.0.2:57588" http.request.uri="/v2/nicolaka/netshoot/manifests/latest" http.request.useragent="containerd/v1.4.0-beta.1-34-g49b0743c" http.response.contenttype="application/vnd.docker.distribution.manifest.v2+json" http.response.duration=1.6697112s http.response.status=200 http.response.written=1999
+```
+
+<!--
+
+## Why "proxy" wasn't resolved inside containers
 
 ```sh
 % docker inspect proxy --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
@@ -158,64 +262,6 @@ a6ceea984c68        bridge              bridge              local
 6f6a9618d746        host                host                local
 4927dc2eba9b        kind                bridge              local
 ```
-
-My first attempt was to move the kind cluster to the default network (why
-does it use another network anyway??) and kind has an experimental option
-for that:
-
-```sh
-% KIND_EXPERIMENTAL_DOCKER_NETWORK=bridge kind create cluster --config /dev/stdin <<EOF
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-containerdConfigPatches:
-  - |-
-    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."proxy"]
-      endpoint = ["http://proxy:5000"]
-EOF
-
-Creating cluster "kind" ...
-WARNING: Overriding docker network due to KIND_EXPERIMENTAL_DOCKER_NETWORK
-WARNING: Here be dragons! This is not supported currently.
- ✓ Ensuring node image (kindest/node:v1.18.2) 🖼
- ✓ Preparing nodes 📦
- ✓ Writing configuration 📜
- ✓ Starting control-plane 🕹️
- ✓ Installing CNI 🔌
- ✓ Installing StorageClass 💾
-Set kubectl context to "kind-kind"
-```
-
-Perfect! My local cluster is now on the same network as my tiny registry
-cache:
-
-```sh
-% docker inspect proxy --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
-bridge 172.17.0.2
-
-% docker inspect kind-control-plane --format '{{range $net, $cfg := .NetworkSettings.Networks}}{{$net}} {{$cfg.IPAddress}}{{end}}'
-bridge 172.17.0.6
-```
-
-But... it doesn't seem to work... The registry is still empty, no cached
-blobs:
-
-```sh
-% docker exec -it proxy ls /var/lib/registry
-# Nothing!
-```
-
-After digging a bit more, I realized that Kind had chosen to create it own
-network due to the fact that the default "bridge" has limitations and
-[doesn't allow you][dns-services] to use container names as DNS names:
-
-> By default, a container inherits the DNS settings of the host, as defined
-> in the `/etc/resolv.conf` configuration file. Containers that use the
-> default bridge network get a copy of this file, whereas containers that
-> use a custom network use Docker’s embedded DNS server, which forwards
-> external DNS lookups to the DNS servers configured on the host.
-
-[default-bridge]: https://docs.docker.com/network/bridge/#use-the-default-bridge-network
-[dns-services]: https://docs.docker.com/config/containers/container-networking/#dns-services
 
 Let's try to reproduce this issue. I first run a registry with the default
 network, and I then try to connect to it from a second container using the
@@ -392,50 +438,7 @@ version = 2
           endpoint = ["http://proxy:5000"]
 ```
 
-We can see the registry serving images by creating a deployment:
-
-```sh
-% kubectl create deployment test --image alpine
-% docker logs proxy | tail
-172.18.0.3 - - [03/Jul/2020:12:18:21 +0000] "HEAD /v2/library/alpine/manifests/latest HTTP/1.1" 404 96 "" "containerd/v1.3.3-14-g449e9269"
-172.18.0.3 - - [03/Jul/2020:12:18:50 +0000] "HEAD /v2/library/alpine/manifests/latest HTTP/1.1" 404 96 "" "containerd/v1.3.3-14-g449e9269"
-172.18.0.3 - - [03/Jul/2020:12:19:40 +0000] "HEAD /v2/library/alpine/manifests/latest HTTP/1.1" 404 96 "" "containerd/v1.3.3-14-g449e9269"
-```
-
-Nope, not yet... All the GET requests are answered with a `404 Not Found`.
-It's probably because I forgot to enable [the pull-through
-feature](https://docs.docker.com/registry/configuration/#proxy) which turns
-the registry into an "image proxy":
-
-```sh
-docker rm -f proxy
-docker run -d --name proxy --restart=always --net=kind -e REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io registry:2
-```
-
-And... It works!!
-
-```sh
-% docker logs proxy | tail
-172.18.0.3 - - [03/Jul/2020:12:51:24 +0000] "HEAD /v2/library/alpine/manifests/latest HTTP/1.1" 200 1638 "" "containerd/v1.3.3-14-g449e9269"
-time="2020-07-03T12:51:38.728711481Z" level=info msg="response completed" go.version=go1.11.2 http.request.host="proxy:5000" http.request.id=89341304-f38b-4ce3-9364-429709311783 http.request.method=HEAD http.request.remoteaddr="172.18.0.3:54188" http.request.uri="/v2/library/alpine/manifests/latest" http.request.useragent="containerd/v1.3.3-14-g449e9269" http.response.contenttype="application/vnd.docker.distribution.manifest.list.v2+json" http.response.duration=271.043848ms http.response.status=200 http.response.written=1638
-172.18.0.3 - - [03/Jul/2020:12:51:38 +0000] "HEAD /v2/library/alpine/manifests/latest HTTP/1.1" 200 1638 "" "containerd/v1.3.3-14-g449e9269"
-```
-
-> Note: the [Docker
-> docs](https://docs.docker.com/registry/configuration/#proxy) indicates
-> YAML fields; to pass the same configuration as env variables, you can use
-> `REGISTRY_` and then the path to the field you want. For example,
->
-> ```yaml
-> proxy:
->   remoteurl: https://registry-1.docker.io
-> ```
->
-> becomes
->
-> ```sh
-> REGISTRY_PROXY_REMOTEURL=https://registry-1.docker.io
-> ```
+-->
 
 ## Docker proxy vs. local registry
 
@@ -534,4 +537,4 @@ spec:
 ```
 
 **Update 26 July 2020**: added a section about local registry vs. caching
-proxy.
+proxy. Reworked the whole post (less noise, more useful information).
