@@ -40,7 +40,7 @@ spin up local Kubernetes clusters locally in seconds. It is perfect for
 Kubernetes developers or anyone who wants to play with controllers.</p><p>One thing I hate about Kind is that images are not cached between two Kind
 containers. Even worse: when deleting and re-creating a cluster, all the
 downloaded images disappear.</p><p>In this post, I detail my discoveries around local registries and why the
-default Docker network is a trap.</p><ol><li><a href=#the-registry-pain-with-kind>The registry pain with Kind</a></li><li><a href=#docker-proxy-vs-local-registry>Docker proxy vs. local registry</a></li><li><a href=#improving-the-clusterapi-docker-provider-to-use-a-given-network>Improving the ClusterAPI docker provider to use a given network</a></li></ol><hr><h2 id=the-registry-pain-with-kind>The registry pain with Kind</h2><p>Whenever I re-create a Kind cluster and try to install ClusterAPI, all the
+default Docker network is a trap.</p><ol><li><a href=#the-registry-pain-with-kind>The registry pain with Kind</a></li><li><a href=#the-mysteries-of-the-docker-default-network>The mysteries of the Docker default network</a></li><li><a href=#docker-proxy-vs-local-registry>Docker proxy vs. local registry</a></li><li><a href=#improving-the-clusterapi-docker-provider-to-use-a-given-network>Improving the ClusterAPI docker provider to use a given network</a></li></ol><hr><h2 id=the-registry-pain-with-kind>The registry pain with Kind</h2><p>Whenever I re-create a Kind cluster and try to install ClusterAPI, all the
 (quite heavy) images have to be re-downloaded. Just take a look at all the
 images that get re-downloaded:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh><span class=c1># That&#39;s the cluster created using &#39;kind create cluster&#39;</span>
 % docker <span class=nb>exec</span> -it kind-control-plane crictl images
@@ -65,10 +65,10 @@ docker.io/metallb/speaker             v0.9.3              f241be9dae666       19
 clusters!</p><p>One solution to this problem is to <a href=https://kind.sigs.k8s.io/docs/user/local-registry/>spin up an intermediary Docker
 registry</a> in a side
 container; as long as this container exists, all the images that have
-already been downloaded once can be served from cache. Let&rsquo;s spin up this
-registry:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>docker run -d --net<span class=o>=</span>other --restart<span class=o>=</span>always --name proxy registry:2
-</code></pre></div><p>Now, let&rsquo;s tell <code>kind</code> that we want the created node to be using this
-cache:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>kind create cluster --config /dev/stdin <span class=s>&lt;&lt;EOF
+already been downloaded once can be served from cache.</p><h2 id=the-mysteries-of-the-docker-default-network>The mysteries of the Docker default network</h2><p>Let&rsquo;s see if we can do that by just creating a simple proxy registry with a
+simple Kind cluster in which we tell it that any image starting with
+<code>proxy/</code> will have to hit <code>http://proxy:5000</code>:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>docker run -d --restart<span class=o>=</span>always --name proxy registry:2
+kind create cluster --config /dev/stdin <span class=s>&lt;&lt;EOF
 </span><span class=s>kind: Cluster
 </span><span class=s>apiVersion: kind.x-k8s.io/v1alpha4
 </span><span class=s>containerdConfigPatches:
@@ -96,7 +96,7 @@ for that:</p><div class=highlight><pre class=chroma><code class=language-sh data
 </span><span class=s>apiVersion: kind.x-k8s.io/v1alpha4
 </span><span class=s>containerdConfigPatches:
 </span><span class=s>  - |-
-</span><span class=s>    [plugins.&#34;io.containerd.grpc.v1.cri&#34;.registry.mirrors.&#34;registry&#34;]
+</span><span class=s>    [plugins.&#34;io.containerd.grpc.v1.cri&#34;.registry.mirrors.&#34;proxy&#34;]
 </span><span class=s>      endpoint = [&#34;http://proxy:5000&#34;]
 </span><span class=s>EOF</span>
 
@@ -296,10 +296,13 @@ push images &ldquo;from the host&rdquo;, e.g.:</p><div class=highlight><pre clas
 The push refers to repository <span class=o>[</span>localhost:5000/alpine<span class=o>]</span>
 50644c29ef5a: Pushed
 latest: digest: sha256:a15790640a6690aa1730c38cf0a440e2aa44aaca9b0e8931a9f2b0d7cc90fd65 size: <span class=m>528</span>
+
+<span class=c1># Let&#39;s see if this image is also available from the cluster:</span>
+% docker <span class=nb>exec</span> -it kind-control-plane crictl pull localhost:5000/alpine
+Image is up to date <span class=k>for</span> sha256:a24bb4013296f61e89ba57005a7b3e52274d8edd3ae2077d04395f806b63d83e
 </code></pre></div><p>If you use Tilt, you might also want to tell Tilt that it can use the local
 registry. I find it a bit weird to have to set an annotation (hidden Tilt
 API?) but whatever. If you set this:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>kind get nodes <span class=p>|</span> xargs -L1 -I% kubectl annotate node % tilt.dev/registry<span class=o>=</span>localhost:5000 --overwrite
-kind get nodes <span class=p>|</span> xargs -L1 -I% kubectl annotate node % tilt.dev/registry-from-cluster<span class=o>=</span>registry:5000 --overwrite
 </code></pre></div><p>then Tilt <a href=legacy-annotation-based-registry-discovery>will use</a> <code>docker push localhost:5000/you-image</code> (from your host, not from the cluster
 container) in order to speed up things. Note that there is a proposal (<a href=https://github.com/kubernetes/enhancements/tree/master/keps/sig-cluster-lifecycle/generic/1755-communicating-a-local-registry>KEP
 1755</a>)
@@ -329,7 +332,8 @@ the network name as part of a
 </span><span class=w>          </span><span class=k>hostPath</span><span class=p>:</span><span class=w> </span>/var/run/docker.sock<span class=w>
 </span><span class=w>
 </span><span class=w>      </span><span class=k>network</span><span class=p>:</span><span class=w> </span>kind<span class=w>        </span><span class=c># 🔰 This field does not exist yet.</span><span class=w>
-</span></code></pre></div></div><a href=https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/docker-proxy-registry-kind-macos/index.md>📝 Edit this page and propose a change!</a><div class=tags><div style=float:right><p>Tags:
+</span></code></pre></div><p><strong>Update 26 July 2020</strong>: added a section about local registry vs. caching
+proxy.</p></div><a href=https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/docker-proxy-registry-kind-macos/index.md>📝 Edit this page and propose a change!</a><div class=tags><div style=float:right><p>Tags:
 <a href=/tags/docker/>docker</a>
 <a href=/tags/kind/>kind</a>
 <a href=/tags/kubernetes/>kubernetes</a>
