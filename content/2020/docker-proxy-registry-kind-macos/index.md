@@ -81,8 +81,9 @@ In this post, I detail my discoveries around local registries and why the
 default Docker network is a trap.
 
 1. [The registry pain with Kind](#the-registry-pain-with-kind)
-2. [Docker proxy vs. local registry](#docker-proxy-vs-local-registry)
-3. [Improving the ClusterAPI docker provider to use a given network](#improving-the-clusterapi-docker-provider-to-use-a-given-network)
+2. [The mysteries of the Docker default network](#the-mysteries-of-the-docker-default-network)
+3. [Docker proxy vs. local registry](#docker-proxy-vs-local-registry)
+4. [Improving the ClusterAPI docker provider to use a given network](#improving-the-clusterapi-docker-provider-to-use-a-given-network)
 
 ---
 
@@ -120,17 +121,16 @@ clusters!
 One solution to this problem is to [spin up an intermediary Docker
 registry](https://kind.sigs.k8s.io/docs/user/local-registry/) in a side
 container; as long as this container exists, all the images that have
-already been downloaded once can be served from cache. Let's spin up this
-registry:
+already been downloaded once can be served from cache.
+
+## The mysteries of the Docker default network
+
+Let's see if we can do that by just creating a simple proxy registry with a
+simple Kind cluster in which we tell it that any image starting with
+`proxy/` will have to hit `http://proxy:5000`:
 
 ```sh
-docker run -d --net=other --restart=always --name proxy registry:2
-```
-
-Now, let's tell `kind` that we want the created node to be using this
-cache:
-
-```sh
+docker run -d --restart=always --name proxy registry:2
 kind create cluster --config /dev/stdin <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
@@ -169,7 +169,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
   - |-
-    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry"]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."proxy"]
       endpoint = ["http://proxy:5000"]
 EOF
 
@@ -476,6 +476,10 @@ push images "from the host", e.g.:
 The push refers to repository [localhost:5000/alpine]
 50644c29ef5a: Pushed
 latest: digest: sha256:a15790640a6690aa1730c38cf0a440e2aa44aaca9b0e8931a9f2b0d7cc90fd65 size: 528
+
+# Let's see if this image is also available from the cluster:
+% docker exec -it kind-control-plane crictl pull localhost:5000/alpine
+Image is up to date for sha256:a24bb4013296f61e89ba57005a7b3e52274d8edd3ae2077d04395f806b63d83e
 ```
 
 If you use Tilt, you might also want to tell Tilt that it can use the local
@@ -484,7 +488,6 @@ API?) but whatever. If you set this:
 
 ```sh
 kind get nodes | xargs -L1 -I% kubectl annotate node % tilt.dev/registry=localhost:5000 --overwrite
-kind get nodes | xargs -L1 -I% kubectl annotate node % tilt.dev/registry-from-cluster=registry:5000 --overwrite
 ```
 
 then Tilt [will use](legacy-annotation-based-registry-discovery) `docker
@@ -529,3 +532,6 @@ spec:
 
       network: kind        # 🔰 This field does not exist yet.
 ```
+
+**Update 26 July 2020**: added a section about local registry vs. caching
+proxy.
