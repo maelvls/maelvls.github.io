@@ -2,9 +2,10 @@
 title: Pull-through Docker registry on Kind clusters on macOS
 description: "Kind offers an excellent UX to Kubernetes developers but lacks support for caching images; each time you recreate a new cluster, all the previous downloaded images are gone. In this post, I explain why the default Docker network is a trap and how to set up a registry & make sure that it actually works."
 date: 2020-07-03T15:13:39+02:00
-url: /docker-proxy-registry-kind-macos
-images: [docker-proxy-registry-kind-macos/cover-docker-proxy-registry-kind-macos.png]
-tags: [kubernetes, kind, docker, networking]
+url: /docker-proxy-registry-kind
+aliases: [/docker-proxy-registry-kind-macos]
+images: [docker-proxy-registry-kind/cover-docker-proxy-registry-kind.png]
+tags: [kubernetes, kind, docker, networking, dns]
 author: Maël Valais
 ---
 
@@ -81,9 +82,11 @@ In this post, I detail my discoveries around local registries and why the
 default Docker network is a trap.
 
 1. [Kind has no image caching mechanism](#kind-has-no-image-caching-mechanism)
-2. [The DNS mysteries of the Docker default network (`bridge`)](#the-dns-mysteries-of-the-docker-default-network-bridge)
-3. [Docker proxy vs. local registry](#docker-proxy-vs-local-registry)
-4. [Improving the ClusterAPI docker provider to use a given network](#improving-the-clusterapi-docker-provider-to-use-a-given-network)
+2. [Creating a caching proxy registry](#creating-a-caching-proxy-registry)
+3. [Creating a Kind cluster that knows about this caching proxy registry](#creating-a-kind-cluster-that-knows-about-this-caching-proxy-registry)
+4. [Check that the caching proxy registry works](#check-that-the-caching-proxy-registry-works)
+5. [Docker proxy vs. local registry](#docker-proxy-vs-local-registry)
+6. [Improving the ClusterAPI docker provider to use a given network](#improving-the-clusterapi-docker-provider-to-use-a-given-network)
 
 ---
 
@@ -118,13 +121,14 @@ docker.io/metallb/speaker             v0.9.3              f241be9dae666       19
 That's a total of 418 MB that get re-downloaded every time I restart both
 clusters!
 
-Unfortunately, there is no way to re-use the image registry built into
-Docker for Mac. One solution to this problem is to [spin up an intermediary
-Docker registry](https://kind.sigs.k8s.io/docs/user/local-registry/) in a
-side container; as long as this container exists, all the images that have
+Unfortunately, there is no way to re-use the image registry built into your
+default Docker engine (both on Linux and on macOS). One solution to this
+problem is to [spin up an intermediary Docker
+registry](https://kind.sigs.k8s.io/docs/user/local-registry/) in a side
+container; as long as this container exists, all the images that have
 already been downloaded once can be served from cache.
 
-## The DNS mysteries of the Docker default network (`bridge`)
+## Creating a caching proxy registry
 
 We want to create a registry with a simple Kind cluster; let's start with
 the registry:
@@ -185,6 +189,8 @@ Details:
 [default-bridge]: https://docs.docker.com/network/bridge/#use-the-default-bridge-network
 [dns-services]: https://docs.docker.com/config/containers/container-networking/#dns-services
 
+## Creating a Kind cluster that knows about this caching proxy registry
+
 The second step is to create a Kind cluster and tell the container runtime
 to use a specific registry; here is the command to create it:
 
@@ -226,6 +232,8 @@ Details:
   | alpine                      | docker.io/alpine            | https://registry-1.docker.io/v2/alpine |
   | gcr.io/istio-release/galley | gcr.io/istio-release/galley | https://gcr.io/v2/istio-release/galley |
   | something/someimage         | something/someimage         | https://something/v2/someimage         |
+
+## Check that the caching proxy registry works
 
 Let's see if the proxy registry works by running a pod:
 
