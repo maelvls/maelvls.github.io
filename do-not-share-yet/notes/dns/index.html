@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.64.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="author" content="Maël Valais"><meta name="keywords" content="networking"><meta name="description" content=""><meta property="og:title" content="It&#39;s always the DNS&#39; fault" />
+<meta property="og:description" content="Terms A domain name (or just &ldquo;domain&rdquo;) is a string the form bar.foo.com.. Not all domains refer to physical machines; for example, one of my domains, k.maelvls.dev., do not point to any physical machine.
+We often represent the domain name space using a tree. Each node is a domain. Leaves and nodes may have A records. Here is a simple example of the domain space represented as a tree:
+. ├── com." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/dns/" />
+<meta property="og:image" content="https://maelvls.dev/img/mael.jpg"/>
+<meta property="article:published_time" content="2020-07-25T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-07-25T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://maelvls.dev/img/mael.jpg"/>
+
+<meta name="twitter:title" content="It&#39;s always the DNS&#39; fault"/>
+<meta name="twitter:description" content="Terms A domain name (or just &ldquo;domain&rdquo;) is a string the form bar.foo.com.. Not all domains refer to physical machines; for example, one of my domains, k.maelvls.dev., do not point to any physical machine.
+We often represent the domain name space using a tree. Each node is a domain. Leaves and nodes may have A records. Here is a simple example of the domain space represented as a tree:
+. ├── com."/>
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/maelvls.css" /><title>It&#39;s always the DNS&#39; fault | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/do-not-share-yet/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="meta">
+<div class="date">
+<span class="day">25</span>
+<span class="rest">Jul 2020</span>
+</div>
+</div>
+
+<div class="matter">
+<h1 class="title">It&#39;s always the DNS&#39; fault</h1>
+</div>
+</div>
+<div class="markdown">
+<h2 id="terms">Terms</h2>
+<p>A domain name (or just &ldquo;domain&rdquo;) is a string the form <code>bar.foo.com.</code>. Not
+all domains refer to physical machines; for example, one of my domains,
+<code>k.maelvls.dev.</code>, do not point to any physical machine.</p>
+<p>We often represent the domain name space using a tree. Each node is a
+domain. Leaves and nodes may have <code>A</code> records. Here is a simple example of
+the domain space represented as a tree:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">.
+├── com.
+├── dev.
+│  └── maelvls.dev.
+│     └── k.maelvls.dev.
+└── io.
+</code></pre></div><p>A <a href="https://tools.ietf.org/html/rfc1034#section-2.4" title="Elements of a DNS">zone</a> is a subtree of the domain space that is under the
+authority of a given name server. In the following, I will use &ldquo;subtree&rdquo;
+and &ldquo;zone&rdquo; interchangeably and I identify a zone (or subtree) by its apex
+domain; the apex is domain name at the root of a zone.</p>
+<blockquote>
+<p>I decided to put domain names directly in each node; note that the <a href="https://tools.ietf.org/html/rfc1034#section-3.1" title="Domain space">RFC
+1034</a> represents the domain space as a tree of labels (a
+label is of the form <code>foo</code> or <code>foo-bar</code>). In this tree, the domain name
+of a node has to be reconstructed by concatenating the labels starting
+from the node and ending with the root of the domain space tree.</p>
+</blockquote>
+<p>From the above example, my zone is:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">maelvls.dev.
+└── k.maelvls.dev.
+</code></pre></div><p>A zone has &ldquo;authority&rdquo; over its subtree as long as one of its parent
+domains has an <code>NS</code> record to a name server that has the records for that
+zone. I told my registrar (Google Domains) to use the Google DNS name
+servers, which means that the <code>dev.</code> name servers now have <code>NS</code> records
+that point to Google DNS&rsquo; name servers. With this <code>NS</code> record, the <code>dev.</code>
+zone &ldquo;delegates&rdquo; the <code>maelvls.dev.</code> zone to Google DNS&rsquo; name servers.</p>
+<p>For example, let us use <code>dig</code> to see all intermediate DNS queries at once:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% dig +trace minio.k.maelvls.dev
+<span class="c1"># I omitted the DNSSEC-related records (RRSIG, DS and NSEC3 records).</span>
+<span class="c1"># I also omitted some NS records when there was too many of them.</span>
+.                       <span class="m">342831</span>  IN  NS  a.root-servers.net.
+.                       <span class="m">342831</span>  IN  NS  b.root-servers.net.
+dev.                    <span class="m">172800</span>  IN  NS  ns-tld1.charlestonroadregistry.com.
+dev.                    <span class="m">172800</span>  IN  NS  ns-tld2.charlestonroadregistry.com.
+maelvls.dev.            <span class="m">10800</span>   IN  NS  ns-cloud-a1.googledomains.com.
+maelvls.dev.            <span class="m">10800</span>   IN  NS  ns-cloud-a2.googledomains.com.
+maelvls.dev.            <span class="m">300</span>     IN  SOA ns-cloud-a1.googledomains.com. ...
+minio.k.maelvls.dev.    <span class="m">300</span>     IN  A   91.211.152.190
+</code></pre></div><h2 id="client-side-name-guessing">Client-side name guessing</h2>
+<p>In some cases, the DNS query may omit the right-most part of the domain.
+For example, in Kubernetes, you may either use the fully-qualified domain
+name (FQDN, which is a domain that contains the <code>.</code> root domain), or just
+use a part of the domain name:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">nslookup kubernetes.default.svc.cluster.local    <span class="c1"># works (FQDN)</span>
+nslookup kubernetes.default.svc.cluster          <span class="c1"># doesn&#39;t work</span>
+nslookup kubernetes.default.svc                  <span class="c1"># works</span>
+nslookup kubernetes.default                      <span class="c1"># works</span>
+nslookup kubernetes                              <span class="c1"># works (guesses namespace)</span>
+</code></pre></div><p>In CoreDNS, you can give the apex domain name (by default, in Kubernetes,
+the apex is <code>cluster.local.</code>). The Corefile needs to load the <a href="https://github.com/coredns/coredns/tree/master/plugin/kubernetes">kubernetes
+plugin</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">.:53 <span class="o">{</span>
+    kubernetes cluster.local
+<span class="o">}</span>
+</code></pre></div><blockquote>
+<p>Note that <code>kubernetes.default</code> is not a subdomain; a <a href="https://tools.ietf.org/html/rfc7719" title="DNS terminology">subdomain</a>
+of a domain is a domain that contains the domain itself on it right-most
+side.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">minio.k.maelvls.dev   is subdomain of     k.maelvls.dev
+minio.k.maelvls.dev   is subdomain of       maelvls.dev
+k.maelvls.dev         is subdomain of       maelvls.dev
+</code></pre></div></blockquote>
+<p>Whenever a container is given to resolve any kind of name (even one that
+looks like an FQDN; the client doesn&rsquo;t known, really), it will go through
+the &ldquo;search domain names&rdquo; list configured in <code>/etc/resolv.conf</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% cat /etc/resolv.conf
+search default.svc.cluster.local svc.cluster.local cluster.local
+nameserver 10.96.0.10
+options ndots:5
+</code></pre></div><p>Let&rsquo;s try with <code>kubernetes.default</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% tcpdump <span class="s2">&#34;udp port 53&#34;</span>
+% nslookup kubernetes.default
+12:01:17.430931 IP foo.39435 &gt; kube-dns.kube-system.svc.cluster.local.53: 32862+ A? kubernetes.default.default.svc.cluster.local. <span class="o">(</span>62<span class="o">)</span>
+12:01:17.431573 IP kube-dns.kube-system.svc.cluster.local.53 &gt; foo.39435: <span class="m">32862</span> NXDomain*- 0/1/0 <span class="o">(</span>155<span class="o">)</span>
+12:01:17.431987 IP foo.35023 &gt; kube-dns.kube-system.svc.cluster.local.53: 39314+ A? kubernetes.default.svc.cluster.local. <span class="o">(</span>54<span class="o">)</span>
+12:01:17.433258 IP kube-dns.kube-system.svc.cluster.local.53 &gt; foo.35023: 39314*- 1/0/0 A 10.96.0.1 <span class="o">(</span>106<span class="o">)</span>
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+Name:	kubernetes.default.svc.cluster.local
+Address: 10.96.0.1
+</code></pre></div><p>The client (the container <code>foo</code>) has to do two consecutive queries in order
+to get an answer; as you can see, the way partial domain name guessing is
+done is quite dumb and relies on many client-side queries:</p>
+<table>
+<thead>
+<tr>
+<th>queried name</th>
+<th>queries count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kubernetes</td>
+<td>1</td>
+</tr>
+<tr>
+<td>kubernetes.default</td>
+<td>2</td>
+</tr>
+<tr>
+<td>kubernetes.default.svc</td>
+<td>3</td>
+</tr>
+<tr>
+<td>kubernetes.default.svc.cluster</td>
+<td>(*)</td>
+</tr>
+<tr>
+<td>kubernetes.default.svc.cluster.local</td>
+<td>4</td>
+</tr>
+<tr>
+<td>foo (the container&rsquo;s name)</td>
+<td>4</td>
+</tr>
+<tr>
+<td>google.com</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>(*) since the search domain name <code>cluster</code> doesn&rsquo;t exist in
+<code>/etc/resolv.conf</code>, this name can&rsquo;t be resolved.</p>
+</blockquote>
+<p>I noticed something unexpected when querying <code>foo</code> (which is the
+container&rsquo;s name). I was expecting the name to be picked from <code>/etc/hosts</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% cat /etc/hosts
+<span class="c1"># Kubernetes-managed hosts file.</span>
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+fe00::0	ip6-mcastprefix
+fe00::1	ip6-allnodes
+fe00::2	ip6-allrouters
+10.244.0.14	foo                     <span class="c1"># this!</span>
+</code></pre></div><p>But weirdly enough, <code>foo</code> is resolved by the name server:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% hostname
+foo
+% tcpdump <span class="s2">&#34;udp port 53&#34;</span>
+% nslookup foo
+10:35:09.052394 IP foo.58416 &gt; kube-dns.kube-system.svc.cluster.local.53: 39460+ A? foo.default.svc.cluster.local. <span class="o">(</span>47<span class="o">)</span>
+10:35:09.052993 IP kube-dns.kube-system.svc.cluster.local.53 &gt; foo.58416: <span class="m">39460</span> NXDomain*- 0/1/0 <span class="o">(</span>140<span class="o">)</span>
+10:35:09.053708 IP foo.53273 &gt; kube-dns.kube-system.svc.cluster.local.53: 3313+ A? foo.svc.cluster.local. <span class="o">(</span>39<span class="o">)</span>
+10:35:09.054315 IP kube-dns.kube-system.svc.cluster.local.53 &gt; foo.53273: <span class="m">3313</span> NXDomain*- 0/1/0 <span class="o">(</span>132<span class="o">)</span>
+10:35:09.055023 IP foo.44989 &gt; kube-dns.kube-system.svc.cluster.local.53: 19225+ A? foo.cluster.local. <span class="o">(</span>35<span class="o">)</span>
+10:35:09.056578 IP kube-dns.kube-system.svc.cluster.local.53 &gt; foo.44989: <span class="m">19225</span> NXDomain*- 0/1/0 <span class="o">(</span>128<span class="o">)</span>
+10:35:09.057185 IP foo.39326 &gt; kube-dns.kube-system.svc.cluster.local.53: 2052+ A? foo. <span class="o">(</span>21<span class="o">)</span>
+10:35:09.060754 IP kube-dns.kube-system.svc.cluster.local.53 &gt; foo.39326: <span class="m">2052</span> 1/0/0 A 127.0.0.1 <span class="o">(</span>40<span class="o">)</span>
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+Non-authoritative answer:
+Name:	foo
+Address: 127.0.0.1
+</code></pre></div><p>Whenever a container queries a name that is outside of Kubernetes, it has
+to go through all these four <code>NSDOMAIN</code> before actually getting a response:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% tcpdump <span class="s2">&#34;udp port 53&#34;</span>
+% nslookup google.com
+10:40:12.569439 IP foo.49028 &gt; kube-dns.kube-system.svc.cluster.local.53: 33319+ A? google.com.default.svc.cluster.local. <span class="o">(</span>54<span class="o">)</span>
+10:40:12.572349 IP kube-dns.kube-system.svc.cluster.local.53 &gt; foo.49028: <span class="m">33319</span> NXDomain*- 0/1/0 <span class="o">(</span>147<span class="o">)</span>
+10:40:12.572970 IP foo.54948 &gt; kube-dns.kube-system.svc.cluster.local.53: 48254+ A? google.com.svc.cluster.local. <span class="o">(</span>46<span class="o">)</span>
+10:40:12.573828 IP kube-dns.kube-system.svc.cluster.local.53 &gt; foo.54948: <span class="m">48254</span> NXDomain*- 0/1/0 <span class="o">(</span>139<span class="o">)</span>
+10:40:12.574303 IP foo.56236 &gt; kube-dns.kube-system.svc.cluster.local.53: 26722+ A? google.com.cluster.local. <span class="o">(</span>42<span class="o">)</span>
+10:40:12.574865 IP kube-dns.kube-system.svc.cluster.local.53 &gt; foo.56236: <span class="m">26722</span> NXDomain*- 0/1/0 <span class="o">(</span>135<span class="o">)</span>
+10:40:12.576272 IP foo.48021 &gt; kube-dns.kube-system.svc.cluster.local.53: 2652+ A? google.com. <span class="o">(</span>28<span class="o">)</span>
+10:40:12.609035 IP kube-dns.kube-system.svc.cluster.local.53 &gt; foo.48021: <span class="m">2652</span> 1/0/0 A 172.217.18.206 <span class="o">(</span>54<span class="o">)</span>
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+Non-authoritative answer:
+Name:	google.com
+Address: 172.217.18.206
+</code></pre></div><p>The DHCP answer from my router contains the <a href="https://tools.ietf.org/html/rfc2132#section-3.17">option header
+15</a> &ldquo;Domain Name&rdquo;; in my
+case, the only domain name returned is <code>home</code>. Which means that anytime the
+client (my machine) wants to query a name, say <code>macbook-pro</code>, it will try
+in this order:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">macbook-pro.home.
+macbook-pro.
+</code></pre></div><p>Here is a capture of my machine trying to figure out the name
+<code>macbook-pro</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% tcpdump -ien0 <span class="s1">&#39;(udp port 53 &amp;&amp; (src 192.168.1.1 || dst 192.168.1.1))&#39;</span>
+listening on en0, link-type EN10MB <span class="o">(</span>Ethernet<span class="o">)</span>, capture size <span class="m">262144</span> bytes
+12:04:34.873178 IP 192.168.1.14.58108 &gt; 192.168.1.1.domain: 1698+ A? macbook-pro.home. <span class="o">(</span>41<span class="o">)</span>
+12:04:34.924824 IP 192.168.1.1.domain &gt; 192.168.1.14.58108: <span class="m">1698</span> NXDomain 0/1/0 <span class="o">(</span>116<span class="o">)</span>
+12:04:34.925217 IP 192.168.1.14.53531 &gt; 192.168.1.1.domain: 9166+ A? macbook-pro. <span class="o">(</span>39<span class="o">)</span>
+12:04:34.948013 IP 192.168.1.1.domain &gt; 192.168.1.14.53531: 9166* 2/0/0 A 192.168.1.14, A 192.168.1.21 <span class="o">(</span>71<span class="o">)</span>
+</code></pre></div><ul>
+<li>a hierarchical DNS (also called DNS chaining or DNS delegation) is when a
+DNS has a record <code>NS</code> to another DNS server.</li>
+</ul>
+<p>One single <a href="https://simpledns.plus/help/soa-records">SOA record</a> (start of
+authority) exists for every given zone. As you can see here, my zone is
+<code>maelvls.dev.</code>.</p>
+<h2 id="playing-with-k8s_gateway">Playing with <code>k8s_gateway</code></h2>
+<p>Corefile:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">dig @127.0.0.1 kubernetes.default
+</code></pre></div>
+</div>
+<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/notes/dns.md">📝 Edit this page and propose a change!</a>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+
+<div style="float: right;">
+<p>Tags:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a href="/tags/networking/"> networking </a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+<div class="clearit"></div>
+
+
+
+
+
+</div>
+
+<script
+  src="https://utteranc.es/client.js"
+  repo="maelvls/maelvls.github.io"
+  issue-term="pathname"
+  label="💬"
+  theme="github-light"
+  crossorigin="anonymous"
+  async
+></script>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>

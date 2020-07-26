@@ -6,10 +6,22 @@
     <description>Recent content in networking on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Jul 2020 10:07:11 +0200</lastBuildDate>
+    <lastBuildDate>Sat, 25 Jul 2020 00:00:00 +0000</lastBuildDate>
     
     <atom:link href="https://maelvls.dev/do-not-share-yet/tags/networking/index.xml" rel="self" type="application/rss+xml" />
     
+    <item>
+      <title>It&#39;s always the DNS&#39; fault</title>
+      <link>https://maelvls.dev/do-not-share-yet/notes/dns/</link>
+      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/notes/dns/</guid>
+      <description>
+      
+      Terms A domain name (or just “domain”) is a string the form bar.foo.com.. Not all domains refer to physical ...
+      
+      </description>
+    </item>
     <item>
       <title>Expose Service Using Kind on Macos</title>
       <link>https://maelvls.dev/do-not-share-yet/expose-service-using-kind-on-macos/</link>
