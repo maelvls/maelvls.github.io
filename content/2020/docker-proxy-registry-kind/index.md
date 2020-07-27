@@ -1,5 +1,5 @@
 ---
-title: Pull-through Docker registry on Kind clusters on macOS
+title: Pull-through Docker registry on Kind clusters
 description: "Kind offers an excellent UX to Kubernetes developers but lacks support for caching images; each time you recreate a new cluster, all the previous downloaded images are gone. In this post, I explain why the default Docker network is a trap and how to set up a registry & make sure that it actually works."
 date: 2020-07-03T15:13:39+02:00
 url: /docker-proxy-registry-kind
