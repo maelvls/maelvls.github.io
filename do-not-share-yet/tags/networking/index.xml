@@ -35,7 +35,7 @@
       </description>
     </item>
     <item>
-      <title>Pull-through Docker registry on Kind clusters on macOS</title>
+      <title>Pull-through Docker registry on Kind clusters</title>
       <link>https://maelvls.dev/do-not-share-yet/docker-proxy-registry-kind/</link>
       <pubDate>Fri, 03 Jul 2020 15:13:39 +0200</pubDate>
       
