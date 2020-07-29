@@ -9,8 +9,7 @@
 <meta property="og:description" content="I know two main ways of using OAuth2
   password-based client grant (2-leg oauth flow: on the project I worked on, the OAuth client was not third party server, but instead, it was the front-end.)
   code-based grant (3-legs oauth flow)
-  Terminology Two secrets:
- signing key = the private key  " />
+  Terminology The RFC 6749 that presents OAuth2 is very readable, but some terms like &ldquo;client&rdquo; or &ldquo;code&rdquo; are confusing. What I found is that trying to understand &ldquo;why&rdquo; the main flow (3-legged oauth, or &ldquo;authorization code flow&rdquo;) has to be like this." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/oauth/" />
 <meta property="og:image" content="https://maelvls.dev/img/mael.jpg"/>
@@ -23,8 +22,7 @@
 <meta name="twitter:description" content="I know two main ways of using OAuth2
   password-based client grant (2-leg oauth flow: on the project I worked on, the OAuth client was not third party server, but instead, it was the front-end.)
   code-based grant (3-legs oauth flow)
-  Terminology Two secrets:
- signing key = the private key  "/>
+  Terminology The RFC 6749 that presents OAuth2 is very readable, but some terms like &ldquo;client&rdquo; or &ldquo;code&rdquo; are confusing. What I found is that trying to understand &ldquo;why&rdquo; the main flow (3-legged oauth, or &ldquo;authorization code flow&rdquo;) has to be like this."/>
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -81,10 +79,59 @@ the OAuth client was not third party server, but instead, it was the front-end.)
 </li>
 </ul>
 <h2 id="terminology">Terminology</h2>
-<p>Two secrets:</p>
+<p>The <a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a> that presents OAuth2 is very readable, but some terms
+like &ldquo;client&rdquo; or &ldquo;code&rdquo; are confusing. What I found is that trying to understand
+&ldquo;why&rdquo; the main flow (3-legged oauth, or &ldquo;authorization code flow&rdquo;) has to be
+like this.</p>
+<p>The most important aspect that I had to realize is that &ldquo;client&rdquo; is hidden from
+the end-user (e.g. as a nodejs server serving /callback). The &ldquo;client&rdquo; has a
+single purpose: receive the code when /callback is called by the third-party
+Authorize screen, POST /token to the third party using the <code>client_secret</code> using
+that code.</p>
+<ol>
+<li>
+<p>User clicks the &ldquo;Login with Google&rdquo;; this URL is public and forwards the user
+to an &ldquo;Authorize&rdquo; form.</p>
+<div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="nf">GET</span> <span class="nn">/o/oauth2/auth?client_id=foo&amp;redirect_uri=http%3A%2F%2Flocalhost%3A8042%2Fcallback&amp;response_type=code&amp;scope=calendar.readonly&amp;state=something</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="n">Host</span><span class="o">:</span> <span class="l">https://accounts.google.com</span>
+</code></pre></div></li>
+</ol>
+<p>Since this URL is quite long, let&rsquo;s see what we have:</p>
 <ul>
-<li>signing key = the private key</li>
+<li><code>access_type</code> is <code>offline</code> (huh??)</li>
+<li><code>client_id</code> (remember that the &ldquo;client&rdquo; is my CLI which asks the permission to
+Google&rsquo;s servers to access the scopes.</li>
+<li><code>redirect_uri</code> is <a href="http://localhost:8042/oauth2">http://localhost:8042/oauth2</a></li>
+<li><code>response_type</code> is <code>code</code> which makes sense since we want a code so that we
+can, eventually, get a token. The <code>code</code> and <code>state</code> values will be given to
+us in the callback. When pressing &ldquo;Authorize&rdquo; in the Google authentication
+page, we get something like:</li>
 </ul>
+<ol start="2">
+<li>
+<p>After authorizing, the user is redirected to the &ldquo;client&rdquo; endpoint:</p>
+<div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="nf">GET</span> <span class="nn">/callback?code=f1a2bc&amp;state=something</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="n">Host</span><span class="o">:</span> <span class="l">http://localhost:8042</span>
+</code></pre></div><p>Response is</p>
+</li>
+<li>
+<p>The client gets the token using the code it received.</p>
+<div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="nf">POST</span> <span class="nn">/token</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="n">Host</span><span class="o">:</span> <span class="l">https://oauth2.googleapis.com</span>
+<span class="n">Content-Type</span><span class="o">:</span> <span class="l">application/x-www-form-urlencoded</span>
+
+grant_type=authorization_code&amp;code=f1a2bc&amp;client_id=foo&amp;client_secret=&lt;the_secret&gt;&amp;redirect_url=&lt;same as above&gt;
+</code></pre></div><p>The token looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;access_token&#34;</span><span class="p">:</span> <span class="s2">&#34;ya29.a0AfH6SMCkF6Kd0bZPf60Knhq8XyMKTgmQ6zE5lP9pjdZfW-9ebV5V9wifFagdiioN5JWovHmfVfdukAE0-jcHRmjzsycQCYPj7zzSup55X0n_gz8rkglYGBaeG5Tyde8a8rAIu1CimhtSdsoq0_HCh2VBXOLmrq7oKSg&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;token_type&#34;</span><span class="p">:</span> <span class="s2">&#34;Bearer&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;refresh_token&#34;</span><span class="p">:</span> <span class="s2">&#34;1//03E6r0qdOHKqrCgYIARAAGAMSNwF-L9Ir37zr9-GH8po_A5XSwsSiEw8XmiHPnCbKPaFHNCckIF-vmJRRKddbjWLbX9ZrbOzffts&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;expiry&#34;</span><span class="p">:</span> <span class="s2">&#34;2020-07-21T19:26:47.346143+02:00&#34;</span>
+<span class="p">}</span>
+</code></pre></div><p>Note: when we say &ldquo;an oauth token&rdquo;, what we actually mean is the access token
+the refresh token.</p>
+</li>
+</ol>
 
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/notes/oauth.md">📝 Edit this page and propose a change!</a>
