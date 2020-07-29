@@ -8,12 +8,12 @@ author: Maël Valais
 I know two main ways of using OAuth2
 
 - password-based client grant (2-leg oauth flow: on the project I worked on,
-  the OAuth client was not third party server, but instead, it was the front-end.)
+  the OAuth client was not third party server, but instead, it was the
+  front-end.)
+- authorization code based grant (3-legs oauth flow)
 
-- code-based grant (3-legs oauth flow)
 
-
-## Terminology
+## What is "the client"?
 
 The [RFC 6749][rfc6749] that presents OAuth2 is very readable, but some terms
 like "client" or "code" are confusing. What I found is that trying to understand
@@ -27,6 +27,8 @@ Authorize screen, POST /token to the third party using the `client_secret` using
 that code.
 
 [rfc6749]: https://tools.ietf.org/html/rfc6749
+
+## Authorization code (3 legged oauth)
 
 1. User clicks the "Login with Google"; this URL is public and forwards the user
    to an "Authorize" form.
