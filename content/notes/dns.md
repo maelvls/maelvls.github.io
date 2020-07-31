@@ -55,14 +55,14 @@ For example, let us use `dig` to see all intermediate DNS queries at once:
 % dig +trace minio.k.maelvls.dev
 # I omitted the DNSSEC-related records (RRSIG, DS and NSEC3 records).
 # I also omitted some NS records when there was too many of them.
-.                       342831  IN  NS  a.root-servers.net.
-.                       342831  IN  NS  b.root-servers.net.
-dev.                    172800  IN  NS  ns-tld1.charlestonroadregistry.com.
-dev.                    172800  IN  NS  ns-tld2.charlestonroadregistry.com.
-maelvls.dev.            10800   IN  NS  ns-cloud-a1.googledomains.com.
-maelvls.dev.            10800   IN  NS  ns-cloud-a2.googledomains.com.
-maelvls.dev.            300     IN  SOA ns-cloud-a1.googledomains.com. ...
-minio.k.maelvls.dev.    300     IN  A   91.211.152.190
+.                              342831  IN  NS     a.root-servers.net.
+.                              342831  IN  NS     b.root-servers.net.
+dev.                           172800  IN  NS     ns-tld1.charlestonroadregistry.com.
+dev.                           172800  IN  NS     ns-tld2.charlestonroadregistry.com.
+maelvls.dev.                   10800   IN  NS     ns-cloud-a1.googledomains.com.
+maelvls.dev.                   10800   IN  NS     ns-cloud-a2.googledomains.com.
+maelvls.dev.                   300     IN  SOA   ns-cloud-a1.googledomains.com. ...
+minio.k.maelvls.dev.           300     IN  A       91.211.152.190
 ```
 
 ## Client-side name guessing
@@ -183,7 +183,7 @@ Address: 127.0.0.1
 ```
 
 Whenever a container queries a name that is outside of Kubernetes, it has
-to go through all these four `NSDOMAIN` before actually getting a response:
+to go through all these four   NSDOMA  ` before actually getting a response:
 
 ```sh
 % tcpdump "udp port 53"
@@ -244,10 +244,58 @@ authority) exists for every given zone. As you can see here, my zone is
 
 ## Playing with `k8s_gateway`
 
-Corefile:
+The Corefile is available
+[here](https://github.com/maelvls/k.maelvls.dev/blob/0e77a838251b209646f433a2b1d5e1a440f8e856/helm/ext-coredns.yaml#L13-L31).
 
+Before, my top-level DNS would be littered with records created by
+ExternalDNS:
 
+```sh
+% gcloud dns record-sets list --zone=maelvls
+NAME                      TYPE   TTL    DATA
+maelvls.dev.              A      300    185.199.108.153,185.199.109.153,185.199.110.153,185.199.111.153
+maelvls.dev.              MX     300    1 aspmx.l.google.com.,5 alt1.aspmx.l.google.com.,5 alt2.aspmx.l.google.com.,10 alt3.aspmx.l.google.com.,10 alt4.aspmx.l.google.com.,15 pdquboxtbnqki2zinxaksc3jnnluefibfdbqhi7ghbhfbg7ef47q.mx-verification.google.com.
+maelvls.dev.              NS     21600  ns-cloud-a1.googledomains.com.,ns-cloud-a2.googledomains.com.,ns-cloud-a3.googledomains.com.,ns-cloud-a4.googledomains.com.
+maelvls.dev.              SOA    21600  ns-cloud-a1.googledomains.com. cloud-dns-hostmaster.google.com. 12 21600 3600 259200 300
+maelvls.dev.              TXT    300    "keybase-site-verification=PnIWsZlbzCGwYrc5J_VCVphBOMHCVjcIx6nMSkeCZzI"
+concourse.k.maelvls.dev.  A      300    91.211.152.190
+concourse.k.maelvls.dev.  TXT    300    "heritage=external-dns,external-dns/owner=k8s,external-dns/resource=ingress/concourse/cm-acme-http-solver-xlvtk"
+drone.k.maelvls.dev.      A      300    91.211.152.190
+drone.k.maelvls.dev.      TXT    300    "heritage=external-dns,external-dns/owner=k8s,external-dns/resource=ingress/drone/cm-acme-http-solver-xv5cs"
+minio.k.maelvls.dev.      A      300    91.211.152.190
+minio.k.maelvls.dev.      TXT    300    "heritage=external-dns,external-dns/owner=k8s,external-dns/resource=ingress/minio/cm-acme-http-solver-82slp"
+*.minio.k.maelvls.dev.    A      300    91.211.152.190
+*.minio.k.maelvls.dev.    TXT    300    "heritage=external-dns,external-dns/owner=k8s,external-dns/resource=ingress/minio/minio"
+ns.k.maelvls.dev.         A      300    91.211.152.190
+ns.k.maelvls.dev.         TXT    300    "heritage=external-dns,external-dns/owner=k8s,external-dns/resource=service/ext-coredns/ext-coredns"
+```
+
+After:
 
 ```plain
-dig @127.0.0.1 kubernetes.default
+% gcloud dns record-sets list --zone=maelvls
+NAME               TYPE  TTL    DATA
+maelvls.dev.       A     300    185.199.108.153,185.199.109.153,185.199.110.153,185.199.111.153
+maelvls.dev.       MX    300    1 aspmx.l.google.com.,5 alt1.aspmx.l.google.com.,5 alt2.aspmx.l.google.com.,10 alt3.aspmx.l.google.com.,10 alt4.aspmx.l.google.com.,15 pdquboxtbnqki2zinxaksc3jnnluefibfdbqhi7ghbhfbg7ef47q.mx-verification.google.com.
+maelvls.dev.       NS    21600  ns-cloud-a1.googledomains.com.,ns-cloud-a2.googledomains.com.,ns-cloud-a3.googledomains.com.,ns-cloud-a4.googledomains.com.
+maelvls.dev.       SOA   21600  ns-cloud-a1.googledomains.com. cloud-dns-hostmaster.google.com. 13 21600 3600 259200 300
+maelvls.dev.       TXT   300    "keybase-site-verification=PnIWsZlbzCGwYrc5J_VCVphBOMHCVjcIx6nMSkeCZzI"
+k.maelvls.dev.     NS    300    ns.k.maelvls.dev.
+ns.k.maelvls.dev.  A     300    91.211.152.190
+ns.k.maelvls.dev.  TXT   300    "heritage=external-dns,external-dns/owner=k8s,external-dns/resource=service/ext-coredns/ext-coredns"
+```
+
+It works!
+
+```sh
+% dig +trace minio.k.maelvls.dev
+.                     407578  IN  NS  a.root-servers.net.
+.                     407578  IN  NS  b.root-servers.net.
+.                     407578  IN  NS  c.root-servers.net.
+dev.                  172800  IN  NS  ns-tld1.charlestonroadregistry.com.
+dev.                  172800  IN  NS  ns-tld2.charlestonroadregistry.com.
+maelvls.dev.          10800   IN  NS  ns-cloud-a1.googledomains.com.
+maelvls.dev.          10800   IN  NS  ns-cloud-a2.googledomains.com.
+k.maelvls.dev.        300     IN  NS  ns.k.maelvls.dev.
+minio.k.maelvls.dev.  5       IN  A   91.211.152.190
 ```

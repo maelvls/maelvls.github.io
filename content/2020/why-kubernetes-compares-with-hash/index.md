@@ -156,3 +156,4 @@ BenchmarkKubernetesComputeHash-8          456028              2.704 µs/op
       controller-revision-hash: 6f7768f569
       k8s-app: kube-proxy
       pod-template-generation: "7"
+
