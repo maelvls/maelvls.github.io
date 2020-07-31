@@ -6,7 +6,7 @@ Difference between CA and cert Ssh authentication themes Case A: unknown host Ca
 From: https://apple.stackexchange.com/questions/220670/run-boot-camp-windows10-partition-inside-virtualbox
 First, find w...</description></item><item><title>Notes on OAuth</title><link>https://maelvls.dev/notes/oauth/</link><pubDate>Sun, 17 Feb 2019 00:00:00 +0000</pubDate><guid>https://maelvls.dev/notes/oauth/</guid><description>
 I know two main ways of using OAuth2
-password-based client grant (2-leg oauth flow: on the project I worked on, the OA...</description></item><item><title>Some kubectl stuff</title><link>https://maelvls.dev/notes/kubectl/</link><pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate><guid>https://maelvls.dev/notes/kubectl/</guid><description>
+password-based client grant (2-leg oauth flow: on the project I worked on, the OAu...</description></item><item><title>Some kubectl stuff</title><link>https://maelvls.dev/notes/kubectl/</link><pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate><guid>https://maelvls.dev/notes/kubectl/</guid><description>
 kubectl run --generator=run-pod/v1 tmp-shell --rm -i --tty --image nicolaka/netshoot -- /bin/bash gcloud ssh ... docker ...</description></item><item><title>Memo for Tmux</title><link>https://maelvls.dev/notes/tmux/</link><pubDate>Sat, 03 Nov 2018 00:00:00 +0000</pubDate><guid>https://maelvls.dev/notes/tmux/</guid><description>
 I installed https://gist.github.com/cybic/6375457 in ~/.bash_completion (file) to get the bash completion.
 General short...</description></item><item><title>Checking info about CPU and Nvidia GPU on Linux</title><link>https://maelvls.dev/notes/cpu_gpu/</link><pubDate>Thu, 01 Nov 2018 00:00:00 +0000</pubDate><guid>https://maelvls.dev/notes/cpu_gpu/</guid><description>

@@ -103,14 +103,14 @@ zone &ldquo;delegates&rdquo; the <code>maelvls.dev.</code> zone to Google DNS&rs
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% dig +trace minio.k.maelvls.dev
 <span class="c1"># I omitted the DNSSEC-related records (RRSIG, DS and NSEC3 records).</span>
 <span class="c1"># I also omitted some NS records when there was too many of them.</span>
-.                       <span class="m">342831</span>  IN  NS  a.root-servers.net.
-.                       <span class="m">342831</span>  IN  NS  b.root-servers.net.
-dev.                    <span class="m">172800</span>  IN  NS  ns-tld1.charlestonroadregistry.com.
-dev.                    <span class="m">172800</span>  IN  NS  ns-tld2.charlestonroadregistry.com.
-maelvls.dev.            <span class="m">10800</span>   IN  NS  ns-cloud-a1.googledomains.com.
-maelvls.dev.            <span class="m">10800</span>   IN  NS  ns-cloud-a2.googledomains.com.
-maelvls.dev.            <span class="m">300</span>     IN  SOA ns-cloud-a1.googledomains.com. ...
-minio.k.maelvls.dev.    <span class="m">300</span>     IN  A   91.211.152.190
+.                              <span class="m">342831</span>  IN  NS     a.root-servers.net.
+.                              <span class="m">342831</span>  IN  NS     b.root-servers.net.
+dev.                           <span class="m">172800</span>  IN  NS     ns-tld1.charlestonroadregistry.com.
+dev.                           <span class="m">172800</span>  IN  NS     ns-tld2.charlestonroadregistry.com.
+maelvls.dev.                   <span class="m">10800</span>   IN  NS     ns-cloud-a1.googledomains.com.
+maelvls.dev.                   <span class="m">10800</span>   IN  NS     ns-cloud-a2.googledomains.com.
+maelvls.dev.                   <span class="m">300</span>     IN  SOA   ns-cloud-a1.googledomains.com. ...
+minio.k.maelvls.dev.           <span class="m">300</span>     IN  A       91.211.152.190
 </code></pre></div><h2 id="client-side-name-guessing">Client-side name guessing</h2>
 <p>In some cases, the DNS query may omit the right-most part of the domain.
 For example, in Kubernetes, you may either use the fully-qualified domain
@@ -230,7 +230,7 @@ Non-authoritative answer:
 Name:	foo
 Address: 127.0.0.1
 </code></pre></div><p>Whenever a container queries a name that is outside of Kubernetes, it has
-to go through all these four <code>NSDOMAIN</code> before actually getting a response:</p>
+to go through all these four   NSDOMA  ` before actually getting a response:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% tcpdump <span class="s2">&#34;udp port 53&#34;</span>
 % nslookup google.com
 10:40:12.569439 IP foo.49028 &gt; kube-dns.kube-system.svc.cluster.local.53: 33319+ A? google.com.default.svc.cluster.local. <span class="o">(</span>54<span class="o">)</span>
@@ -270,8 +270,49 @@ DNS has a record <code>NS</code> to another DNS server.</li>
 authority) exists for every given zone. As you can see here, my zone is
 <code>maelvls.dev.</code>.</p>
 <h2 id="playing-with-k8s_gateway">Playing with <code>k8s_gateway</code></h2>
-<p>Corefile:</p>
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">dig @127.0.0.1 kubernetes.default
+<p>The Corefile is available
+<a href="https://github.com/maelvls/k.maelvls.dev/blob/0e77a838251b209646f433a2b1d5e1a440f8e856/helm/ext-coredns.yaml#L13-L31">here</a>.</p>
+<p>Before, my top-level DNS would be littered with records created by
+ExternalDNS:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% gcloud dns record-sets list --zone<span class="o">=</span>maelvls
+NAME                      TYPE   TTL    DATA
+maelvls.dev.              A      <span class="m">300</span>    185.199.108.153,185.199.109.153,185.199.110.153,185.199.111.153
+maelvls.dev.              MX     <span class="m">300</span>    <span class="m">1</span> aspmx.l.google.com.,5 alt1.aspmx.l.google.com.,5 alt2.aspmx.l.google.com.,10 alt3.aspmx.l.google.com.,10 alt4.aspmx.l.google.com.,15 pdquboxtbnqki2zinxaksc3jnnluefibfdbqhi7ghbhfbg7ef47q.mx-verification.google.com.
+maelvls.dev.              NS     <span class="m">21600</span>  ns-cloud-a1.googledomains.com.,ns-cloud-a2.googledomains.com.,ns-cloud-a3.googledomains.com.,ns-cloud-a4.googledomains.com.
+maelvls.dev.              SOA    <span class="m">21600</span>  ns-cloud-a1.googledomains.com. cloud-dns-hostmaster.google.com. <span class="m">12</span> <span class="m">21600</span> <span class="m">3600</span> <span class="m">259200</span> <span class="m">300</span>
+maelvls.dev.              TXT    <span class="m">300</span>    <span class="s2">&#34;keybase-site-verification=PnIWsZlbzCGwYrc5J_VCVphBOMHCVjcIx6nMSkeCZzI&#34;</span>
+concourse.k.maelvls.dev.  A      <span class="m">300</span>    91.211.152.190
+concourse.k.maelvls.dev.  TXT    <span class="m">300</span>    <span class="s2">&#34;heritage=external-dns,external-dns/owner=k8s,external-dns/resource=ingress/concourse/cm-acme-http-solver-xlvtk&#34;</span>
+drone.k.maelvls.dev.      A      <span class="m">300</span>    91.211.152.190
+drone.k.maelvls.dev.      TXT    <span class="m">300</span>    <span class="s2">&#34;heritage=external-dns,external-dns/owner=k8s,external-dns/resource=ingress/drone/cm-acme-http-solver-xv5cs&#34;</span>
+minio.k.maelvls.dev.      A      <span class="m">300</span>    91.211.152.190
+minio.k.maelvls.dev.      TXT    <span class="m">300</span>    <span class="s2">&#34;heritage=external-dns,external-dns/owner=k8s,external-dns/resource=ingress/minio/cm-acme-http-solver-82slp&#34;</span>
+*.minio.k.maelvls.dev.    A      <span class="m">300</span>    91.211.152.190
+*.minio.k.maelvls.dev.    TXT    <span class="m">300</span>    <span class="s2">&#34;heritage=external-dns,external-dns/owner=k8s,external-dns/resource=ingress/minio/minio&#34;</span>
+ns.k.maelvls.dev.         A      <span class="m">300</span>    91.211.152.190
+ns.k.maelvls.dev.         TXT    <span class="m">300</span>    <span class="s2">&#34;heritage=external-dns,external-dns/owner=k8s,external-dns/resource=service/ext-coredns/ext-coredns&#34;</span>
+</code></pre></div><p>After:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">% gcloud dns record-sets list --zone=maelvls
+NAME               TYPE  TTL    DATA
+maelvls.dev.       A     300    185.199.108.153,185.199.109.153,185.199.110.153,185.199.111.153
+maelvls.dev.       MX    300    1 aspmx.l.google.com.,5 alt1.aspmx.l.google.com.,5 alt2.aspmx.l.google.com.,10 alt3.aspmx.l.google.com.,10 alt4.aspmx.l.google.com.,15 pdquboxtbnqki2zinxaksc3jnnluefibfdbqhi7ghbhfbg7ef47q.mx-verification.google.com.
+maelvls.dev.       NS    21600  ns-cloud-a1.googledomains.com.,ns-cloud-a2.googledomains.com.,ns-cloud-a3.googledomains.com.,ns-cloud-a4.googledomains.com.
+maelvls.dev.       SOA   21600  ns-cloud-a1.googledomains.com. cloud-dns-hostmaster.google.com. 13 21600 3600 259200 300
+maelvls.dev.       TXT   300    &#34;keybase-site-verification=PnIWsZlbzCGwYrc5J_VCVphBOMHCVjcIx6nMSkeCZzI&#34;
+k.maelvls.dev.     NS    300    ns.k.maelvls.dev.
+ns.k.maelvls.dev.  A     300    91.211.152.190
+ns.k.maelvls.dev.  TXT   300    &#34;heritage=external-dns,external-dns/owner=k8s,external-dns/resource=service/ext-coredns/ext-coredns&#34;
+</code></pre></div><p>It works!</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% dig +trace minio.k.maelvls.dev
+.                     <span class="m">407578</span>  IN  NS  a.root-servers.net.
+.                     <span class="m">407578</span>  IN  NS  b.root-servers.net.
+.                     <span class="m">407578</span>  IN  NS  c.root-servers.net.
+dev.                  <span class="m">172800</span>  IN  NS  ns-tld1.charlestonroadregistry.com.
+dev.                  <span class="m">172800</span>  IN  NS  ns-tld2.charlestonroadregistry.com.
+maelvls.dev.          <span class="m">10800</span>   IN  NS  ns-cloud-a1.googledomains.com.
+maelvls.dev.          <span class="m">10800</span>   IN  NS  ns-cloud-a2.googledomains.com.
+k.maelvls.dev.        <span class="m">300</span>     IN  NS  ns.k.maelvls.dev.
+minio.k.maelvls.dev.  <span class="m">5</span>       IN  A   91.211.152.190
 </code></pre></div>
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/notes/dns.md">📝 Edit this page and propose a change!</a>

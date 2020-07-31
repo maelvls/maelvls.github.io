@@ -151,7 +151,88 @@ to be forwarded.</p>
 <h2 id="layer-7-the-https--sni-proxy">Layer 7: the HTTPS + SNI proxy</h2>
 <p>tbd</p>
 <h2 id="layer-7-the-reverse-http-proxy">Layer 7: the reverse HTTP proxy</h2>
+<h2 id="examples-of-proxies">Examples of proxies</h2>
+<p>By remote dialer, I mean something that exposes a port on a local machine,
+and everything that goes through this port is forwarded to a distant host;
+the distant host &ldquo;dials&rdquo; the destination host (we could say &ldquo;proxies&rdquo; the
+TCP connection, but I like the &ldquo;dial&rdquo; word 😅)</p>
+<!-- https://textik.com/#216b639e0aaa6953 -->
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">                   local host                    remote host
+                      |                               |
+ PHASE 1:             |                               |
+ tunnel setup         |   create tcp connection       |
+                      |   (e.g. ssh port forwarding,  |
+                      |   websockets...)              |
+                      |------------------------------&gt;|
+                      |                               |
+                      |   tcp connection established  |
+                      |&lt;-----------------------------&gt;|
+                      |                               |
+                      |                               |
+                      |    configure 80 -&gt; 8000       |
+                      |-----------------------------&gt; |
+                      |                        +-------------+
+                      |                        |listen on 80 |
+                      |                        +-------------+
+                      |                               |
+                      |                               |
+                      |                               |
+ PHASE 2:             |                               |
+ remote port          |                               |  remote:80
+ forwarding           |                               |&lt;---------
+                      |      forwards tcp packets     |
+                      |&lt;------------------------------|
+ dials localhost:8000 |                               |
+       &lt;--------------|                               |
+                      |                               |
+                      |                               |
+</code></pre></div><p>And by reverse remote dialer,</p>
+<p>By tunnel we mean one local port that a process binds to and every TCP
+opened to that port gets forwarded to a remote dialer.</p>
+<p>TCP tunnel vs. TCP proxy vs. reverse proxy = they are all the same in the
+end? Except for how things are captured on the local host (simple port
+binding) and to where the thing is forwarded to.</p>
+<p><a href="https://github.com/klsecservices/rpivot">Rpivot</a> is a python tool used for
+penetration testing. It acts as a &ldquo;remote dialer&rdquo;:</p>
+<h2 id="what-is-socat">What is socat</h2>
+<p><a href="https://book.hacktricks.xyz/tunneling-and-port-forwarding#socat">socat</a></p>
+<p>From
+<a href="https://github.com/rancher/k3s/blob/fe7337937155af41f1aebeb87d1acd07091b71de/scripts/provision/generic/alpine310/vagrant#L25">rancher/k3s</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 127.0.0.1:2375:2375 alpine/socat TCP-LISTEN:2375,fork UNIX-CONNECT:/var/run/docker.sock
+</code></pre></div><p>Probably a massive workaround for exposing <code>docker.sock</code> on
+<code>localhost:2375</code> when the only thing you have in hand is docker &amp; you can’t
+run <code>socat</code> locally (or don’t want to bother installing it lol).</p>
+<h2 id="reverseremote-tcp-connection-remote-dialer">Reverse/remote TCP connection (remote dialer)</h2>
+<p>Let&rsquo;s expose port 80 on the remote and that will forward traffic to
+localhost:8080 on my local machine:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># From local</span>
+ssh -R 42345:22 remote -p <span class="m">22</span>
+ssh -R 80:8080 localhost -p <span class="m">42345</span>      <span class="c1"># the reverse port-forwarding</span>
+</code></pre></div><p>Diagram of that:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">      REMOTE TCP TUNNEL
+      Forwards TCP connections from the remote to the
+      local host, but the initial TCP connection is
+      made from local to remote.
 
+           local host             remote host
+                |                       |
+                |                       |
+                |    ssh port-forward   |
+                |----------------------&gt;|
+                |                       |
+                |    ssh port-forward   |
+                |&lt;------(80:8080)-------|
+                |                       |
+                |                 +-----|------+
+                |                 |listen on 80|
+                |                 +-----|------+
+                |                       |
+                |                       |    host:80
+                |   dial backend:8080   |&lt;----------
+          dials |&lt;----------------------|
+ fixedhost:8080 |                       |
+ &lt;--------------|                       |
+</code></pre></div>
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/what-are-proxies/index.md">📝 Edit this page and propose a change!</a>
 <div class="tags">
