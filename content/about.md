@@ -6,7 +6,9 @@ disqus: false
 author: Maël Valais
 ---
 
-I currently work at [Ori](https://www.ori.co/), a Cloud infrastructure
+I am currently open to opportunity as a software engineer. See my resume at https://github.com/maelvls.
+
+I previously worked at [Ori](https://www.ori.co/), a Cloud infrastructure
 startup that aims at providing a unified experience for deploying to
 close-to-the-user compute resources.
 
