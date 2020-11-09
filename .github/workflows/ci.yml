@@ -15,7 +15,7 @@ jobs:
 
       - uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: "0.64.0"
+          hugo-version: "v0.75.1"
 
       - run: hugo -d ./public --minify
       - run: hugo -d ./public/do-not-share-yet --baseURL "https://maelvls.dev/do-not-share-yet/" --buildDrafts --buildFuture
