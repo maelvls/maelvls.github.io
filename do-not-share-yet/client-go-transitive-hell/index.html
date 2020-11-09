@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -93,11 +93,11 @@ that still relies on v0.17.4), a workaround is to set client-go to use the
 latest pre-v1.18 version:</p>
 <div class="highlight"><pre class="chroma"><code class="language-diff" data-lang="diff"> require (
 <span class="gd">-    k8s.io/client-go v0.18.1
-</span><span class="gd"></span><span class="gd">-    k8s.io/apimachinery v0.18.1
-</span><span class="gd"></span><span class="gd">-    k8s.io/api v0.18.1 //indirect
+</span><span class="gd">-    k8s.io/apimachinery v0.18.1
+</span><span class="gd">-    k8s.io/api v0.18.1 //indirect
 </span><span class="gd"></span><span class="gi">+    k8s.io/client-go v0.17.4
-</span><span class="gi"></span><span class="gi">+    k8s.io/apimachinery v0.17.4
-</span><span class="gi"></span><span class="gi">+    k8s.io/api v0.17.4 //indirect
+</span><span class="gi">+    k8s.io/apimachinery v0.17.4
+</span><span class="gi">+    k8s.io/api v0.17.4 //indirect
 </span><span class="gi"></span> )
 </code></pre></div><p>The <code>v0.17.4</code> version is the last version of apimachinery and api that
 stays compatible with client-go pre-v1.18.</p>

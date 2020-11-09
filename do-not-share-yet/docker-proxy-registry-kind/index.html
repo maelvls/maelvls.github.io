@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -211,8 +211,8 @@ API</a>. The
 variable</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nv">REGISTRY_PROXY_REMOTEURL</span><span class="o">=</span>https://registry-1.docker.io
 </code></pre></div><p>is equivalent to the following YAML config:</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">proxy</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">remoteurl</span><span class="p">:</span><span class="w"> </span>https<span class="p">:</span>//registry<span class="m">-1.</span>docker.io<span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">proxy</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">remoteurl</span><span class="p">:</span><span class="w"> </span><span class="l">https://registry-1.docker.io</span><span class="w">
 </span></code></pre></div></blockquote>
 <p>⚠️ The registry can&rsquo;t be both in normal mode (&ldquo;local proxy&rdquo;) and in
 caching proxy mode at the same time, see
@@ -541,19 +541,19 @@ the network name as part of a
 <a href="https://github.com/kubernetes-sigs/cluster-api/blob/6821939410c37743b45c36ec91d94c37dba1998e/test/e2e/data/infrastructure-docker/cluster-template.yaml#L26-L35">DockerMachineTemplate</a>
 (the content of the <code>spec</code> is defined in code
 <a href="https://github.com/kubernetes-sigs/cluster-api/blob/2ac3728d26593f7c54520999477aad45934e1c59/test/infrastructure/docker/api/v1alpha3/dockermachine_types.go#L30-L55">here</a>):</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">apiVersion</span><span class="p">:</span><span class="w"> </span>infrastructure.cluster.x-k8s.io/v1alpha3<span class="w">
-</span><span class="w"></span><span class="k">kind</span><span class="p">:</span><span class="w"> </span>DockerMachineTemplate<span class="w">
-</span><span class="w"></span><span class="k">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">name</span><span class="p">:</span><span class="w"> </span>capd-control-plane<span class="w">
-</span><span class="w">  </span><span class="k">namespace</span><span class="p">:</span><span class="w"> </span>default<span class="w">
-</span><span class="w"></span><span class="k">spec</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">template</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">spec</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">      </span><span class="k">extraMounts</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">        </span>- <span class="k">containerPath</span><span class="p">:</span><span class="w"> </span>/var/run/docker.sock<span class="w">
-</span><span class="w">          </span><span class="k">hostPath</span><span class="p">:</span><span class="w"> </span>/var/run/docker.sock<span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">infrastructure.cluster.x-k8s.io/v1alpha3</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">DockerMachineTemplate</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">capd-control-plane</span><span class="w">
+</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">extraMounts</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span>- <span class="nt">containerPath</span><span class="p">:</span><span class="w"> </span><span class="l">/var/run/docker.sock</span><span class="w">
+</span><span class="w">          </span><span class="nt">hostPath</span><span class="p">:</span><span class="w"> </span><span class="l">/var/run/docker.sock</span><span class="w">
 </span><span class="w">
-</span><span class="w">      </span><span class="k">network</span><span class="p">:</span><span class="w"> </span>kind<span class="w">        </span><span class="c"># 🔰 This field does not exist yet.</span><span class="w">
+</span><span class="w">      </span><span class="nt">network</span><span class="p">:</span><span class="w"> </span><span class="l">kind        # 🔰 This field does not exist yet.</span><span class="w">
 </span></code></pre></div><p><strong>Update 26 July 2020</strong>: added a section about local registry vs. caching
 proxy. Reworked the whole post (less noise, more useful information).</p>
 

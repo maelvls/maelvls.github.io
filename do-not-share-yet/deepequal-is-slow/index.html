@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -74,17 +74,17 @@ From https://github.com/ori-edge/deploy-controllers/pull/14#discussion_r43239887
 
 <span class="kd">type</span> <span class="nx">Status</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="nx">Available</span> <span class="kt">bool</span>
-    <span class="nx">Addresses</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span>
+    <span class="nx">Addresses</span> <span class="p">[]</span><span class="kt">string</span>
 <span class="p">}</span>
 
 <span class="kd">var</span> <span class="p">(</span>
     <span class="nx">s1</span> <span class="p">=</span> <span class="nx">Status</span><span class="p">{</span>
         <span class="nx">Available</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">Addresses</span><span class="p">:</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;87.35.9.18&#34;</span><span class="p">,</span> <span class="s">&#34;87.34.9.11&#34;</span><span class="p">,</span> <span class="s">&#34;some.tld.org&#34;</span><span class="p">}</span><span class="p">,</span>
+        <span class="nx">Addresses</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;87.35.9.18&#34;</span><span class="p">,</span> <span class="s">&#34;87.34.9.11&#34;</span><span class="p">,</span> <span class="s">&#34;some.tld.org&#34;</span><span class="p">},</span>
     <span class="p">}</span>
     <span class="nx">s2</span> <span class="p">=</span> <span class="nx">Status</span><span class="p">{</span>
         <span class="nx">Available</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">Addresses</span><span class="p">:</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;87.35.9.18&#34;</span><span class="p">,</span> <span class="s">&#34;87.34.9.11&#34;</span><span class="p">,</span> <span class="s">&#34;some1.tld.org&#34;</span><span class="p">}</span><span class="p">,</span>
+        <span class="nx">Addresses</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;87.35.9.18&#34;</span><span class="p">,</span> <span class="s">&#34;87.34.9.11&#34;</span><span class="p">,</span> <span class="s">&#34;some1.tld.org&#34;</span><span class="p">},</span>
     <span class="p">}</span>
 <span class="p">)</span>
 

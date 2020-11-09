@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -94,7 +94,7 @@ position-independant code is required when you want to embed a static
 library into a dynamically-linked library. That&rsquo;s due to the fact that
 OCaml requires both the <code>.so</code> and <code>.a</code> versions of the &ldquo;stub&rdquo; library (a
 stub library is a C library that wraps another C library using OCaml C
-primitives). And naturally, Yices&rsquo; build system had not been written to
+primitives). And naturally, Yices' build system had not been written to
 support building a static PIC <code>libyices.a</code>.</p>
 <p>I remember these days as an epic struggle against old build systems. This
 experience taught me everything about <code>autoconf</code>, Makefiles,
@@ -166,7 +166,7 @@ parts of the build configuration being passed as Makefile variables, I
 moved everything to nice flags that you would pass to <code>./configure</code>.</p>
 </li>
 <li>
-<p><strong>Proper PIC support</strong>. Sometimes, Yices&rsquo; <code>./configure</code> would pick up a
+<p><strong>Proper PIC support</strong>. Sometimes, Yices' <code>./configure</code> would pick up a
 <code>libgmp.a</code> that would not be &ldquo;PIC&rdquo;. So I wrote a new
 <a href="https://en.wikipedia.org/wiki/M4_(computer_language)">M4</a> macro,
 <code>CSL_CHECK_STATIC_GMP_HAS_PIC</code>, that would do the PIC check using
@@ -399,14 +399,14 @@ executable using <a href="http://www.mingw.org/">MinGW32</a> (which a port of GC
     <span class="nx">creating</span> <span class="nx">gmp</span><span class="o">-</span><span class="nx">shared</span><span class="o">-</span><span class="nx">free</span> <span class="nx">binaries</span><span class="p">.</span>
 
     <span class="nx">Why</span> <span class="nx">do</span> <span class="nx">we</span> <span class="nx">prefer</span> <span class="nx">using</span> <span class="nx">a</span> <span class="nx">static</span> <span class="nx">version</span> <span class="nx">of</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span><span class="err">?</span>
-    <span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="p">=</span>
+    <span class="o">==================================================</span><span class="p">=</span>
 
     <span class="nx">This</span> <span class="nx">is</span> <span class="nx">because</span> <span class="nx">we</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">non</span><span class="o">-</span><span class="nx">PIC</span> <span class="nx">static</span> <span class="nx">version</span> <span class="nx">of</span> <span class="nx">libyices</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span> <span class="nx">If</span>
     <span class="nx">we</span> <span class="nx">wanted</span> <span class="nx">to</span> <span class="nx">build</span> <span class="nx">both</span> <span class="nx">static</span> <span class="nx">and</span> <span class="nx">shared</span> <span class="nx">stubs</span><span class="p">,</span> <span class="nx">we</span> <span class="nx">should</span> <span class="nx">either</span>
     <span class="o">-</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">PIC</span> <span class="nx">libyices</span><span class="p">.</span><span class="nx">a</span> <span class="nx">but</span> <span class="nx">it</span> <span class="nx">would</span> <span class="nx">conflict</span> <span class="nx">with</span> <span class="nx">the</span> <span class="nx">non</span><span class="o">-</span><span class="nx">PIC</span> <span class="nx">one</span>
     <span class="o">-</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">shared</span> <span class="nx">library</span> <span class="nx">libyices</span><span class="p">.</span><span class="nx">so</span><span class="p">.</span>
 
-    <span class="nx">For</span> <span class="nx">now</span><span class="p">,</span> <span class="nx">I</span> <span class="nx">chose</span> <span class="nx">to</span> <span class="nx">just</span> <span class="nx">skip</span> <span class="nx">the</span> <span class="nx">shared</span> <span class="nf">stubs</span> <span class="p">(</span><span class="nx">dllyices2_stubs</span><span class="p">.</span><span class="nx">so</span><span class="p">)</span><span class="p">.</span>
+    <span class="nx">For</span> <span class="nx">now</span><span class="p">,</span> <span class="nx">I</span> <span class="nx">chose</span> <span class="nx">to</span> <span class="nx">just</span> <span class="nx">skip</span> <span class="nx">the</span> <span class="nx">shared</span> <span class="nf">stubs</span> <span class="p">(</span><span class="nx">dllyices2_stubs</span><span class="p">.</span><span class="nx">so</span><span class="p">).</span>
 
     <span class="nx">Also</span><span class="p">:</span>
 
@@ -419,7 +419,7 @@ executable using <a href="http://www.mingw.org/">MinGW32</a> (which a port of GC
     <span class="nx">not</span> <span class="nx">need</span> <span class="nx">any</span> <span class="nx">dll</span> <span class="nx">alongside</span><span class="p">.</span>
 
     <span class="nx">Guess</span> <span class="nx">the</span> <span class="nx">host</span> <span class="nx">system</span> <span class="nx">and</span> <span class="nx">pass</span> <span class="nx">it</span> <span class="nx">to</span> <span class="nx">libyices</span> <span class="p">.</span><span class="o">/</span><span class="nx">configure</span>
-    <span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="o">==</span><span class="p">=</span>
+    <span class="o">========================================================</span><span class="p">=</span>
     <span class="nx">It</span> <span class="nx">is</span> <span class="nx">now</span> <span class="nx">possible</span> <span class="nx">to</span> <span class="nx">use</span> <span class="p">.</span><span class="o">/</span><span class="nx">configure</span> <span class="k">for</span> <span class="nx">mingw32</span> <span class="nx">cross</span><span class="o">-</span><span class="nx">compilation</span><span class="p">.</span>
 </code></pre></div><p>A month past and I soon realized that GMP was not embedded at all in
 <code>libyices.a</code>. I could see the symbols as undefined (<code>U</code>) when running <code>nm libyices.a</code>. It took me a while to figure this out&hellip; back to tweaking the
@@ -547,14 +547,14 @@ System types:
   --host<span class="o">=</span>HOST       cross-compile to build programs to run on HOST <span class="o">[</span>BUILD<span class="o">]</span>
 
 Optional Features:
-  --enable-shared<span class="o">[</span><span class="o">=</span>PKGS<span class="o">]</span>  build shared libraries <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>
-  --enable-static<span class="o">[</span><span class="o">=</span>PKGS<span class="o">]</span>  build static libraries <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>
+  --enable-shared<span class="o">[=</span>PKGS<span class="o">]</span>  build shared libraries <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>
+  --enable-static<span class="o">[=</span>PKGS<span class="o">]</span>  build static libraries <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>
   --disable-libtool-lock  avoid locking <span class="o">(</span>might <span class="nb">break</span> parallel builds<span class="o">)</span>
   --enable-mcsat          Enable support <span class="k">for</span> MCSAT. This requires the libpoly
                           library.
 
 Optional Packages:
-  --with-pic<span class="o">[</span><span class="o">=</span>PKGS<span class="o">]</span>       try to use only PIC/non-PIC objects <span class="o">[</span><span class="nv">default</span><span class="o">=</span>use
+  --with-pic<span class="o">[=</span>PKGS<span class="o">]</span>       try to use only PIC/non-PIC objects <span class="o">[</span><span class="nv">default</span><span class="o">=</span>use
                           both<span class="o">]</span>
   --with-static-gmp<span class="o">=</span>&lt;path&gt;
                           Full path to a static GMP library <span class="o">(</span>e.g., libgmp.a<span class="o">)</span>

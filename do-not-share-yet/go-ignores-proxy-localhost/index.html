@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -79,7 +79,7 @@ do is</p>
 </code></pre></div><p>Since Proxyman acts like a proxy listening on 0.0.0.0:9090, I can see and
 replay all the HTTP calls, similarly to what you would do with the Chrome
 DevTools.</p>
-<p><img src="proxyman.png" alt="Screenshot with macOS&rsquo; Proxyman for a local Openstack instance"></p>
+<p><img src="proxyman.png" alt="Screenshot with macOS' Proxyman for a local Openstack instance"></p>
 <p>Note that HTTPS is a bit tricky and requires an additional step on macOS
 (settings &gt; Proxyman CA &gt; Generate new) but works flawlessly with any Go
 binary since Go supports <code>HTTPS_PROXY</code> by default. For Python, it becomes a
@@ -109,7 +109,7 @@ can hack your <code>/etc/hosts</code> and use a different host.</p>
 	<span class="s">&#34;github.com/gophercloud/gophercloud/openstack/compute/v2/servers&#34;</span>
 <span class="p">)</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="nx">pr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">openstack</span><span class="p">.</span><span class="nf">NewClient</span><span class="p">(</span><span class="s">&#34;http://localhost/identity/v3&#34;</span><span class="p">)</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;could not create an openstack client&#34;</span><span class="p">)</span>
@@ -122,14 +122,14 @@ can hack your <code>/etc/hosts</code> and use a different host.</p>
 		<span class="nx">Username</span><span class="p">:</span>         <span class="s">&#34;admin&#34;</span><span class="p">,</span>
 		<span class="nx">Password</span><span class="p">:</span>         <span class="s">&#34;secret&#34;</span><span class="p">,</span>
 		<span class="nx">TenantName</span><span class="p">:</span>       <span class="s">&#34;admin&#34;</span><span class="p">,</span>
-	<span class="p">}</span><span class="p">)</span>
+	<span class="p">})</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;auth failed&#34;</span><span class="p">)</span>
 		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 	<span class="p">}</span>
 
-	<span class="nx">compute</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">openstack</span><span class="p">.</span><span class="nf">NewComputeV2</span><span class="p">(</span><span class="nx">pr</span><span class="p">,</span> <span class="nx">gophercloud</span><span class="p">.</span><span class="nx">EndpointOpts</span><span class="p">{</span><span class="nx">Region</span><span class="p">:</span> <span class="s">&#34;&#34;</span><span class="p">}</span><span class="p">)</span>
-	<span class="nx">srvs</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">servers</span><span class="p">.</span><span class="nf">List</span><span class="p">(</span><span class="nx">compute</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span><span class="p">.</span><span class="nf">AllPages</span><span class="p">(</span><span class="p">)</span>
+	<span class="nx">compute</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">openstack</span><span class="p">.</span><span class="nf">NewComputeV2</span><span class="p">(</span><span class="nx">pr</span><span class="p">,</span> <span class="nx">gophercloud</span><span class="p">.</span><span class="nx">EndpointOpts</span><span class="p">{</span><span class="nx">Region</span><span class="p">:</span> <span class="s">&#34;&#34;</span><span class="p">})</span>
+	<span class="nx">srvs</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">servers</span><span class="p">.</span><span class="nf">List</span><span class="p">(</span><span class="nx">compute</span><span class="p">,</span> <span class="kc">nil</span><span class="p">).</span><span class="nf">AllPages</span><span class="p">()</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;%v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
 		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -139,17 +139,17 @@ can hack your <code>/etc/hosts</code> and use a different host.</p>
 <span class="p">}</span>
 </code></pre></div><p>We must be able to swap the <code>http.Transport</code> used. The <a href="https://golang.org/src/net/http/transport.go#L42"><code>http.DefaultTransport</code></a> uses <code>ProxyFromEnvironment</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// DefaultTransport is the default implementation of Transport and is
-</span><span class="c1"></span><span class="c1">// used by DefaultClient. It establishes network connections as needed
-</span><span class="c1"></span><span class="c1">// and caches them for reuse by subsequent calls. It uses HTTP proxies
-</span><span class="c1"></span><span class="c1">// as directed by the $HTTP_PROXY and $NO_PROXY (or $http_proxy and
-</span><span class="c1"></span><span class="c1">// $no_proxy) environment variables.
+</span><span class="c1">// used by DefaultClient. It establishes network connections as needed
+</span><span class="c1">// and caches them for reuse by subsequent calls. It uses HTTP proxies
+</span><span class="c1">// as directed by the $HTTP_PROXY and $NO_PROXY (or $http_proxy and
+</span><span class="c1">// $no_proxy) environment variables.
 </span><span class="c1"></span><span class="kd">var</span> <span class="nx">DefaultTransport</span> <span class="nx">RoundTripper</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">Transport</span><span class="p">{</span>
 	<span class="nx">Proxy</span><span class="p">:</span> <span class="nx">ProxyFromEnvironment</span><span class="p">,</span>
 	<span class="nx">DialContext</span><span class="p">:</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">net</span><span class="p">.</span><span class="nx">Dialer</span><span class="p">{</span>
 		<span class="nx">Timeout</span><span class="p">:</span>   <span class="mi">30</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
 		<span class="nx">KeepAlive</span><span class="p">:</span> <span class="mi">30</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
 		<span class="nx">DualStack</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-	<span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nx">DialContext</span><span class="p">,</span>
+	<span class="p">}).</span><span class="nx">DialContext</span><span class="p">,</span>
 	<span class="nx">ForceAttemptHTTP2</span><span class="p">:</span>     <span class="kc">true</span><span class="p">,</span>
 	<span class="nx">MaxIdleConns</span><span class="p">:</span>          <span class="mi">100</span><span class="p">,</span>
 	<span class="nx">IdleConnTimeout</span><span class="p">:</span>       <span class="mi">90</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
@@ -159,7 +159,7 @@ can hack your <code>/etc/hosts</code> and use a different host.</p>
 </code></pre></div><p>Let&rsquo;s change <code>ProxyFromEnvironment</code> with something of our own:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">Proxy</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">url</span><span class="p">.</span><span class="nx">URL</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">url</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="s">&#34;http://127.0.0.1:9090&#34;</span><span class="p">)</span>
-<span class="p">}</span><span class="p">,</span>
+<span class="p">},</span>
 </code></pre></div><p>Now, the code looks like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
@@ -176,7 +176,7 @@ can hack your <code>/etc/hosts</code> and use a different host.</p>
 	<span class="s">&#34;github.com/gophercloud/gophercloud/openstack/compute/v2/servers&#34;</span>
 <span class="p">)</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="nx">pr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">openstack</span><span class="p">.</span><span class="nf">NewClient</span><span class="p">(</span><span class="s">&#34;http://localhost/identity/v3&#34;</span><span class="p">)</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;could not create an openstack client&#34;</span><span class="p">)</span>
@@ -185,12 +185,12 @@ can hack your <code>/etc/hosts</code> and use a different host.</p>
 	<span class="nx">pr</span><span class="p">.</span><span class="nx">HTTPClient</span><span class="p">.</span><span class="nx">Transport</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Transport</span><span class="p">{</span>
 		<span class="nx">Proxy</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">url</span><span class="p">.</span><span class="nx">URL</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
 			<span class="k">return</span> <span class="nx">url</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="s">&#34;http://127.0.0.1:9090&#34;</span><span class="p">)</span>
-		<span class="p">}</span><span class="p">,</span>
+		<span class="p">},</span>
 		<span class="nx">DialContext</span><span class="p">:</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">net</span><span class="p">.</span><span class="nx">Dialer</span><span class="p">{</span>
 			<span class="nx">Timeout</span><span class="p">:</span>   <span class="mi">30</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
 			<span class="nx">KeepAlive</span><span class="p">:</span> <span class="mi">30</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
 			<span class="nx">DualStack</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-		<span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nx">DialContext</span><span class="p">,</span>
+		<span class="p">}).</span><span class="nx">DialContext</span><span class="p">,</span>
 		<span class="nx">ForceAttemptHTTP2</span><span class="p">:</span>     <span class="kc">true</span><span class="p">,</span>
 		<span class="nx">MaxIdleConns</span><span class="p">:</span>          <span class="mi">100</span><span class="p">,</span>
 		<span class="nx">IdleConnTimeout</span><span class="p">:</span>       <span class="mi">90</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
@@ -204,14 +204,14 @@ can hack your <code>/etc/hosts</code> and use a different host.</p>
 		<span class="nx">Username</span><span class="p">:</span>         <span class="s">&#34;admin&#34;</span><span class="p">,</span>
 		<span class="nx">Password</span><span class="p">:</span>         <span class="s">&#34;secret&#34;</span><span class="p">,</span>
 		<span class="nx">TenantName</span><span class="p">:</span>       <span class="s">&#34;admin&#34;</span><span class="p">,</span>
-	<span class="p">}</span><span class="p">)</span>
+	<span class="p">})</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;auth failed&#34;</span><span class="p">)</span>
 		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 	<span class="p">}</span>
 
-	<span class="nx">compute</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">openstack</span><span class="p">.</span><span class="nf">NewComputeV2</span><span class="p">(</span><span class="nx">pr</span><span class="p">,</span> <span class="nx">gophercloud</span><span class="p">.</span><span class="nx">EndpointOpts</span><span class="p">{</span><span class="nx">Region</span><span class="p">:</span> <span class="s">&#34;&#34;</span><span class="p">}</span><span class="p">)</span>
-	<span class="nx">srvs</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">servers</span><span class="p">.</span><span class="nf">List</span><span class="p">(</span><span class="nx">compute</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span><span class="p">.</span><span class="nf">AllPages</span><span class="p">(</span><span class="p">)</span>
+	<span class="nx">compute</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">openstack</span><span class="p">.</span><span class="nf">NewComputeV2</span><span class="p">(</span><span class="nx">pr</span><span class="p">,</span> <span class="nx">gophercloud</span><span class="p">.</span><span class="nx">EndpointOpts</span><span class="p">{</span><span class="nx">Region</span><span class="p">:</span> <span class="s">&#34;&#34;</span><span class="p">})</span>
+	<span class="nx">srvs</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">servers</span><span class="p">.</span><span class="nf">List</span><span class="p">(</span><span class="nx">compute</span><span class="p">,</span> <span class="kc">nil</span><span class="p">).</span><span class="nf">AllPages</span><span class="p">()</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&#34;%v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
 		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>

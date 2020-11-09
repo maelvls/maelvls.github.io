@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -78,7 +78,7 @@ rewriting interesting.
 </div>
 <div class="markdown">
 <p>In a previous post &ldquo;<a href="/packets-eye-kubernetes-service/">The Packet&rsquo;s-Eye View of a Kubernetes
-Service</a>&quot;, I studied how traffic flows in when
+Service</a>&rdquo;, I studied how traffic flows in when
 using Kubernetes Services. In the last diagram of that post, I could not
 clearly see how traffic could make its way back to the user. In this
 article, I will try to understand how packets are able to flow back to the
@@ -105,7 +105,7 @@ don&rsquo;t need to go through iptables again. You can list the tracked
 connections using the
 <a href="https://manpages.debian.org/testing/conntrack/conntrack.8.en.html">conntrack(8)</a>
 tool. I mention it in &ldquo;<a href="/debugging-kubernetes-networking">Debugging Kubernetes
-Networking</a>&quot;.</p>
+Networking</a>&rdquo;.</p>
 </blockquote>
 <p>Let us dive a bit more and add the &ldquo;response&rdquo; packets. For the following
 diagram, I used the excellent <a href="https://textik.com/">textik</a> ascii drawing

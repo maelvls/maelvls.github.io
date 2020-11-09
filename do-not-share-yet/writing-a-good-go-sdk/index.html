@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -95,15 +95,15 @@ way to give the token:</p>
 <h2 id="unleash">Unleash</h2>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="s">&#34;github.com/Unleash/unleash-client-go&#34;</span>
 
-<span class="kd">func</span> <span class="nf">init</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">unleash</span><span class="p">.</span><span class="nf">Initialize</span><span class="p">(</span>
-        <span class="nx">unleash</span><span class="p">.</span><span class="nf">WithListener</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">unleash</span><span class="p">.</span><span class="nx">DebugListener</span><span class="p">{</span><span class="p">}</span><span class="p">)</span><span class="p">,</span>
-        <span class="nx">unleash</span><span class="p">.</span><span class="nf">WithAppName</span><span class="p">(</span><span class="s">&#34;my-application&#34;</span><span class="p">)</span><span class="p">,</span>
-        <span class="nx">unleash</span><span class="p">.</span><span class="nf">WithUrl</span><span class="p">(</span><span class="s">&#34;http://unleash.herokuapp.com/api/&#34;</span><span class="p">)</span><span class="p">,</span>
+        <span class="nx">unleash</span><span class="p">.</span><span class="nf">WithListener</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">unleash</span><span class="p">.</span><span class="nx">DebugListener</span><span class="p">{}),</span>
+        <span class="nx">unleash</span><span class="p">.</span><span class="nf">WithAppName</span><span class="p">(</span><span class="s">&#34;my-application&#34;</span><span class="p">),</span>
+        <span class="nx">unleash</span><span class="p">.</span><span class="nf">WithUrl</span><span class="p">(</span><span class="s">&#34;http://unleash.herokuapp.com/api/&#34;</span><span class="p">),</span>
     <span class="p">)</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// Example of API call.
 </span><span class="c1"></span>    <span class="nx">unleash</span><span class="p">.</span><span class="nf">IsEnabled</span><span class="p">(</span><span class="s">&#34;app.ToggleX&#34;</span><span class="p">)</span>
 <span class="p">}</span>
@@ -113,7 +113,7 @@ way to give the token:</p>
     <span class="nx">stripe</span> <span class="s">&#34;github.com/stripe/stripe-go&#34;</span>
     <span class="s">&#34;github.com/stripe/stripe-go/client&#34;</span>
 <span class="p">)</span>
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">httpClient</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Client</span><span class="p">{</span><span class="nx">Timeout</span><span class="p">:</span> <span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">}</span>
     <span class="nx">backends</span> <span class="o">:=</span> <span class="nx">stripe</span><span class="p">.</span><span class="nf">NewBackends</span><span class="p">(</span><span class="nx">httpClient</span><span class="p">)</span>
     <span class="nx">client</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewClient</span><span class="p">(</span><span class="s">&#34;token&#34;</span><span class="p">,</span> <span class="nx">backends</span><span class="p">)</span>
@@ -124,7 +124,7 @@ way to give the token:</p>
 offer everything itself (e.g. DialTimeout).</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="s">&#34;github.com/go-redis/redis&#34;</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">opts</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">redis</span><span class="p">.</span><span class="nx">Options</span><span class="p">{</span><span class="nx">Addr</span><span class="p">:</span> <span class="s">&#34;localhost:6379&#34;</span><span class="p">,</span><span class="nx">Password</span><span class="p">:</span> <span class="s">&#34;&#34;</span><span class="p">}</span>
     <span class="nx">client</span> <span class="o">:=</span> <span class="nx">redis</span><span class="p">.</span><span class="nf">NewClient</span><span class="p">(</span><span class="nx">opts</span><span class="p">)</span>
 <span class="p">}</span>
@@ -140,7 +140,7 @@ mutating the <code>conn.AuthToken</code> value.</p>
     <span class="s">&#34;github.com/r3labs/go-salt&#34;</span>
 <span class="p">)</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// Using NewClient
 </span><span class="c1"></span>    <span class="nx">opts</span> <span class="o">:=</span> <span class="nx">salt</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span><span class="nx">Host</span><span class="p">:</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">Username</span><span class="p">:</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">Password</span><span class="p">:</span> <span class="s">&#34;&#34;</span><span class="p">}</span>
     <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">salt</span><span class="p">.</span><span class="nf">NewClient</span><span class="p">(</span><span class="nx">opts</span><span class="p">)</span>
@@ -148,7 +148,7 @@ mutating the <code>conn.AuthToken</code> value.</p>
     <span class="c1">// With a timeout using *http.Client
 </span><span class="c1"></span>    <span class="nx">httpClient</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Client</span><span class="p">{</span><span class="nx">Timeout</span><span class="p">:</span> <span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">}</span>
     <span class="nx">conn</span> <span class="o">:=</span> <span class="nx">salt</span><span class="p">.</span><span class="nx">Connector</span><span class="p">{</span><span class="nx">Client</span><span class="p">:</span> <span class="nx">httpClient</span><span class="p">,</span> <span class="nx">AuthToken</span><span class="p">:</span> <span class="s">&#34;token&#34;</span><span class="p">}</span>
-    <span class="nx">conn</span><span class="p">.</span><span class="nf">Authenticate</span><span class="p">(</span><span class="p">)</span>
+    <span class="nx">conn</span><span class="p">.</span><span class="nf">Authenticate</span><span class="p">()</span>
     <span class="nx">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">salt</span><span class="p">.</span><span class="nx">Client</span><span class="p">{</span><span class="nx">Connector</span><span class="p">:</span> <span class="nx">conn</span><span class="p">}</span>
     <span class="nx">job</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Job</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">)</span>
 <span class="p">}</span>
@@ -160,9 +160,9 @@ transport field (<code>http.Transport</code>) is in fact a <code>http.RoundTripp
     <span class="s">&#34;net/http&#34;</span>
     <span class="s">&#34;github.com/moby/moby/client&#34;</span>
 <span class="p">)</span>
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">httpClient</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Client</span><span class="p">{</span><span class="nx">Timeout</span><span class="p">:</span> <span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">}</span>
-    <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewClientWithOpts</span><span class="p">(</span><span class="nx">client</span><span class="p">.</span><span class="nf">WithHTTPClient</span><span class="p">(</span><span class="nx">httpClient</span><span class="p">)</span><span class="p">)</span>
+    <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewClientWithOpts</span><span class="p">(</span><span class="nx">client</span><span class="p">.</span><span class="nf">WithHTTPClient</span><span class="p">(</span><span class="nx">httpClient</span><span class="p">))</span>
     <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
         <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
     <span class="p">}</span>
@@ -173,13 +173,13 @@ used without using the global state (<code>heroku.DefaultTransport</code>).
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="p">(</span>
     <span class="nx">heroku</span> <span class="s">&#34;github.com/heroku/heroku-go/v5&#34;</span>
 <span class="p">)</span>
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">c</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Client</span><span class="p">{</span>
         <span class="nx">Timeout</span><span class="p">:</span> <span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
-        <span class="nx">Transport</span><span class="p">:</span> <span class="nx">heroku</span><span class="p">.</span><span class="nx">Transport</span><span class="p">{</span><span class="nx">BearerToken</span><span class="p">:</span> <span class="s">&#34;token&#34;</span><span class="p">}</span><span class="p">,</span>
+        <span class="nx">Transport</span><span class="p">:</span> <span class="nx">heroku</span><span class="p">.</span><span class="nx">Transport</span><span class="p">{</span><span class="nx">BearerToken</span><span class="p">:</span> <span class="s">&#34;token&#34;</span><span class="p">},</span>
     <span class="p">}</span>
     <span class="nx">h</span> <span class="o">:=</span> <span class="nx">heroku</span><span class="p">.</span><span class="nf">NewService</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
-    <span class="nx">addons</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nf">AddOnList</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">heroku</span><span class="p">.</span><span class="nx">ListRange</span><span class="p">{</span><span class="nx">Field</span><span class="p">:</span> <span class="s">&#34;name&#34;</span><span class="p">}</span><span class="p">)</span>
+    <span class="nx">addons</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nf">AddOnList</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="o">&amp;</span><span class="nx">heroku</span><span class="p">.</span><span class="nx">ListRange</span><span class="p">{</span><span class="nx">Field</span><span class="p">:</span> <span class="s">&#34;name&#34;</span><span class="p">})</span>
 <span class="p">}</span>
 </code></pre></div><h2 id="slack">Slack</h2>
 <p>Very good!!!
@@ -188,9 +188,9 @@ used without using the global state (<code>heroku.DefaultTransport</code>).
     <span class="s">&#34;github.com/nlopes/slack&#34;</span>
 <span class="p">)</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">httpClient</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Client</span><span class="p">{</span><span class="nx">Timeout</span><span class="p">:</span> <span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">}</span>
-    <span class="nx">api</span> <span class="o">:=</span> <span class="nx">slack</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;token&#34;</span><span class="p">,</span> <span class="nx">slack</span><span class="p">.</span><span class="nf">OptionHTTPClient</span><span class="p">(</span><span class="nx">httpClient</span><span class="p">)</span><span class="p">)</span>
+    <span class="nx">api</span> <span class="o">:=</span> <span class="nx">slack</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;token&#34;</span><span class="p">,</span> <span class="nx">slack</span><span class="p">.</span><span class="nf">OptionHTTPClient</span><span class="p">(</span><span class="nx">httpClient</span><span class="p">))</span>
     <span class="nx">groups</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">api</span><span class="p">.</span><span class="nf">GetGroups</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div><h2 id="scaleway">Scaleway</h2>

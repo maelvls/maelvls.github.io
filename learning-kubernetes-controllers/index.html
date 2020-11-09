@@ -1,4 +1,4 @@
-<!doctype html><html lang=en><head><meta name=generator content="Hugo 0.64.0"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=author content="Maël Valais"><meta name=keywords content="kubernetes,controllers"><meta name=description content="Kubernetes' extensibility is probably its biggest strength. Controllers and
+<!doctype html><html lang=en><head><meta name=generator content="Hugo 0.75.1"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=author content="Maël Valais"><meta name=keywords content="kubernetes,controllers"><meta name=description content="Kubernetes' extensibility is probably its biggest strength. Controllers and
 CRDs are all over the place. But finding the right information to begin
 writing a controller isn't easy due to the sheer amount of tribal knowledge
 scattered everywhere. Here are some links to help you start."><meta property="og:title" content="Learning Kubernetes Controllers"><meta property="og:description" content="Kubernetes' extensibility is probably its biggest strength. Controllers and
@@ -8,7 +8,7 @@ scattered everywhere. Here are some links to help you start."><meta property="og
 CRDs are all over the place. But finding the right information to begin
 writing a controller isn't easy due to the sheer amount of tribal knowledge
 scattered everywhere. Here are some links to help you start."><link rel=icon type=image/png href=/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/favicon-16x16.png sizes=16x16><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/main.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/all.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/maelvls.css><title>Learning Kubernetes Controllers | maelvls dev blog</title></head><body><header><div id=avatar><a href=https://maelvls.dev/><img src=/img/mael.jpg alt="maelvls dev blog"></a></div><div id=titletext><h2 id=title><a href=https://maelvls.dev/>maelvls dev blog</a></h2></div><div id=title-description><p id=subtitle>Systems software engineer. I write mostly about Kubernetes and Go. <a href=/about>About</a></p><div id=social><nav><ul><li><a href=https://github.com/maelvls><i title=Github class="icons fab fa-github"></i></a></li><li><a href=https://twitter.com/maelvls><i title=Twitter class="icons fab fa-twitter"></i></a></li></ul></nav></div></div><div id=mainmenu></div></header><main><div class=post><div class=author></div><div class=post-header><div class=meta><div class=date><span class=day>22</span>
-<span class=rest>Apr 2020</span></div></div><div class=matter><h1 class=title>Learning Kubernetes Controllers</h1></div></div><div class=markdown><p>Kubernetes&rsquo; extensibility is probably its biggest strength. Controllers and
+<span class=rest>Apr 2020</span></div></div><div class=matter><h1 class=title>Learning Kubernetes Controllers</h1></div></div><div class=markdown><p>Kubernetes' extensibility is probably its biggest strength. Controllers and
 CRDs are all over the place. But finding the right information to begin
 writing a controller isn&rsquo;t easy due to the sheer amount of tribal knowledge
 scattered everywhere. This post intends to help you start with controllers.</p><hr><p>Let us begin with some terminology:</p><ul><li><p><strong>controller</strong>: a single loop that watches some objects. We often refer
@@ -42,17 +42,17 @@ what most controllers use nowadays (Rancher uses a somehow forked version
 of controller-runtime and controller-tools,
 <a href=https://github.com/rancher/wrangler>Wrangler</a>, that also generates code
 but with their own &ldquo;style&rdquo; – for example, simple flat interfaces instead
-of <a href=https://github.com/kubernetes/client-go>client-go</a>&lsquo;s deeply nested
+of <a href=https://github.com/kubernetes/client-go>client-go</a>&rsquo;s deeply nested
 interfaces that don&rsquo;t feel like Go).</p></li><li><p>The <a href=https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md>Kubernetes API
 conventions</a>
 is an amazing document. It summarizes a lot of the &ldquo;tribal knowledge&rdquo;
 around naming and how sync loops are conceived and what they mean by
-&ldquo;level-based behaviour&rdquo;.</p></li><li><p>Github search &ldquo;<a href="https://github.com/search?q=language%3Ayaml+language%3Ago+kubernetes+controllers">language:yaml language:go kubernetes controllers</a>", tons of nice examples of controllers</p></li><li><p><a href=https://github.com/jetstack/cert-manager>cert-manager</a>&lsquo;s codebase is a nice controller to take a look at</p></li><li><p>ClusterAPI <a href=https://github.com/kubernetes-sigs/cluster-api/blob/master/docs/proposals/20190610-machine-states-preboot-bootstrapping.md>proposals</a> and codebase (<a href=https://github.com/kubernetes-sigs/cluster-api>capi</a>, <a href=https://github.com/kubernetes-sigs/cluster-api-provider-aws>capa</a>) and  (we took a lot of inspiration from what they do)</p></li><li><p>The ClusterAPI <a href=https://docs.google.com/document/d/1fQNlqsDkvEggWFi51GVxOglL2P1Bvo2JhZlMhm2d-Co/edit#>Meeting
+&ldquo;level-based behaviour&rdquo;.</p></li><li><p>Github search &ldquo;<a href="https://github.com/search?q=language%3Ayaml+language%3Ago+kubernetes+controllers">language:yaml language:go kubernetes controllers</a>&rdquo;, tons of nice examples of controllers</p></li><li><p><a href=https://github.com/jetstack/cert-manager>cert-manager</a>&rsquo;s codebase is a nice controller to take a look at</p></li><li><p>ClusterAPI <a href=https://github.com/kubernetes-sigs/cluster-api/blob/master/docs/proposals/20190610-machine-states-preboot-bootstrapping.md>proposals</a> and codebase (<a href=https://github.com/kubernetes-sigs/cluster-api>capi</a>, <a href=https://github.com/kubernetes-sigs/cluster-api-provider-aws>capa</a>) and  (we took a lot of inspiration from what they do)</p></li><li><p>The ClusterAPI <a href=https://docs.google.com/document/d/1fQNlqsDkvEggWFi51GVxOglL2P1Bvo2JhZlMhm2d-Co/edit#>Meeting
 notes</a> contains
 a ton of useful information on Machine, MachinePool&mldr; (crazy how much I
 learned from that).</p></li><li><p>The Kubernetes <code>status</code> field is tricky. You can take a look at
 &ldquo;<a href=https://maelvls.dev/kubernetes-conditions/>conditions vs. phases vs.
-reasons</a>".</p></li><li><p>The <a href=https://github.com/kubernetes/kubernetes>Kubernetes codebase</a>
+reasons</a>&rdquo;.</p></li><li><p>The <a href=https://github.com/kubernetes/kubernetes>Kubernetes codebase</a>
 itself is also a very nice read. It might feel overwhelming at first; I
 invite you to take a look at a few of the following sync loops contained
 in the <code>kube-controller-manager</code>, <code>kube-scheduler</code> and <code>kubelet</code>. Since

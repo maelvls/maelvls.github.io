@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -77,7 +77,7 @@ they are in beta and I really wanted to try K3s.</p>
 <h2 id="civos-managed-k3s">Civo&rsquo;s Managed K3s</h2>
 <p>Civo is a company that offers a public cloud as well as managed Kubernetes
 clusters. Their managed Kubernetes offer, named
-&ldquo;<a href="https://www.civo.com/kube100">KUBE100</a>&quot;, is quite new (launched in
+&ldquo;<a href="https://www.civo.com/kube100">KUBE100</a>&rdquo;, is quite new (launched in
 mid-2019). Unlike most managed Kubernetes offerings like EKS or GKE, Civo
 went with Rancher&rsquo;s <a href="https://k3s.io/">K3s</a> Kubernetes distribution.</p>
 <p>Compared to the standard Kubernetes distribution, K3s is a way lighter:
@@ -85,7 +85,7 @@ simple embedded database with sqlite, one single binary instead of four; a
 single VM can both host the control plane and run pods. With the
 traditional Kubernetes distribution, you have to run the control plane on a
 separate VM. Note that Civo has a whole blog post on &ldquo;<a href="https://www.civo.com/blog/k8s-vs-k3s">Kubernetes vs.
-K3s</a>&quot;.</p>
+K3s</a>&rdquo;.</p>
 <p>This lightweight feature is what brings me here, and also the fact that K3s
 comes by default with Traefik &amp; their own tiny Service type=LoadBalancer
 controller, which means you don&rsquo;t even need an expensive network load
@@ -103,7 +103,7 @@ I could have gone with a single node.</p>
 use Google&rsquo;s CloudDNS. I did not find an easy alternative yet. Maybe just
 Cloudflare for now?</p>
 <p>After creating Traefik, I knew that its service would automatically be
-populated with the <code>status.loadBalancer</code> field thanks to K3s&rsquo;
+populated with the <code>status.loadBalancer</code> field thanks to K3s'
 <a href="https://github.com/rancher/k3s/blob/master/pkg/servicelb/controller.go">servicelb</a>.
 Let&rsquo;s see:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% kubectl -n traefik get services
@@ -115,7 +115,7 @@ order to set <code>A</code> records.</p>
 <p>If you want to know more about how &ldquo;servicelb&rdquo; works, you can take a look
 at <a href="https://maelvls.dev/packets-eye-kubernetes-service/">The Packet&rsquo;s-Eye View of a Kubernetes
 Service</a> where I
-describe how Akrobateo works (K3s&rsquo; servicelb has the exact same behavior).</p>
+describe how Akrobateo works (K3s' servicelb has the exact same behavior).</p>
 <h2 id="migrating-minio-from-the-old-to-the-new-cluster">Migrating MinIO from the old to the new cluster</h2>
 <p>I use <a href="https://min.io/">minio</a> for various uses. It is great if you want a
 S3-compatible storage solution. In order to migrate, I followed

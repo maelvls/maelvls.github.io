@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -70,10 +70,10 @@ kind:Podmetadata:labels:pod-template-hash:775855699bIn this post, I want to pres
 compare objects. Pods that are owned by a replica set have a label that is
 used to remember what the hash of the pod template that led to this pod
 spec:</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">kind</span><span class="p">:</span><span class="w"> </span>Pod<span class="w">
-</span><span class="w"></span><span class="k">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">labels</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span><span class="k">pod-template-hash</span><span class="p">:</span><span class="w"> </span>775855699b<span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">pod-template-hash</span><span class="p">:</span><span class="w"> </span><span class="l">775855699b</span><span class="w">
 </span></code></pre></div><p>In this post, I want to present the advantages and limitations of using a
 hash function in this context.</p>
 <p>✅ <strong>Pros</strong>: works around the fact that child object might get mutated or
@@ -89,27 +89,27 @@ replica set mapping to multiple pods</strong>)</p>
 it uses the <a href="https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/controller_utils.go#L1130-L1145"><code>ComputeHash</code></a> func which uses
 <a href="https://golang.org/pkg/hash/fnv/#New32">fnv.New32a</a> from the std lib:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// ComputeHash returns a hash value calculated from pod template and
-</span><span class="c1"></span><span class="c1">// a collisionCount to avoid hash collision. The hash will be safe encoded to
-</span><span class="c1"></span><span class="c1">// avoid bad words.
+</span><span class="c1">// a collisionCount to avoid hash collision. The hash will be safe encoded to
+</span><span class="c1">// avoid bad words.
 </span><span class="c1"></span><span class="kd">func</span> <span class="nf">ComputeHash</span><span class="p">(</span><span class="nx">template</span> <span class="o">*</span><span class="nx">v1</span><span class="p">.</span><span class="nx">PodTemplateSpec</span><span class="p">,</span> <span class="nx">collisionCount</span> <span class="o">*</span><span class="kt">int32</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
-    <span class="nx">podTemplateSpecHasher</span> <span class="o">:=</span> <span class="nx">fnv</span><span class="p">.</span><span class="nf">New32a</span><span class="p">(</span><span class="p">)</span>
+    <span class="nx">podTemplateSpecHasher</span> <span class="o">:=</span> <span class="nx">fnv</span><span class="p">.</span><span class="nf">New32a</span><span class="p">()</span>
     <span class="nx">hashutil</span><span class="p">.</span><span class="nf">DeepHashObject</span><span class="p">(</span><span class="nx">podTemplateSpecHasher</span><span class="p">,</span> <span class="o">*</span><span class="nx">template</span><span class="p">)</span>
 
     <span class="c1">// Add collisionCount in the hash if it exists.
 </span><span class="c1"></span>    <span class="k">if</span> <span class="nx">collisionCount</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-        <span class="nx">collisionCountBytes</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-        <span class="nx">binary</span><span class="p">.</span><span class="nx">LittleEndian</span><span class="p">.</span><span class="nf">PutUint32</span><span class="p">(</span><span class="nx">collisionCountBytes</span><span class="p">,</span> <span class="nb">uint32</span><span class="p">(</span><span class="o">*</span><span class="nx">collisionCount</span><span class="p">)</span><span class="p">)</span>
+        <span class="nx">collisionCountBytes</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="nx">binary</span><span class="p">.</span><span class="nx">LittleEndian</span><span class="p">.</span><span class="nf">PutUint32</span><span class="p">(</span><span class="nx">collisionCountBytes</span><span class="p">,</span> <span class="nb">uint32</span><span class="p">(</span><span class="o">*</span><span class="nx">collisionCount</span><span class="p">))</span>
         <span class="nx">podTemplateSpecHasher</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">collisionCountBytes</span><span class="p">)</span>
     <span class="p">}</span>
 
-    <span class="k">return</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">SafeEncodeString</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nx">podTemplateSpecHasher</span><span class="p">.</span><span class="nf">Sum32</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">SafeEncodeString</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nx">podTemplateSpecHasher</span><span class="p">.</span><span class="nf">Sum32</span><span class="p">()))</span>
 <span class="p">}</span>
 </code></pre></div><p>and the <a href="https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/util/hash/hash.go#L25-L37"><code>DeepHashObject</code></a> looks like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// DeepHashObject writes specified object to hash using the spew library
-</span><span class="c1"></span><span class="c1">// which follows pointers and prints actual values of the nested objects
-</span><span class="c1"></span><span class="c1">// ensuring the hash does not change when a pointer changes.
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">DeepHashObject</span><span class="p">(</span><span class="nx">hasher</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">Hash</span><span class="p">,</span> <span class="nx">objectToWrite</span> <span class="kd">interface</span><span class="p">{</span><span class="p">}</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">hasher</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="p">)</span>
+</span><span class="c1">// which follows pointers and prints actual values of the nested objects
+</span><span class="c1">// ensuring the hash does not change when a pointer changes.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">DeepHashObject</span><span class="p">(</span><span class="nx">hasher</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">Hash</span><span class="p">,</span> <span class="nx">objectToWrite</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="nx">hasher</span><span class="p">.</span><span class="nf">Reset</span><span class="p">()</span>
     <span class="nx">printer</span> <span class="o">:=</span> <span class="nx">spew</span><span class="p">.</span><span class="nx">ConfigState</span><span class="p">{</span>
         <span class="nx">Indent</span><span class="p">:</span>         <span class="s">&#34; &#34;</span><span class="p">,</span>
         <span class="nx">SortKeys</span><span class="p">:</span>       <span class="kc">true</span><span class="p">,</span>
@@ -136,17 +136,17 @@ into a string, and then uses the <code>fnv</code> std library to hash that strin
 <span class="kd">type</span> <span class="nx">ComplexStruct</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="nx">Name</span>     <span class="kt">string</span>
     <span class="nx">Age</span>      <span class="kt">uint</span>
-    <span class="nx">Metadata</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{</span><span class="p">}</span>
+    <span class="nx">Metadata</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span>
 <span class="p">}</span>
 
 <span class="kd">var</span> <span class="nx">v</span> <span class="p">=</span> <span class="nx">ComplexStruct</span><span class="p">{</span>
     <span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;mitchellh&#34;</span><span class="p">,</span>
     <span class="nx">Age</span><span class="p">:</span>  <span class="mi">64</span><span class="p">,</span>
-    <span class="nx">Metadata</span><span class="p">:</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{</span><span class="p">}</span><span class="p">{</span>
+    <span class="nx">Metadata</span><span class="p">:</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span>
         <span class="s">&#34;car&#34;</span><span class="p">:</span>      <span class="kc">true</span><span class="p">,</span>
         <span class="s">&#34;location&#34;</span><span class="p">:</span> <span class="s">&#34;California&#34;</span><span class="p">,</span>
-        <span class="s">&#34;siblings&#34;</span><span class="p">:</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;Bob&#34;</span><span class="p">,</span> <span class="s">&#34;John&#34;</span><span class="p">}</span><span class="p">,</span>
-    <span class="p">}</span><span class="p">,</span>
+        <span class="s">&#34;siblings&#34;</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;Bob&#34;</span><span class="p">,</span> <span class="s">&#34;John&#34;</span><span class="p">},</span>
+    <span class="p">},</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">BenchmarkMitchellhHashstructure</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
@@ -157,15 +157,15 @@ into a string, and then uses the <code>fnv</code> std library to hash that strin
 
 <span class="kd">func</span> <span class="nf">BenchmarkKubernetesComputeHash</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-        <span class="nx">hasher</span> <span class="o">:=</span> <span class="nx">fnv</span><span class="p">.</span><span class="nf">New32a</span><span class="p">(</span><span class="p">)</span>
+        <span class="nx">hasher</span> <span class="o">:=</span> <span class="nx">fnv</span><span class="p">.</span><span class="nf">New32a</span><span class="p">()</span>
         <span class="nf">DeepHashObject</span><span class="p">(</span><span class="nx">hasher</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
-        <span class="nx">_</span> <span class="p">=</span> <span class="nx">hasher</span><span class="p">.</span><span class="nf">Sum32</span><span class="p">(</span><span class="p">)</span>
+        <span class="nx">_</span> <span class="p">=</span> <span class="nx">hasher</span><span class="p">.</span><span class="nf">Sum32</span><span class="p">()</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="c1">// From https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/util/hash/hash.go#L25-L37
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">DeepHashObject</span><span class="p">(</span><span class="nx">hasher</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">Hash</span><span class="p">,</span> <span class="nx">objectToWrite</span> <span class="kd">interface</span><span class="p">{</span><span class="p">}</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">hasher</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="p">)</span>
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">DeepHashObject</span><span class="p">(</span><span class="nx">hasher</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">Hash</span><span class="p">,</span> <span class="nx">objectToWrite</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="nx">hasher</span><span class="p">.</span><span class="nf">Reset</span><span class="p">()</span>
     <span class="nx">printer</span> <span class="o">:=</span> <span class="nx">spew</span><span class="p">.</span><span class="nx">ConfigState</span><span class="p">{</span>
         <span class="nx">Indent</span><span class="p">:</span>         <span class="s">&#34; &#34;</span><span class="p">,</span>
         <span class="nx">SortKeys</span><span class="p">:</span>       <span class="kc">true</span><span class="p">,</span>
@@ -174,7 +174,7 @@ into a string, and then uses the <code>fnv</code> std library to hash that strin
     <span class="p">}</span>
     <span class="nx">printer</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">hasher</span><span class="p">,</span> <span class="s">&#34;%#v&#34;</span><span class="p">,</span> <span class="nx">objectToWrite</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></div><p>The winner seems to be the Kubernetes&rsquo; ComputeHash function, although it
+</code></pre></div><p>The winner seems to be the Kubernetes' ComputeHash function, although it
 relies on spew to generate a string. I guess most of the time spent by
 hashstructure.Hash is due to the reflect package?</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% go <span class="nb">test</span> -bench .

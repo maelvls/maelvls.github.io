@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -97,8 +97,8 @@ from the node and ending with the root of the domain space tree.</p>
 domains has an <code>NS</code> record to a name server that has the records for that
 zone. I told my registrar (Google Domains) to use the Google DNS name
 servers, which means that the <code>dev.</code> name servers now have <code>NS</code> records
-that point to Google DNS&rsquo; name servers. With this <code>NS</code> record, the <code>dev.</code>
-zone &ldquo;delegates&rdquo; the <code>maelvls.dev.</code> zone to Google DNS&rsquo; name servers.</p>
+that point to Google DNS' name servers. With this <code>NS</code> record, the <code>dev.</code>
+zone &ldquo;delegates&rdquo; the <code>maelvls.dev.</code> zone to Google DNS' name servers.</p>
 <p>For example, let us use <code>dig</code> to see all intermediate DNS queries at once:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% dig +trace minio.k.maelvls.dev
 <span class="c1"># I omitted the DNSSEC-related records (RRSIG, DS and NSEC3 records).</span>

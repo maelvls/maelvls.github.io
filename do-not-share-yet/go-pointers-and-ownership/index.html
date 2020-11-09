@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Go, pointers and data ownership" />
-<meta property="og:description" content="After reading the venerable &ldquo;Using Pointers In Go (2014)&quot;. In this post, William Kennedy mentions the &ldquo;tribal knowledge&rdquo; around the use of pointers:
+<meta property="og:description" content="After reading the venerable &ldquo;Using Pointers In Go (2014)&rdquo;. In this post, William Kennedy mentions the &ldquo;tribal knowledge&rdquo; around the use of pointers:
  My use of pointers is based on discoveries I have made looking at code from the standard library. There are always exceptions to these rules, but what I will show you is common practice. It starts with classifying the type of value that needs to be shared." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/do-not-share-yet/go-pointers-and-ownership/" />
@@ -17,7 +17,7 @@
 <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/go-pointers-and-ownership/cover-go-pointers-and-ownership.png"/>
 
 <meta name="twitter:title" content="Go, pointers and data ownership"/>
-<meta name="twitter:description" content="After reading the venerable &ldquo;Using Pointers In Go (2014)&quot;. In this post, William Kennedy mentions the &ldquo;tribal knowledge&rdquo; around the use of pointers:
+<meta name="twitter:description" content="After reading the venerable &ldquo;Using Pointers In Go (2014)&rdquo;. In this post, William Kennedy mentions the &ldquo;tribal knowledge&rdquo; around the use of pointers:
  My use of pointers is based on discoveries I have made looking at code from the standard library. There are always exceptions to these rules, but what I will show you is common practice. It starts with classifying the type of value that needs to be shared."/>
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
@@ -65,7 +65,7 @@
 </div>
 <div class="markdown">
 <p>After reading the venerable &ldquo;<a href="https://www.ardanlabs.com/blog/2014/12/using-pointers-in-go.html">Using Pointers In Go
-(2014)</a>&quot;.
+(2014)</a>&rdquo;.
 In this post, William Kennedy mentions the &ldquo;tribal knowledge&rdquo; around the
 use of pointers:</p>
 <blockquote>
@@ -99,7 +99,7 @@ https://github.com/ori-edge/edge-platform-controllers/pull/24
 <span class="p">}</span>
 
 <span class="c1">// Update mutates the given slice.
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">Update</span> <span class="p">(</span><span class="nx">current</span> <span class="p">[</span><span class="p">]</span><span class="nx">Condition</span><span class="p">,</span> <span class="nx">new</span> <span class="nx">Condition</span><span class="p">)</span> <span class="p">[</span><span class="p">]</span><span class="nx">Condition</span> <span class="p">{</span>
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">Update</span> <span class="p">(</span><span class="nx">current</span> <span class="p">[]</span><span class="nx">Condition</span><span class="p">,</span> <span class="nx">new</span> <span class="nx">Condition</span><span class="p">)</span> <span class="p">[]</span><span class="nx">Condition</span> <span class="p">{</span>
     <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">c</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">current</span> <span class="p">{</span>
         <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Type</span> <span class="o">==</span> <span class="nx">new</span><span class="p">.</span><span class="nx">Type</span> <span class="p">{</span>
             <span class="nx">current</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">new</span>
@@ -112,10 +112,10 @@ https://github.com/ori-edge/edge-platform-controllers/pull/24
 </code></pre></div><p>We are mutating <code>current</code> but we still return it, which is confusing: is the
 function mutating <code>current</code>?</p>
 <p>One better way would be to write:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Update</span> <span class="p">(</span><span class="nx">current</span> <span class="p">[</span><span class="p">]</span><span class="nx">Condition</span><span class="p">,</span> <span class="nx">new</span> <span class="nx">Condition</span><span class="p">)</span> <span class="p">[</span><span class="p">]</span><span class="nx">Condition</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Update</span> <span class="p">(</span><span class="nx">current</span> <span class="p">[]</span><span class="nx">Condition</span><span class="p">,</span> <span class="nx">new</span> <span class="nx">Condition</span><span class="p">)</span> <span class="p">[]</span><span class="nx">Condition</span> <span class="p">{</span>
     <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">c</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">current</span> <span class="p">{</span>
         <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Type</span> <span class="o">==</span> <span class="nx">new</span><span class="p">.</span><span class="nx">Type</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">current</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">...</span><span class="p">,</span> <span class="nx">new</span><span class="p">,</span> <span class="nx">current</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mf">1.</span><span class="p">.</span><span class="p">.</span><span class="p">]</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">current</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">...</span><span class="p">,</span> <span class="nx">new</span><span class="p">,</span> <span class="nx">current</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mf">1.</span><span class="p">..])</span>
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="c1">// Condition type doesn&#39;t currently exist, add it.
@@ -124,7 +124,7 @@ function mutating <code>current</code>?</p>
 </code></pre></div><p>That&rsquo;s much better.</p>
 <h2 id="pointer-or-not-pointer">Pointer or not pointer?</h2>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Dictionary</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">words</span> <span class="p">[</span><span class="p">]</span><span class="kt">string</span>
+    <span class="nx">words</span> <span class="p">[]</span><span class="kt">string</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">AddWord</span><span class="p">(</span><span class="nx">d</span> <span class="nx">Dictionary</span><span class="p">,</span> <span class="nx">entry</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Dictionary</span>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -149,7 +149,7 @@ requires Go modules (e.g., <code>go get</code> a specific version of a binary), 
 need to do:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get github.com/golang/mock/tree/master/mockgen@v1.3.1
 </code></pre></div><h3 id="go111module-with-go-113"><code>GO111MODULE</code> with Go 1.13</h3>
-<p>Using Go 1.13, <code>GO111MODULE</code>'s default (<code>auto</code>) changes:</p>
+<p>Using Go 1.13, <code>GO111MODULE</code>&rsquo;s default (<code>auto</code>) changes:</p>
 <ul>
 <li>behaves like <code>GO111MODULE=on</code> anywhere there is a <code>go.mod</code> OR anywhere
 outside the GOPATH even if there is no <code>go.mod</code>. So you can keep all your
@@ -306,7 +306,7 @@ big</li>
 is about 30MB), we can very well do it without vendoring. That would
 require to pass some form of GITHUB_TOKEN as argument of <code>docker build</code>,
 and in the Dockerfile, set something like:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">git config --global url.<span class="s2">&#34;</span><span class="s2">https://foo:</span><span class="si">${</span><span class="nv">GITHUB_TOKEN</span><span class="si">}</span><span class="s2">@github.com/company</span><span class="s2">&#34;</span>.insteadOf <span class="s2">&#34;https://github.com/company&#34;</span>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">git config --global url.<span class="s2">&#34;https://foo:</span><span class="si">${</span><span class="nv">GITHUB_TOKEN</span><span class="si">}</span><span class="s2">@github.com/company&#34;</span>.insteadOf <span class="s2">&#34;https://github.com/company&#34;</span>
 <span class="nb">export</span> <span class="nv">GOPRIVATE</span><span class="o">=</span>github.com/company/<span class="se">\*</span>
 </code></pre></div><p><em>Illustration by Bailey Beougher, from The Illustrated Children&rsquo;s Guide to Kubernetes.</em></p>
 <p><strong>Update 22 June 2020:</strong> it said <code>use replace</code> instead of just <code>replace</code></p>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -170,7 +170,60 @@ https://textik.com/#d85b4624473ca862
   <iframe src="https://www.youtube.com/embed/gXz4cq3PKdg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
 
-
+<hr>
+<h2 id="see-the-acme-http-01-protocol-using-pebble-lego-cli-and-mitmproxy">See the ACME HTTP-01 protocol using Pebble, Lego CLI and mitmproxy</h2>
+<p>First, let us create a CA key pair using
+<a href="https://github.com/jsha/minica">minica</a>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go get -u github.com/jsha/minica
+minica --domains me -ip-addresses 127.0.0.1,0.0.0.0
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain minica.pem
+</code></pre></div><p>We are going to use the domain <code>me</code> instead of <code>locahost</code> since Go programs
+<a href="https://maelvls.dev/go-ignores-proxy-localhost/">are ignoring the proxy
+settings</a> when the host of
+the request is <code>localhost</code>. Thus, we need to make sure we can resolve the
+<code>me</code> name by adding a line in <code>/etc/hosts</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># /etc/hosts</span>
+127.0.0.1   me
+</code></pre></div><p>Now, let us run <a href="https://mitmproxy.org/">mitmproxy</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">mitmproxy -p <span class="m">9090</span> --set <span class="nv">ssl_verify_upstream_trusted_ca</span><span class="o">=</span>minica.pem
+</code></pre></div><blockquote>
+<p>The <code>minica.pem</code> has to be given to mitmproxy since it does not know
+about the system keychain (on macOS). Even if we added this root CA to
+the keychain and set it as trusted, mitmproxy uses its own certificate
+bundle (handled by <a href="https://github.com/certifi/python-certifi">certifi</a>).
+So we have to give mitmproxy the root CA of the upstream server that
+mitmproxy will talk to (i.e., pebble).</p>
+</blockquote>
+<p>At this point, let&rsquo;s make sure <code>lego</code> will trust mitmproxy&rsquo;s
+man-in-the-middle CA:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain ~/.mitmproxy/mitmproxy-ca-cert.pem
+</code></pre></div><p>Then, let us run <a href="https://github.com/letsencrypt/pebble">pebble</a>, the
+simple ACME server meant for testing:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go get -u github.com/letsencrypt/pebble/cmd/pebble
+<span class="nv">HTTP_PROXY</span><span class="o">=</span>localhost:9090 pebble -config /dev/stdin <span class="s">&lt;&lt;EOF
+</span><span class="s">{
+</span><span class="s">  &#34;pebble&#34;: {
+</span><span class="s">    &#34;listenAddress&#34;: &#34;0.0.0.0:14000&#34;,
+</span><span class="s">    &#34;managementListenAddress&#34;: &#34;0.0.0.0:15000&#34;,
+</span><span class="s">    &#34;certificate&#34;: &#34;me/cert.pem&#34;,
+</span><span class="s">    &#34;privateKey&#34;: &#34;me/key.pem&#34;,
+</span><span class="s">    &#34;httpPort&#34;: 5002,
+</span><span class="s">    &#34;tlsPort&#34;: 5001,
+</span><span class="s">    &#34;externalAccountBindingRequired&#34;: false
+</span><span class="s">  }
+</span><span class="s">}
+</span><span class="s">EOF</span>
+</code></pre></div><p>Finally, let us run the ACME client
+<a href="https://github.com/go-acme/lego">lego</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go get -u github.com/go-acme/lego/v4/cmd/lego
+lego -server<span class="o">=</span>https://me:14000/dir -domains me -email foo@bar.org -http.port :5002 -http run
+</code></pre></div><p>And there we go!</p>
+<p><img src="mitmproxy-with-lego-and-pebble.png" alt="Screeshot of mitmproxy running interactively in the terminal and capturing the input and output from Pebble and Lego"></p>
+<p>If you would like to dig into these traces, you can do so by downloading
+the mitmproxy flow here:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">curl -O https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/pebble-and-lego.mitmproxy
+mitmproxy -r pebble-and-lego.mitmproxy
+</code></pre></div>
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/kubeconfigs-and-certs/index.md">📝 Edit this page and propose a change!</a>
 <div class="tags">

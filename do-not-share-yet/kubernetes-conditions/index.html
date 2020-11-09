@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.64.0" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -160,31 +160,31 @@ of communicating between components/sync loops.</p>
 <h2 id="pod-example">Pod example</h2>
 <p>Let&rsquo;s read a Pod manifest:</p>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># kubectl -n cert-manager get pods -oyaml</span><span class="w">
-</span><span class="w"></span><span class="k">kind</span><span class="p">:</span><span class="w"> </span>Pod<span class="w">
-</span><span class="w"></span><span class="k">status</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">conditions</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span>- <span class="k">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:24Z&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">type</span><span class="p">:</span><span class="w"> </span>PodScheduled<span class="w">
-</span><span class="w">    </span>- <span class="k">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:24Z&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">type</span><span class="p">:</span><span class="w"> </span>Initialized<span class="w">
-</span><span class="w">    </span>- <span class="k">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:31Z&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">type</span><span class="p">:</span><span class="w"> </span>ContainersReady<span class="w">
-</span><span class="w">    </span>- <span class="k">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:31Z&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">type</span><span class="p">:</span><span class="w"> </span>Ready<span class="w">
-</span><span class="w">  </span><span class="k">containerStatuses</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span>- <span class="k">image</span><span class="p">:</span><span class="w"> </span>quay.io/jetstack/cert-manager-controller<span class="p">:</span>v0<span class="m">.6</span><span class="m">.1</span><span class="w">
-</span><span class="w">      </span><span class="k">ready</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span><span class="w">      </span><span class="k">state</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="k">running</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="k">startedAt</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:31Z&#34;</span><span class="w"> </span>}<span class="w"> </span>}<span class="w">
-</span><span class="w">  </span><span class="k">phase</span><span class="p">:</span><span class="w"> </span>Running<span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span><span class="w"></span><span class="nt">status</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">conditions</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:24Z&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">PodScheduled</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:24Z&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">Initialized</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:31Z&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">ContainersReady</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:31Z&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">Ready</span><span class="w">
+</span><span class="w">  </span><span class="nt">containerStatuses</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">quay.io/jetstack/cert-manager-controller:v0.6.1</span><span class="w">
+</span><span class="w">      </span><span class="nt">ready</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="nt">running</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="nt">startedAt</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:31Z&#34;</span><span class="w"> </span>}<span class="w"> </span>}<span class="w">
+</span><span class="w">  </span><span class="nt">phase</span><span class="p">:</span><span class="w"> </span><span class="l">Running</span><span class="w">
 </span></code></pre></div><p>A condition contains a Status and a Type. It may also contain a Reason and
 a Message. For example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">- <span class="k">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:31Z&#34;</span><span class="w">
-</span><span class="w">  </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
-</span><span class="w">  </span><span class="k">type</span><span class="p">:</span><span class="w"> </span>ContainersReady<span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">- <span class="nt">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:29:31Z&#34;</span><span class="w">
+</span><span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
+</span><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">ContainersReady</span><span class="w">
 </span></code></pre></div><p>The <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-conditions">pod-lifecycle</a> documentation explains the difference between the
 &lsquo;phase&rsquo; and &lsquo;conditions:</p>
 <ol>
@@ -258,11 +258,11 @@ in the status to represent meaningful information. We can revisit the
 specifics when new patterns start to emerge in core.</p>
 </blockquote>
 <p>Instead of using a list of conditions, cluster-api projects go like that:</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">status</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">ready</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
-</span><span class="w">  </span><span class="k">phase</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Failed&#34;</span><span class="w">
-</span><span class="w">  </span><span class="k">failureReason</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;GcpMachineCrashed&#34;</span><span class="w">
-</span><span class="w">  </span><span class="k">failureMessage</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;VM crashed: ...&#34;</span><span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">status</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">ready</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">  </span><span class="nt">phase</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Failed&#34;</span><span class="w">
+</span><span class="w">  </span><span class="nt">failureReason</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;GcpMachineCrashed&#34;</span><span class="w">
+</span><span class="w">  </span><span class="nt">failureMessage</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;VM crashed: ...&#34;</span><span class="w">
 </span></code></pre></div></li>
 <li>
 <p><a href="https://github.com/jetstack/cert-manager">cert-manager</a> uses Conditions,
@@ -272,13 +272,13 @@ components that are willing to use cert-manager&rsquo;s API, similarly to what
 happens with the PodSchedulable condition and its reason,
 PodReasonUnschedulable. For example, the <a href="https://github.com/jetstack/cert-manager/blob/b91b7d8d3/pkg/controller/issuers/sync.go#L61-L69">Issuer&rsquo;s
 Sync</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">kind</span><span class="p">:</span><span class="w"> </span>Issuer<span class="w">
-</span><span class="w"></span><span class="k">status</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">conditions</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Ready&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;False&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;ErrorConfig&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Resource validation failed: ...&#34;</span><span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Issuer</span><span class="w">
+</span><span class="w"></span><span class="nt">status</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">conditions</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Ready&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;False&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;ErrorConfig&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Resource validation failed: ...&#34;</span><span class="w">
 </span></code></pre></div></li>
 <li>
 <p>Openshift uses conditions a lot but does not use the standard &lsquo;Ready&rsquo;
@@ -453,21 +453,21 @@ explanations, such as kubectl describe output.</p>
 <p>(<a href="https://twitter.com/bgrant0607/status/1111473660479430656">Brian Grant, Mar 2019</a>) Rather than rigid fine-grained state enumerations that couldn&rsquo;t be evolved, we initially adopted simple basic states that could report <a href="http://issues.k8s.io/1146">open-ended reasons for being in each state</a> (2014), and later <a href="http://issues.k8s.io/7856">non-orthogonal, extensible conditions</a> (2017).</p>
 </blockquote>
 <p>Since the Pod conditions do not have a &lsquo;Reason&rsquo; field (in the previous Pod example), let&rsquo;s take a look at the Node conditions instead:</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">kind</span><span class="p">:</span><span class="w"> </span>Node<span class="w">
-</span><span class="w"></span><span class="k">status</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">conditions</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span>DiskPressure<span class="w">
-</span><span class="w">      </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;False&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">reason</span><span class="p">:</span><span class="w"> </span>KubeletHasNoDiskPressure<span class="w">
-</span><span class="w">      </span><span class="k">message</span><span class="p">:</span><span class="w"> </span>kubelet<span class="w"> </span>has<span class="w"> </span>no<span class="w"> </span>disk<span class="w"> </span>pressure<span class="w">
-</span><span class="w">      </span><span class="k">lastHeartbeatTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-11-17T14:18:26Z&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:27:53Z&#34;</span><span class="w">
-</span><span class="w">    </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span>Ready<span class="w">
-</span><span class="w">      </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">reason</span><span class="p">:</span><span class="w"> </span>KubeletReady<span class="w">
-</span><span class="w">      </span><span class="k">message</span><span class="p">:</span><span class="w"> </span>kubelet<span class="w"> </span>is<span class="w"> </span>posting<span class="w"> </span>ready<span class="w"> </span>status.<span class="w"> </span>AppArmor<span class="w"> </span>enabled<span class="w">
-</span><span class="w">      </span><span class="k">lastHeartbeatTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-11-17T14:18:26Z&#34;</span><span class="w">
-</span><span class="w">      </span><span class="k">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:27:53Z&#34;</span><span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Node</span><span class="w">
+</span><span class="w"></span><span class="nt">status</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">conditions</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">DiskPressure</span><span class="w">
+</span><span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;False&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">reason</span><span class="p">:</span><span class="w"> </span><span class="l">KubeletHasNoDiskPressure</span><span class="w">
+</span><span class="w">      </span><span class="nt">message</span><span class="p">:</span><span class="w"> </span><span class="l">kubelet has no disk pressure</span><span class="w">
+</span><span class="w">      </span><span class="nt">lastHeartbeatTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-11-17T14:18:26Z&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:27:53Z&#34;</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">Ready</span><span class="w">
+</span><span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;True&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">reason</span><span class="p">:</span><span class="w"> </span><span class="l">KubeletReady</span><span class="w">
+</span><span class="w">      </span><span class="nt">message</span><span class="p">:</span><span class="w"> </span><span class="l">kubelet is posting ready status. AppArmor enabled</span><span class="w">
+</span><span class="w">      </span><span class="nt">lastHeartbeatTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-11-17T14:18:26Z&#34;</span><span class="w">
+</span><span class="w">      </span><span class="nt">lastTransitionTime</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2019-10-22T16:27:53Z&#34;</span><span class="w">
 </span></code></pre></div><p>Here, the &lsquo;Ready&rsquo; condition type has an additional &lsquo;Reason&rsquo; field that
 gives the user more information about the transition. The Reason field is
 sometimes used by other components: for example, <code>PodReasonUnschedulable</code>
@@ -504,16 +504,16 @@ API.</p>
 <p>Conditions are also a clean way of letting third-party components (such as
 the cluster-api controller) to add their own &lsquo;named&rsquo; conditions to an
 existing object, e.g. to a Pod (see <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate">pod-readiness-gate</a>):</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">Kind</span><span class="p">:</span><span class="w"> </span>Pod<span class="w">
-</span><span class="w"></span><span class="k">spec</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">readinessGates</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span>- <span class="k">conditionType</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;www.example.com/feature-1&#34;</span><span class="w">
-</span><span class="w"></span><span class="k">status</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">  </span><span class="k">conditions</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="w">    </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span>Ready<span class="w"> </span><span class="c"># this is a builtin PodCondition</span><span class="w">
-</span><span class="w">      </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;False&#34;</span><span class="w">
-</span><span class="w">    </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;www.example.com/feature-1&#34;</span><span class="w"> </span><span class="c"># an extra PodCondition</span><span class="w">
-</span><span class="w">      </span><span class="k">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;False&#34;</span><span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">Kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">readinessGates</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">conditionType</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;www.example.com/feature-1&#34;</span><span class="w">
+</span><span class="w"></span><span class="nt">status</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">conditions</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">Ready # this is a builtin PodCondition</span><span class="w">
+</span><span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;False&#34;</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;www.example.com/feature-1&#34;</span><span class="w"> </span><span class="c"># an extra PodCondition</span><span class="w">
+</span><span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;False&#34;</span><span class="w">
 </span></code></pre></div><!--
 Discussion is happening here:
 
