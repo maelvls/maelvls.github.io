@@ -133,3 +133,86 @@ https://textik.com/#d85b4624473ca862
 {{< youtube gXz4cq3PKdg >}}
 
 
+---
+
+## See the ACME HTTP-01 protocol using Pebble, Lego CLI and mitmproxy
+
+First, let us create a CA key pair using
+[minica](https://github.com/jsha/minica).
+
+```sh
+go get -u github.com/jsha/minica
+minica --domains me -ip-addresses 127.0.0.1,0.0.0.0
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain minica.pem
+```
+
+We are going to use the domain `me` instead of `locahost` since Go programs
+[are ignoring the proxy
+settings](https://maelvls.dev/go-ignores-proxy-localhost/) when the host of
+the request is `localhost`. Thus, we need to make sure we can resolve the
+`me` name by adding a line in `/etc/hosts`:
+
+```sh
+# /etc/hosts
+127.0.0.1   me
+```
+
+Now, let us run [mitmproxy](https://mitmproxy.org/):
+
+```sh
+mitmproxy -p 9090 --set ssl_verify_upstream_trusted_ca=minica.pem
+```
+
+> The `minica.pem` has to be given to mitmproxy since it does not know
+> about the system keychain (on macOS). Even if we added this root CA to
+> the keychain and set it as trusted, mitmproxy uses its own certificate
+> bundle (handled by [certifi](https://github.com/certifi/python-certifi)).
+> So we have to give mitmproxy the root CA of the upstream server that
+> mitmproxy will talk to (i.e., pebble).
+
+At this point, let's make sure `lego` will trust mitmproxy's
+man-in-the-middle CA:
+
+```sh
+sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain ~/.mitmproxy/mitmproxy-ca-cert.pem
+```
+
+Then, let us run [pebble](https://github.com/letsencrypt/pebble), the
+simple ACME server meant for testing:
+
+```sh
+go get -u github.com/letsencrypt/pebble/cmd/pebble
+HTTP_PROXY=localhost:9090 pebble -config /dev/stdin <<EOF
+{
+  "pebble": {
+    "listenAddress": "0.0.0.0:14000",
+    "managementListenAddress": "0.0.0.0:15000",
+    "certificate": "me/cert.pem",
+    "privateKey": "me/key.pem",
+    "httpPort": 5002,
+    "tlsPort": 5001,
+    "externalAccountBindingRequired": false
+  }
+}
+EOF
+```
+
+Finally, let us run the ACME client
+[lego](https://github.com/go-acme/lego):
+
+```sh
+go get -u github.com/go-acme/lego/v4/cmd/lego
+lego -server=https://me:14000/dir -domains me -email foo@bar.org -http.port :5002 -http run
+```
+
+And there we go!
+
+![Screeshot of mitmproxy running interactively in the terminal and capturing the input and output from Pebble and Lego](mitmproxy-with-lego-and-pebble.png)
+
+If you would like to dig into these traces, you can do so by downloading
+the mitmproxy flow here:
+
+```sh
+curl -O {{< ref path="kubeconfigs-and-certs/" >}}pebble-and-lego.mitmproxy
+mitmproxy -r pebble-and-lego.mitmproxy
+```
