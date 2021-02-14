@@ -5,14 +5,15 @@ tags: []
 author: Maël Valais
 ---
 
-1. [General information](#general-information)
-2. [Sed](#sed)
-3. [Shell, terminal, console, command line](#shell-terminal-console-command-line)
-4. [`.bash_profile` vs `.bashrc`](#bash_profile-vs-bashrc)
-5. [Tty, pty, interactive vs non-interactive](#tty-pty-interactive-vs-non-interactive)
-6. [Login vs. non-login shells](#login-vs-non-login-shells)
-7. [Use `bashrc` also on login shell](#use-bashrc-also-on-login-shell)
-8. [Parallelize xargs](#parallelize-xargs)
+- [General information](#general-information)
+- [Sed](#sed)
+- [Shell, terminal, console, command line](#shell-terminal-console-command-line)
+- [`.bash_profile` vs `.bashrc`](#bash_profile-vs-bashrc)
+- [Tty, pty, interactive vs non-interactive](#tty-pty-interactive-vs-non-interactive)
+- [Login vs. non-login shells](#login-vs-non-login-shells)
+- [Use `bashrc` also on login shell](#use-bashrc-also-on-login-shell)
+- [Parallelize xargs](#parallelize-xargs)
+- [Discrepencies between /bin/sh versions](#discrepencies-between-binsh-versions)
 
 ## General information
 

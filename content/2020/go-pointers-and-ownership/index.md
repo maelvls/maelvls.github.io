@@ -108,3 +108,6 @@ works with an interface, which means the `*` won't even help us guess that this
 data is shared.
 
 
+## The for loop gotcha
+
+https://stackoverflow.com/questions/52980172/cannot-understand-5-6-1-caveat-capturing-iteration-variables

@@ -157,3 +157,4 @@ BenchmarkKubernetesComputeHash-8          456028              2.704 µs/op
       k8s-app: kube-proxy
       pod-template-generation: "7"
 
+      k3s.io/node-config-hash

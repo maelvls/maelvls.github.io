@@ -7,6 +7,7 @@ aliases: [/docker-proxy-registry-kind-macos]
 images: [docker-proxy-registry-kind/cover-docker-proxy-registry-kind.png]
 tags: [kubernetes, kind, docker, networking, dns]
 author: Maël Valais
+devto: 410837
 ---
 
 <!--
@@ -81,12 +82,12 @@ downloaded images disappear.
 In this post, I detail my discoveries around local registries and why the
 default Docker network is a trap.
 
-1. [Kind has no image caching mechanism](#kind-has-no-image-caching-mechanism)
-2. [Creating a caching proxy registry](#creating-a-caching-proxy-registry)
-3. [Creating a Kind cluster that knows about this caching proxy registry](#creating-a-kind-cluster-that-knows-about-this-caching-proxy-registry)
-4. [Check that the caching proxy registry works](#check-that-the-caching-proxy-registry-works)
-5. [Docker proxy vs. local registry](#docker-proxy-vs-local-registry)
-6. [Improving the ClusterAPI docker provider to use a given network](#improving-the-clusterapi-docker-provider-to-use-a-given-network)
+- [Kind has no image caching mechanism](#kind-has-no-image-caching-mechanism)
+- [Creating a caching proxy registry](#creating-a-caching-proxy-registry)
+- [Creating a Kind cluster that knows about this caching proxy registry](#creating-a-kind-cluster-that-knows-about-this-caching-proxy-registry)
+- [Check that the caching proxy registry works](#check-that-the-caching-proxy-registry-works)
+- [Docker proxy vs. local registry](#docker-proxy-vs-local-registry)
+- [Improving the ClusterAPI docker provider to use a given network](#improving-the-clusterapi-docker-provider-to-use-a-given-network)
 
 ---
 

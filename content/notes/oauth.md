@@ -51,7 +51,7 @@ Since this URL is quite long, let's see what we have:
 2. After authorizing, the user is redirected to the "client" endpoint:
 
    ```http
-   GET /callback?code=f1a2bc&state=something HTTP/1.1
+   GET /callback?code=f1a2bc&state=something&state=foo HTTP/1.1
    Host: http://localhost:8042
    ```
 

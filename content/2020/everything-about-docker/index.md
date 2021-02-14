@@ -7,6 +7,7 @@ images: [everything-about-docker/cover-everything-about-docker.png]
 draft: true
 tags: []
 author: Maël Valais
+showcomments: "FOO"
 ---
 
 - Linux kernel 3.10 or higher required

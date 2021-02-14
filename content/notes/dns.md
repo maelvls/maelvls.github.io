@@ -49,6 +49,11 @@ servers, which means that the `dev.` name servers now have `NS` records
 that point to Google DNS' name servers. With this `NS` record, the `dev.`
 zone "delegates" the `maelvls.dev.` zone to Google DNS' name servers.
 
+> Note: recursivity and delegation are different: a recursive DNS makes the
+> subsequent calls on behalf of its client, while delegating a DNS zone means
+> that a certain domain of a zone is "forwarded" to another name server using
+> the `NS` record.
+
 For example, let us use `dig` to see all intermediate DNS queries at once:
 
 ```sh
