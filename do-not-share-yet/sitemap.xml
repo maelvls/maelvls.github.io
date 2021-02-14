@@ -3,12 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/dns/</loc>
-    <lastmod>2020-07-25T00:00:00+00:00</lastmod>
+    <loc>https://maelvls.dev/do-not-share-yet/2020/</loc>
+    <lastmod>2020-12-04T17:31:07+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/custom-ingresses-and-helm-charts/</loc>
+    <lastmod>2020-12-04T17:31:07+01:00</lastmod>
   </url>
   
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/</loc>
+    <lastmod>2020-12-04T17:31:07+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/yaml-isnt-that-good/</loc>
+    <lastmod>2020-11-02T15:46:44+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/dns/</loc>
     <lastmod>2020-07-25T00:00:00+00:00</lastmod>
   </url>
   
@@ -25,11 +40,6 @@
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/tags/</loc>
     <lastmod>2020-07-25T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/2020/</loc>
-    <lastmod>2020-07-21T10:07:11+02:00</lastmod>
   </url>
   
   <url>

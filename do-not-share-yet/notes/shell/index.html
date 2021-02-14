@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="What I know about shells" />
-<meta property="og:description" content="General information Sed Shell, terminal, console, command line .bash_profile vs .bashrc Tty, pty, interactive vs non-interactive Login vs. non-login shells Use bashrc also on login shell Parallelize xargs  General information   Xargs for creating positionnals through stdin included_figures.sh | xargs git add
+<meta property="og:description" content="General information Sed Shell, terminal, console, command line .bash_profile vs .bashrc Tty, pty, interactive vs non-interactive Login vs. non-login shells Use bashrc also on login shell Parallelize xargs Discrepencies between /bin/sh versions  General information   Xargs for creating positionnals through stdin included_figures.sh | xargs git add
   Avoid the sub-shell problem when while read a while read a; do ...; done &lt; &lt;(ls) pour éviter d&rsquo;avoir le while dans un sous-shell C." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/shell/" />
@@ -17,7 +17,7 @@
 <meta name="twitter:image" content="https://maelvls.dev/img/mael.jpg"/>
 
 <meta name="twitter:title" content="What I know about shells"/>
-<meta name="twitter:description" content="General information Sed Shell, terminal, console, command line .bash_profile vs .bashrc Tty, pty, interactive vs non-interactive Login vs. non-login shells Use bashrc also on login shell Parallelize xargs  General information   Xargs for creating positionnals through stdin included_figures.sh | xargs git add
+<meta name="twitter:description" content="General information Sed Shell, terminal, console, command line .bash_profile vs .bashrc Tty, pty, interactive vs non-interactive Login vs. non-login shells Use bashrc also on login shell Parallelize xargs Discrepencies between /bin/sh versions  General information   Xargs for creating positionnals through stdin included_figures.sh | xargs git add
   Avoid the sub-shell problem when while read a while read a; do ...; done &lt; &lt;(ls) pour éviter d&rsquo;avoir le while dans un sous-shell C."/>
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
@@ -64,7 +64,7 @@
 </div>
 </div>
 <div class="markdown">
-<ol>
+<ul>
 <li><a href="#general-information">General information</a></li>
 <li><a href="#sed">Sed</a></li>
 <li><a href="#shell-terminal-console-command-line">Shell, terminal, console, command line</a></li>
@@ -73,7 +73,8 @@
 <li><a href="#login-vs-non-login-shells">Login vs. non-login shells</a></li>
 <li><a href="#use-bashrc-also-on-login-shell">Use <code>bashrc</code> also on login shell</a></li>
 <li><a href="#parallelize-xargs">Parallelize xargs</a></li>
-</ol>
+<li><a href="#discrepencies-between-binsh-versions">Discrepencies between /bin/sh versions</a></li>
+</ul>
 <h2 id="general-information">General information</h2>
 <ul>
 <li>

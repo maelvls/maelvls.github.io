@@ -131,14 +131,14 @@ containers. Even worse: when deleting and re-creating a cluster, all the
 downloaded images disappear.</p>
 <p>In this post, I detail my discoveries around local registries and why the
 default Docker network is a trap.</p>
-<ol>
+<ul>
 <li><a href="#kind-has-no-image-caching-mechanism">Kind has no image caching mechanism</a></li>
 <li><a href="#creating-a-caching-proxy-registry">Creating a caching proxy registry</a></li>
 <li><a href="#creating-a-kind-cluster-that-knows-about-this-caching-proxy-registry">Creating a Kind cluster that knows about this caching proxy registry</a></li>
 <li><a href="#check-that-the-caching-proxy-registry-works">Check that the caching proxy registry works</a></li>
 <li><a href="#docker-proxy-vs-local-registry">Docker proxy vs. local registry</a></li>
 <li><a href="#improving-the-clusterapi-docker-provider-to-use-a-given-network">Improving the ClusterAPI docker provider to use a given network</a></li>
-</ol>
+</ul>
 <hr>
 <h2 id="kind-has-no-image-caching-mechanism">Kind has no image caching mechanism</h2>
 <p>Whenever I re-create a Kind cluster and try to install ClusterAPI, all the

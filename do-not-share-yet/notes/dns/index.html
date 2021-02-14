@@ -99,6 +99,12 @@ zone. I told my registrar (Google Domains) to use the Google DNS name
 servers, which means that the <code>dev.</code> name servers now have <code>NS</code> records
 that point to Google DNS' name servers. With this <code>NS</code> record, the <code>dev.</code>
 zone &ldquo;delegates&rdquo; the <code>maelvls.dev.</code> zone to Google DNS' name servers.</p>
+<blockquote>
+<p>Note: recursivity and delegation are different: a recursive DNS makes the
+subsequent calls on behalf of its client, while delegating a DNS zone means
+that a certain domain of a zone is &ldquo;forwarded&rdquo; to another name server using
+the <code>NS</code> record.</p>
+</blockquote>
 <p>For example, let us use <code>dig</code> to see all intermediate DNS queries at once:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% dig +trace minio.k.maelvls.dev
 <span class="c1"># I omitted the DNSSEC-related records (RRSIG, DS and NSEC3 records).</span>
