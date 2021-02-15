@@ -109,11 +109,7 @@ Mitmproxy is an excellent tool that helps us understand what network calls are m
 <h3 class="title small"><a href="/do-not-share-yet/learning-kubernetes-controllers/">Learning Kubernetes Controllers</a></h3>
 <span class="description">
 
-Kubernetes&#39; extensibility is probably its biggest strength. Controllers and
-CRDs are all over the place. But finding the right information to begin
-writing a controller isn&#39;t easy due to the sheer amount of tribal knowledge
-scattered everywhere. Here are some links to help you start.
-
+Kubernetes&#39; extensibility is probably its biggest strength. Controllers and CRDs are all over the place. But finding the right information to begin writing a controller isn&#39;t easy due to the sheer amount of tribal knowledge scattered everywhere. Here are some links to help you start.
 
 </span>
 </div>
@@ -173,28 +169,6 @@ My free trial on GKE was ending in 2 days and I had to find a way to migrate awa
 <div class="post-header">
 <div class="meta">
 <div class="date">
-<span class="day">14</span>
-<span class="rest">Mar 2020</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/packets-eye-kubernetes-service/">The Packet&#39;s-Eye View of a Kubernetes Service</a></h3>
-<span class="description">
-
-The Service and Ingress respectively brings L4 and L7 traffics to your
-pods. In this article, I focus on how traffic flows in and what are the
-interactions between the ingress controller and the &#34;service-lb controller&#34;
-(the thing that creates the external load balancer). I also detail how the
-`hostPort` approach shapes traffic.
-
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
 <span class="day">26</span>
 <span class="rest">Jan 2020</span>
 </div>
@@ -203,10 +177,7 @@ interactions between the ingress controller and the &#34;service-lb controller&#
 <h3 class="title small"><a href="/do-not-share-yet/debugging-kubernetes-networking/">Debugging Kubernetes Networking: my kube-dns is not working!</a></h3>
 <span class="description">
 
-Some pods were unable to connect to the kube-proxy pod on one of my GKE
-Kubernetes clusters. This post present an in-depth investigation using
-tcpdump, wireshark and iptables tracing.
-
+Some pods were unable to connect to the kube-proxy pod on one of my GKE Kubernetes clusters. This post present an in-depth investigation using tcpdump, wireshark and iptables tracing.
 
 </span>
 </div>
@@ -223,10 +194,7 @@ tcpdump, wireshark and iptables tracing.
 <h3 class="title small"><a href="/do-not-share-yet/avoid-gke-lb-with-hostport/">Avoid GKE&#39;s expensive load balancer by using hostPort</a></h3>
 <span class="description">
 
-I want to avoid using the expensive Google Network Load Balancer and
-instead do the load balancing in-cluster using akrobateo, which
-acts as a LoadBalancer controller.
-
+I want to avoid using the expensive Google Network Load Balancer and instead do the load balancing in-cluster using akrobateo, which acts as a LoadBalancer controller.
 
 </span>
 </div>
@@ -240,15 +208,27 @@ acts as a LoadBalancer controller.
 </div>
 </div>
 <div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/kubernetes-conditions/">Use of conditions in Kubernetes controllers</a></h3>
+<h3 class="title small"><a href="/do-not-share-yet/kubernetes-conditions/">What the heck are Conditions in Kubernetes controllers?</a></h3>
 <span class="description">
 
-Although progress is being made, Kubernetes controllers and operators
-still require prior knowledge about Kubernetes internals. Information on
-how to set the status is scattered across comments, issues, PRs and the
-Kubernetes code itself. Conditions may be a good solution for your
-controller, but for what?
+Although progress is being made, Kubernetes controllers and operators still require prior knowledge about Kubernetes internals. Information on how to set the status is scattered across comments, issues, PRs and the Kubernetes code itself. Conditions may be a good solution for your controller, but for what?
 
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">01</span>
+<span class="rest">Jan 1</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/packets-eye-kubernetes-service/">The Packet&#39;s-Eye View of a Kubernetes Service</a></h3>
+<span class="description">
+
+The Service and Ingress respectively brings L4 and L7 traffics to your pods. In this article, I focus on how traffic flows in and what are the interactions between the ingress controller and the service-lb controller (the thing that creates the external load balancer). I also detail how the `hostPort` approach shapes traffic.
 
 </span>
 </div>

@@ -22,6 +22,18 @@
       
       </description>
     </item>
+    <item>
+      <title>Why is GO111MODULE everywhere, and everything about Go Modules</title>
+      <link>https://maelvls.dev/do-not-share-yet/go111module-everywhere/</link>
+      <pubDate>Wed, 13 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/go111module-everywhere/</guid>
+      <description>
+      
+      GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with 1.13 and will changed a last time in 1.14.
+      
+      </description>
+    </item>
     
   </channel>
 </rss>

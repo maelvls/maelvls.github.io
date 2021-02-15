@@ -66,25 +66,11 @@ Woah! Because interface values in Go are represented by two pointers causing ass
 </div>
 </div>
 <div class="markdown">
-<p>Last month, Sylvain Wallez, author of the excellent &ldquo;<a href="https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/">Go: the Good, the Bad
-and the Ugly</a>&rdquo;,
-wrote:</p>
+<p>Last month, Sylvain Wallez, author of the excellent &ldquo;<a href="https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/">Go: the Good, the Bad and the Ugly</a>&rdquo;, wrote:</p>
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Woah! Because interface values in Go are represented by two pointers causing assignment to not be atomic, you can easily write concurrent code that swaps one of the pointers, leading to completely unpredictable behaviour. Demonstrated with an RCE... <a href="https://t.co/DsMWzpYuQ4">https://t.co/DsMWzpYuQ4</a></p>&mdash; Sylvain Wallez (@bluxte) <a href="https://twitter.com/bluxte/status/1192945301604184065?ref_src=twsrc%5Etfw">November 8, 2019</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<p>Once again, my beloved language takes a hit. As time passes, I come to
-realize Go has its strenghts (ease of adoption, no overly abstract REST
-framework, readability, fast compilation) but also its weaknesses. I can
-think of the weirdness of variable scoping
-(<a href="https://github.com/kyoh86/scopelint">scopelint</a> really helps) and also
-variable shadowing, weird syntax around variable assignment, <code>go help</code> is
-unreadable and just not up to the standard (compared to <code>git help</code> for
-example), the ever-changing behaviour of GO111MODULE (that&rsquo;s a temporary
-issue), <code>go get</code> that do too many things and changes <code>go.mod</code> when you just
-want to install some tool, but also <code>go install</code> &amp; <code>go run</code> that don&rsquo;t
-support versions (e.g. ). Wait, also the &ldquo;semantic import versioning&rdquo; that
-everybody seems to avoid (including Google itself in
-<a href="https://github.com/golang/protobuf/issues/1049">protobuf</a>).</p>
+<p>Once again, my beloved language takes a hit. As time passes, I come to realize Go has its strenghts (ease of adoption, no overly abstract REST framework, readability, fast compilation) but also its weaknesses. I can think of the weirdness of variable scoping (<a href="https://github.com/kyoh86/scopelint">scopelint</a> really helps) and also variable shadowing, weird syntax around variable assignment, <code>go help</code> is unreadable and just not up to the standard (compared to <code>git help</code> for example), the ever-changing behaviour of GO111MODULE (that&rsquo;s a temporary issue), <code>go get</code> that do too many things and changes <code>go.mod</code> when you just want to install some tool, but also <code>go install</code> &amp; <code>go run</code> that don&rsquo;t support versions (e.g. ). Wait, also the &ldquo;semantic import versioning&rdquo; that everybody seems to avoid (including Google itself in <a href="https://github.com/golang/protobuf/issues/1049">protobuf</a>).</p>
 <p>But the issue Sylvain raised really bothered me: it felt like a bug.</p>
 <blockquote>
 <p>Given <code>v</code> a pointer to an interface, <code>v != nil</code> when <code>v</code> is <code>nil</code>.</p>
@@ -92,9 +78,7 @@ everybody seems to avoid (including Google itself in
 <p>Oooh, let&rsquo;s see.</p>
 <blockquote>
 <p>Boxed type, fat pointer:</p>
-<p>Do Go use boxed types for map[string]string? No! It doesn&rsquo;t use
-interface{} boxing (boxed = fat pointer = one more level of indirection,
-less locality – same problem as linked lists).</p>
+<p>Do Go use boxed types for map[string]string? No! It doesn&rsquo;t use interface{} boxing (boxed = fat pointer = one more level of indirection, less locality – same problem as linked lists).</p>
 </blockquote>
 <p>Here is a short program:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
@@ -271,9 +255,7 @@ less locality – same problem as linked lists).</p>
   <span class="mh">0x10995b1</span>		<span class="n">e81a000000</span>		<span class="n">CALL</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
 </code></pre></div><p>Let&rsquo;s read that line by line.</p>
 <div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s">  <span class="mh">0x109959d</span>		<span class="m">488</span><span class="n">d059c1a0500</span>		<span class="n">LEAQ</span> <span class="n">go.itab.</span><span class="o">*</span><span class="n">main.concrete</span><span class="p">,</span><span class="nf">main.abstract</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
-</code></pre></div><p>We first load the <code>tab</code> field of the <code>itab</code> struct into the address pointed
-by the stack pointer (SP). This <code>itab</code> refers to the field &lsquo;itab&rsquo; of the
-iface struct (see <a href="https://github.com/golang/go/blob/bf86aec25972f3a100c3aa58a6abcbcc35bdea49/src/runtime/runtime2.go#L143-L146">iface</a> in runtime2.go):</p>
+</code></pre></div><p>We first load the <code>tab</code> field of the <code>itab</code> struct into the address pointed by the stack pointer (SP). This <code>itab</code> refers to the field &lsquo;itab&rsquo; of the iface struct (see <a href="https://github.com/golang/go/blob/bf86aec25972f3a100c3aa58a6abcbcc35bdea49/src/runtime/runtime2.go#L143-L146">iface</a> in runtime2.go):</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">iface</span> <span class="kd">struct</span> <span class="p">{</span>
   <span class="nx">tab</span>  <span class="o">*</span><span class="nx">itab</span>
   <span class="nx">data</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
@@ -282,8 +264,7 @@ iface struct (see <a href="https://github.com/golang/go/blob/bf86aec25972f3a100c
 </code></pre></div><p>Here, we test that AL, which contains</p>
 <div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s"><span class="mh">0x10995a6</span>		<span class="m">488</span><span class="n">d05eba40f00</span>		<span class="n">LEAQ</span> <span class="nf">runtime.zerobase</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
 <span class="mh">0x10995ad</span>		<span class="m">48890424</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-</code></pre></div><p>Now that the <code>tab</code> address is contained in the address pointed by the SP, it&rsquo;s time to find out
-which concrete implementation of <code>f()</code> should be called:</p>
+</code></pre></div><p>Now that the <code>tab</code> address is contained in the address pointed by the SP, it&rsquo;s time to find out which concrete implementation of <code>f()</code> should be called:</p>
 <div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s"><span class="mh">0x10995b1</span>		<span class="n">e81a000000</span>		<span class="n">CALL</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
 </code></pre></div><p>And here is the dispath function <code>main.(*concrete).f</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s"><span class="n">TEXT</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span> <span class="o">&lt;</span><span class="n">autogenerated</span><span class="o">&gt;</span>
@@ -291,13 +272,7 @@ which concrete implementation of <code>f()</code> should be called:</p>
 <span class="mh">0x10995d0</span>		<span class="m">65488</span><span class="n">b0c2530000000</span>	<span class="n">MOVQ</span> <span class="n">GS</span><span class="o">:</span><span class="mh">0x30</span><span class="p">,</span> <span class="n">CX</span>
 <span class="mh">0x10995d9</span>		<span class="m">483</span><span class="n">b6110</span>		<span class="n">CMPQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">SP</span>
 <span class="mh">0x10995dd</span>		<span class="m">7631</span>			<span class="n">JBE</span> <span class="mh">0x1099610</span>
-</code></pre></div><p>That&rsquo;s the <a href="https://cmc.gitbook.io/go-internals/chapter-i-go-assembly#splits">stack-split
-prologue</a>
-that deals with growing the stack when the goroutine doesn&rsquo;t have enough
-stack space. Basicall, <code>JBE</code> means &lsquo;jump to the stack-split epilogue if the
-value contained in <code>GS:0x30</code> is lower or equal to the SP (stack pointer).
-Since the stack grows backwards, meaning that SP will decrease as the stack
-grows).</p>
+</code></pre></div><p>That&rsquo;s the <a href="https://cmc.gitbook.io/go-internals/chapter-i-go-assembly#splits">stack-split prologue</a> that deals with growing the stack when the goroutine doesn&rsquo;t have enough stack space. Basicall, <code>JBE</code> means &lsquo;jump to the stack-split epilogue if the value contained in <code>GS:0x30</code> is lower or equal to the SP (stack pointer). Since the stack grows backwards, meaning that SP will decrease as the stack grows).</p>
 <div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s"><span class="mh">0x10995df</span>		<span class="m">4883</span><span class="n">ec08</span>		<span class="n">SUBQ</span> <span class="o">$</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">SP</span>
 <span class="mh">0x10995e3</span>		<span class="m">48892</span><span class="n">c24</span>		<span class="n">MOVQ</span> <span class="n">BP</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
 <span class="mh">0x10995e7</span>		<span class="m">488</span><span class="n">d2c24</span>		<span class="n">LEAQ</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
@@ -324,8 +299,7 @@ grows).</p>
   <span class="mh">0x10995b6</span>		<span class="n">e805ffffff</span>		<span class="n">CALL</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
 </code></pre></div><h2 id="notes">Notes</h2>
 <h3 id="the-ax-and-al-registers">The AX and AL registers</h3>
-<p>From <a href="https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf" title="Intel 64's x86_64 specification">intel64</a> (Figure 3-5. Alternate General-Purpose Register Names,
-p. 3-12 Vol. 1):</p>
+<p>From <a href="https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf" title="Intel 64's x86_64 specification">intel64</a> (Figure 3-5. Alternate General-Purpose Register Names, p. 3-12 Vol. 1):</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">| 0000 0001 0010 0011 0100 0101 0110 0111 | ------&gt; EAX
 
 |                     0100 0101 0110 0111 | ------&gt; AX
@@ -336,31 +310,17 @@ p. 3-12 Vol. 1):</p>
 </code></pre></div><p>(from a Stackoverflow <a href="https://stackoverflow.com/a/52892696/3808537%3E">post</a>)</p>
 <p>From <a href="https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf" title="Intel 64's x86_64 specification">intel64</a> (p. 3-16, Vol. 1):</p>
 <blockquote>
-<p>AF (bit 4) Auxiliary Carry flag — Set if an arithmetic operation
-generates a carry or a borrow out of bit 3 of the result; cleared
-otherwise. This flag is used in binary-coded decimal (BCD) arithmetic.</p>
+<p>AF (bit 4) Auxiliary Carry flag — Set if an arithmetic operation generates a carry or a borrow out of bit 3 of the result; cleared otherwise. This flag is used in binary-coded decimal (BCD) arithmetic.</p>
 </blockquote>
 <h3 id="the-gs-register">The GS register</h3>
 <p>In the x86-64 <a href="https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf" title="Intel 64's x86_64 specification">intel64</a> (p. 3-14, Vol. 1):</p>
 <blockquote>
-<p>The DS, ES, FS, and GS registers point to four data segments. The
-availability of four data segments permits efficient and secure access to
-different types of data structures. For example, four separate data
-segments might be created: one for the data structures of the current
-module, another for the data exported from a higher-level module, a third
-for a dynamically created data structure, and a fourth for data shared
-with another program. To access additional data segments, the application
-program must load segment selectors for these segments into the DS, ES,
-FS, and GS registers, as needed.</p>
+<p>The DS, ES, FS, and GS registers point to four data segments. The availability of four data segments permits efficient and secure access to different types of data structures. For example, four separate data segments might be created: one for the data structures of the current module, another for the data exported from a higher-level module, a third for a dynamically created data structure, and a fourth for data shared with another program. To access additional data segments, the application program must load segment selectors for these segments into the DS, ES, FS, and GS registers, as needed.</p>
 </blockquote>
 <h3 id="the-q-suffix-in-movq-and-leaq">The &lsquo;Q&rsquo; suffix in MOVQ and LEAQ</h3>
-<p>I could not find that in the <a href="https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf" title="Intel 64's x86_64 specification">Intel 64 PDF</a>. Apparently, these
-prefixes were introduced with the assembler (<code>as</code>). See binutils&rsquo;s as
-<a href="https://sourceware.org/binutils/docs/as/i386_002dMnemonics.html#Instruction-Naming">i386mnemonics</a>:</p>
+<p>I could not find that in the <a href="https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf" title="Intel 64's x86_64 specification">Intel 64 PDF</a>. Apparently, these prefixes were introduced with the assembler (<code>as</code>). See binutils&rsquo;s as <a href="https://sourceware.org/binutils/docs/as/i386_002dMnemonics.html#Instruction-Naming">i386mnemonics</a>:</p>
 <blockquote>
-<p>Instruction mnemonics are suffixed with one character modifiers which
-specify the size of operands. The letters ‘b’, ‘w’, ‘l’ and ‘q’ specify
-byte, word, long and quadruple word operands.</p>
+<p>Instruction mnemonics are suffixed with one character modifiers which specify the size of operands. The letters ‘b’, ‘w’, ‘l’ and ‘q’ specify byte, word, long and quadruple word operands.</p>
 </blockquote>
 <h2 id="what-are-sp-and-sb">What are SP and SB</h2>
 <p>From <a href="https://golang.org/doc/asm#symbols">https://golang.org/doc/asm#symbols</a>:</p>

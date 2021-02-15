@@ -70,16 +70,14 @@
 <li><a href="#public-key-protocol-is-slow">Public-key protocol is slow</a></li>
 <li><a href="#errors-i-got">Errors I got</a></li>
 </ol>
-<p>To list the keys I have in my keyring, use <code>gpg --list-key</code>. Here, I can
-see one public key in the file <code>pubring.pgp</code>:</p>
+<p>To list the keys I have in my keyring, use <code>gpg --list-key</code>. Here, I can see one public key in the file <code>pubring.pgp</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">&gt; gpg --list-key
 /Users/mvalais/.gnupg/pubring.gpg
 -------------------------------
 pub   4096R/27F4C016 2016-03-04
 uid                  Maël Valais &lt;mael.valais@gmail.com&gt;
 sub   4096R/A3D4828E 2016-03-04
-</code></pre></div><p>The identifier for my public key is <code>27F4C016</code> and the sub identifier
-<code>A3D4828E</code>. 4096R = 4096-bits RSA encrypted.</p>
+</code></pre></div><p>The identifier for my public key is <code>27F4C016</code> and the sub identifier <code>A3D4828E</code>. 4096R = 4096-bits RSA encrypted.</p>
 <p>When seeing the whole primary key fingerprint:</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">F105 E235 8FEB FC3D A4A4 9499 0075 8A3D 27F4 C016
                                         ^^^^^^^^^
@@ -94,25 +92,18 @@ keys.gnupg.net
 (1) Maël Valais &lt;mael.valais@gmail.com&gt;
 To  4096 bit RSA key 27F4C016, créé : 2016-03-04
 </code></pre></div><h2 id="sign-my-message">Sign my message</h2>
-<p>Say I have writen the message in <code>message.txt</code>. Now I want to sign it and I want
-the signature to be in ASCII-format <code>.asc</code> (not a binary mess <code>.sig</code>).</p>
+<p>Say I have writen the message in <code>message.txt</code>. Now I want to sign it and I want the signature to be in ASCII-format <code>.asc</code> (not a binary mess <code>.sig</code>).</p>
 <pre><code>gpg2 --armor --detach-sign message.txt
 </code></pre>
 <p>This signature will be in text format in <code>message.asc</code>.</p>
 <h2 id="things-on-securiry">Things on securiry</h2>
-<p>encrypt: AES 256 (symetric)
-salting: hash(pwd+salt), salt is dynamically generated
-key derivation: PBKDF2
-hash: MD5, SHA-1, SHA-256</p>
+<p>encrypt: AES 256 (symetric) salting: hash(pwd+salt), salt is dynamically generated key derivation: PBKDF2 hash: MD5, SHA-1, SHA-256</p>
 <h2 id="public-key-protocol-is-slow">Public-key protocol is slow</h2>
-<p>With gpg, the public-key protocol is only used for encrypting
-the symmetric key and the hash of the message (hash with SHA-256).
-The message is then encrypted using the symmetric encryption.</p>
+<p>With gpg, the public-key protocol is only used for encrypting the symmetric key and the hash of the message (hash with SHA-256). The message is then encrypted using the symmetric encryption.</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">gpg:
     rsa public key ---encrypts--&gt; symmetric key --encrpyts--&gt; message
                    ---encrypts--&gt; SHA-256 hash
-</code></pre></div><p>With SSL protocol, the only purpose of the public-key encryption is to
-encrypt the AES symmetric key.</p>
+</code></pre></div><p>With SSL protocol, the only purpose of the public-key encryption is to encrypt the AES symmetric key.</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">ssl:
     &lt;---client---&gt;             &lt;-----server----&gt;
     rsa public key ---sends--&gt; AES symmetric key
@@ -122,8 +113,7 @@ encrypt the AES symmetric key.</p>
 <li>Error message with pinentry
 <ol>
 <li>Install <code>brew install pinentry-mac</code></li>
-<li>edit ~/.gnupg/gpg-agent.conf to use pinentry-mac instead of pinentry:
-pinentry-program /usr/local/bin/pinentry-mac</li>
+<li>edit ~/.gnupg/gpg-agent.conf to use pinentry-mac instead of pinentry: pinentry-program /usr/local/bin/pinentry-mac</li>
 </ol>
 </li>
 </ul>

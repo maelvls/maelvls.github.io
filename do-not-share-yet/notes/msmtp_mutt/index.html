@@ -75,8 +75,7 @@ smtp://smtp.gmail.com email@gmail.com mypassword   In Keychain Access.app, selec
 <p>On macOS, install msmtp:</p>
 <pre><code>brew install mutt msmtp
 </code></pre>
-<p>I read this thread:
-<a href="https://www.engadget.com/2010/05/04/msmtp-a-free-tool-to-send-email-from-terminal/">https://www.engadget.com/2010/05/04/msmtp-a-free-tool-to-send-email-from-terminal/</a></p>
+<p>I read this thread: <a href="https://www.engadget.com/2010/05/04/msmtp-a-free-tool-to-send-email-from-terminal/">https://www.engadget.com/2010/05/04/msmtp-a-free-tool-to-send-email-from-terminal/</a></p>
 <p>In order to use msmtp from command-line &lsquo;mail&rsquo;</p>
 <ol>
 <li>
@@ -84,16 +83,13 @@ smtp://smtp.gmail.com email@gmail.com mypassword   In Keychain Access.app, selec
 <div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">set sendmail=/usr/local/bin/msmtp
 </code></pre></div></li>
 <li>
-<p>In Keychain Access.app, go to File &gt; New Password Item (Cmd+N)
-and fill it with</p>
+<p>In Keychain Access.app, go to File &gt; New Password Item (Cmd+N) and fill it with</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">    smtp://smtp.gmail.com
     email@gmail.com
     mypassword
 </code></pre></div></li>
 <li>
-<p>In Keychain Access.app, select System Roots, select all certificates
-and File &gt; Export Items (Shift+Cmd+E) &gt; Privacy Enhanced Mail (.pem)
-and save it as &lsquo;Certificates.pem&rsquo; in your $HOME.</p>
+<p>In Keychain Access.app, select System Roots, select all certificates and File &gt; Export Items (Shift+Cmd+E) &gt; Privacy Enhanced Mail (.pem) and save it as &lsquo;Certificates.pem&rsquo; in your $HOME.</p>
 </li>
 <li>
 <p>Test the configuration with</p>
@@ -103,8 +99,7 @@ and save it as &lsquo;Certificates.pem&rsquo; in your $HOME.</p>
 <p>Troubleshooting:</p>
 <ul>
 <li>
-<p>Check in keychain Access.app that there is only ONE Internet password using the
-<a href="mailto:email@gmail.com">email@gmail.com</a> and smtp://smtp.gmail.com.</p>
+<p>Check in keychain Access.app that there is only ONE Internet password using the <a href="mailto:email@gmail.com">email@gmail.com</a> and smtp://smtp.gmail.com.</p>
 </li>
 <li>
 <p>If the SMTP of Google says that you should go to some adress, with the error:</p>
@@ -122,16 +117,12 @@ send-mail: could not send mail (account default from /Users/mvalais/.msmtprc)
 </li>
 </ul>
 <h2 id="set-up-mutt">Set up Mutt</h2>
-<p>I followed the instructions of <a href="https://gist.github.com/chrismytton/3976435">https://gist.github.com/chrismytton/3976435</a> except
-for the keychain stuff:</p>
+<p>I followed the instructions of <a href="https://gist.github.com/chrismytton/3976435">https://gist.github.com/chrismytton/3976435</a> except for the keychain stuff:</p>
 <ol>
 <li>
-<p>We are going to re-use the Keychain thing we created earlier. In order to show
-the password, use</p>
+<p>We are going to re-use the Keychain thing we created earlier. In order to show the password, use</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">security find-internet-password -s smtp.gmail.com -a email@gmail.com -w
-</code></pre></div><p>where &lsquo;-w&rsquo; tells him to only show the password, &lsquo;-s&rsquo; means server (in my case I
-had used &lsquo;smtp://smtp.gmail.com&rsquo; but you must remove the protocol smtp://) and
-&lsquo;-a&rsquo; means account.</p>
+</code></pre></div><p>where &lsquo;-w&rsquo; tells him to only show the password, &lsquo;-s&rsquo; means server (in my case I had used &lsquo;smtp://smtp.gmail.com&rsquo; but you must remove the protocol smtp://) and &lsquo;-a&rsquo; means account.</p>
 </li>
 </ol>
 

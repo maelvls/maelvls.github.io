@@ -126,34 +126,7 @@ Mitmproxy is an excellent tool that helps us understand what network calls are m
 <h3 class="title small"><a href="/do-not-share-yet/how-do-packets-come-back/">How do packets find their way back?</a></h3>
 <span class="description">
 
-In one of my previous posts, I studied how traffic flows when using
-Kubernetes Services. While drawing the last diagram, I did not clearly
-see how traffic could make its way back to the user. In this
-post, I focus on how packets find their way back and what makes stateless
-rewriting interesting.
-
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">14</span>
-<span class="rest">Mar 2020</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/packets-eye-kubernetes-service/">The Packet&#39;s-Eye View of a Kubernetes Service</a></h3>
-<span class="description">
-
-The Service and Ingress respectively brings L4 and L7 traffics to your
-pods. In this article, I focus on how traffic flows in and what are the
-interactions between the ingress controller and the &#34;service-lb controller&#34;
-(the thing that creates the external load balancer). I also detail how the
-`hostPort` approach shapes traffic.
-
+In one of my previous posts, I studied how traffic flows when using Kubernetes Services. While drawing the last diagram, I did not clearly see how traffic could make its way back to the user. In this post, I focus on how packets find their way back and what makes stateless rewriting interesting.
 
 </span>
 </div>
@@ -170,10 +143,7 @@ interactions between the ingress controller and the &#34;service-lb controller&#
 <h3 class="title small"><a href="/do-not-share-yet/debugging-kubernetes-networking/">Debugging Kubernetes Networking: my kube-dns is not working!</a></h3>
 <span class="description">
 
-Some pods were unable to connect to the kube-proxy pod on one of my GKE
-Kubernetes clusters. This post present an in-depth investigation using
-tcpdump, wireshark and iptables tracing.
-
+Some pods were unable to connect to the kube-proxy pod on one of my GKE Kubernetes clusters. This post present an in-depth investigation using tcpdump, wireshark and iptables tracing.
 
 </span>
 </div>
@@ -190,10 +160,24 @@ tcpdump, wireshark and iptables tracing.
 <h3 class="title small"><a href="/do-not-share-yet/avoid-gke-lb-with-hostport/">Avoid GKE&#39;s expensive load balancer by using hostPort</a></h3>
 <span class="description">
 
-I want to avoid using the expensive Google Network Load Balancer and
-instead do the load balancing in-cluster using akrobateo, which
-acts as a LoadBalancer controller.
+I want to avoid using the expensive Google Network Load Balancer and instead do the load balancing in-cluster using akrobateo, which acts as a LoadBalancer controller.
 
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
+<span class="day">01</span>
+<span class="rest">Jan 1</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/packets-eye-kubernetes-service/">The Packet&#39;s-Eye View of a Kubernetes Service</a></h3>
+<span class="description">
+
+The Service and Ingress respectively brings L4 and L7 traffics to your pods. In this article, I focus on how traffic flows in and what are the interactions between the ingress controller and the service-lb controller (the thing that creates the external load balancer). I also detail how the `hostPort` approach shapes traffic.
 
 </span>
 </div>

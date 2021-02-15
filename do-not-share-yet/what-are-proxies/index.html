@@ -66,12 +66,8 @@ Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an H
 </div>
 </div>
 <div class="markdown">
-<p>A proxy is something (most of the time software, but sometimes also
-hardware like a dedicated FPGA) that forwards traffic from a place to
-another.</p>
-<p>Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an HTTP
-proxy that would allow this person to access the internet behind a
-corporate firewall.</p>
+<p>A proxy is something (most of the time software, but sometimes also hardware like a dedicated FPGA) that forwards traffic from a place to another.</p>
+<p>Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an HTTP proxy that would allow this person to access the internet behind a corporate firewall.</p>
 <table>
 <thead>
 <tr>
@@ -106,19 +102,12 @@ corporate firewall.</p>
 <div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="nf">CONNECT</span> <span class="nn">streamline.t-mobile.com:22</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="n">Proxy-Authorization</span><span class="o">:</span> <span class="l">Basic encoded-credentials</span>
 </code></pre></div><h2 id="layer-3-the-vpn">Layer 3: the VPN</h2>
-<p>A VPN often acts at L3. For example, Telepresence sets a packet filter on
-BSD (or iptable rule on Linux) which redirects all packets to a given TCP
-proxy which then forwards traffic to into the pod.</p>
-<p>Some VPNs have to use a higher protocol in order to work around network
-limitations (e.g., corporate firewall or country-wide censorship), such as
-OpenVPN which opens a TLS connection (L7) and then use the ciphered TCP
-connection to forward all TCP traffic; that&rsquo;s L3-into-L7 tunneling (watch
-out for the MTU!)</p>
+<p>A VPN often acts at L3. For example, Telepresence sets a packet filter on BSD (or iptable rule on Linux) which redirects all packets to a given TCP proxy which then forwards traffic to into the pod.</p>
+<p>Some VPNs have to use a higher protocol in order to work around network limitations (e.g., corporate firewall or country-wide censorship), such as OpenVPN which opens a TLS connection (L7) and then use the ciphered TCP connection to forward all TCP traffic; that&rsquo;s L3-into-L7 tunneling (watch out for the MTU!)</p>
 <h2 id="layer-4-the-tcp-proxy">Layer 4: the TCP proxy</h2>
 <p>I am particularly interested in two different kinds of TCP proxies.</p>
 <h2 id="layer-7-the-standard-http-proxy">Layer 7: the standard HTTP proxy</h2>
-<p>There are many available HTTP proxies like Squid, tinyproxy, cntlm and
-mitmproxy. Let&rsquo;s try mitmproxy and handcraft an HTTP request:</p>
+<p>There are many available HTTP proxies like Squid, tinyproxy, cntlm and mitmproxy. Let&rsquo;s try mitmproxy and handcraft an HTTP request:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># Open that in one shell session:</span>
 mitmproxy -p <span class="m">9000</span>
 
@@ -131,31 +120,20 @@ nc 127.0.0.1 <span class="m">9000</span> <span class="o">&lt;&lt;&lt;</span> <sp
 </code></pre></div><details>
 <summary>Note on escaping <code>\r\n</code> in your shell</summary>
 <blockquote>
-<p>The tricky part when crafting an HTTP request for <code>nc</code> in the shell is
-the backslash-escaped charaters expansion. Using a here-document does not
-work since backslash-escaped characters like <code>\r</code> and <code>\n</code> are not
-replaced with their actual value as per the ANSI C standard (<a href="http://www.open-std.org/JTC1/SC22/WG14/www/docs/n1539.pdf#page=42">ISO/IEC
-9899:201x</a> § 5.2.2 Character display semantics, p. 23)</p>
-<p>I use <code>$'text'</code> which is a feature of bash that replaces <code>\</code> sequences
-with their byte representation. Another possibility is to use <code>printf</code> or
-<code>echo -e</code>:</p>
+<p>The tricky part when crafting an HTTP request for <code>nc</code> in the shell is the backslash-escaped charaters expansion. Using a here-document does not work since backslash-escaped characters like <code>\r</code> and <code>\n</code> are not replaced with their actual value as per the ANSI C standard ([ISO/IEC &gt; 9899:201x][] § 5.2.2 Character display semantics, p. 23)</p>
+<p>I use <code>$'text'</code> which is a feature of bash that replaces <code>\</code> sequences with their byte representation. Another possibility is to use <code>printf</code> or <code>echo -e</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nb">printf</span> <span class="s1">&#39;GET http://httpbin.org/ HTTP/1.1\r
 </span><span class="s1">Host: httpbin.org\r
 </span><span class="s1">\r
 </span><span class="s1">&#39;</span> <span class="p">|</span> nc 127.0.0.1 <span class="m">9000</span>
 </code></pre></div></blockquote>
 </details>
-<p>The HTTP proxy uses the exact same protocol as HTTP; you can pass some
-special headers like <code>Proxy-Authorization: Basic ...</code> which are not going
-to be forwarded.</p>
+<p>The HTTP proxy uses the exact same protocol as HTTP; you can pass some special headers like <code>Proxy-Authorization: Basic ...</code> which are not going to be forwarded.</p>
 <h2 id="layer-7-the-https--sni-proxy">Layer 7: the HTTPS + SNI proxy</h2>
 <p>tbd</p>
 <h2 id="layer-7-the-reverse-http-proxy">Layer 7: the reverse HTTP proxy</h2>
 <h2 id="examples-of-proxies">Examples of proxies</h2>
-<p>By remote dialer, I mean something that exposes a port on a local machine,
-and everything that goes through this port is forwarded to a distant host;
-the distant host &ldquo;dials&rdquo; the destination host (we could say &ldquo;proxies&rdquo; the
-TCP connection, but I like the &ldquo;dial&rdquo; word 😅)</p>
+<p>By remote dialer, I mean something that exposes a port on a local machine, and everything that goes through this port is forwarded to a distant host; the distant host &ldquo;dials&rdquo; the destination host (we could say &ldquo;proxies&rdquo; the TCP connection, but I like the &ldquo;dial&rdquo; word 😅)</p>
 <!-- https://textik.com/#216b639e0aaa6953 -->
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">                   local host                    remote host
                       |                               |
@@ -187,24 +165,16 @@ TCP connection, but I like the &ldquo;dial&rdquo; word 😅)</p>
                       |                               |
                       |                               |
 </code></pre></div><p>And by reverse remote dialer,</p>
-<p>By tunnel we mean one local port that a process binds to and every TCP
-opened to that port gets forwarded to a remote dialer.</p>
-<p>TCP tunnel vs. TCP proxy vs. reverse proxy = they are all the same in the
-end? Except for how things are captured on the local host (simple port
-binding) and to where the thing is forwarded to.</p>
-<p><a href="https://github.com/klsecservices/rpivot">Rpivot</a> is a python tool used for
-penetration testing. It acts as a &ldquo;remote dialer&rdquo;:</p>
+<p>By tunnel we mean one local port that a process binds to and every TCP opened to that port gets forwarded to a remote dialer.</p>
+<p>TCP tunnel vs. TCP proxy vs. reverse proxy = they are all the same in the end? Except for how things are captured on the local host (simple port binding) and to where the thing is forwarded to.</p>
+<p><a href="https://github.com/klsecservices/rpivot">Rpivot</a> is a python tool used for penetration testing. It acts as a &ldquo;remote dialer&rdquo;:</p>
 <h2 id="what-is-socat">What is socat</h2>
 <p><a href="https://book.hacktricks.xyz/tunneling-and-port-forwarding#socat">socat</a></p>
-<p>From
-<a href="https://github.com/rancher/k3s/blob/fe7337937155af41f1aebeb87d1acd07091b71de/scripts/provision/generic/alpine310/vagrant#L25">rancher/k3s</a>:</p>
+<p>From <a href="https://github.com/rancher/k3s/blob/fe7337937155af41f1aebeb87d1acd07091b71de/scripts/provision/generic/alpine310/vagrant#L25">rancher/k3s</a>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 127.0.0.1:2375:2375 alpine/socat TCP-LISTEN:2375,fork UNIX-CONNECT:/var/run/docker.sock
-</code></pre></div><p>Probably a massive workaround for exposing <code>docker.sock</code> on
-<code>localhost:2375</code> when the only thing you have in hand is docker &amp; you can’t
-run <code>socat</code> locally (or don’t want to bother installing it lol).</p>
+</code></pre></div><p>Probably a massive workaround for exposing <code>docker.sock</code> on <code>localhost:2375</code> when the only thing you have in hand is docker &amp; you can’t run <code>socat</code> locally (or don’t want to bother installing it lol).</p>
 <h2 id="reverseremote-tcp-connection-remote-dialer">Reverse/remote TCP connection (remote dialer)</h2>
-<p>Let&rsquo;s expose port 80 on the remote and that will forward traffic to
-localhost:8080 on my local machine:</p>
+<p>Let&rsquo;s expose port 80 on the remote and that will forward traffic to localhost:8080 on my local machine:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># From local</span>
 ssh -R 42345:22 remote -p <span class="m">22</span>
 ssh -R 80:8080 localhost -p <span class="m">42345</span>      <span class="c1"># the reverse port-forwarding</span>

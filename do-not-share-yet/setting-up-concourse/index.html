@@ -77,19 +77,14 @@ navigate to the following URL in your browser:
 
 or enter token manually:
 target saved
-</code></pre></div><p>Can <code>-t main</code> be remembered by default like contexts and namespaces with
-<code>kubectl config set-context</code>? See:</p>
+</code></pre></div><p>Can <code>-t main</code> be remembered by default like contexts and namespaces with <code>kubectl config set-context</code>? See:</p>
 <ul>
 <li><a href="https://github.com/concourse/fly/issues/213">issue 213</a>:</li>
 <li></li>
 <li><a href="https://github.com/concourse/concourse/issues/1933">issue 1933</a>:
 <blockquote>
-<p>Could <code>fly</code> remember the target? Either with <code>FLY_TARGET</code> env var or
-setting a default in ~/.flyrc?</p>
-<p>Response: The <code>-t</code> flag is intentionally stateless and must be
-explicitly added to each command. This reduces the risk of accidentally
-running a command against the wrong environment when you have multiple
-targets defined.</p>
+<p>Could <code>fly</code> remember the target? Either with <code>FLY_TARGET</code> env var or setting a default in ~/.flyrc?</p>
+<p>Response: The <code>-t</code> flag is intentionally stateless and must be explicitly added to each command. This reduces the risk of accidentally running a command against the wrong environment when you have multiple targets defined.</p>
 </blockquote>
 </li>
 </ul>
@@ -122,12 +117,7 @@ targets defined.</p>
 </span><span class="s">EOF</span>
 </code></pre></div><div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">fly -t main set-pipeline -pmaster -c pipeline.yml
 </code></pre></div><blockquote>
-<p>&ldquo;<a href="https://concourse-ci.org/concourse-worker.html#configuring-gdn-server">Configuring gdn
-server</a>&quot;:
-On Linux, the concourse binary is packaged alongside a <code>gdn</code> binary. This
-binary is used for running Guardian, which is a Garden backend
-implementation which runs containers via <code>runc</code> (the same technology
-underlying tools like Docker).</p>
+<p>&ldquo;<a href="https://concourse-ci.org/concourse-worker.html#configuring-gdn-server">Configuring gdn server</a>&quot;: On Linux, the concourse binary is packaged alongside a <code>gdn</code> binary. This binary is used for running Guardian, which is a Garden backend implementation which runs containers via <code>runc</code> (the same technology underlying tools like Docker).</p>
 </blockquote>
 
 </div>

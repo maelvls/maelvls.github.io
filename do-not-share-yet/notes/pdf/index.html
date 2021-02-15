@@ -68,9 +68,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQ
 </div>
 </div>
 <div class="markdown">
-<p>The Epson iPrint soft is producing PDFs in 300dpi but the 300 information does
-not seem to be stored in the PDF metadata; thus, the PDF reader thinks
-by default that it is a 72 dpi PDF and thus the huge size:</p>
+<p>The Epson iPrint soft is producing PDFs in 300dpi but the 300 information does not seem to be stored in the PDF metadata; thus, the PDF reader thinks by default that it is a 72 dpi PDF and thus the huge size:</p>
 <pre><code>87,49 × 123,72 cm
 </code></pre>
 <p>instead of an A4 paper:</p>
@@ -104,8 +102,7 @@ convert -units PixelsPerInch EPSON004.pdf -density 300 -quality 30 -compress jpe
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">mogrify -despeckle -fuzz 5% -fill white -opaque white -gamma 0.8 -colorspace gray -depth <span class="m">6</span> -format png <span class="se">\*</span>.jpg
 </code></pre></div><h2 id="ocr">OCR</h2>
 <h2 id="to-black-and-white">To black and white</h2>
-<p>A SO link talking about that:
-<a href="https://stackoverflow.com/questions/15211428/conversion-of-tiff-to-pdf-with-ghostscript">https://stackoverflow.com/questions/15211428/conversion-of-tiff-to-pdf-with-ghostscript</a>.</p>
+<p>A SO link talking about that: <a href="https://stackoverflow.com/questions/15211428/conversion-of-tiff-to-pdf-with-ghostscript">https://stackoverflow.com/questions/15211428/conversion-of-tiff-to-pdf-with-ghostscript</a>.</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">gs -dQUIET -dNOPAUSE -r200 -dBATCH -sPAPERSIZE<span class="o">=</span>a4 -sDEVICE<span class="o">=</span>tiffg3 -sOutputFile<span class="o">=</span>temp.tiff -sColorConversionStrategy<span class="o">=</span>Mono -sColorConversionStrategyForImages<span class="o">=</span>/Mono -dProcessColorModel<span class="o">=</span>/DeviceGray <span class="s2">&#34;a.pdf&#34;</span>
 tiff2pdf -o out.pdf -p A4 -F temp.tiff
 </code></pre></div><p>Or:</p>

@@ -63,21 +63,11 @@
 </div>
 <div class="markdown">
 <ul>
-<li>ChatOps takes the GitOps to the next level and uses a chat interface
-(such as Slack or Github PR comments) to bring more transparency and
-retain knowledge about past actions.</li>
+<li>ChatOps takes the GitOps to the next level and uses a chat interface (such as Slack or Github PR comments) to bring more transparency and retain knowledge about past actions.</li>
 <li>The Kubernetes project uses Prow, a chat bot.</li>
-<li>Chat UI = transparent, visible, avoids shadow operations (when a
-colleague has to do some <code>terraform apply</code> locally), workflow is public
-instead of in people&rsquo;s minds.</li>
-<li>Tekton = tasks &amp; pipelines only but deals with inputs and outputs.
-API-only which means there is it kind of lacks user-friendliness. You
-only get the <code>tekton</code> CLI and a read-only web-based dashboard, but the
-nice thing is that it is Kubernetes-based so it integrates with many
-things like <code>kubectl</code>.</li>
-<li>Concourse CI = also input-output oriented. Has a very nice web UI that is
-mostly read-only (except for re-running jobs). It is API-only and the
-main way of configuring and running CI is to use the <code>fly</code> CLI.</li>
+<li>Chat UI = transparent, visible, avoids shadow operations (when a colleague has to do some <code>terraform apply</code> locally), workflow is public instead of in people&rsquo;s minds.</li>
+<li>Tekton = tasks &amp; pipelines only but deals with inputs and outputs. API-only which means there is it kind of lacks user-friendliness. You only get the <code>tekton</code> CLI and a read-only web-based dashboard, but the nice thing is that it is Kubernetes-based so it integrates with many things like <code>kubectl</code>.</li>
+<li>Concourse CI = also input-output oriented. Has a very nice web UI that is mostly read-only (except for re-running jobs). It is API-only and the main way of configuring and running CI is to use the <code>fly</code> CLI.</li>
 </ul>
 <p>Example: <a href="https://github.com/maelvls/gh-actions-chatops">https://github.com/maelvls/gh-actions-chatops</a></p>
 

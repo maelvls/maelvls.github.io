@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Weird Api Choices" />
 <meta property="og:description" content="Map vs. discriminative arrays (map key -&gt; discriminative name) From docker inspect:
-{ Networks: { &#34;bridge&#34;: { IPAddress: &#34;172.17.0.2&#34; }, &#34;kind&#34;: { IPAddress: &#34;172.18.0.2&#34; } } } versus:
+{ &#34;Networks&#34;: { &#34;bridge&#34;: { &#34;IPAddress&#34;: &#34;172.17.0.2&#34; }, &#34;kind&#34;: { &#34;IPAddress&#34;: &#34;172.18.0.2&#34; } } } versus:
 { Networks: [ { Name: &#34;bridge&#34; IPAddress: &#34;172.17.0.2&#34; }, { Name: &#34;kind&#34;, IPAddress: &#34;172.18.0.2&#34; } ] } Polymorphic vs. discriminative array (polymorphic object -&gt; discriminative type) From the Service type in Kubernetes:
 status:loadBalancer:ingress:- ip:35.67.89.10- ip:35.67.89.11- hostname:nginx-test.gcp-1.helix.engineeringIt is confusing: can we have an object with both &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; set?" />
 <meta property="og:type" content="article" />
@@ -20,7 +20,7 @@ status:loadBalancer:ingress:- ip:35.67.89.10- ip:35.67.89.11- hostname:nginx-tes
 
 <meta name="twitter:title" content="Weird Api Choices"/>
 <meta name="twitter:description" content="Map vs. discriminative arrays (map key -&gt; discriminative name) From docker inspect:
-{ Networks: { &#34;bridge&#34;: { IPAddress: &#34;172.17.0.2&#34; }, &#34;kind&#34;: { IPAddress: &#34;172.18.0.2&#34; } } } versus:
+{ &#34;Networks&#34;: { &#34;bridge&#34;: { &#34;IPAddress&#34;: &#34;172.17.0.2&#34; }, &#34;kind&#34;: { &#34;IPAddress&#34;: &#34;172.18.0.2&#34; } } } versus:
 { Networks: [ { Name: &#34;bridge&#34; IPAddress: &#34;172.17.0.2&#34; }, { Name: &#34;kind&#34;, IPAddress: &#34;172.18.0.2&#34; } ] } Polymorphic vs. discriminative array (polymorphic object -&gt; discriminative type) From the Service type in Kubernetes:
 status:loadBalancer:ingress:- ip:35.67.89.10- ip:35.67.89.11- hostname:nginx-test.gcp-1.helix.engineeringIt is confusing: can we have an object with both &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; set?"/>
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
@@ -71,15 +71,15 @@ status:loadBalancer:ingress:- ip:35.67.89.10- ip:35.67.89.11- hostname:nginx-tes
 <h1 id="map-vs-discriminative-arrays-map-key---discriminative-name">Map vs. discriminative arrays (map key -&gt; discriminative name)</h1>
 <p>From <code>docker inspect</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-    <span class="err">Networks:</span> <span class="err">{</span>
-        <span class="nt">&#34;bridge&#34;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="err">IPAddress:</span> <span class="nt">&#34;172.17.0.2&#34;</span>
-        <span class="p">},</span>
-        <span class="nt">&#34;kind&#34;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="err">IPAddress:</span> <span class="nt">&#34;172.18.0.2&#34;</span>
-        <span class="p">}</span>
+  <span class="nt">&#34;Networks&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;bridge&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;IPAddress&#34;</span><span class="p">:</span> <span class="s2">&#34;172.17.0.2&#34;</span>
+    <span class="p">},</span>
+    <span class="nt">&#34;kind&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;IPAddress&#34;</span><span class="p">:</span> <span class="s2">&#34;172.18.0.2&#34;</span>
     <span class="p">}</span>
-<span class="err">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div><p>versus:</p>
 <div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
     <span class="err">Networks:</span> <span class="err">[</span>
@@ -98,23 +98,20 @@ status:loadBalancer:ingress:- ip:35.67.89.10- ip:35.67.89.11- hostname:nginx-tes
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">status</span><span class="p">:</span><span class="w">
 </span><span class="w">  </span><span class="nt">loadBalancer</span><span class="p">:</span><span class="w">
 </span><span class="w">    </span><span class="nt">ingress</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="m">35.67.89.10</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="m">35.67.89.11</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l">nginx-test.gcp-1.helix.engineering</span><span class="w">
-</span></code></pre></div><p>It is confusing: can we have an object with both &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; set?
-The answer is no: the <code>kubectl describe</code> code
-<a href="https://github.com/kubernetes/kubectl/blob/9effcd79b3974fde2098571dfd3d0446f0c86d78/pkg/describe/describe.go#L4907-L4911">here</a>
-makes it clear that &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; are mutually exclusive.</p>
+</span><span class="w">      </span>- <span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="m">35.67.89.10</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="m">35.67.89.11</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l">nginx-test.gcp-1.helix.engineering</span><span class="w">
+</span></code></pre></div><p>It is confusing: can we have an object with both &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; set? The answer is no: the <code>kubectl describe</code> code <a href="https://github.com/kubernetes/kubectl/blob/9effcd79b3974fde2098571dfd3d0446f0c86d78/pkg/describe/describe.go#L4907-L4911">here</a> makes it clear that &ldquo;ip&rdquo; and &ldquo;hostname&rdquo; are mutually exclusive.</p>
 <p>Using a discriminative &ldquo;type&rdquo; field helps:</p>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">status</span><span class="p">:</span><span class="w">
 </span><span class="w">  </span><span class="nt">loadBalancer</span><span class="p">:</span><span class="w">
 </span><span class="w">    </span><span class="nt">ingress</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">ip</span><span class="w">
-</span><span class="w">      </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="m">35.67.89.10</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">ip</span><span class="w">
-</span><span class="w">      </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="m">35.67.89.11</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">hostname</span><span class="w">
-</span><span class="w">      </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="l">nginx-test.gcp-1.helix.engineering</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">ip</span><span class="w">
+</span><span class="w">        </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="m">35.67.89.10</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">ip</span><span class="w">
+</span><span class="w">        </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="m">35.67.89.11</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">hostname</span><span class="w">
+</span><span class="w">        </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="l">nginx-test.gcp-1.helix.engineering</span><span class="w">
 </span></code></pre></div>
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/weird-api-choices/index.md">📝 Edit this page and propose a change!</a>

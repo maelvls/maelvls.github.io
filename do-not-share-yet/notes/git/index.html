@@ -64,30 +64,24 @@
 </div>
 </div>
 <div class="markdown">
-<p>Many times, I used <code>git reset --hard</code> and found out later that all my changes had disappeared.
-I think this is because I do not fully understand what <code>git reset --hard</code> does:</p>
+<p>Many times, I used <code>git reset --hard</code> and found out later that all my changes had disappeared. I think this is because I do not fully understand what <code>git reset --hard</code> does:</p>
 <ol>
 <li>move the branch ref pointer to the given reference</li>
 <li>set HEAD to this ref</li>
 <li>Depending on the option:</li>
 </ol>
 <ul>
-<li>&ndash;soft: working dir and stage are not touched, useful when <code>git reset --hard HEAD^</code> to
-change the content of the commit without having to re-add everything</li>
+<li>&ndash;soft: working dir and stage are not touched, useful when <code>git reset --hard HEAD^</code> to change the content of the commit without having to re-add everything</li>
 <li>&ndash;mixed: working dir is not touched, but the stage is set to match the HEAD</li>
 <li>&ndash;hard: stage + working dir are set to match the HEAD</li>
 </ul>
 <p>On the other side, <code>git stash</code> will set stage + working dir to match the HEAD.</p>
-<p>So instead of <code>git reset --hard REF</code> I should rather do <code>git stash &amp;&amp; git reset --hard REF</code>.
-This would avoid cases where I forgot that I had made changes&hellip; and end up losing them all.</p>
+<p>So instead of <code>git reset --hard REF</code> I should rather do <code>git stash &amp;&amp; git reset --hard REF</code>. This would avoid cases where I forgot that I had made changes&hellip; and end up losing them all.</p>
 <p>IDEAS ON NEW COMMANDS</p>
 <ul>
-<li>I often have committed something like
-@~0: edit touist.rb
-@~1: edit .travis.yml</li>
+<li>I often have committed something like @~0: edit touist.rb @~1: edit .travis.yml</li>
 </ul>
-<p>I want to add a command like <code>git ci --amend~2</code> that would amend the commit in @~1,
-not the HEAD. Here is what I must do:</p>
+<p>I want to add a command like <code>git ci --amend~2</code> that would amend the commit in @~1, not the HEAD. Here is what I must do:</p>
 <pre><code>vim .travis.yml
 git stash
 git rb -i @^^ # edit HEAD^
@@ -96,9 +90,7 @@ git add .travis.yml
 git ci --amend
 git rb --continue
 </code></pre>
-<p>Facebook&rsquo;s hg extensions have &lsquo;absorb&rsquo; which does this but on @~1, @~2&hellip; and chooses
-automatically in which commit it should be amended.
-See:</p>
+<p>Facebook&rsquo;s hg extensions have &lsquo;absorb&rsquo; which does this but on @~1, @~2&hellip; and chooses automatically in which commit it should be amended. See:</p>
 <ul>
 <li><a href="https://stackoverflow.com/questions/24625411/amend-the-second-to-last-commit">https://stackoverflow.com/questions/24625411/amend-the-second-to-last-commit</a></li>
 <li><a href="https://blog.filippo.io/git-fixup-amending-an-older-commit/">https://blog.filippo.io/git-fixup-amending-an-older-commit/</a></li>

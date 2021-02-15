@@ -115,8 +115,7 @@ PING 10.24.9.3 <span class="o">(</span>10.24.9.3<span class="o">)</span> 56<span
 <span class="m">64</span> bytes from 10.24.9.3: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">62</span> <span class="nv">time</span><span class="o">=</span>1.47 ms
 
 % bash-5.0# nc -v 10.24.9.21 <span class="m">9000</span>
-</code></pre></div><p>Let&rsquo;s take another pod that is on host A. It&rsquo;s minio, which serves on port
-10.24.9.21:9000:</p>
+</code></pre></div><p>Let&rsquo;s take another pod that is on host A. It&rsquo;s minio, which serves on port 10.24.9.21:9000:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">bash-5.0# ping 10.24.9.21
 PING 10.24.9.21 <span class="o">(</span>10.24.9.21<span class="o">)</span> 56<span class="o">(</span>84<span class="o">)</span> bytes of data.
 <span class="m">64</span> bytes from 10.24.9.21: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">62</span> <span class="nv">time</span><span class="o">=</span>1.16 ms
@@ -126,8 +125,7 @@ PING 10.24.9.21 <span class="o">(</span>10.24.9.21<span class="o">)</span> 56<sp
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">mvalais@gke-august-period-234610-worker-micro-1de60498-g961 ~ $ tail /var/log/kube-proxy.log
 I0125 12:30:37.882376       <span class="m">1</span> service.go:334<span class="o">]</span> Updating existing service port <span class="s2">&#34;traefik/traefik:http&#34;</span> at 10.27.244.111:80/TCP
 I0125 12:31:35.093785       <span class="m">1</span> proxier.go:675<span class="o">]</span> Stale udp service kube-system/kube-dns:dns -&gt; 10.27.240.10
-</code></pre></div><p>Now, let&rsquo;s trace in iptables on host B:
-<a href="https://www.opsist.com/blog/2015/08/11/how-do-i-see-what-iptables-is-doing.html">https://www.opsist.com/blog/2015/08/11/how-do-i-see-what-iptables-is-doing.html</a></p>
+</code></pre></div><p>Now, let&rsquo;s trace in iptables on host B: <a href="https://www.opsist.com/blog/2015/08/11/how-do-i-see-what-iptables-is-doing.html">https://www.opsist.com/blog/2015/08/11/how-do-i-see-what-iptables-is-doing.html</a></p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% sudo iptables -t nat -I PREROUTING <span class="m">1</span> -j LOG
 % sudo iptables -t nat -I POSTROUTING <span class="m">1</span> -j LOG
 % sudo iptables -t nat -I OUTPUT <span class="m">1</span> -j LOG
@@ -163,18 +161,13 @@ I0125 12:31:35.093785       <span class="m">1</span> proxier.go:675<span class="
 <span class="n">[90332.564769]</span> <span class="n">TRACE</span><span class="o">:</span> <span class="n">nat</span><span class="o">:</span><span class="n">POSTROUTING</span><span class="o">:</span><span class="n">rule</span><span class="o">:</span><span class="m">2</span>                   <span class="n">IN</span><span class="o">=</span>     <span class="n">OUT</span><span class="o">=</span><span class="n">eth0</span> <span class="n">PHYSIN</span><span class="o">=</span><span class="n">veth4a3719bc</span> <span class="n">SRC</span><span class="o">=</span><span class="m">10.24.10.2</span> <span class="n">DST</span><span class="o">=</span><span class="m">10.24.9.3</span>     <span class="n">LEN</span><span class="o">=</span><span class="m">82</span> <span class="n">TOS</span><span class="o">=</span><span class="mh">0x00</span> <span class="n">PREC</span><span class="o">=</span><span class="mh">0x00</span> <span class="n">TTL</span><span class="o">=</span><span class="m">63</span> <span class="n">ID</span><span class="o">=</span><span class="m">43592</span> <span class="n">PROTO</span><span class="o">=</span><span class="n">UDP</span> <span class="n">SPT</span><span class="o">=</span><span class="m">36775</span> <span class="n">DPT</span><span class="o">=</span><span class="m">53</span> <span class="n">LEN</span><span class="o">=</span><span class="m">62</span>
 <span class="n">[90332.580978]</span> <span class="n">TRACE</span><span class="o">:</span> <span class="n">nat</span><span class="o">:</span><span class="n">IP</span><span class="o">-</span><span class="n">MASQ</span><span class="o">:</span><span class="n">rule</span><span class="o">:</span><span class="m">2</span>                       <span class="n">IN</span><span class="o">=</span>     <span class="n">OUT</span><span class="o">=</span><span class="n">eth0</span> <span class="n">PHYSIN</span><span class="o">=</span><span class="n">veth4a3719bc</span> <span class="n">SRC</span><span class="o">=</span><span class="m">10.24.10.2</span> <span class="n">DST</span><span class="o">=</span><span class="m">10.24.9.3</span>     <span class="n">LEN</span><span class="o">=</span><span class="m">82</span> <span class="n">TOS</span><span class="o">=</span><span class="mh">0x00</span> <span class="n">PREC</span><span class="o">=</span><span class="mh">0x00</span> <span class="n">TTL</span><span class="o">=</span><span class="m">63</span> <span class="n">ID</span><span class="o">=</span><span class="m">43592</span> <span class="n">PROTO</span><span class="o">=</span><span class="n">UDP</span> <span class="n">SPT</span><span class="o">=</span><span class="m">36775</span> <span class="n">DPT</span><span class="o">=</span><span class="m">53</span> <span class="n">LEN</span><span class="o">=</span><span class="m">62</span>
 <span class="n">[90332.596840]</span> <span class="n">TRACE</span><span class="o">:</span> <span class="n">nat</span><span class="o">:</span><span class="n">POSTROUTING</span><span class="o">:</span><span class="n">policy</span><span class="o">:</span><span class="m">4</span>                 <span class="n">IN</span><span class="o">=</span>     <span class="n">OUT</span><span class="o">=</span><span class="n">eth0</span> <span class="n">PHYSIN</span><span class="o">=</span><span class="n">veth4a3719bc</span> <span class="n">SRC</span><span class="o">=</span><span class="m">10.24.10.2</span> <span class="n">DST</span><span class="o">=</span><span class="m">10.24.9.3</span>     <span class="n">LEN</span><span class="o">=</span><span class="m">82</span> <span class="n">TOS</span><span class="o">=</span><span class="mh">0x00</span> <span class="n">PREC</span><span class="o">=</span><span class="mh">0x00</span> <span class="n">TTL</span><span class="o">=</span><span class="m">63</span> <span class="n">ID</span><span class="o">=</span><span class="m">43592</span> <span class="n">PROTO</span><span class="o">=</span><span class="n">UDP</span> <span class="n">SPT</span><span class="o">=</span><span class="m">36775</span> <span class="n">DPT</span><span class="o">=</span><span class="m">53</span> <span class="n">LEN</span><span class="o">=</span><span class="m">62</span>
-</code></pre></div><p>Note that using TRACE is extremely expensive. For example, using <code>-p icmp</code>
-would result in pings going from 1ms (without tracing) to 500ms. I also
-overloaded one of the nodes by adding a rule that was &ldquo;too wide&rdquo; and nearly
-killed the entire node. Use tracing filters (<code>-s</code>, <code>-p</code>, <code>-d</code>) as narrow as
-possible!</p>
+</code></pre></div><p>Note that using TRACE is extremely expensive. For example, using <code>-p icmp</code> would result in pings going from 1ms (without tracing) to 500ms. I also overloaded one of the nodes by adding a rule that was &ldquo;too wide&rdquo; and nearly killed the entire node. Use tracing filters (<code>-s</code>, <code>-p</code>, <code>-d</code>) as narrow as possible!</p>
 <h2 id="other-experiment-icmp">Other experiment: icmp</h2>
 <p>At this point, I recreated both nodes which changed all the IP CIDRs.</p>
 <ul>
 <li>Host A CIDR is <code>10.24.9.0/24</code>,</li>
 <li>Host B CIDR is <code>10.24.11.0/24</code>,</li>
-<li>We use the traefik pod (<code>10.24.11.7</code>) on host B for reproducing the
-connectivity issue.</li>
+<li>We use the traefik pod (<code>10.24.11.7</code>) on host B for reproducing the connectivity issue.</li>
 <li>KubeDNS is running on <code>10.24.9.14</code>.</li>
 </ul>
 <p>Host B:</p>
@@ -251,11 +244,7 @@ listening on eth0, link-type EN10MB <span class="o">(</span>Ethernet<span class=
 <span class="c1"># Nothing</span>
 </code></pre></div><p>Definitely something wrong with anything else than 80/tcp!</p>
 <h2 id="omg-it-was-a-missing-firewall-rule">OMG it was a missing firewall rule</h2>
-<p>I realised that only 80/tcp, 443/tcp and icmp packets would get routed.
-It&rsquo;s surprisingly very specific: what if the VPC firewall rules were off.
-Maybe these 80/tcp and 443/tcp are correspond to the rule
-&ldquo;akrobateo-fw-traefik&rdquo; I had added when I wanted to load-balance traffic
-direclty from the cluster (as opposed as external load balancing).</p>
+<p>I realised that only 80/tcp, 443/tcp and icmp packets would get routed. It&rsquo;s surprisingly very specific: what if the VPC firewall rules were off. Maybe these 80/tcp and 443/tcp are correspond to the rule &ldquo;akrobateo-fw-traefik&rdquo; I had added when I wanted to load-balance traffic direclty from the cluster (as opposed as external load balancing).</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% gcloud compute firewall-rules list
 NAME                                 NETWORK  DIRECTION  PRIORITY  ALLOW                         DENY  DISABLED
 akrobateo-fw-traefik                 default  INGRESS    <span class="m">1000</span>      tcp:80,tcp:443                      False
@@ -263,9 +252,7 @@ default-allow-icmp                   default  INGRESS    <span class="m">65534</
 default-allow-internal               default  INGRESS    <span class="m">65534</span>     tcp:0-65535,udp:0-65535,icmp        False
 default-allow-rdp                    default  INGRESS    <span class="m">65534</span>     tcp:3389                            False
 default-allow-ssh                    default  INGRESS    <span class="m">65534</span>     tcp:22                              False
-</code></pre></div><p>No rule for traffic in <code>10.24.0.0/14</code>! This CIDR is the subnet used for
-distributing CIDRs to each node. So I added a new rule &ldquo;all&rdquo;; here is the
-new list of rules:</p>
+</code></pre></div><p>No rule for traffic in <code>10.24.0.0/14</code>! This CIDR is the subnet used for distributing CIDRs to each node. So I added a new rule &ldquo;all&rdquo;; here is the new list of rules:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% gcloud compute firewall-rules list
 NAME                                 NETWORK  DIRECTION  PRIORITY  ALLOW                         DENY  DISABLED
 akrobateo-fw-traefik                 default  INGRESS    <span class="m">1000</span>      tcp:80,tcp:443                      False

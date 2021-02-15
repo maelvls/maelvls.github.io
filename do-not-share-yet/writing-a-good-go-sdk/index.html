@@ -64,20 +64,14 @@ Another good practice is to avoid hidden network calls. For example, most Go use
 </div>
 </div>
 <div class="markdown">
-<p>The typical way of building a client in Go is to pass a <code>*http.Client</code> in
-order to let the caller set timeouts and so on. See <a href="https://github.com/digitalocean/godo/blob/97ac73b1d53e23afa2700e9f97d5eeb1f3641e3f/godo.go#L153-L188">godo</a> (Digital Ocean
-API client) for a good way of doing it.</p>
-<p>Another good practice is to avoid hidden network calls. For example, most
-Go users do not expect a <code>NewClient</code> function to do a network call. Prefer
-using a dedicated function such as <code>client.Auth</code>.</p>
+<p>The typical way of building a client in Go is to pass a <code>*http.Client</code> in order to let the caller set timeouts and so on. See <a href="https://github.com/digitalocean/godo/blob/97ac73b1d53e23afa2700e9f97d5eeb1f3641e3f/godo.go#L153-L188">godo</a> (Digital Ocean API client) for a good way of doing it.</p>
+<p>Another good practice is to avoid hidden network calls. For example, most Go users do not expect a <code>NewClient</code> function to do a network call. Prefer using a dedicated function such as <code>client.Auth</code>.</p>
 <p>In the [docker][] client</p>
 <p>[docker]: <a href="https://github.com/moby/moby/blob/f5bb374a0c6260721ac551b232e8eac02b7d2674/client/client.go#L146-L150">https://github.com/moby/moby/blob/f5bb374a0c6260721ac551b232e8eac02b7d2674/client/client.go#L146-L150</a>)</p>
 <blockquote>
-<p><code>NewClient</code> should probably only take an <code>*http.Client</code> and work from
-there.</p>
+<p><code>NewClient</code> should probably only take an <code>*http.Client</code> and work from there.</p>
 </blockquote>
-<p>I think <code>NewClient</code> should only take a token and we also offer the user a
-way to give the token:</p>
+<p>I think <code>NewClient</code> should only take a token and we also offer the user a way to give the token:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">NewClient</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Client</span><span class="p">,</span> <span class="nx">token</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Client</span> <span class="p">{</span>
 <span class="p">}</span>
 
@@ -119,9 +113,7 @@ way to give the token:</p>
     <span class="nx">client</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">NewClient</span><span class="p">(</span><span class="s">&#34;token&#34;</span><span class="p">,</span> <span class="nx">backends</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div><h2 id="redis">Redis</h2>
-<p>Doesn&rsquo;t use HTTP anyway. But you can pass a Dialer function that creates a
-<code>net.Conn</code>. Since Redis is using TCP directly, the Redis client has to
-offer everything itself (e.g. DialTimeout).</p>
+<p>Doesn&rsquo;t use HTTP anyway. But you can pass a Dialer function that creates a <code>net.Conn</code>. Since Redis is using TCP directly, the Redis client has to offer everything itself (e.g. DialTimeout).</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="s">&#34;github.com/go-redis/redis&#34;</span>
 
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
@@ -129,12 +121,9 @@ offer everything itself (e.g. DialTimeout).</p>
     <span class="nx">client</span> <span class="o">:=</span> <span class="nx">redis</span><span class="p">.</span><span class="nf">NewClient</span><span class="p">(</span><span class="nx">opts</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div><h2 id="saltstack-client-r3labsgo-salt">Saltstack client (r3labs/go-salt)</h2>
-<p>The <a href="https://github.com/r3labs/go-salt/blob/e6bcc1482122fbfbb41c8c5d7204e067e97a4266/client.go#L18">NewClient</a> does a network call. That&rsquo;s pretty uncommon
-to do that in Go.</p>
-<p>There is no way to pass a <code>*http.Client</code> in <code>NewClient</code>. But you can by
-going through some hoops.</p>
-<p>Also, the authentication should create a new <code>*http.Client</code> instead of
-mutating the <code>conn.AuthToken</code> value.</p>
+<p>The <a href="https://github.com/r3labs/go-salt/blob/e6bcc1482122fbfbb41c8c5d7204e067e97a4266/client.go#L18">NewClient</a> does a network call. That&rsquo;s pretty uncommon to do that in Go.</p>
+<p>There is no way to pass a <code>*http.Client</code> in <code>NewClient</code>. But you can by going through some hoops.</p>
+<p>Also, the authentication should create a new <code>*http.Client</code> instead of mutating the <code>conn.AuthToken</code> value.</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="p">(</span>
     <span class="s">&#34;net/http&#34;</span>
     <span class="s">&#34;github.com/r3labs/go-salt&#34;</span>
@@ -153,9 +142,7 @@ mutating the <code>conn.AuthToken</code> value.</p>
     <span class="nx">job</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Job</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div><h2 id="docker-engine-api-client">Docker Engine API client</h2>
-<p>The <a href="https://github.com/moby/moby/blob/f5bb374a0c6260721ac551b232e8eac02b7d2674/client/client.go#L119">dockerengine.NewClient</a> does return an error, which is kind of
-unusual for NewClient in Go. The only thing they do is to check that the
-transport field (<code>http.Transport</code>) is in fact a <code>http.RoundTripper</code>.</p>
+<p>The <a href="https://github.com/moby/moby/blob/f5bb374a0c6260721ac551b232e8eac02b7d2674/client/client.go#L119">dockerengine.NewClient</a> does return an error, which is kind of unusual for NewClient in Go. The only thing they do is to check that the transport field (<code>http.Transport</code>) is in fact a <code>http.RoundTripper</code>.</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="p">(</span>
     <span class="s">&#34;net/http&#34;</span>
     <span class="s">&#34;github.com/moby/moby/client&#34;</span>
@@ -167,9 +154,7 @@ transport field (<code>http.Transport</code>) is in fact a <code>http.RoundTripp
         <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
     <span class="p">}</span>
 </code></pre></div><h2 id="heroku">Heroku</h2>
-<p>Very clean! Many globals, but it&rsquo;s just for ease of use: everything can be
-used without using the global state (<code>heroku.DefaultTransport</code>).
-<a href="https://github.com/heroku/heroku-go/blob/master/v5/transport.go">https://github.com/heroku/heroku-go/blob/master/v5/transport.go</a></p>
+<p>Very clean! Many globals, but it&rsquo;s just for ease of use: everything can be used without using the global state (<code>heroku.DefaultTransport</code>). <a href="https://github.com/heroku/heroku-go/blob/master/v5/transport.go">https://github.com/heroku/heroku-go/blob/master/v5/transport.go</a></p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="p">(</span>
     <span class="nx">heroku</span> <span class="s">&#34;github.com/heroku/heroku-go/v5&#34;</span>
 <span class="p">)</span>
@@ -182,8 +167,7 @@ used without using the global state (<code>heroku.DefaultTransport</code>).
     <span class="nx">addons</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nf">AddOnList</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="o">&amp;</span><span class="nx">heroku</span><span class="p">.</span><span class="nx">ListRange</span><span class="p">{</span><span class="nx">Field</span><span class="p">:</span> <span class="s">&#34;name&#34;</span><span class="p">})</span>
 <span class="p">}</span>
 </code></pre></div><h2 id="slack">Slack</h2>
-<p>Very good!!!
-<a href="https://github.com/nlopes/slack/blob/e5749f13b5af3c139165ab4180a95bb06a60128b/slack.go#L68">https://github.com/nlopes/slack/blob/e5749f13b5af3c139165ab4180a95bb06a60128b/slack.go#L68</a></p>
+<p>Very good!!! <a href="https://github.com/nlopes/slack/blob/e5749f13b5af3c139165ab4180a95bb06a60128b/slack.go#L68">https://github.com/nlopes/slack/blob/e5749f13b5af3c139165ab4180a95bb06a60128b/slack.go#L68</a></p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="p">(</span>
     <span class="s">&#34;github.com/nlopes/slack&#34;</span>
 <span class="p">)</span>

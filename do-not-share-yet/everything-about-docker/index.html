@@ -92,21 +92,9 @@ runtime-endpoint: unix:///var/run/containerd/containerd.sock
 <p>As detailed <a href="https://stackoverflow.com/questions/41645665/how-containerd-compares-to-runc#:~:text=runc%20is%20used%20by%20containerd,specification%20for%20runtime%20and%20images.">here</a>:</p>
 <blockquote>
 <ul>
-<li><a href="https://github.com/containerd/containerd"><code>containerd</code></a> is a container
-runtime which can manage a complete container lifecycle &ndash; from image
-transfer/storage (locally and from/to registries) to container
-execution, supervision and networking. Containerd abides by the
-client-side of the <a href="https://github.com/opencontainers/distribution-spec/blob/master/spec.md">OCI Distribution
-spec</a>.</li>
-<li><a href="http://alexander.holbreich.org/docker-components-explained#containerdshim"><code>containerd-shim</code></a>
-handles headless containers, meaning once <code>runc</code> initializes the
-containers, it exits handing the containers over to the container-shim
-which acts as some middleman.</li>
-<li><a href="https://github.com/opencontainers/runc"><code>runc</code></a> is a lightweight
-universal container runtime, which abides by the OCI specification.
-runc is used by containerd for spawning and running containers
-according to OCI spec. It is also the repackaging of Docker&rsquo;s
-libcontainer.</li>
+<li><a href="https://github.com/containerd/containerd"><code>containerd</code></a> is a container runtime which can manage a complete container lifecycle &ndash; from image transfer/storage (locally and from/to registries) to container execution, supervision and networking. Containerd abides by the client-side of the <a href="https://github.com/opencontainers/distribution-spec/blob/master/spec.md">OCI Distribution spec</a>.</li>
+<li><a href="http://alexander.holbreich.org/docker-components-explained#containerdshim"><code>containerd-shim</code></a> handles headless containers, meaning once <code>runc</code> initializes the containers, it exits handing the containers over to the container-shim which acts as some middleman.</li>
+<li><a href="https://github.com/opencontainers/runc"><code>runc</code></a> is a lightweight universal container runtime, which abides by the OCI specification. runc is used by containerd for spawning and running containers according to OCI spec. It is also the repackaging of Docker&rsquo;s libcontainer.</li>
 </ul>
 </blockquote>
 

@@ -62,47 +62,17 @@
 </div>
 </div>
 <div class="markdown">
-<p>Between May and June 2016, I worked with
-<a href="https://github.com/polazarus/ocamlyices">ocamlyices2</a>, an OCaml package
-that binds to the <a href="https://github.com/SRI-CSL/yices2">Yices</a> C++ library.
-Both projects (as well as many Linux projects) are built using the
-&ldquo;Autotools&rdquo; suite.</p>
-<p>The Autotools suite includes tools like
-<a href="https://www.gnu.org/software/autoconf/">autoconf</a>,
-<a href="https://www.gnu.org/software/automake">automake</a> and
-<a href="https://www.gnu.org/software/libtool/">libtool</a>. These tools generate a
-bunch of shell scripts and Makefiles using shell scripts and the
-<a href="https://en.wikipedia.org/wiki/M4_(computer_language)">M4</a> macro language.
-The user of your projects ends up two simple commands to build your
-project:</p>
+<p>Between May and June 2016, I worked with <a href="https://github.com/polazarus/ocamlyices">ocamlyices2</a>, an OCaml package that binds to the <a href="https://github.com/SRI-CSL/yices2">Yices</a> C++ library. Both projects (as well as many Linux projects) are built using the &ldquo;Autotools&rdquo; suite.</p>
+<p>The Autotools suite includes tools like <a href="https://www.gnu.org/software/autoconf/">autoconf</a>, <a href="https://www.gnu.org/software/automake">automake</a> and <a href="https://www.gnu.org/software/libtool/">libtool</a>. These tools generate a bunch of shell scripts and Makefiles using shell scripts and the <a href="https://en.wikipedia.org/wiki/M4_(computer_language)">M4</a> macro language. The user of your projects ends up two simple commands to build your project:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">./configure
 make
 </code></pre></div><blockquote>
-<p>Why did I bother with this? As part of my PhD, I worked on a tool,
-<a href="https://github.com/touist/touist">touist</a>, which uses SMT solvers like
-Yices. The <code>touist</code> CLI was written in OCaml (a popular language among
-academics, including my supervisor), which meant I had to go through
-hoops to interoperate with C/C++ solvers like Yices.</p>
+<p>Why did I bother with this? As part of my PhD, I worked on a tool, <a href="https://github.com/touist/touist">touist</a>, which uses SMT solvers like Yices. The <code>touist</code> CLI was written in OCaml (a popular language among academics, including my supervisor), which meant I had to go through hoops to interoperate with C/C++ solvers like Yices.</p>
 </blockquote>
-<p>My first challenge with ocamlyices2 was the fact that I needed a
-statically-linked <code>libyices.a</code>. And since Yices depends on
-<a href="https://gmplib.org/">GMP</a>, I had to dive deep into Yices2&rsquo;s <code>configure.ac</code>
-and find a way to select the static version of GMP.</p>
-<p>But building a static library <code>libyices.a</code> was not enough. I was to build
-in PIC mode (position-independant code, enabled with <code>-fPIC</code> in gcc). The
-position-independant code is required when you want to embed a static
-library into a dynamically-linked library. That&rsquo;s due to the fact that
-OCaml requires both the <code>.so</code> and <code>.a</code> versions of the &ldquo;stub&rdquo; library (a
-stub library is a C library that wraps another C library using OCaml C
-primitives). And naturally, Yices' build system had not been written to
-support building a static PIC <code>libyices.a</code>.</p>
-<p>I remember these days as an epic struggle against old build systems. This
-experience taught me everything about <code>autoconf</code>, Makefiles,
-position-independant code, <code>gcc</code>, <code>ldd</code> and <code>libtool</code>. And in this post, I
-want to share these discoveries and how I progressed into contributing to
-the <a href="https://github.com/polazarus/ocamlyices">ocamlyices2</a> project.</p>
-<p>Here is a diagram showing the dependencies between libraries. Ocamlyices2
-depends on Yices and Yices depends on GMP.</p>
+<p>My first challenge with ocamlyices2 was the fact that I needed a statically-linked <code>libyices.a</code>. And since Yices depends on <a href="https://gmplib.org/">GMP</a>, I had to dive deep into Yices2&rsquo;s <code>configure.ac</code> and find a way to select the static version of GMP.</p>
+<p>But building a static library <code>libyices.a</code> was not enough. I was to build in PIC mode (position-independant code, enabled with <code>-fPIC</code> in gcc). The position-independant code is required when you want to embed a static library into a dynamically-linked library. That&rsquo;s due to the fact that OCaml requires both the <code>.so</code> and <code>.a</code> versions of the &ldquo;stub&rdquo; library (a stub library is a C library that wraps another C library using OCaml C primitives). And naturally, Yices' build system had not been written to support building a static PIC <code>libyices.a</code>.</p>
+<p>I remember these days as an epic struggle against old build systems. This experience taught me everything about <code>autoconf</code>, Makefiles, position-independant code, <code>gcc</code>, <code>ldd</code> and <code>libtool</code>. And in this post, I want to share these discoveries and how I progressed into contributing to the <a href="https://github.com/polazarus/ocamlyices">ocamlyices2</a> project.</p>
+<p>Here is a diagram showing the dependencies between libraries. Ocamlyices2 depends on Yices and Yices depends on GMP.</p>
 <div class="nohighlight">
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">                            build:   dune
              touist         lang:    ocaml
@@ -136,68 +106,33 @@ depends on Yices and Yices depends on GMP.</p>
                             output:  libgmp.a (with PIC enabled)
 </code></pre></div></div>
 <!-- https://textik.com/#23689eecb0630a77 -->
-<p>The most important thing about this diagram is that since we need a
-PIC-enabled static library <code>libyices.a</code> in order to build the &ldquo;binding
-libraries&rdquo;: the shared library <code>yices2.cmxs</code> and the static library
-<code>libyices2_stubs.a</code>.</p>
-<p>And in order to get this PIC-enabled <code>libyices.a</code>, I needed to make sure
-that the GMP library picked by the Yices <code>./configure</code> would be static and
-PIC-enabled.</p>
-<p>In early 2016, the Yices build system was limited to building a shared
-library with no support for cross-compilation (a requirement to build on
-Windows) and no support for enforcing PIC in <code>libgmp.a</code> and <code>libyices.a</code>.</p>
+<p>The most important thing about this diagram is that since we need a PIC-enabled static library <code>libyices.a</code> in order to build the &ldquo;binding libraries&rdquo;: the shared library <code>yices2.cmxs</code> and the static library <code>libyices2_stubs.a</code>.</p>
+<p>And in order to get this PIC-enabled <code>libyices.a</code>, I needed to make sure that the GMP library picked by the Yices <code>./configure</code> would be static and PIC-enabled.</p>
+<p>In early 2016, the Yices build system was limited to building a shared library with no support for cross-compilation (a requirement to build on Windows) and no support for enforcing PIC in <code>libgmp.a</code> and <code>libyices.a</code>.</p>
 <h2 id="yices2--autoconf-an-attempt-at-fixing-a-limited-build-system">Yices2 &amp; autoconf: an attempt at fixing a limited build system</h2>
-<p>I remember the warmth that we had in May 2016. My daughter had turned three
-and we were still living in a tiny appartment since I was technically still
-a student.</p>
-<p>My first patch to the ocamlyices2 project took over a month of intense
-work. The stake was immense: I aimed at revamping the whole Yices2 build
-system. The original build system didn&rsquo;t allow developers to statically
-build <code>libyices.a</code>. More generally, it was a pain to work with: most
-configuration was happening at <code>./configure</code> time, but a ton of things had
-still to be passed at make time (e.g., <code>make VAR=value</code>).</p>
-<p>This change
-(<a href="https://github.com/polazarus/ocamlyices2/commit/25f5eb15">25f5eb15</a>)
-brought a ton of features. But the most important ones were:</p>
+<p>I remember the warmth that we had in May 2016. My daughter had turned three and we were still living in a tiny appartment since I was technically still a student.</p>
+<p>My first patch to the ocamlyices2 project took over a month of intense work. The stake was immense: I aimed at revamping the whole Yices2 build system. The original build system didn&rsquo;t allow developers to statically build <code>libyices.a</code>. More generally, it was a pain to work with: most configuration was happening at <code>./configure</code> time, but a ton of things had still to be passed at make time (e.g., <code>make VAR=value</code>).</p>
+<p>This change (<a href="https://github.com/polazarus/ocamlyices2/commit/25f5eb15">25f5eb15</a>) brought a ton of features. But the most important ones were:</p>
 <ol>
 <li>
-<p><strong>Better <code>./configure &amp;&amp; make</code> experience</strong>. Instead of having some
-parts of the build configuration being passed as Makefile variables, I
-moved everything to nice flags that you would pass to <code>./configure</code>.</p>
+<p><strong>Better <code>./configure &amp;&amp; make</code> experience</strong>. Instead of having some parts of the build configuration being passed as Makefile variables, I moved everything to nice flags that you would pass to <code>./configure</code>.</p>
 </li>
 <li>
-<p><strong>Proper PIC support</strong>. Sometimes, Yices' <code>./configure</code> would pick up a
-<code>libgmp.a</code> that would not be &ldquo;PIC&rdquo;. So I wrote a new
-<a href="https://en.wikipedia.org/wiki/M4_(computer_language)">M4</a> macro,
-<code>CSL_CHECK_STATIC_GMP_HAS_PIC</code>, that would do the PIC check using
-libtool. For example, the developer would be able to ask for a static
-library with PIC support:</p>
+<p><strong>Proper PIC support</strong>. Sometimes, Yices' <code>./configure</code> would pick up a <code>libgmp.a</code> that would not be &ldquo;PIC&rdquo;. So I wrote a new <a href="https://en.wikipedia.org/wiki/M4_(computer_language)">M4</a> macro, <code>CSL_CHECK_STATIC_GMP_HAS_PIC</code>, that would do the PIC check using libtool. For example, the developer would be able to ask for a static library with PIC support:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">./configure --with-pic --enable-static --disable-shared --with-pic-gmp<span class="o">=</span><span class="nv">$PWD</span>/with-pic/libgmp.a
 </code></pre></div></li>
 <li>
 <p><strong>Static <code>libyices.a</code></strong>. The original build system did not</p>
 </li>
 <li>
-<p><strong>Using <code>libtool</code></strong>. Instead of hand-crafted targets for building the static
-&amp; dynamic libraries,  <code>libtool</code> allowed me to build both with very
-little effort (at the cost of slightly longer build times). I remember
-trying to fiddle with the Makefile to be able to get PIC/non-PIC as well
-as dynamic/static <code>.o</code> units. Using <code>libtool</code> made it so easier to build
-simultanously the static and dynamic versions of <code>libyices</code>
-(<code>libyices.a</code> and <code>libyices.so</code>).</p>
+<p><strong>Using <code>libtool</code></strong>. Instead of hand-crafted targets for building the static &amp; dynamic libraries, <code>libtool</code> allowed me to build both with very little effort (at the cost of slightly longer build times). I remember trying to fiddle with the Makefile to be able to get PIC/non-PIC as well as dynamic/static <code>.o</code> units. Using <code>libtool</code> made it so easier to build simultanously the static and dynamic versions of <code>libyices</code> (<code>libyices.a</code> and <code>libyices.so</code>).</p>
 </li>
 <li>
-<p><strong>Cross-compilation</strong>. I wanted to be able to release binaries for
-Windows users, which meant that I needed to cross-compile from a Cygwin
-environment to a Win32 executable.</p>
+<p><strong>Cross-compilation</strong>. I wanted to be able to release binaries for Windows users, which meant that I needed to cross-compile from a Cygwin environment to a Win32 executable.</p>
 </li>
 </ol>
-<p>I also fixed weird bugs like a failure on Alpine 3.5 due to a race
-condition in <code>ltmain.sh</code>. Yes, you heard well! A race condition in a build
-system!</p>
-<p>Not sure, but
-<a href="https://github.com/polazarus/ocamlyices2/commit/25f5eb15">25f5eb15</a> might
-be my biggest commit ever:</p>
+<p>I also fixed weird bugs like a failure on Alpine 3.5 due to a race condition in <code>ltmain.sh</code>. Yes, you heard well! A race condition in a build system!</p>
+<p>Not sure, but <a href="https://github.com/polazarus/ocamlyices2/commit/25f5eb15">25f5eb15</a> might be my biggest commit ever:</p>
 <div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
 Date:   Fri May 5 10:31:37 2017 +0200
 Commit: 25f5eb15
@@ -368,17 +303,8 @@ Commit: 25f5eb15
             func_append command &#34; -o $obj&#34;
     ```
 </code></pre></div><p>What a massive commit message, right?!</p>
-<p>Oviously, I still needed to use all the new features that I had just addeed
-to the Yices <code>./configure</code>. So I proposed a second patch
-(<a href="https://github.com/polazarus/ocamlyices2/commit/ccb5a563">ccb5a563</a>) with
-changes to the ocamlyices2&rsquo;s own <code>./configure</code>; that took the form of new
-flags so that I would be able to build a static <code>libyices.a</code> by specifying
-the static version of the GMP library <code>libgmp.a</code>.</p>
-<p>I also used the new cross-compilation capability of the Yices <code>./configure</code>
-so that it would be possible to build ocamlyices2 on Windows. The
-compilation would rely on the POSIX-compliant
-<a href="https://www.cygwin.com/">Cygwin</a> suite and cross-compile to a native Win32
-executable using <a href="http://www.mingw.org/">MinGW32</a> (which a port of GCC).</p>
+<p>Oviously, I still needed to use all the new features that I had just addeed to the Yices <code>./configure</code>. So I proposed a second patch (<a href="https://github.com/polazarus/ocamlyices2/commit/ccb5a563">ccb5a563</a>) with changes to the ocamlyices2&rsquo;s own <code>./configure</code>; that took the form of new flags so that I would be able to build a static <code>libyices.a</code> by specifying the static version of the GMP library <code>libgmp.a</code>.</p>
+<p>I also used the new cross-compilation capability of the Yices <code>./configure</code> so that it would be possible to build ocamlyices2 on Windows. The compilation would rely on the POSIX-compliant <a href="https://www.cygwin.com/">Cygwin</a> suite and cross-compile to a native Win32 executable using <a href="http://www.mingw.org/">MinGW32</a> (which a port of GCC).</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">Author</span><span class="p">:</span> <span class="nx">Maël</span> <span class="nx">Valais</span> <span class="p">&lt;</span><span class="nx">mael</span><span class="p">.</span><span class="nx">valais</span><span class="err">@</span><span class="nx">gmail</span><span class="p">.</span><span class="nx">com</span><span class="p">&gt;</span>
 <span class="nx">Date</span><span class="p">:</span>   <span class="nx">Fri</span> <span class="nx">May</span> <span class="mi">5</span> <span class="mi">16</span><span class="p">:</span><span class="mi">18</span><span class="p">:</span><span class="mi">46</span> <span class="mi">2017</span> <span class="o">+</span><span class="mo">0200</span>
 <span class="nx">Commit</span><span class="p">:</span> <span class="nx">ccb5a563</span>
@@ -421,13 +347,8 @@ executable using <a href="http://www.mingw.org/">MinGW32</a> (which a port of GC
     <span class="nx">Guess</span> <span class="nx">the</span> <span class="nx">host</span> <span class="nx">system</span> <span class="nx">and</span> <span class="nx">pass</span> <span class="nx">it</span> <span class="nx">to</span> <span class="nx">libyices</span> <span class="p">.</span><span class="o">/</span><span class="nx">configure</span>
     <span class="o">========================================================</span><span class="p">=</span>
     <span class="nx">It</span> <span class="nx">is</span> <span class="nx">now</span> <span class="nx">possible</span> <span class="nx">to</span> <span class="nx">use</span> <span class="p">.</span><span class="o">/</span><span class="nx">configure</span> <span class="k">for</span> <span class="nx">mingw32</span> <span class="nx">cross</span><span class="o">-</span><span class="nx">compilation</span><span class="p">.</span>
-</code></pre></div><p>A month past and I soon realized that GMP was not embedded at all in
-<code>libyices.a</code>. I could see the symbols as undefined (<code>U</code>) when running <code>nm libyices.a</code>. It took me a while to figure this out&hellip; back to tweaking the
-fragile Yices <code>./configure</code>!</p>
-<p>Along the way, I also realized how different Linux distributions are. Arch
-Linux is notably lacking support for partial linking (<code>ld -r</code>). Which meant
-I had to add a flag for this specific purpose in commit
-<a href="https://github.com/polazarus/ocamlyices2/commit/38200b0a">38200b0a</a>:</p>
+</code></pre></div><p>A month past and I soon realized that GMP was not embedded at all in <code>libyices.a</code>. I could see the symbols as undefined (<code>U</code>) when running <code>nm libyices.a</code>. It took me a while to figure this out&hellip; back to tweaking the fragile Yices <code>./configure</code>!</p>
+<p>Along the way, I also realized how different Linux distributions are. Arch Linux is notably lacking support for partial linking (<code>ld -r</code>). Which meant I had to add a flag for this specific purpose in commit <a href="https://github.com/polazarus/ocamlyices2/commit/38200b0a">38200b0a</a>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
 Date:   Fri Jun 16 21:18:37 2017 +0200
 Commit: 38200b0a
@@ -463,11 +384,7 @@ Commit: 38200b0a
     This option disables the embedding of GMP inside libyices.a. This
     &#39;embedding&#39; is made using partial linking (ld -r) which seems to
     be failing on Arch Linux when using the shared GMP library.
-</code></pre></div><p>Although I had already added a check (<code>CSL_CHECK_STATIC_GMP_HAS_PIC</code> in
-<a href="https://github.com/polazarus/ocamlyices2/commit/25f5eb15">25f5eb15</a>) to
-make sure that the user-provided libgmp was PIC when using <code>--with-pic</code>, I
-realized that it was trickier that what I thought in
-<a href="https://github.com/polazarus/ocamlyices2/commit/55c8e92a">55c8e92a</a>&hellip;</p>
+</code></pre></div><p>Although I had already added a check (<code>CSL_CHECK_STATIC_GMP_HAS_PIC</code> in <a href="https://github.com/polazarus/ocamlyices2/commit/25f5eb15">25f5eb15</a>) to make sure that the user-provided libgmp was PIC when using <code>--with-pic</code>, I realized that it was trickier that what I thought in <a href="https://github.com/polazarus/ocamlyices2/commit/55c8e92a">55c8e92a</a>&hellip;</p>
 <div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
 Date:   Sat Jun 17 14:09:12 2017 +0200
 Commit: 55c8e92a
@@ -490,15 +407,8 @@ Commit: 55c8e92a
     Reminder: we also check that the system libgmp.a or the libgmp.a given with
     --with-static-gmp is PIC. If it is the case, the PIC libgmp.a will be used
     for --with-pic.
-</code></pre></div><p>Now, I also had to fix ocamlyices2&rsquo;s <code>./configure</code> since <code>ld -r</code> (partial
-linking) was not supported on Arch Linux (see [PR&rsquo;s CI failure](pull
-request](<a href="https://github.com/ocaml/opam-repository/pull/9086)">https://github.com/ocaml/opam-repository/pull/9086)</a>. I remember
-waiting for hours for the CI to run on all imaginable systems: Debian,
-Ubuntu, Suse, Arch Linux, Alpine, CentOS, Fedora, macOS and Windows&hellip;</p>
-<p>Commits
-<a href="https://github.com/polazarus/ocamlyices2/commit/df7c89a1">df7c89a1</a> and
-<a href="https://github.com/polazarus/ocamlyices2/commit/70dc5de5">70dc5de5</a>) fix
-the partial linking issue on Arch Linux:</p>
+</code></pre></div><p>Now, I also had to fix ocamlyices2&rsquo;s <code>./configure</code> since <code>ld -r</code> (partial linking) was not supported on Arch Linux (see [PR&rsquo;s CI failure](pull request](<a href="https://github.com/ocaml/opam-repository/pull/9086)">https://github.com/ocaml/opam-repository/pull/9086)</a>. I remember waiting for hours for the CI to run on all imaginable systems: Debian, Ubuntu, Suse, Arch Linux, Alpine, CentOS, Fedora, macOS and Windows&hellip;</p>
+<p>Commits <a href="https://github.com/polazarus/ocamlyices2/commit/df7c89a1">df7c89a1</a> and <a href="https://github.com/polazarus/ocamlyices2/commit/70dc5de5">70dc5de5</a>) fix the partial linking issue on Arch Linux:</p>
 <div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
 Date:   Sat Jun 17 16:52:59 2017 +0200
 Commit: df7c89a1
@@ -527,16 +437,8 @@ Commit: 70dc5de5
 
         ld -r *.o -lgmp -o libyices.o
 </code></pre></div><h2 id="final-result-of-the-yices2-build-system">Final result of the Yices2 build system</h2>
-<p>The experience with the re-written <code>./configure</code>
-(<a href="https://github.com/polazarus/ocamlyices2/tree/master/ext/yices">here</a>) is
-very different from the original one. When the user wants to compile the
-library with PIC, they get a warning if one of the dependencies is not PIC.
-There is a much finer control over what the user wants: dynamic vs. static,
-PIC vs. non-PIC. But also more control over dependencies like GMP, since
-the user must be able to pass a static or dynamic version of libgmp.</p>
-<p>The <code>./configure</code> that you can see
-<a href="https://github.com/polazarus/ocamlyices2/tree/master/ext/yices">here</a>
-gained many features like <code>--with-shared-gmp</code> or <code>--with-pic</code>.</p>
+<p>The experience with the re-written <code>./configure</code> (<a href="https://github.com/polazarus/ocamlyices2/tree/master/ext/yices">here</a>) is very different from the original one. When the user wants to compile the library with PIC, they get a warning if one of the dependencies is not PIC. There is a much finer control over what the user wants: dynamic vs. static, PIC vs. non-PIC. But also more control over dependencies like GMP, since the user must be able to pass a static or dynamic version of libgmp.</p>
+<p>The <code>./configure</code> that you can see <a href="https://github.com/polazarus/ocamlyices2/tree/master/ext/yices">here</a> gained many features like <code>--with-shared-gmp</code> or <code>--with-pic</code>.</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% ./configure --help
 <span class="sb">`</span>configure<span class="err">&#39;</span> configures Yices 2.5.2 to adapt to many kinds of systems.
 
@@ -593,9 +495,7 @@ Optional Packages:
   --with-static-name<span class="o">=</span>name <span class="o">(</span>Windows only<span class="o">)</span> when building simultanously shared
                           and static libraries, allows you to give a different
                           name <span class="k">for</span> the static version of libyices.a.
-</code></pre></div><p>I also added a ton of diagnostic information that appears at the end of
-<code>./configure</code>. That&rsquo;s very useful when you want to make sure that
-<code>./configure</code> has picked up the right version of <code>libgmp</code>:</p>
+</code></pre></div><p>I also added a ton of diagnostic information that appears at the end of <code>./configure</code>. That&rsquo;s very useful when you want to make sure that <code>./configure</code> has picked up the right version of <code>libgmp</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">configure: Summary of the configuration:
 EXEEXT:
 SED:                        /usr/bin/sed
@@ -646,13 +546,9 @@ For shared library:
   Libgmp.a with PIC found:  yes
   Libgmp.a path:            /usr/local/lib/libgmp.a
   Use shared gmp instead of libgmp.a: no
-</code></pre></div><p>A final word about the <code>Makefile</code>: since all the build configuration is
-handled by <code>./configure</code>, you don&rsquo;t have to pass any variables at <code>make</code>
-time anymore, which really helps when you need to <code>make</code> multiple times in
-a row and don&rsquo;t want to type the variables every single time.</p>
+</code></pre></div><p>A final word about the <code>Makefile</code>: since all the build configuration is handled by <code>./configure</code>, you don&rsquo;t have to pass any variables at <code>make</code> time anymore, which really helps when you need to <code>make</code> multiple times in a row and don&rsquo;t want to type the variables every single time.</p>
 <h2 id="inpecting-static-and-dynamic-libraries">Inpecting static and dynamic libraries</h2>
-<p>Here are two tips that I learned along the way. First, I very often need to
-know what libraries an executable is depending on:</p>
+<p>Here are two tips that I learned along the way. First, I very often need to know what libraries an executable is depending on:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># macOS</span>
 % otool -L /bin/ls
 /bin/ls:
@@ -664,8 +560,7 @@ know what libraries an executable is depending on:</p>
 ldd /bin/ls
     /lib/ld-musl-x86_64.so.1 <span class="o">(</span>0x7fc9b2c84000<span class="o">)</span>
     libc.musl-x86_64.so.1 <span class="o">=</span>&gt; /lib/ld-musl-x86_64.so.1 <span class="o">(</span>0x7fc9b2c84000<span class="o">)</span>
-</code></pre></div><p>I also had to dig into the symbols of libraries in order to make sure that
-static libraries contained all the needed symbols:</p>
+</code></pre></div><p>I also had to dig into the symbols of libraries in order to make sure that static libraries contained all the needed symbols:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% nm ext/libyices_pic_no_gmp/lib/libyices.a
 ext/libyices_pic_no_gmp/lib/libyices.a<span class="o">(</span>libyices.o<span class="o">)</span>:
 00000000000ef6c0 t _convert_rba_tree
@@ -701,48 +596,29 @@ ext/libyices_pic_no_gmp/lib/libyices.a<span class="o">(</span>libyices.o<span cl
 <span class="m">0000000000145290</span> S ___gmp_digit_value_tab
 </code></pre></div><p>The letter before the symbol is the &ldquo;symbol type&rdquo; (from <code>man nm</code>):</p>
 <blockquote>
-<p>Each symbol name is preceded by its value (blanks if undefined). This
-value is followed by one of the following characters, representing the
-symbol type:</p>
+<p>Each symbol name is preceded by its value (blanks if undefined). This value is followed by one of the following characters, representing the symbol type:</p>
 <ul>
 <li>U = undefined,</li>
 <li>T (text section symbol),</li>
 <li>D (data section symbol),</li>
 <li>S (symbol in a section other than those above).</li>
 </ul>
-<p>If the symbol is local (non-external), the symbol&rsquo;s type is instead
-represented by the corresponding lowercase letter. A lower case u in a
-dynamic shared library indicates a undefined reference to a private
-external in another module in the same library.</p>
+<p>If the symbol is local (non-external), the symbol&rsquo;s type is instead represented by the corresponding lowercase letter. A lower case u in a dynamic shared library indicates a undefined reference to a private external in another module in the same library.</p>
 </blockquote>
-<p>For example, the symbol <code>_yices_parse_float</code> is an external symbol, meaning
-that this symbol isn&rsquo;t static to <code>libyices.a</code>. On the other side,
-<code>_convert_simple_value</code> is statically defined (<code>t</code>).</p>
+<p>For example, the symbol <code>_yices_parse_float</code> is an external symbol, meaning that this symbol isn&rsquo;t static to <code>libyices.a</code>. On the other side, <code>_convert_simple_value</code> is statically defined (<code>t</code>).</p>
 <h2 id="contributing-the-new-yices-build-system-to-upstream">Contributing the new Yices build system to upstream</h2>
-<p>On 16 June 2016, I sent an email to Bruno Dutertre, one of the developers
-at SRI (the company behind the Yices SMT solver). I proposed all these
-changes with links to the various patches on GitHub. Unfortunately, it
-didn&rsquo;t work out, and the reason might be that the whole patch was enormous
-and very hard to review.</p>
+<p>On 16 June 2016, I sent an email to Bruno Dutertre, one of the developers at SRI (the company behind the Yices SMT solver). I proposed all these changes with links to the various patches on GitHub. Unfortunately, it didn&rsquo;t work out, and the reason might be that the whole patch was enormous and very hard to review.</p>
 <blockquote>
 <p>Hi Maël,</p>
 <p>Thanks for the message and for your efforts. We&rsquo;ll look into your updates.</p>
-<p>We know that the Yices build system is unconventional because most of the
-work is done in the Makefiles rather that in the configure script. There
-are historical reason for this (and it should be able to build PIC
-libraries without problems).</p>
-<p>By the way, Yices is now open-source (GPL) on github:
-<a href="https://github.com/SRI-CSL/yices2">https://github.com/SRI-CSL/yices2</a>. Take a look when you have time,</p>
+<p>We know that the Yices build system is unconventional because most of the work is done in the Makefiles rather that in the configure script. There are historical reason for this (and it should be able to build PIC libraries without problems).</p>
+<p>By the way, Yices is now open-source (GPL) on github: <a href="https://github.com/SRI-CSL/yices2">https://github.com/SRI-CSL/yices2</a>. Take a look when you have time,</p>
 <p>Thanks again,</p>
 <p>Bruno</p>
 </blockquote>
-<p>I wish we had a unit-test framework for <code>autoconf</code>. The <code>autoconf</code>
-ecosystem generates very fragile scripts and the only way to test them is
-to run them with all possible flag combinations, which is pretty much
-impossible.</p>
+<p>I wish we had a unit-test framework for <code>autoconf</code>. The <code>autoconf</code> ecosystem generates very fragile scripts and the only way to test them is to run them with all possible flag combinations, which is pretty much impossible.</p>
 <ul>
-<li><strong>Update 31 May 2020</strong>: added the ascii &ldquo;dependency&rdquo; diagram to give a
-better sense of what the challenge was.</li>
+<li><strong>Update 31 May 2020</strong>: added the ascii &ldquo;dependency&rdquo; diagram to give a better sense of what the challenge was.</li>
 </ul>
 
 </div>
@@ -776,6 +652,8 @@ better sense of what the challenge was.</li>
 
 
 <a href="/tags/c&#43;&#43;/"> c&#43;&#43; </a>
+
+
 
 
 

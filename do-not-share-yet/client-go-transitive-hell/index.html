@@ -63,34 +63,21 @@
 </div>
 <div class="markdown">
 <blockquote>
-<p>⚠️ I&rsquo;m not sure this is a transitive issue. It might just not be due to
-transitivity at all!</p>
+<p>⚠️ I&rsquo;m not sure this is a transitive issue. It might just not be due to transitivity at all!</p>
 </blockquote>
-<p>Looks like the Kubernetes people chose to break the client-go API without
-bumping the major version (with a new import path e.g
-<code>k8s.io/client-go/v13</code>) when adding support for <code>context.Context</code> that
-comes with Kubernetes v1.18. Darren Shepherd reported the
-<a href="https://issues.k8s.io/88472">issue</a> in February 2020. We <a href="https://github.com/kubernetes/client-go#compatibility-your-code---client-go">were warned</a>:</p>
+<p>Looks like the Kubernetes people chose to break the client-go API without bumping the major version (with a new import path e.g <code>k8s.io/client-go/v13</code>) when adding support for <code>context.Context</code> that comes with Kubernetes v1.18. Darren Shepherd reported the <a href="https://issues.k8s.io/88472">issue</a> in February 2020. We <a href="https://github.com/kubernetes/client-go#compatibility-your-code---client-go">were warned</a>:</p>
 <blockquote>
-<p>The v0.x.y tags indicate that go APIs may change in incompatible ways in
-different versions.</p>
+<p>The v0.x.y tags indicate that go APIs may change in incompatible ways in different versions.</p>
 </blockquote>
-<p>At first, I thought that it would not affect us at Ori since we don’t use
-any extra dependency that rely on client-go — so no transitive dependencies
-on client-go, we are the sole user of it. We then began working on some
-tooling depending on the API of our main project. And the transitive hell
-began.</p>
+<p>At first, I thought that it would not affect us at Ori since we don’t use any extra dependency that rely on client-go — so no transitive dependencies on client-go, we are the sole user of it. We then began working on some tooling depending on the API of our main project. And the transitive hell began.</p>
 <p>Here is what the error looks like:</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"># k8s.io/client-go/rest
 ../../../go/pkg/mod/k8s.io/client-go@v11.0.0+incompatible/rest/request.go:598:31: not enough arguments in call to watch.NewStreamWatcher
         have (*versioned.Decoder)
         want (watch.Decoder, watch.Reporter)
-</code></pre></div><p>On top of that, you might also have a version mismatch between <code>k8s.io/api</code>
-and <code>k8s.io/apimachinery</code> with the following error:</p>
+</code></pre></div><p>On top of that, you might also have a version mismatch between <code>k8s.io/api</code> and <code>k8s.io/apimachinery</code> with the following error:</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">../../../go/pkg/mod/k8s.io/client-go@v11.0.0+incompatible/tools/clientcmd/api/v1/conversion.go:52:12: s.DefaultConvert undefined (type conversion.Scope has no field or method DefaultConvert)
-</code></pre></div><p>If you cannot upgrade to v0.18.* (e.g. you have a transitive dependency
-that still relies on v0.17.4), a workaround is to set client-go to use the
-latest pre-v1.18 version:</p>
+</code></pre></div><p>If you cannot upgrade to v0.18.* (e.g. you have a transitive dependency that still relies on v0.17.4), a workaround is to set client-go to use the latest pre-v1.18 version:</p>
 <div class="highlight"><pre class="chroma"><code class="language-diff" data-lang="diff"> require (
 <span class="gd">-    k8s.io/client-go v0.18.1
 </span><span class="gd">-    k8s.io/apimachinery v0.18.1
@@ -99,41 +86,22 @@ latest pre-v1.18 version:</p>
 </span><span class="gi">+    k8s.io/apimachinery v0.17.4
 </span><span class="gi">+    k8s.io/api v0.17.4 //indirect
 </span><span class="gi"></span> )
-</code></pre></div><p>The <code>v0.17.4</code> version is the last version of apimachinery and api that
-stays compatible with client-go pre-v1.18.</p>
-<p><strong>Long-term</strong>: you want to upgrade to client-go v0.18.* as soon as
-possible. If the breaking dependencies that still require client-go with no
-<code>context.Context</code> argument, ask their maintainer (if it is an open-source
-project) and hopefully that will work&hellip; but then, anyone relying on this
-project will also have then stuff broken.</p>
-<p>The project still has v11, v12&hellip; version but they stopped tagging new
-major versions like they did with <code>v11.0.0</code> (there is no <code>v18.0.0</code>) because
-they don&rsquo;t use the major used with Go Modules. That&rsquo;s due to the fact that
-the client-go project doesn&rsquo;t follow the &ldquo;<a href="https://research.swtch.com/vgo-import">semantic import
-versioning</a>&rdquo; rule. You can&rsquo;t do:</p>
+</code></pre></div><p>The <code>v0.17.4</code> version is the last version of apimachinery and api that stays compatible with client-go pre-v1.18.</p>
+<p><strong>Long-term</strong>: you want to upgrade to client-go v0.18.* as soon as possible. If the breaking dependencies that still require client-go with no <code>context.Context</code> argument, ask their maintainer (if it is an open-source project) and hopefully that will work&hellip; but then, anyone relying on this project will also have then stuff broken.</p>
+<p>The project still has v11, v12&hellip; version but they stopped tagging new major versions like they did with <code>v11.0.0</code> (there is no <code>v18.0.0</code>) because they don&rsquo;t use the major used with Go Modules. That&rsquo;s due to the fact that the client-go project doesn&rsquo;t follow the &ldquo;<a href="https://research.swtch.com/vgo-import">semantic import versioning</a>&rdquo; rule. You can&rsquo;t do:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% go get k8s.io/client-go@v12.0.0
 go get k8s.io/client-go@v12.0.0: k8s.io/client-go@v12.0.0: invalid version: module contains a go.mod file, so major version must be compatible: should be v0 or v1, not v12
-</code></pre></div><p>That&rsquo;s why the Kubernetes team maintains another set of tags that begin
-with <code>v0.*</code> (e.g., <code>v0.18.0</code>) for that specific reason. Just a clever way
-of escaping the semantic import versioning, but all these different
-versions make it very confusing&hellip;</p>
-<p>Oh, and when you use the <code>kubernetes-1.17.4</code> tag, it redirects to the
-<code>v0.17.4</code> tag (my guess is that it is infered by <code>go get</code>):</p>
+</code></pre></div><p>That&rsquo;s why the Kubernetes team maintains another set of tags that begin with <code>v0.*</code> (e.g., <code>v0.18.0</code>) for that specific reason. Just a clever way of escaping the semantic import versioning, but all these different versions make it very confusing&hellip;</p>
+<p>Oh, and when you use the <code>kubernetes-1.17.4</code> tag, it redirects to the <code>v0.17.4</code> tag (my guess is that it is infered by <code>go get</code>):</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% go get k8s.io/client-go@kubernetes-1.17.4
 go: k8s.io/client-go kubernetes-1.17.4 <span class="o">=</span>&gt; v0.17.4
 go: downloading k8s.io/client-go v0.17.4
-</code></pre></div><p>And to make even more confusing, these tags (kubernetes-v1.17.4, v0.17.4
-and v12.0.0) are not set on the master branch; instead, they all live on
-headless branches.</p>
-<p>This issue is a reminder that we (Kubernetes hackers who write controllers
-for a living) heavily rely on the “good will” of the Kubernetes team. These
-decisions as they might affect anyone relying on Kubernetes &ldquo;as a
-platform&rdquo;&hellip; 🤔</p>
+</code></pre></div><p>And to make even more confusing, these tags (kubernetes-v1.17.4, v0.17.4 and v12.0.0) are not set on the master branch; instead, they all live on headless branches.</p>
+<p>This issue is a reminder that we (Kubernetes hackers who write controllers for a living) heavily rely on the “good will” of the Kubernetes team. These decisions as they might affect anyone relying on Kubernetes &ldquo;as a platform&rdquo;&hellip; 🤔</p>
 <!--
 https://ori-edge.slack.com/archives/C96DU1WDC/p1583851517147600?thread_ts=1582966579.027200&cid=C96DU1WDC
 https://ori-edge.slack.com/archives/C96DU1WDC/p1586525068128100
---><blockquote>
-</blockquote>
+-->
 
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/client-go-transitive-hell/index.md">📝 Edit this page and propose a change!</a>
@@ -212,6 +180,8 @@ https://ori-edge.slack.com/archives/C96DU1WDC/p1586525068128100
 
 
 <a href="/tags/go-modules/"> go-modules </a>
+
+
 
 
 

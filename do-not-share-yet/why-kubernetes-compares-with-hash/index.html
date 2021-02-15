@@ -66,28 +66,18 @@ kind:Podmetadata:labels:pod-template-hash:775855699bIn this post, I want to pres
 </div>
 </div>
 <div class="markdown">
-<p>In Kubernetes, the replica set controller uses a hashing mechanism to
-compare objects. Pods that are owned by a replica set have a label that is
-used to remember what the hash of the pod template that led to this pod
-spec:</p>
+<p>In Kubernetes, the replica set controller uses a hashing mechanism to compare objects. Pods that are owned by a replica set have a label that is used to remember what the hash of the pod template that led to this pod spec:</p>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
 </span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
 </span><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
 </span><span class="w">    </span><span class="nt">pod-template-hash</span><span class="p">:</span><span class="w"> </span><span class="l">775855699b</span><span class="w">
-</span></code></pre></div><p>In this post, I want to present the advantages and limitations of using a
-hash function in this context.</p>
-<p>✅ <strong>Pros</strong>: works around the fact that child object might get mutated or
-defaulted, which means the <code>reflect.DeepEqual</code> can&rsquo;t work (<strong>what about
-performance???</strong>)</p>
-<p>❌ <strong>Cons</strong>: if the child gets updated, the parent cannot know that it has
-been changed since the hash only works in one way. (<strong>talk about
-replica set mapping to multiple pods</strong>)</p>
+</span></code></pre></div><p>In this post, I want to present the advantages and limitations of using a hash function in this context.</p>
+<p>✅ <strong>Pros</strong>: works around the fact that child object might get mutated or defaulted, which means the <code>reflect.DeepEqual</code> can&rsquo;t work (<strong>what about performance???</strong>)</p>
+<p>❌ <strong>Cons</strong>: if the child gets updated, the parent cannot know that it has been changed since the hash only works in one way. (<strong>talk about replica set mapping to multiple pods</strong>)</p>
 <ul>
 <li>why is it a label and not an annotation?</li>
 </ul>
-<p>Looks like the hash is created <a href="https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/deployment/sync.go#L189">in the replicaset sync func</a> and
-it uses the <a href="https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/controller_utils.go#L1130-L1145"><code>ComputeHash</code></a> func which uses
-<a href="https://golang.org/pkg/hash/fnv/#New32">fnv.New32a</a> from the std lib:</p>
+<p>Looks like the hash is created <a href="https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/deployment/sync.go#L189">in the replicaset sync func</a> and it uses the <a href="https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/controller_utils.go#L1130-L1145"><code>ComputeHash</code></a> func which uses <a href="https://golang.org/pkg/hash/fnv/#New32">fnv.New32a</a> from the std lib:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// ComputeHash returns a hash value calculated from pod template and
 </span><span class="c1">// a collisionCount to avoid hash collision. The hash will be safe encoded to
 </span><span class="c1">// avoid bad words.
@@ -118,9 +108,7 @@ it uses the <a href="https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/
     <span class="p">}</span>
     <span class="nx">printer</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">hasher</span><span class="p">,</span> <span class="s">&#34;%#v&#34;</span><span class="p">,</span> <span class="nx">objectToWrite</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></div><p>So the hashing mechanism uses
-<a href="https://github.com/davecgh/go-spew">davecgh/go-spew</a> to turn the object
-into a string, and then uses the <code>fnv</code> std library to hash that string.</p>
+</code></pre></div><p>So the hashing mechanism uses <a href="https://github.com/davecgh/go-spew">davecgh/go-spew</a> to turn the object into a string, and then uses the <code>fnv</code> std library to hash that string.</p>
 <h2 id="benchmarking-two-hashing-functions">Benchmarking two hashing functions</h2>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
@@ -174,9 +162,7 @@ into a string, and then uses the <code>fnv</code> std library to hash that strin
     <span class="p">}</span>
     <span class="nx">printer</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">hasher</span><span class="p">,</span> <span class="s">&#34;%#v&#34;</span><span class="p">,</span> <span class="nx">objectToWrite</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></div><p>The winner seems to be the Kubernetes' ComputeHash function, although it
-relies on spew to generate a string. I guess most of the time spent by
-hashstructure.Hash is due to the reflect package?</p>
+</code></pre></div><p>The winner seems to be the Kubernetes' ComputeHash function, although it relies on spew to generate a string. I guess most of the time spent by hashstructure.Hash is due to the reflect package?</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% go <span class="nb">test</span> -bench .
 BenchmarkMitchellhHashstructure-8         <span class="m">368101</span>              3.127 µs/op
 BenchmarkKubernetesComputeHash-8          <span class="m">456028</span>              2.704 µs/op

@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>2019s on maelvls dev blog</title><link>https://maelvls.dev/2019/</link><description>Recent content in 2019s on maelvls.dev</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 23 Nov 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://maelvls.dev/2019/index.xml" rel="self" type="application/rss+xml"/><item><title>Go Happy Path: the Unindented Line of Sight</title><link>https://maelvls.dev/go-happy-line-of-sight/</link><pubDate>Sat, 23 Nov 2019 00:00:00 +0000</pubDate><guid>https://maelvls.dev/go-happy-line-of-sight/</guid><description>
-Readability is a property we all love about Go. In other languages, it
-might be fine to have a lot of nested if statements; in Go, it is a good
-practice to keep away from overly-nested logic.</description></item><item><title>GO111MODULE is everywhere: history and tips</title><link>https://maelvls.dev/go111module-everywhere/</link><pubDate>Wed, 13 Nov 2019 00:00:00 +0000</pubDate><guid>https://maelvls.dev/go111module-everywhere/</guid><description>
-GO111MODULE is all over the place. It appears in README install
-instructions, in Dockerfiles, in makefiles. On top of that, the behavior of
-GO111MODULE has changed from Go 1.11 to 1.12, changed again with 1.13 and
-will changed a last time in 1.14.</description></item><item><title>Use of conditions in Kubernetes controllers</title><link>https://maelvls.dev/kubernetes-conditions/</link><pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate><guid>https://maelvls.dev/kubernetes-conditions/</guid><description>
-Although progress is being made, Kubernetes controllers and operators
-still require prior knowledge about Kubernetes internals. Information on
-how to set the status is scattered across comments, issues, PRs and the
-Kubernetes code itself. Conditions may be a good solution for your
-controller, but for what?</description></item></channel></rss>
+Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic.</description></item><item><title>Why is GO111MODULE everywhere, and everything about Go Modules</title><link>https://maelvls.dev/go111module-everywhere/</link><pubDate>Wed, 13 Nov 2019 00:00:00 +0000</pubDate><guid>https://maelvls.dev/go111module-everywhere/</guid><description>
+GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with 1.13 and will changed a last time in 1.14.</description></item><item><title>What the heck are Conditions in Kubernetes controllers?</title><link>https://maelvls.dev/kubernetes-conditions/</link><pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate><guid>https://maelvls.dev/kubernetes-conditions/</guid><description>
+Although progress is being made, Kubernetes controllers and operators still require prior knowledge about Kubernetes internals. Information on how to set the status is scattered across comments, issues, PRs and the Kubernetes code itself. Conditions may be a good solution for your controller, but for what?</description></item></channel></rss>

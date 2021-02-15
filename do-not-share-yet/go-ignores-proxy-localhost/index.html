@@ -5,14 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="keywords" content="go,proxyman"><meta name="description" content="At some point, the Go team chose to disable the proxy for requests coming
-from localhost or 127.0.0.1. This is annoying when debugging services
-locally.
-"><meta property="og:title" content="What to do when Go ignores HTTP_PROXY for 127.0.0.1" />
-<meta property="og:description" content="At some point, the Go team chose to disable the proxy for requests coming
-from localhost or 127.0.0.1. This is annoying when debugging services
-locally.
-" />
+<meta name="author" content="Maël Valais"><meta name="keywords" content="go,proxyman"><meta name="description" content="At some point, the Go team chose to disable the proxy for requests coming from localhost or 127.0.0.1. This is annoying when debugging services locally."><meta property="og:title" content="What to do when Go ignores HTTP_PROXY for 127.0.0.1" />
+<meta property="og:description" content="At some point, the Go team chose to disable the proxy for requests coming from localhost or 127.0.0.1. This is annoying when debugging services locally." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/do-not-share-yet/go-ignores-proxy-localhost/" />
 <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/go-ignores-proxy-localhost/cover-go-proxy-ignored.png" />
@@ -22,10 +16,7 @@ locally.
 <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/go-ignores-proxy-localhost/cover-go-proxy-ignored.png"/>
 
 <meta name="twitter:title" content="What to do when Go ignores HTTP_PROXY for 127.0.0.1"/>
-<meta name="twitter:description" content="At some point, the Go team chose to disable the proxy for requests coming
-from localhost or 127.0.0.1. This is annoying when debugging services
-locally.
-"/>
+<meta name="twitter:description" content="At some point, the Go team chose to disable the proxy for requests coming from localhost or 127.0.0.1. This is annoying when debugging services locally."/>
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -71,31 +62,17 @@ locally.
 </div>
 </div>
 <div class="markdown">
-<p>I use <a href="https://proxyman.io">Proxyman</a> for inspecting the HTTP and HTTPS
-traffic coming from applications. For example, you may want to know which
-API calls are made by <code>docker</code> when running <code>docker search</code>. What I would
-do is</p>
+<p>I use <a href="https://proxyman.io">Proxyman</a> for inspecting the HTTP and HTTPS traffic coming from applications. For example, you may want to know which API calls are made by <code>docker</code> when running <code>docker search</code>. What I would do is</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nv">HTTPS_PROXY</span><span class="o">=</span>http://localhost:9090 docker search ubuntu
-</code></pre></div><p>Since Proxyman acts like a proxy listening on 0.0.0.0:9090, I can see and
-replay all the HTTP calls, similarly to what you would do with the Chrome
-DevTools.</p>
+</code></pre></div><p>Since Proxyman acts like a proxy listening on 0.0.0.0:9090, I can see and replay all the HTTP calls, similarly to what you would do with the Chrome DevTools.</p>
 <p><img src="proxyman.png" alt="Screenshot with macOS' Proxyman for a local Openstack instance"></p>
-<p>Note that HTTPS is a bit tricky and requires an additional step on macOS
-(settings &gt; Proxyman CA &gt; Generate new) but works flawlessly with any Go
-binary since Go supports <code>HTTPS_PROXY</code> by default. For Python, it becomes a
-bit trickier often requires the app to have a flag like <code>--cacert</code>.</p>
+<p>Note that HTTPS is a bit tricky and requires an additional step on macOS (settings &gt; Proxyman CA &gt; Generate new) but works flawlessly with any Go binary since Go supports <code>HTTPS_PROXY</code> by default. For Python, it becomes a bit trickier often requires the app to have a flag like <code>--cacert</code>.</p>
 <p>But by default, Go [ignores <code>HTTPS_PROXY</code>] for <code>localhost</code> and <code>127.0.0.1</code> hosts (see <a href="https://godoc.org/golang.org/x/net/http/httpproxy#Config.ProxyFunc">ProxyFunc</a> and <a href="https://github.com/golang/net/blob/c0dbc17a35534bf2e581d7a942408dc936316da4/http/httpproxy/proxy.go#L172-L191">useProxy</a>):</p>
 <blockquote>
-<p>As a special case, if req.URL.Host is &ldquo;localhost&rdquo; (with or without a port
-number), then a nil URL and nil error will be returned.</p>
+<p>As a special case, if req.URL.Host is &ldquo;localhost&rdquo; (with or without a port number), then a nil URL and nil error will be returned.</p>
 </blockquote>
-<p>Note that the documentation forgets to mention that <code>127.0.0.1</code> (and
-related) are also ignored. That&rsquo;s a bummer since using a proxy may be the
-only way to debug a CLI or an application that makes network calls without
-logging properly.</p>
-<p>Two solutions: either you have access (and are willing to) hack the source
-code in order to force Go to use the proxy with <code>localhost</code> anyway, or you
-can hack your <code>/etc/hosts</code> and use a different host.</p>
+<p>Note that the documentation forgets to mention that <code>127.0.0.1</code> (and related) are also ignored. That&rsquo;s a bummer since using a proxy may be the only way to debug a CLI or an application that makes network calls without logging properly.</p>
+<p>Two solutions: either you have access (and are willing to) hack the source code in order to force Go to use the proxy with <code>localhost</code> anyway, or you can hack your <code>/etc/hosts</code> and use a different host.</p>
 <h2 id="solution-1-hack-the-proxy-setup-by-tweaking-httptransport">Solution 1: hack the proxy setup by tweaking <code>http.Transport</code></h2>
 <p>You need to have access to the place where the <code>http.Client</code> is set. Imagine that you are working on something that uses the Openstack API. You would have something like:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
@@ -219,12 +196,9 @@ can hack your <code>/etc/hosts</code> and use a different host.</p>
 
 	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;servers:\n%v\n&#34;</span><span class="p">,</span> <span class="nx">srvs</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></div><p>Now, all traffic including calls to <code>Host: localhost</code> or <code>Host: 127.0.0.1</code>
-will be properly proxied to <code>localhost:9090</code>.</p>
+</code></pre></div><p>Now, all traffic including calls to <code>Host: localhost</code> or <code>Host: 127.0.0.1</code> will be properly proxied to <code>localhost:9090</code>.</p>
 <h2 id="solution-2-use-a-different-host-name">Solution 2: use a different host name</h2>
-<p>In your <code>/etc/hosts</code>, add the line such as <code>local 127.0.0.1</code>. Now, you can
-use the host <code>local</code> instead of <code>localhost</code>, which means Go will proxy your
-requests properly.</p>
+<p>In your <code>/etc/hosts</code>, add the line such as <code>local 127.0.0.1</code>. Now, you can use the host <code>local</code> instead of <code>localhost</code>, which means Go will proxy your requests properly.</p>
 <!--
 Join the discussion [on
 Twitter](https://twitter.com/maelvls/status/1214242197119406080) or post a
@@ -296,6 +270,8 @@ message here
 
 
 <a href="/tags/go/"> go </a>
+
+
 
 
 

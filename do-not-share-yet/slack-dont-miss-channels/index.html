@@ -64,9 +64,7 @@ $$ f(u,v,c) = \begin{cases}1 &amp; \text{ if } u \text{ and } v \text{ both in c
 </div>
 </div>
 <div class="markdown">
-<p>Given $U$ the set of users and a pair of users $(u, v) \in U^2$, we denote
-by $f$ the function that tells us when two users belong to the same channel
-$c \in C$ where $C$ is the set of channels. It is defined as</p>
+<p>Given $U$ the set of users and a pair of users $(u, v) \in U^2$, we denote by $f$ the function that tells us when two users belong to the same channel $c \in C$ where $C$ is the set of channels. It is defined as</p>
 <p>$$
 f(u,v,c) = \begin{cases}1 &amp; \text{ if } u \text{ and } v \text{ both in channel } c \ 0 &amp;\text{ otherwise. }\end{cases}
 $$</p>
@@ -76,10 +74,7 @@ dist(u, v) = \sum_{c \in C} f(u,v,c)\text{.}
 $$</p>
 <p>The optimization problem can be formulated as:</p>
 <blockquote>
-<p>Given a user $u$, we want to find the channel $c$ in which he does not
-already belong and which maximizes the chances of subscribing to an
-interesting channel. This assumes that the user has already subscribed to
-some channels and that some of these channels are</p>
+<p>Given a user $u$, we want to find the channel $c$ in which he does not already belong and which maximizes the chances of subscribing to an interesting channel. This assumes that the user has already subscribed to some channels and that some of these channels are</p>
 </blockquote>
 <p>For a given user $v$:</p>
 <p>$$\max_{c \in C} \sum_{u \in U, u \ne v} dist(v, u)$$</p>

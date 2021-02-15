@@ -70,8 +70,7 @@ ssh-add -K id_rsa  "/>
 </div>
 </div>
 <div class="markdown">
-<p>Here:
-<a href="https://unix.stackexchange.com/questions/12195/how-to-avoid-being-asked-passphrase-each-time-i-push-to-bitbucket">https://unix.stackexchange.com/questions/12195/how-to-avoid-being-asked-passphrase-each-time-i-push-to-bitbucket</a></p>
+<p>Here: <a href="https://unix.stackexchange.com/questions/12195/how-to-avoid-being-asked-passphrase-each-time-i-push-to-bitbucket">https://unix.stackexchange.com/questions/12195/how-to-avoid-being-asked-passphrase-each-time-i-push-to-bitbucket</a></p>
 <p>Two solutions:</p>
 <h2 id="using-ssh-agent">Using ssh-agent</h2>
 <pre><code>eval $(ssh-agent)
@@ -82,9 +81,7 @@ ssh-add
 </code></pre>
 <h2 id="using-forwardagent-yes-in-sshconfig">Using &lsquo;ForwardAgent yes&rsquo; in .ssh/config</h2>
 <p>Here: <a href="https://developer.github.com/v3/guides/using-ssh-agent-forwarding">https://developer.github.com/v3/guides/using-ssh-agent-forwarding</a></p>
-<p>If it doesn&rsquo;t work at first, check that the key ~/.ssh/id_rsa is added to
-ssh-agent, i.e., ssh-add has been run. To avoid re-typing &lsquo;ssh-add&rsquo; and
-password on every startup, run:</p>
+<p>If it doesn&rsquo;t work at first, check that the key ~/.ssh/id_rsa is added to ssh-agent, i.e., ssh-add has been run. To avoid re-typing &lsquo;ssh-add&rsquo; and password on every startup, run:</p>
 <pre><code>ssh-add -K id_rsa
 </code></pre>
 

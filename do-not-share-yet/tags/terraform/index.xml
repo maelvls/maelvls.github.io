@@ -18,11 +18,7 @@
       <guid>https://maelvls.dev/do-not-share-yet/gh-actions-with-tf-private-repo/</guid>
       <description>
       
-      Terraform makes it easy to manage infrastructure at scale; you
-might want to share code between modules, and that&#39;s where it becomes tricky.
-In this post, I try to give some clues on how to use terraform across private
-Github repos.
-
+      Terraform makes it easy to manage infrastructure at scale; you might want to share code between modules, and that&#39;s where it becomes tricky. In this post, I try to give some clues on how to use terraform across private Github repos.
       
       </description>
     </item>

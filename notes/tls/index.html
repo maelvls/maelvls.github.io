@@ -59,10 +59,7 @@
 </code></pre></div></div><h2 id=whats-a-certificate-in-the-openssl-jargon>What&rsquo;s a &ldquo;certificate&rdquo; in the openssl jargon</h2><p>For example, mitmproxy relies on a specific dir structure and filenames:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>/Users/mvalais/.mitmproxy
 ├── mitmproxy-ca-cert.pem            <span class=c1># ca-cert = cert</span>
 └── mitmproxy-ca.pem                 <span class=c1># ca      = cert + key</span>
-</code></pre></div><p>That&rsquo;s the kind of directory structure that <code>--set client_dir=...</code> would
-expect (in mitmproxy).</p><h2 id=using-openssl-to-dig-certificates>Using <code>openssl</code> to dig certificates</h2><p>This <a href=https://www.sslshopper.com/article-most-common-openssl-commands.html>cheat sheet</a> is nice. Here is a one-liner for fetching
-the certificate chain sitting on a server; for example for
-<code>api.github.com:443</code>:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% openssl x509 -in &lt;<span class=o>(</span>openssl s_client -connect api.github.com:443 -prexit <span class=o>&lt;&lt;&lt;</span> <span class=s2>&#34;&#34;</span><span class=o>)</span> -noout -text
+</code></pre></div><p>That&rsquo;s the kind of directory structure that <code>--set client_dir=...</code> would expect (in mitmproxy).</p><h2 id=using-openssl-to-dig-certificates>Using <code>openssl</code> to dig certificates</h2><p>This <a href=https://www.sslshopper.com/article-most-common-openssl-commands.html>cheat sheet</a> is nice. Here is a one-liner for fetching the certificate chain sitting on a server; for example for <code>api.github.com:443</code>:</p><div class=highlight><pre class=chroma><code class=language-sh data-lang=sh>% openssl x509 -in &lt;<span class=o>(</span>openssl s_client -connect api.github.com:443 -prexit <span class=o>&lt;&lt;&lt;</span> <span class=s2>&#34;&#34;</span><span class=o>)</span> -noout -text
 
 <span class=nv>openssldepth</span><span class=o>=</span><span class=m>2</span> <span class=nv>C</span> <span class=o>=</span> US, <span class=nv>O</span> <span class=o>=</span> DigiCert Inc, <span class=nv>OU</span> <span class=o>=</span> www.digicert.com, <span class=nv>CN</span> <span class=o>=</span> DigiCert High Assurance EV Root CA
 verify <span class=k>return</span>:1

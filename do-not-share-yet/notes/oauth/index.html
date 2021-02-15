@@ -66,26 +66,16 @@
 <div class="markdown">
 <p>I know two main ways of using OAuth2</p>
 <ul>
-<li>password-based client grant (2-leg oauth flow: on the project I worked on,
-the OAuth client was not third party server, but instead, it was the
-front-end.)</li>
+<li>password-based client grant (2-leg oauth flow: on the project I worked on, the OAuth client was not third party server, but instead, it was the front-end.)</li>
 <li>authorization code based grant (3-legs oauth flow)</li>
 </ul>
 <h2 id="what-is-the-client">What is &ldquo;the client&rdquo;?</h2>
-<p>The <a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a> that presents OAuth2 is very readable, but some terms
-like &ldquo;client&rdquo; or &ldquo;code&rdquo; are confusing. What I found is that trying to understand
-&ldquo;why&rdquo; the main flow (3-legged oauth, or &ldquo;authorization code flow&rdquo;) has to be
-like this.</p>
-<p>The most important aspect that I had to realize is that &ldquo;client&rdquo; is hidden from
-the end-user (e.g. as a nodejs server serving /callback). The &ldquo;client&rdquo; has a
-single purpose: receive the code when /callback is called by the third-party
-Authorize screen, POST /token to the third party using the <code>client_secret</code> using
-that code.</p>
+<p>The <a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a> that presents OAuth2 is very readable, but some terms like &ldquo;client&rdquo; or &ldquo;code&rdquo; are confusing. What I found is that trying to understand &ldquo;why&rdquo; the main flow (3-legged oauth, or &ldquo;authorization code flow&rdquo;) has to be like this.</p>
+<p>The most important aspect that I had to realize is that &ldquo;client&rdquo; is hidden from the end-user (e.g. as a nodejs server serving /callback). The &ldquo;client&rdquo; has a single purpose: receive the code when /callback is called by the third-party Authorize screen, POST /token to the third party using the <code>client_secret</code> using that code.</p>
 <h2 id="authorization-code-3-legged-oauth">Authorization code (3 legged oauth)</h2>
 <ol>
 <li>
-<p>User clicks the &ldquo;Login with Google&rdquo;; this URL is public and forwards the user
-to an &ldquo;Authorize&rdquo; form.</p>
+<p>User clicks the &ldquo;Login with Google&rdquo;; this URL is public and forwards the user to an &ldquo;Authorize&rdquo; form.</p>
 <div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="nf">GET</span> <span class="nn">/o/oauth2/auth?client_id=foo&amp;redirect_uri=http%3A%2F%2Flocalhost%3A8042%2Fcallback&amp;response_type=code&amp;scope=calendar.readonly&amp;state=something</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="n">Host</span><span class="o">:</span> <span class="l">https://accounts.google.com</span>
 </code></pre></div></li>
@@ -93,13 +83,9 @@ to an &ldquo;Authorize&rdquo; form.</p>
 <p>Since this URL is quite long, let&rsquo;s see what we have:</p>
 <ul>
 <li><code>access_type</code> is <code>offline</code> (huh??)</li>
-<li><code>client_id</code> (remember that the &ldquo;client&rdquo; is my CLI which asks the permission to
-Google&rsquo;s servers to access the scopes.</li>
+<li><code>client_id</code> (remember that the &ldquo;client&rdquo; is my CLI which asks the permission to Google&rsquo;s servers to access the scopes.</li>
 <li><code>redirect_uri</code> is <a href="http://localhost:8042/oauth2">http://localhost:8042/oauth2</a></li>
-<li><code>response_type</code> is <code>code</code> which makes sense since we want a code so that we
-can, eventually, get a token. The <code>code</code> and <code>state</code> values will be given to
-us in the callback. When pressing &ldquo;Authorize&rdquo; in the Google authentication
-page, we get something like:</li>
+<li><code>response_type</code> is <code>code</code> which makes sense since we want a code so that we can, eventually, get a token. The <code>code</code> and <code>state</code> values will be given to us in the callback. When pressing &ldquo;Authorize&rdquo; in the Google authentication page, we get something like:</li>
 </ul>
 <ol start="2">
 <li>
@@ -122,8 +108,7 @@ grant_type=authorization_code&amp;code=f1a2bc&amp;client_id=foo&amp;client_secre
   <span class="nt">&#34;refresh_token&#34;</span><span class="p">:</span> <span class="s2">&#34;1//03E6r0qdOHKqrCgYIARAAGAMSNwF-L9Ir37zr9-GH8po_A5XSwsSiEw8XmiHPnCbKPaFHNCckIF-vmJRRKddbjWLbX9ZrbOzffts&#34;</span><span class="p">,</span>
   <span class="nt">&#34;expiry&#34;</span><span class="p">:</span> <span class="s2">&#34;2020-07-21T19:26:47.346143+02:00&#34;</span>
 <span class="p">}</span>
-</code></pre></div><p>Note: when we say &ldquo;an oauth token&rdquo;, what we actually mean is the access token
-the refresh token.</p>
+</code></pre></div><p>Note: when we say &ldquo;an oauth token&rdquo;, what we actually mean is the access token the refresh token.</p>
 </li>
 </ol>
 

@@ -66,16 +66,9 @@ The idea is to have a Kind cluster (right box) in which we run a service type=Lo
 </div>
 </div>
 <div class="markdown">
-<p><a href="https://github.com/sshuttle/sshuttle">Sshuttle</a> is a tool that lets you
-proxy traffic for an IP range (using iptables on Linux or pf on BSD
-derivatives including macOS) to a host through ssh.</p>
-<p>I use Telepresence which makes sshuttle easier to use with Kubernetes. But
-I wondered: what happens under the hood? How come I am able to expose a
-service type=LoadBalancer using MetalLB on macOS using
-<a href="https://github.com/kubernetes-sigs/kind">Kind</a>?</p>
-<p>The idea is to have a Kind cluster (right box) in which we run a service
-type=LoadBalancer controller (MetalLB) and a simple pod. Making an HTTP
-request from the host should hit the pod thanks to sshuttle:</p>
+<p><a href="https://github.com/sshuttle/sshuttle">Sshuttle</a> is a tool that lets you proxy traffic for an IP range (using iptables on Linux or pf on BSD derivatives including macOS) to a host through ssh.</p>
+<p>I use Telepresence which makes sshuttle easier to use with Kubernetes. But I wondered: what happens under the hood? How come I am able to expose a service type=LoadBalancer using MetalLB on macOS using <a href="https://github.com/kubernetes-sigs/kind">Kind</a>?</p>
+<p>The idea is to have a Kind cluster (right box) in which we run a service type=LoadBalancer controller (MetalLB) and a simple pod. Making an HTTP request from the host should hit the pod thanks to sshuttle:</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">                                      +------------------------------+
                                       |                              |
  curl http://172.17.0.200             |  +-----------------------+   |
@@ -97,10 +90,7 @@ request from the host should hit the pod thanks to sshuttle:</p>
         (sshuttle)                    |    +------------------+      |
                                       +------------------------------+
 </code></pre></div><!-- https://textik.com/#19fa729cd40cd953 -->
-<p>Let&rsquo;s create a Kind cluster and setup MetalLB in L2 mode. MetalLB will
-advertize services of type LoadBalancer by picking up an IP on the range
-<code>172.17.0.200-172.17.0.250</code> and will advertize this IP using the ARP
-protocol.</p>
+<p>Let&rsquo;s create a Kind cluster and setup MetalLB in L2 mode. MetalLB will advertize services of type LoadBalancer by picking up an IP on the range <code>172.17.0.200-172.17.0.250</code> and will advertize this IP using the ARP protocol.</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span>/tmp/kind-kubeconfig
 kind create cluster
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
@@ -122,10 +112,10 @@ kubectl -n metallb-system create configmap config --from-file<span class="o">=</
 </span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
 </span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
 </span><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
-</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:alpine</span><span class="w">
-</span><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span><span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:alpine</span><span class="w">
+</span><span class="w">      </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span>- <span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
 </span><span class="w"></span><span class="nn">---</span><span class="w">
 </span><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
 </span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Service</span><span class="w">
@@ -134,19 +124,15 @@ kubectl -n metallb-system create configmap config --from-file<span class="o">=</
 </span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
 </span><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">LoadBalancer</span><span class="w">
 </span><span class="w">  </span><span class="nt">ports</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span>- <span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
-</span><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
 </span></code></pre></div><p>Finally, let&rsquo;s run sshuttle:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">brew install sshuttle
 </code></pre></div><blockquote>
-<p>⚠️ I&rsquo;m stuck here since <code>ssh</code> on the host can&rsquo;t reach any sshd&hellip; What
-telepresence does is to have an sshd running in some pod, run <code>kubectl port-forward</code> so that <code>ssh</code> can work from the host.</p>
+<p>⚠️ I&rsquo;m stuck here since <code>ssh</code> on the host can&rsquo;t reach any sshd&hellip; What telepresence does is to have an sshd running in some pod, run <code>kubectl port-forward</code> so that <code>ssh</code> can work from the host.</p>
 </blockquote>
 <h2 id="packet-tunneling-using-sshuttle">Packet tunneling using sshuttle</h2>
-<p>Sshuttle runs a TCP/UDP proxy on the host on port 12300. The traffic that
-goes to <code>172.17.0.0/16</code> is then forwarded to that port (src and dst headers
-are left unchanged). Note that the 12300 port deals with both TCP and UDP
-packets at the same time!</p>
+<p>Sshuttle runs a TCP/UDP proxy on the host on port 12300. The traffic that goes to <code>172.17.0.0/16</code> is then forwarded to that port (src and dst headers are left unchanged). Note that the 12300 port deals with both TCP and UDP packets at the same time!</p>
 <ul>
 <li>
 <p>On macOS:</p>
@@ -181,6 +167,8 @@ iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 172.17.0.0/16 -p udp -dport
 
 <div style="float: right;">
 <p>Tags:
+
+
 
 
 
