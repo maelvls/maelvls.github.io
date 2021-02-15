@@ -1,72 +1,44 @@
 ---
 title: Migrating from GKE to Civo's K3s
-description: My free trial on GKE was ending in 2 days and I had to find a way to
-  migrate away. I decided to switch to Civo's managed K3s.
+description: My free trial on GKE was ending in 2 days and I had to find a way to migrate away. I decided to switch to Civo's managed K3s.
 date: 2020-03-22
 url: "/from-gke-to-civo-k3s"
 images:
-- from-gke-to-civo-k3s/civo-k3s.png
+  - from-gke-to-civo-k3s/civo-k3s.png
 tags:
-- kubernetes
+  - kubernetes
 author: Maël Valais
+devtoId: 313914
+devtoPublished: true
 ---
-To learn and play with Kubernetes, I keep a "playground" cluster to try
-things on it (helm files I use are
-[here](https://github.com/maelvls/k.maelvls.dev)). Since 2019, I have been
-using GKE (Google's managed Kubernetes service), which works great with the
-one-year $300 credit that you get initially. A few days ago, reality hit me
-hard with this message:
+
+To learn and play with Kubernetes, I keep a "playground" cluster to try things on it (helm files I use are [here](https://github.com/maelvls/k.maelvls.dev)). Since 2019, I have been using GKE (Google's managed Kubernetes service), which works great with the one-year \$300 credit that you get initially. A few days ago, reality hit me hard with this message:
 
 <img alt="Only 2 days left on my GCP 1-year trial" src="2-days-free-trial.png" width="50%">
 
-I had only 2 days to find a plan and migrate everything away from GKE! My
-current setup was only using a single `n1-standard-1` on `us-west-1` and
-with no network load balancer. But that was still around €15 a month, and I
-just didn't want to pay. I chose to migrate to Civo's managed K3s since
-they are in beta and I really wanted to try K3s.
+I had only 2 days to find a plan and migrate everything away from GKE! My current setup was only using a single `n1-standard-1` on `us-west-1` and with no network load balancer. But that was still around €15 a month, and I just didn't want to pay. I chose to migrate to Civo's managed K3s since they are in beta and I really wanted to try K3s.
 
 ## Civo's Managed K3s
 
-Civo is a company that offers a public cloud as well as managed Kubernetes
-clusters. Their managed Kubernetes offer, named
-"[KUBE100](https://www.civo.com/kube100)", is quite new (launched in
-mid-2019). Unlike most managed Kubernetes offerings like EKS or GKE, Civo
-went with Rancher's [K3s](https://k3s.io/) Kubernetes distribution.
+Civo is a company that offers a public cloud as well as managed Kubernetes clusters. Their managed Kubernetes offer, named "[KUBE100](https://www.civo.com/kube100)", is quite new (launched in mid-2019). Unlike most managed Kubernetes offerings like EKS or GKE, Civo went with Rancher's [K3s](https://k3s.io/) Kubernetes distribution.
 
-Compared to the standard Kubernetes distribution, K3s is a way lighter:
-simple embedded database with sqlite, one single binary instead of four; a
-single VM can both host the control plane and run pods. With the
-traditional Kubernetes distribution, you have to run the control plane on a
-separate VM. Note that Civo has a whole blog post on "[Kubernetes vs.
-K3s](https://www.civo.com/blog/k8s-vs-k3s)".
+Compared to the standard Kubernetes distribution, K3s is a way lighter: simple embedded database with sqlite, one single binary instead of four; a single VM can both host the control plane and run pods. With the traditional Kubernetes distribution, you have to run the control plane on a separate VM. Note that Civo has a whole blog post on "[Kubernetes vs. K3s](https://www.civo.com/blog/k8s-vs-k3s)".
 
-This lightweight feature is what brings me here, and also the fact that K3s
-comes by default with Traefik & their own tiny Service type=LoadBalancer
-controller, which means you don't even need an expensive network load
-balancer like on GKE when you want to expose a service to the internet.
+This lightweight feature is what brings me here, and also the fact that K3s comes by default with Traefik & their own tiny Service type=LoadBalancer controller, which means you don't even need an expensive network load balancer like on GKE when you want to expose a service to the internet.
 
-Of course, K3s has drawbacks and is probably meant for IoT-based clusters,
-but it's also perfect for playing around with Kubernetes! So I went ahead
-and create a two-nodes cluster:
+Of course, K3s has drawbacks and is probably meant for IoT-based clusters, but it's also perfect for playing around with Kubernetes! So I went ahead and create a two-nodes cluster:
 
 ![My K3s cluster on Civo](civo-k3s.png)
 
-Note that since this is K3s, the master can also be scheduled with pods. So
-I could have gone with a single node.
+Note that since this is K3s, the master can also be scheduled with pods. So I could have gone with a single node.
 
 ## Migrating ExternalDNS, cert-manager and Traefik
 
-That's the easy part. I just had to run
-[./helm_apply](https://github.com/maelvls/k.maelvls.dev) which runs `helm upgrade --install` for each helm chart I use.
+That's the easy part. I just had to run [./helm_apply](https://github.com/maelvls/k.maelvls.dev) which runs `helm upgrade --install` for each helm chart I use.
 
-In the process, I decided to go with `*.k.maelvls.dev` instead of `*.kube.maelvls.dev`. The shorter, the better! I forgot to add that I still
-use Google's CloudDNS. I did not find an easy alternative yet. Maybe just
-Cloudflare for now?
+In the process, I decided to go with `*.k.maelvls.dev` instead of `*.kube.maelvls.dev`. The shorter, the better! I forgot to add that I still use Google's CloudDNS. I did not find an easy alternative yet. Maybe just Cloudflare for now?
 
-After creating Traefik, I knew that its service would automatically be
-populated with the `status.loadBalancer` field thanks to K3s'
-[servicelb](https://github.com/rancher/k3s/blob/master/pkg/servicelb/controller.go).
-Let's see:
+After creating Traefik, I knew that its service would automatically be populated with the `status.loadBalancer` field thanks to K3s' [servicelb](https://github.com/rancher/k3s/blob/master/pkg/servicelb/controller.go). Let's see:
 
 ```sh
 % kubectl -n traefik get services
@@ -74,21 +46,13 @@ NAME     TYPE          CLUSTER-IP        EXTERNAL-IP      PORT(S)
 traefik  LoadBalancer  192.168.255.134   91.211.152.190   443:32164/TCP,80:32684/TCP
 ```
 
-Great! Now, Traefik will propagate this external IP to the ingresses, and
-ExternalDNS will use the `status.loadBalancer` from these ingresses in
-order to set `A` records.
+Great! Now, Traefik will propagate this external IP to the ingresses, and ExternalDNS will use the `status.loadBalancer` from these ingresses in order to set `A` records.
 
-If you want to know more about how "servicelb" works, you can take a look
-at [The Packet's-Eye View of a Kubernetes
-Service](https://maelvls.dev/packets-eye-kubernetes-service/) where I
-describe how Akrobateo works (K3s' servicelb has the exact same behavior).
+If you want to know more about how "servicelb" works, you can take a look at [The Packet's-Eye View of a Kubernetes Service](https://maelvls.dev/packets-eye-kubernetes-service/) where I describe how Akrobateo works (K3s' servicelb has the exact same behavior).
 
 ## Migrating MinIO from the old to the new cluster
 
-I use [minio](https://min.io/) for various uses. It is great if you want a
-S3-compatible storage solution. In order to migrate, I followed
-[this](https://www.scaleway.com/en/docs/how-to-migrate-object-storage-buckets-with-minio).
-It's quite painless:
+I use [minio](https://min.io/) for various uses. It is great if you want a S3-compatible storage solution. In order to migrate, I followed [this](https://www.scaleway.com/en/docs/how-to-migrate-object-storage-buckets-with-minio). It's quite painless:
 
 ```sh
 $ kubectl -n minio run a --generator=run-pod/v1 -it --rm --restart=Never --image=alpine
@@ -102,43 +66,26 @@ $ kubectl -n minio run a --generator=run-pod/v1 -it --rm --restart=Never --image
 % mc cp --recursive old/bucket1/ new/bucket1/
 ```
 
-I also decided to change the access key & secret key. Again, quite
-painless. As mentioned in the
-[documentation](https://github.com/minio/minio/tree/master/docs/config),
-I changed the secret stored in Kubernetes:
+I also decided to change the access key & secret key. Again, quite painless. As mentioned in the [documentation](https://github.com/minio/minio/tree/master/docs/config), I changed the secret stored in Kubernetes:
 
 ```sh
 kubectl -n minio edit secret minio
 ```
 
-and then I temporarily added the `MINIO_ACCESS_KEY_OLD` and
-`MINIO_SECRET_KEY_OLD` to the deployment by editing it.
+and then I temporarily added the `MINIO_ACCESS_KEY_OLD` and `MINIO_SECRET_KEY_OLD` to the deployment by editing it.
 
 ```sh
 kubectl -n minio edit deployment minio
 ```
 
-After that, the pods get recreated, and MinIO picks up the new secret.
-Note: I also had to edit the deployment again in order to remove the
-temporary `_OLD` environment variables.
+After that, the pods get recreated, and MinIO picks up the new secret. Note: I also had to edit the deployment again in order to remove the temporary `_OLD` environment variables.
 
-***
+---
 
-To recap, the whole migration was painless. The only data I migrated was
-MinIO. Note that I didn't have any SLA to comply with, but if I had planned
-a bit better, I could have moved over with almost zero downtime.
+To recap, the whole migration was painless. The only data I migrated was MinIO. Note that I didn't have any SLA to comply with, but if I had planned a bit better, I could have moved over with almost zero downtime.
 
-In order to get almost-zero-downtime, I would have made sure to keep the
-old and new MinIO instances replicated until the move was over. The only
-problem with the whole migration is the DNS change. I cannot precisely know
-when the propagation will take. After completing the migration and assuming
-that all the DNS entries are propagated, if for some reason people keep
-hitting the old IP due to outdated DNS entries, the old and new clusters
-would have become out-of-sync. To mitigate that issue, I could have chosen
-to "cordon" the old cluster just to make sure that this case never happens.
+In order to get almost-zero-downtime, I would have made sure to keep the old and new MinIO instances replicated until the move was over. The only problem with the whole migration is the DNS change. I cannot precisely know when the propagation will take. After completing the migration and assuming that all the DNS entries are propagated, if for some reason people keep hitting the old IP due to outdated DNS entries, the old and new clusters would have become out-of-sync. To mitigate that issue, I could have chosen to "cordon" the old cluster just to make sure that this case never happens.
 
-The repo for my Kubernetes playground cluster (`*.k.maelvls.dev`) is
-available [here](https://github.com/maelvls/k.maelvls.dev).
+The repo for my Kubernetes playground cluster (`*.k.maelvls.dev`) is available [here](https://github.com/maelvls/k.maelvls.dev).
 
-* **Update 7 May 2020**: better introduction explaining why I use GKE,
-  tell what Civo and K3s are all about.
+- **Update 7 May 2020**: better introduction explaining why I use GKE, tell what Civo and K3s are all about.

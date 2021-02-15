@@ -1,25 +1,18 @@
 ---
 title: "Github Actions with a private Terraform module"
-description: |
-  Terraform makes it easy to manage infrastructure at scale; you
-  might want to share code between modules, and that's where it becomes tricky.
-  In this post, I try to give some clues on how to use terraform across private
-  Github repos.
+description: Terraform makes it easy to manage infrastructure at scale; you might want to share code between modules, and that's where it becomes tricky. In this post, I try to give some clues on how to use terraform across private Github repos.
 date: 2020-05-09T16:02:26+02:00
 url: /gh-actions-with-tf-private-repo
 images: [gh-actions-with-tf-private-repo/cover-gh-actions-with-tf-private-repo.png]
 tags: [terraform, github-actions]
 author: Maël Valais
+devtoId: 331169
+devtoPublished: true
 ---
 
-A common way of sharing terraform modules is to move them in a separate
-repo. And for companies, that means a private repo. When `terraform init`
-is run, the terraform module is fetched and if this module is stored on a
-Github private repo, you will need to work around the authentication.
+A common way of sharing terraform modules is to move them in a separate repo. And for companies, that means a private repo. When `terraform init` is run, the terraform module is fetched and if this module is stored on a Github private repo, you will need to work around the authentication.
 
-Imagine that these shared modules are stored on the private Github repo
-"github.com/your-org/terraform-modules". Importing this module from a
-different repo would look something like:
+Imagine that these shared modules are stored on the private Github repo "github.com/your-org/terraform-modules". Importing this module from a different repo would look something like:
 
 ```hcl
 module "some_instance_of_this_module" {
@@ -27,22 +20,13 @@ module "some_instance_of_this_module" {
 }
 ```
 
-Using `git+ssh` as a way of fetching this private module will work great
-locally since you might probably have a private key that Github knows
-about. Locally, `terraform init` will work.
+Using `git+ssh` as a way of fetching this private module will work great locally since you might probably have a private key that Github knows about. Locally, `terraform init` will work.
 
-But what about CI, should I create a key pair and store the private key as
-a secret and have the public key known by Github (or Gitlab)?
+But what about CI, should I create a key pair and store the private key as a secret and have the public key known by Github (or Gitlab)?
 
-Using SSH key pairs is not ideal. The key pair is tied to an individual and
-can't be linked to a Github App like `github-bot`. Plus, the key pair
-mechanism doesn't offer access to a specific repo, which means all your
-company's repositories are exposed. And finally, some companies do not have
-port 22 open for security reasons, which means `git+https` is their only
-option.
+Using SSH key pairs is not ideal. The key pair is tied to an individual and can't be linked to a Github App like `github-bot`. Plus, the key pair mechanism doesn't offer access to a specific repo, which means all your company's repositories are exposed. And finally, some companies do not have port 22 open for security reasons, which means `git+https` is their only option.
 
-To use https instead of ssh, we start by changing the way we import these
-modules:
+To use https instead of ssh, we start by changing the way we import these modules:
 
 ```diff
  module "some_instance_of_this_module" {
@@ -53,48 +37,31 @@ modules:
 
 ## Local development & git over https
 
-Locally, you will have to make sure you can `git clone` this private repo,
-for example, the following should work:
+Locally, you will have to make sure you can `git clone` this private repo, for example, the following should work:
 
 ```sh
 git clone https://github.com/your-org/terraform-modules.git
 ```
 
-If it doesn't work, Github has a helpful page "[Caching your GitHub
-password in
-Git](https://help.github.com/en/github/using-git/caching-your-github-password-in-git)".
+If it doesn't work, Github has a helpful page "[Caching your GitHub password in Git](https://help.github.com/en/github/using-git/caching-your-github-password-in-git)".
 
 ## Continous integration & git over HTTPS
 
-It is a bit trickier to get HTTPS working on the CI. In the following, I'll
-take the example of Github Actions but that will work for any CI provider.
-There are two main solutions:
+It is a bit trickier to get HTTPS working on the CI. In the following, I'll take the example of Github Actions but that will work for any CI provider. There are two main solutions:
 
 1. using `url.insteadof`,
 2. or using `credential.helper`.
 
-For both options, you will need a PAT (personal access token) linked your
-own account. I refer to this token as `GH_TOKEN`. To create a PAT, you can
-go [to your Github settings](https://github.com/settings/tokens).
+For both options, you will need a PAT (personal access token) linked your own account. I refer to this token as `GH_TOKEN`. To create a PAT, you can go [to your Github settings](https://github.com/settings/tokens).
 
-> ⚠️ NOTE: around April 2020, Github decided to prevent users from using
-> Github Secrets names that begin with `GITHUB_`. We used to use the name
-> `GITHUB_PAT` frequently in Github Actions readmes, I guess we will all
-> have to update everything!
+> ⚠️ NOTE: around April 2020, Github decided to prevent users from using Github Secrets names that begin with `GITHUB_`. We used to use the name `GITHUB_PAT` frequently in Github Actions readmes, I guess we will all have to update everything!
 
 ### Solution 1: `url.insteadof`
 
-1. actions/checkout@v2 sets the 'Authorization' for any git command issued
-   from the checked out repo. But since this uses the Github Actions
-   `GITHUB_TOKEN` which is limited to the current repository. And since we
-   want to access another private repo, we have to disable that.
-2. instead, you can use `git config --global url.insteadof`. The `GH_TOKEN`
-   Github Secret is a [Github personal
-   token](https://github.com/settings/tokens) that has the 'repo' scope
-   (full control of private repositories).
+1. actions/checkout@v2 sets the 'Authorization' for any git command issued from the checked out repo. But since this uses the Github Actions `GITHUB_TOKEN` which is limited to the current repository. And since we want to access another private repo, we have to disable that.
+2. instead, you can use `git config --global url.insteadof`. The `GH_TOKEN` Github Secret is a [Github personal token](https://github.com/settings/tokens) that has the 'repo' scope (full control of private repositories).
 
-> Note: when using git over https with a token on `https://github.com`, the
-username doesn't matter, that's why we put `foo` here.
+> Note: when using git over https with a token on `https://github.com`, the username doesn't matter, that's why we put `foo` here.
 
 ```yaml
 - run: |
@@ -106,8 +73,7 @@ username doesn't matter, that's why we put `foo` here.
 
 ### Solution 2: `credential.helper`
 
-When `git config url.insteadof` does not work, you can try using `git
-credential.helper` instead. For example:
+When `git config url.insteadof` does not work, you can try using `git credential.helper` instead. For example:
 
 ```yaml
 - run: |
@@ -126,18 +92,15 @@ credential.helper` instead. For example:
 
 ### Solution 2 bis: `credential.helper` with a Github Action
 
-Same as solution 2 but wrapped in a neat Github Action
-[setup-git-credentials](https://github.com/marketplace/actions/setup-git-credentials).
+Same as solution 2 but wrapped in a neat Github Action [setup-git-credentials](https://github.com/marketplace/actions/setup-git-credentials).
 
-This action stores the credentials in the file
-`$XDG_CONFIG_HOME/git/credentials` and configures git to use it by calling:
+This action stores the credentials in the file `$XDG_CONFIG_HOME/git/credentials` and configures git to use it by calling:
 
 ```sh
 git config --global credential.helper store/
 ```
 
-The actions also makes sure all `ssh` calls are rewritten to `https`. The
-'credentials' field must be of the form <https://foo:$GH_TOKEN@github.com/>
+The actions also makes sure all `ssh` calls are rewritten to `https`. The 'credentials' field must be of the form <https://foo:$GH_TOKEN@github.com/>
 
 ```yaml
 - uses: fusion-engineering/setup-git-credentials@v2

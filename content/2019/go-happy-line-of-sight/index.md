@@ -2,31 +2,23 @@
 title: "Go Happy Path: the Unindented Line of Sight"
 tags: [go]
 date: 2019-11-23
-description: |
-    Readability is a property we all love about Go. In other languages, it
-    might be fine to have a lot of nested if statements; in Go, it is a good
-    practice to keep away from overly-nested logic.
+description: "Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic."
 url: /go-happy-line-of-sight
 images: [go-happy-line-of-sight/cover-happy-line-of-sight.png]
+author: Maël Valais
+devtoId: 210090
+devtoPublished: true
 ---
 
-Readability is a property we all love about Go. In other languages, it
-might be fine to have a lot of nested if statements; in Go, it is a good
-practice to keep away from overly-nested logic. One of the [Go
-proverbs](https://www.reddit.com/r/ProgrammerTIL/comments/acweob/go_til_a_new_go_proverb_the_happy_path_is/)
-says:
+Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic. One of the [Go proverbs](https://www.reddit.com/r/ProgrammerTIL/comments/acweob/go_til_a_new_go_proverb_the_happy_path_is/) says:
 
 > The happy path is left-aligned.
 
-In this post, I attempt to show through two examples what we mean by
-"left-aligned happy path" and what are the benefits in terms of readibility
-and maintainability.
+In this post, I attempt to show through two examples what we mean by "left-aligned happy path" and what are the benefits in terms of readibility and maintainability.
 
 ## Simple example
 
-Let's see a quick example of what we mean by "happy path is left-aligned".
-The following snippet has two nested ifs. That would be the standard idiom
-for any language like Java:
+Let's see a quick example of what we mean by "happy path is left-aligned". The following snippet has two nested ifs. That would be the standard idiom for any language like Java:
 
 ```go
 if authorizationHeader != "" {
@@ -41,14 +33,10 @@ if authorizationHeader != "" {
 
 We see two things happening here:
 
-- nesting `if`s increases the cognitive weight; we have to think in order
-  to understand what the logic does.
-- nesting ifs often encourages the use of "fallthroughs" (reusing the same
-  code path for two different cases). It tends to obfuscate how and where
-  the function fails and returns.
+- nesting `if`s increases the cognitive weight; we have to think in order to understand what the logic does.
+- nesting ifs often encourages the use of "fallthroughs" (reusing the same code path for two different cases). It tends to obfuscate how and where the function fails and returns.
 
-If we move the first `if` to its own "guard statement", then we end up with
-less nesting which translates to code easier to parse (parse as a human):
+If we move the first `if` to its own "guard statement", then we end up with less nesting which translates to code easier to parse (parse as a human):
 
 ```go
 if authorizationHeader == "" {
@@ -63,8 +51,7 @@ if len(bearerToken) != 2 {
 }
 ```
 
-Notice how each code path is obvious. Parsing the code is fast and you have
-less chance of misunderstanding the logic.
+Notice how each code path is obvious. Parsing the code is fast and you have less chance of misunderstanding the logic.
 
 <!--
 
@@ -82,7 +69,6 @@ library](https://itnext.io/clear-defensive-programming-with-go-using-verifier-li
 
 -->
 
-
 <!--
 ## How does it fit with Defensive programming?
 
@@ -99,13 +85,9 @@ not prescribe a specific way of writing things like the input verification.
 
 ## Real example
 
-While perusing how other Kubernetes developers are implementing their own
-reconciliation loop, I came across [an interesting piece of
-code](https://github.com/kubeflow/katib/blob/40f55b41c/pkg/controller.v1alpha3/trial/trial_controller.go#L259-L291).
+While perusing how other Kubernetes developers are implementing their own reconciliation loop, I came across [an interesting piece of code](https://github.com/kubeflow/katib/blob/40f55b41c/pkg/controller.v1alpha3/trial/trial_controller.go#L259-L291).
 
-The author decided to use the `if-else` control flow at its maximum
-potential: the logic goes as deep as three tabs to the right. We cannot
-immediately guess which parts are important and which aren't.
+The author decided to use the `if-else` control flow at its maximum potential: the logic goes as deep as three tabs to the right. We cannot immediately guess which parts are important and which aren't.
 
 ```go
 func (r *ReconcileTrial) reconcileJob(instance *trialsv1alpha3.Trial, desiredJob *unstructured.Unstructured) (*unstructured.Unstructured, error) {
@@ -155,25 +137,17 @@ func (r *ReconcileTrial) reconcileJob(instance *trialsv1alpha3.Trial, desiredJob
 }
 ```
 
-The outline of this function doesn't tell us anything about what the flow
-is and where the important logic is. Having deeply nested `if-else`
-statements hurt Go's glanceability: where is the "happy path"? Where are
-the "error paths"?
+The outline of this function doesn't tell us anything about what the flow is and where the important logic is. Having deeply nested `if-else` statements hurt Go's glanceability: where is the "happy path"? Where are the "error paths"?
 
 <img src="before.png" width="500"/>
 
-By refactoring and removing `else` statements, we obtain a more coherent
-aligned-to-the-left path:
+By refactoring and removing `else` statements, we obtain a more coherent aligned-to-the-left path:
 
 <img src="after.png" width="500"/>
 
-The green line represents the "core logic" and is at the minimum
-indentation level. The red line represents anything out of the ordinary:
-error handling and guards.
+The green line represents the "core logic" and is at the minimum indentation level. The red line represents anything out of the ordinary: error handling and guards.
 
-And since our eyes are very good at following lines, the _line of sight_
-(the green line) guides us and greatly improves the experience of glancing
-at a piece of code.
+And since our eyes are very good at following lines, the _line of sight_ (the green line) guides us and greatly improves the experience of glancing at a piece of code.
 
 Here is the actual code I rewrote:
 
@@ -228,20 +202,16 @@ func (r *ReconcileTrial) reconcileJob(instance *trialsv1alpha3.Trial, desiredJob
 }
 ```
 
-You can also take a look at Matt Ryer's _Idiomatic Go Tricks_ ([blog
-post](https://medium.com/@matryer/line-of-sight-in-code-186dd7cdea88))
-where he presents some ways of keeping your code as readable as possible:
+You can also take a look at Matt Ryer's _Idiomatic Go Tricks_ ([blog post](https://medium.com/@matryer/line-of-sight-in-code-186dd7cdea88)) where he presents some ways of keeping your code as readable as possible:
 
 {{< youtube yeetIgNeIkc >}}
 
-**Update 23 April 2020:** added a proper introduction with a simple
-example.
+**Update 23 April 2020:** added a proper introduction with a simple example.
 
 ---
+
 <!--
 Wish to comment? Here is the Twitter thread for that post:
 
 {{< twitter 1198259761722122240 >}}
 -->
-
-

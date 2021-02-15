@@ -3,6 +3,8 @@ title: Nice diagram about TLS, certificates and keys
 date: 2020-01-20
 tags: []
 author: Maël Valais
+devtoId: 365848
+devtoPublished: false
 ---
 
 <div class="nohighlight">
@@ -83,14 +85,11 @@ For example, mitmproxy relies on a specific dir structure and filenames:
 └── mitmproxy-ca.pem                 # ca      = cert + key
 ```
 
-That's the kind of directory structure that `--set client_dir=...` would
-expect (in mitmproxy).
+That's the kind of directory structure that `--set client_dir=...` would expect (in mitmproxy).
 
 ## Using `openssl` to dig certificates
 
-This [cheat sheet][cheatsheet] is nice. Here is a one-liner for fetching
-the certificate chain sitting on a server; for example for
-`api.github.com:443`:
+This [cheat sheet][cheatsheet] is nice. Here is a one-liner for fetching the certificate chain sitting on a server; for example for `api.github.com:443`:
 
 ```sh
 % openssl x509 -in <(openssl s_client -connect api.github.com:443 -prexit <<< "") -noout -text

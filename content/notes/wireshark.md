@@ -3,6 +3,8 @@ title: Stuff about Wireshark
 date: 2019-11-06
 tags: []
 author: Maël Valais
+devtoId: 365847
+devtoPublished: false
 ---
 
 ```sh

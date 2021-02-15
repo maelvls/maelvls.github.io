@@ -7,6 +7,8 @@ images: [yaml-isnt-that-good/cover-yaml-isnt-that-good.png]
 draft: true
 tags: []
 author: Maël Valais
+devtoId: 0
+devtoPublished: false
 ---
 
 Example 1:
@@ -14,12 +16,13 @@ Example 1:
 ```yaml
 - example:
   description:
-	  name: foo
+    name: foo
 ```
 
 and
+
 ```yaml
 - example:
     description:
-	    name: foo
+      name: foo
 ```

@@ -3,6 +3,8 @@ title: Remote Docker using docker-machine
 date: 2018-09-13
 tags: []
 author: Maël Valais
+devtoId: 365839
+devtoPublished: false
 ---
 
 ## Use docker-machine for remoting docker
@@ -31,6 +33,4 @@ docker run --rm -it ubuntu
 ```
 
 - `-i` means interactive (stdin will be attached)
-- `-t` (`--tty`) means that this is a pseudo-tty terminal instead of a
-  non-tty (for example, without tty, bash has no prompt; with a tty, it
-  gives a nice prompt such as `bash-4.4#`).
+- `-t` (`--tty`) means that this is a pseudo-tty terminal instead of a non-tty (for example, without tty, bash has no prompt; with a tty, it gives a nice prompt such as `bash-4.4#`).

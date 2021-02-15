@@ -2,23 +2,19 @@
 title: "Debugging Kubernetes Networking: my kube-dns is not working!"
 tags: [kubernetes, networking]
 date: 2020-01-26
-description: |
-    Some pods were unable to connect to the kube-proxy pod on one of my GKE
-    Kubernetes clusters. This post present an in-depth investigation using
-    tcpdump, wireshark and iptables tracing.
+description: "Some pods were unable to connect to the kube-proxy pod on one of my GKE Kubernetes clusters. This post present an in-depth investigation using tcpdump, wireshark and iptables tracing."
 url: /debugging-kubernetes-networking
 images: [debugging-kubernetes-networking/cover-debug-kubernetes-networking.png]
 author: Maël Valais
+devtoId: 248756
+devtoPublished: true
 ---
 
-When I scaled my GKE cluster from one node to two nodes, I realised there
-was some DNS issues with one of the pods on the new Node 2 (that's what I
-initially thought).
+When I scaled my GKE cluster from one node to two nodes, I realised there was some DNS issues with one of the pods on the new Node 2 (that's what I initially thought).
 
 ![network diagram of the cluster where DNS not working in a pod of Node 2](diagram-node-2-dns-not-working.png)
 
-So I went into pod-on-2 (10.24.12.40) and checked that DNS wasn't working.
-What I did is run
+So I went into pod-on-2 (10.24.12.40) and checked that DNS wasn't working. What I did is run
 
 ```sh
 % gcloud compute ssh node-2
@@ -27,10 +23,7 @@ What I did is run
 ;; connection timed out; no servers could be reached
 ```
 
-Let's see if this DNS request actually goes out of the container. So I ran
-tcpdump on the `cbr0` interface on node 2. `cbr0` is the linux bridge used
-by Kubernetes (the bridge and the interface have the same name). Using
-Wireshark on top of tcpdump gives me easier-to-explore results:
+Let's see if this DNS request actually goes out of the container. So I ran tcpdump on the `cbr0` interface on node 2. `cbr0` is the linux bridge used by Kubernetes (the bridge and the interface have the same name). Using Wireshark on top of tcpdump gives me easier-to-explore results:
 
 ![Wireshark running on interface cbr0 on node 2](wireshark-node-2-cbr0-and-terminal.png)
 
@@ -41,10 +34,7 @@ Note that the actual name of Node 2 is _gke-august-period-234610-worker-micro-1d
 tcpdump: listening on cbr0, link-type EN10MB (Ethernet), capture size 262144 bytes
 ```
 
-What we see is that `cbr0` properly receives UDP packets coming from the
-pod `10.24.12.40`, and that the DNS address is `10.27.240.10`. I double
-checked, `10.27.240.10` is the DNS address set in `/etc/resolve.conf`
-inside containers in this pod.
+What we see is that `cbr0` properly receives UDP packets coming from the pod `10.24.12.40`, and that the DNS address is `10.27.240.10`. I double checked, `10.27.240.10` is the DNS address set in `/etc/resolve.conf` inside containers in this pod.
 
 Here is the network setup with the IPs to get a better picture:
 
@@ -58,21 +48,15 @@ NAME       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE
 kube-dns   ClusterIP   10.27.240.10   <none>        53/UDP,53/TCP   34d
 ```
 
-We now know that the DNS used in all the pods is the ClusterIP of the
-kube-dns service. That's not a real pod IP, so the iptables should be
-translating that into an actual pod IP.
+We now know that the DNS used in all the pods is the ClusterIP of the kube-dns service. That's not a real pod IP, so the iptables should be translating that into an actual pod IP.
 
-Now that we know that the packet goes to `cbr0`, is it forwarded to Node
-2's `eth0`? I used Wireshark again, but on `eth0` this time:
+Now that we know that the packet goes to `cbr0`, is it forwarded to Node 2's `eth0`? I used Wireshark again, but on `eth0` this time:
 
 ![Wireshark on eth0 of Node 2](wireshark-node-2-eth0.png)
 
-Apparently, the packet destination has been re-written from `10.27.240.10`
-to `10.24.9.31` (an actual pod IP) which is good sign. This pod IP
-corresponds to one of the replicas of kube-dns on node 1, which seems fine.
+Apparently, the packet destination has been re-written from `10.27.240.10` to `10.24.9.31` (an actual pod IP) which is good sign. This pod IP corresponds to one of the replicas of kube-dns on node 1, which seems fine.
 
-At this point, I was wondering: are UDP packets from node 2 to node 1
-properly routed?
+At this point, I was wondering: are UDP packets from node 2 to node 1 properly routed?
 
 ```sh
 mvalais@node-2 ~ $ docker run -it --rm --net=host nicolaka/netshoot
@@ -85,15 +69,12 @@ Name:	github.com
 Address: 192.30.253.113
 ```
 
-Wait what? The DNS query to `10.27.240.10` works from the host but not from
-the pod? At this point, my guesses were:
+Wait what? The DNS query to `10.27.240.10` works from the host but not from the pod? At this point, my guesses were:
 
 1. something wrong with the routes on the host,
 2. something is wrong with networking on node 1
 3. something is wrong with the iptables of node 2
-4. an issue with routing of `10.24.0.0/14` on the VPC (it's the CIDR
-   allocated to this GKE cluster; the nodes themselves receive `/24` CIDRs
-   from this range)
+4. an issue with routing of `10.24.0.0/14` on the VPC (it's the CIDR allocated to this GKE cluster; the nodes themselves receive `/24` CIDRs from this range)
 
 Let's rule (1) out. Here is the L3 routing table on node 2:
 
@@ -108,16 +89,11 @@ default via 10.142.0.1 dev eth0    proto dhcp
 169.254.123.0/24       dev docker0 proto kernel src 169.254.123.1 linkdown
 ```
 
-Remembering that Node 2's eth0 has the IP `10.142.15.206`, it looks like
-all packets that are meant for Node 1's kube-dns will use the first rule.
-So no problem on this side.
+Remembering that Node 2's eth0 has the IP `10.142.15.206`, it looks like all packets that are meant for Node 1's kube-dns will use the first rule. So no problem on this side.
 
-The (2) guess is easy to check: I ran tcpdump with wireshark on the eth0 of
-node 1. No trace of an UDP packet coming from `10.24.12.40`. So the packets
-don't even reach the node 1.
+The (2) guess is easy to check: I ran tcpdump with wireshark on the eth0 of node 1. No trace of an UDP packet coming from `10.24.12.40`. So the packets don't even reach the node 1.
 
-Let's recap all we know: the packet goes from the pod's eth0 to the linux
-bridge, and is then rewritten and forwarded to the host's eth0.
+Let's recap all we know: the packet goes from the pod's eth0 to the linux bridge, and is then rewritten and forwarded to the host's eth0.
 
 <img
 src="diagram-node-2-iptables-flow.png"
@@ -146,14 +122,9 @@ udp 17 26  src=10.24.12.40    dst=10.27.240.10 sport=57400 dport=53 [UNREPLIED] 
 udp 17 175 src=10.142.15.206 dst=10.27.240.10 sport=37337 dport=53             src=10.24.9.31 dst=10.142.15.206 sport=53 dport=37337 [ASSURED] mark=0 use=1
 ```
 
-Coming from the pod, we see that the DNAT rewriting happened but the
-connection status is UNREPLIED. Coming from the host, the DNAT rewriting
-also happened but the connection status is ASSURED, which means a reply has
-been given.
+Coming from the pod, we see that the DNAT rewriting happened but the connection status is UNREPLIED. Coming from the host, the DNAT rewriting also happened but the connection status is ASSURED, which means a reply has been given.
 
-Now, the deep dive: let's use iptables' `TRACE` target to know how this
-packet gets rewritten when coming from the pod:
-
+Now, the deep dive: let's use iptables' `TRACE` target to know how this packet gets rewritten when coming from the pod:
 
 ```s
 # From Node 2
@@ -186,24 +157,13 @@ packet gets rewritten when coming from the pod:
 [90332.596840] TRACE: nat:POSTROUTING:policy:4                 IN=     OUT=eth0 PHYSIN=veth4a3719bc SRC=10.24.12.40 DST=10.24.9.31     LEN=82 TOS=0x00 PREC=0x00 TTL=63 ID=43592 PROTO=UDP SPT=36775 DPT=53 LEN=62
 ```
 
-The last list, `POSTROUTING`, makes it clear that the packet is properly
-sent to the host's `eth0` with `src 10.24.12.40` and `dst 10.24.9.31`. The
-packet should get to node 1 now!
+The last list, `POSTROUTING`, makes it clear that the packet is properly sent to the host's `eth0` with `src 10.24.12.40` and `dst 10.24.9.31`. The packet should get to node 1 now!
 
-I noticed that using `-j TRACE` is extremely expensive. For example, using
-`-p icmp` would result in pings going from 1ms (without tracing) to 500ms.
-I also overloaded one of the nodes by adding a rule that was "too wide" and
-nearly killed the entire node. Use tracing filters (`-s`, `-p`, `-d`) as
-narrow as possible!
+I noticed that using `-j TRACE` is extremely expensive. For example, using `-p icmp` would result in pings going from 1ms (without tracing) to 500ms. I also overloaded one of the nodes by adding a rule that was "too wide" and nearly killed the entire node. Use tracing filters (`-s`, `-p`, `-d`) as narrow as possible!
 
-So UDP traffic doesn't get routed. But what about ICMP and TCP packets? I
-had previously noticed that `ping` would work from 10.24.12.40 to
-10.24.9.31.
+So UDP traffic doesn't get routed. But what about ICMP and TCP packets? I had previously noticed that `ping` would work from 10.24.12.40 to 10.24.9.31.
 
-Let's see if TCP traffic also works. This time, instead of ssh-ing into the
-nodes and running docker, I used `--generator=run-pod/v1` and `--override`
-in order to choose on which node the pod is launched. Here is a sample of
-what I give to `--override` for running a pod on `node-2`:
+Let's see if TCP traffic also works. This time, instead of ssh-ing into the nodes and running docker, I used `--generator=run-pod/v1` and `--override` in order to choose on which node the pod is launched. Here is a sample of what I give to `--override` for running a pod on `node-2`:
 
 ```yaml
 apiVersion: v1
@@ -235,9 +195,7 @@ Listening on [0.0.0.0] (family 0, port 80)
 Connection from 10.24.9.32 38274 received!
 ```
 
-The traffic on 80/tcp definitely seems to work from Node 1 to Node 2! Now,
-let's try the same but with 53/tcp and from Node 2 to Node 1.
-
+The traffic on 80/tcp definitely seems to work from Node 1 to Node 2! Now, let's try the same but with 53/tcp and from Node 2 to Node 1.
 
 From pod on Node 1 (`10.24.9.32`):
 
@@ -253,13 +211,9 @@ From pod on Node 2 (`10.24.12.41`):
 curl: (28) Failed to connect to 10.24.9.32 port 53: Operation timed out
 ```
 
-To recap, only 80/tcp, 443/tcp and icmp packets are routed. It's
-surprisingly very specific: what if the VPC firewall rules were off? That
-was my last guess, but I guess it should have been myst first...
+To recap, only 80/tcp, 443/tcp and icmp packets are routed. It's surprisingly very specific: what if the VPC firewall rules were off? That was my last guess, but I guess it should have been myst first...
 
-Two weeks ago, I remember having deleted some left-over rules when I was
-playing with Kops. I might have deleted one of the rules that allowed this
-traffic to flow!
+Two weeks ago, I remember having deleted some left-over rules when I was playing with Kops. I might have deleted one of the rules that allowed this traffic to flow!
 
 Here is what the UI shows:
 
@@ -277,12 +231,9 @@ default-allow-rdp      default  INGRESS    65534    tcp:3389
 default-allow-ssh      default  INGRESS    65534    tcp:22
 ```
 
-How is the traffic using the `10.24.0.0/14` subnet supposed to be routed?
-This subnet was allocated to this GKE cluster; node 1 was given the CIDR
-`10.24.9.0/24` and node 2 was given the CIDR `10.24.12.0/24`.
+How is the traffic using the `10.24.0.0/14` subnet supposed to be routed? This subnet was allocated to this GKE cluster; node 1 was given the CIDR `10.24.9.0/24` and node 2 was given the CIDR `10.24.12.0/24`.
 
-So I added a new rule `gke-august-period-234610-all` (august-period-234610
-is the name of my project); it looks like that:
+So I added a new rule `gke-august-period-234610-all` (august-period-234610 is the name of my project); it looks like that:
 
 ```sh
 NAME                         NETWORK  DIRECTION  PRIORITY  ALLOW                         DENY  DISABLED
@@ -310,15 +261,10 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
 21:54:39.787808 IP tmp-host-a > 10.24.12.41: ICMP tmp-host-a udp port 8888 unreachable, length 37
 ```
 
-Yay! In the end, the issue was not so deep... A manual edit to the firewall
-rules that I had not thought through and for which I have no record of. I
-already terraformed a lot of the cluster and node creation, but I should
-definitely move everything to terraform and stop doing manual edits that
-can't be traced back!
+Yay! In the end, the issue was not so deep... A manual edit to the firewall rules that I had not thought through and for which I have no record of. I already terraformed a lot of the cluster and node creation, but I should definitely move everything to terraform and stop doing manual edits that can't be traced back!
 
 <!--
 If you with to leave a comment, here is a Twitter thread:
 
 {{< twitter 1221488683485925376 >}}
 -->
-

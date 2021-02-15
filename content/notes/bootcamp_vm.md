@@ -3,6 +3,8 @@ title: Use the Bootcamp partition under VirtualBox
 date: 2019-04-20
 tags: []
 author: Maël Valais
+devtoId: 365845
+devtoPublished: false
 ---
 
 From: <https://apple.stackexchange.com/questions/220670/run-boot-camp-windows10-partition-inside-virtualbox>

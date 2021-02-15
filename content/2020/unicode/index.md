@@ -7,10 +7,11 @@ images: [unicode/cover-unicode.png]
 draft: true
 tags: []
 author: Maël Valais
+devtoId: 0
+devtoPublished: false
 ---
 
-I take a look at
-"[whatisit](https://www.babelstone.co.uk/Unicode/whatisit.html)":
+I take a look at "[whatisit](https://www.babelstone.co.uk/Unicode/whatisit.html)":
 
 ```plain
 ⚠️
@@ -18,15 +19,13 @@ U+26A0 : WARNING SIGN
 U+FE0F : VARIATION SELECTOR-16 [VS16] {emoji variation selector}
 ```
 
-But even better: [runes](https://github.com/mna/runes) is CLI for exploring
-these emojis! Let's install it:
+But even better: [runes](https://github.com/mna/runes) is CLI for exploring these emojis! Let's install it:
 
 ```sh
 go get github.com/mna/runes
 ```
 
-Now, let's see with an emoji that I know displays correctly in my terminal
-(iTerm2):
+Now, let's see with an emoji that I know displays correctly in my terminal (iTerm2):
 
 ```sh
 % runes - ✅
@@ -47,7 +46,4 @@ Now, let's try with my multi-UTF-8 example "⚠️":
 [C Cc] U+0000         [00]          [0]         <control>
 ```
 
-My terminal (iTerm2) doesn't even allow me to paste "⚠️"?! It shows
-`⚠<fe0f>` instead.
-
-
+My terminal (iTerm2) doesn't even allow me to paste "⚠️"?! It shows `⚠<fe0f>` instead.

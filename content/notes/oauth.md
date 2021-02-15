@@ -3,35 +3,26 @@ title: Notes on OAuth
 date: 2019-02-17
 tags: []
 author: Maël Valais
+devtoId: 365844
+devtoPublished: false
 ---
 
 I know two main ways of using OAuth2
 
-- password-based client grant (2-leg oauth flow: on the project I worked on,
-  the OAuth client was not third party server, but instead, it was the
-  front-end.)
+- password-based client grant (2-leg oauth flow: on the project I worked on, the OAuth client was not third party server, but instead, it was the front-end.)
 - authorization code based grant (3-legs oauth flow)
-
 
 ## What is "the client"?
 
-The [RFC 6749][rfc6749] that presents OAuth2 is very readable, but some terms
-like "client" or "code" are confusing. What I found is that trying to understand
-"why" the main flow (3-legged oauth, or "authorization code flow") has to be
-like this.
+The [RFC 6749][rfc6749] that presents OAuth2 is very readable, but some terms like "client" or "code" are confusing. What I found is that trying to understand "why" the main flow (3-legged oauth, or "authorization code flow") has to be like this.
 
-The most important aspect that I had to realize is that "client" is hidden from
-the end-user (e.g. as a nodejs server serving /callback). The "client" has a
-single purpose: receive the code when /callback is called by the third-party
-Authorize screen, POST /token to the third party using the `client_secret` using
-that code.
+The most important aspect that I had to realize is that "client" is hidden from the end-user (e.g. as a nodejs server serving /callback). The "client" has a single purpose: receive the code when /callback is called by the third-party Authorize screen, POST /token to the third party using the `client_secret` using that code.
 
 [rfc6749]: https://tools.ietf.org/html/rfc6749
 
 ## Authorization code (3 legged oauth)
 
-1. User clicks the "Login with Google"; this URL is public and forwards the user
-   to an "Authorize" form.
+1. User clicks the "Login with Google"; this URL is public and forwards the user to an "Authorize" form.
 
    ```http
    GET /o/oauth2/auth?client_id=foo&redirect_uri=http%3A%2F%2Flocalhost%3A8042%2Fcallback&response_type=code&scope=calendar.readonly&state=something HTTP/1.1
@@ -39,14 +30,11 @@ that code.
    ```
 
 Since this URL is quite long, let's see what we have:
+
 - `access_type` is `offline` (huh??)
-- `client_id` (remember that the "client" is my CLI which asks the permission to
-  Google's servers to access the scopes.
+- `client_id` (remember that the "client" is my CLI which asks the permission to Google's servers to access the scopes.
 - `redirect_uri` is <http://localhost:8042/oauth2>
-- `response_type` is `code` which makes sense since we want a code so that we
-  can, eventually, get a token. The `code` and `state` values will be given to
-  us in the callback. When pressing "Authorize" in the Google authentication
-  page, we get something like:
+- `response_type` is `code` which makes sense since we want a code so that we can, eventually, get a token. The `code` and `state` values will be given to us in the callback. When pressing "Authorize" in the Google authentication page, we get something like:
 
 2. After authorizing, the user is redirected to the "client" endpoint:
 
@@ -78,6 +66,4 @@ Since this URL is quite long, let's see what we have:
    }
    ```
 
-   Note: when we say "an oauth token", what we actually mean is the access token
-   the refresh token.
-
+   Note: when we say "an oauth token", what we actually mean is the access token the refresh token.

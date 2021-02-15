@@ -3,6 +3,8 @@ title: Using Linyxbrew on university servers
 date: 2016-12-15
 tags: []
 author: Maël Valais
+devtoId: 365827
+devtoPublished: false
 ---
 
 On the university server azteca or inca (must use vpn or sassh through-pass)
@@ -14,8 +16,7 @@ Then,
 
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install)"
 
-But on linux with gcc-4.4.7 only, I had also to follow the instructions on
-<https://github.com/Linuxbrew/homebrew-core/issues/4077>. It will
+But on linux with gcc-4.4.7 only, I had also to follow the instructions on <https://github.com/Linuxbrew/homebrew-core/issues/4077>. It will
 
 1. first install glibc 2.20
 2. install gcc-5 and others
@@ -28,8 +29,7 @@ But on linux with gcc-4.4.7 only, I had also to follow the instructions on
    brew upgrade glibc
    ```
 
-Then I also got on the last `brew upgrade glibc` an 'Illegal instruction';
-the issue is mentionned in
+Then I also got on the last `brew upgrade glibc` an 'Illegal instruction'; the issue is mentionned in
 
 - <https://github.com/Linuxbrew/legacy-linuxbrew/issues/173>
 - <https://github.com/Linuxbrew/homebrew-core/issues/4244>
@@ -70,5 +70,4 @@ To avoid 'brew updating...' all the time:
 
     export HOMEBREW_NO_AUTO_UPDATE=1
 
-NOTE: to install on REHL 6.9 or CentOS6, just use the commands given
-by sjackman at <https://github.com/Linuxbrew/brew/wiki/CentOS6>
+NOTE: to install on REHL 6.9 or CentOS6, just use the commands given by sjackman at <https://github.com/Linuxbrew/brew/wiki/CentOS6>

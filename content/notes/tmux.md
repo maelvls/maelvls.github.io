@@ -3,10 +3,11 @@ title: Memo for Tmux
 date: 2018-11-03
 tags: []
 author: Maël Valais
+devtoId: 365842
+devtoPublished: false
 ---
 
-I installed <https://gist.github.com/cybic/6375457> in `~/.bash_completion` (file)
-to get the bash completion.
+I installed <https://gist.github.com/cybic/6375457> in `~/.bash_completion` (file) to get the bash completion.
 
 ## General shortcuts
 
@@ -28,9 +29,7 @@ Inside tmux. prefix = ctrl+b
     prefix alt+arrow -> even bigger pane
     prefix z         -> bigger current pane (redo that to resize like before)
 
-I also created a script called `monitor.sh` to know which one of the 6 server I
-should use for my experiments. The thing is that I don't want the session with 6
-htop open to run in background for days.
+I also created a script called `monitor.sh` to know which one of the 6 server I should use for my experiments. The thing is that I don't want the session with 6 htop open to run in background for days.
 
     prefix ctrl+z    -> suspend the current session
 

@@ -7,6 +7,8 @@ tags: [kubernetes]
 images: []
 draft: true
 author: Maël Valais
+devtoId: 0
+devtoPublished: false
 ---
 
 - level-based events -> state is...
@@ -15,5 +17,4 @@ author: Maël Valais
 
 ## Is Kubernetes event driven?
 
-By event driven, I mean a system that works by reacting to events. For example,
-a simple event driven system would be 
+By event driven, I mean a system that works by reacting to events. For example, a simple event driven system would be

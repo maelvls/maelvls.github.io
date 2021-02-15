@@ -1,18 +1,18 @@
 ---
 title: You should write comments
-description: |
-  We often talk about avoiding unecessary comments that needlessly paraphrase
-  what the code does. In this article, I gathered some thoughts about why
-  writing comments is as important as writing the code itself.
+description: "We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself."
 date: 2020-02-27
 url: "/you-should-write-comments"
 images:
-- you-should-write-comments/cover-you-should-write-comments.png
+  - you-should-write-comments/cover-you-should-write-comments.png
 tags:
-- go
-- software-engineering
+  - go
+  - software-engineering
 author: Maël Valais
+devtoId: 313912
+devtoPublished: true
 ---
+
 Comments are one of these topics that we seem to never agree on ([stackoverflow](https://softwareengineering.stackexchange.com/questions/1/comments-are-a-code-smell) says so). I often hear that comments add noise to the code and that comments never get properly updated.
 
 The solution seems to be to properly self-document code. And I love Go for that; one of the Go proverbs even [says](https://go-proverbs.github.io/):
@@ -39,7 +39,7 @@ Now, let's talk about the issue of comments becoming outdated. Over time, commen
 
 During code reviews, I pay extra attention to these comments. And yes, very often, comments don't make sense anymore because of some copy-paste of code. We must delete any copy-pasted comment and rewrite it. Spreading copy-pasted comments that we don't really know why they were added in the first place is a plague.
 
-***
+---
 
 As a final word, I want us to remember that yes, maintaining comments is a pain. Comments will eventually start lying if you don't delete and rewrite them. But would you rather have no comments at all and let the amount of tribal knowledge creep in every part of your codebase, making it harder and harder for new engineers to join the team?
 

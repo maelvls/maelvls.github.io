@@ -3,6 +3,8 @@ title: Using Matlab at IRIT
 date: 2017-03-20
 tags: []
 author: Maël Valais
+devtoId: 365830
+devtoPublished: false
 ---
 
 Token server at IRIT:
@@ -16,8 +18,7 @@ or
 
 in `/Applications/MATLAB_R2016a.app/licenses/irit.lic`
 
-What toolbox can I access? `ver`
-Know what licence file is used: `matlab -e` or `matlab -n`
+What toolbox can I access? `ver` Know what licence file is used: `matlab -e` or `matlab -n`
 
 ## Which licenses at IRIT
 

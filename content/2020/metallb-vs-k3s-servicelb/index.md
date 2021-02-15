@@ -7,10 +7,11 @@ images: [metallb-vs-k3s-servicelb/cover-metallb-vs-k3s-servicelb.png]
 draft: true
 tags: []
 author: Maël Valais
+devtoId: 0
+devtoPublished: false
 ---
 
-Great post by Duffie Cooley in Apr 2019 "[Using MetalLb with
-Kind](https://mauilion.dev/posts/kind-metallb)":
+Great post by Duffie Cooley in Apr 2019 "[Using MetalLb with Kind](https://mauilion.dev/posts/kind-metallb)":
 
 ```sh
 % kind create cluster --name metallb --config - <<EOF
@@ -46,5 +47,3 @@ metallb-worker          NotReady   <none>   9s    v1.17.2
 ? (239.255.255.250) at 1:0:5e:7f:ff:fa on en9 ifscope permanent [ethernet]
 ? (239.255.255.250) at 1:0:5e:7f:ff:fa on en0 ifscope permanent [ethernet]
 ```
-
-

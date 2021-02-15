@@ -3,6 +3,8 @@ title: Stuff about managing Ruby & rvm
 date: 2017-02-05
 tags: []
 author: Maël Valais
+devtoId: 365829
+devtoPublished: false
 ---
 
 ## Warning 'Ignoring... because its extensions are not built'

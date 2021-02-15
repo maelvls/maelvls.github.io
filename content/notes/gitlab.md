@@ -3,6 +3,8 @@ title: Run the test suite of the Gitlab projet
 date: 2018-07-09
 tags: []
 author: Maël Valais
+devtoId: 365838
+devtoPublished: false
 ---
 
 From <https://docs.gitlab.com/runner/install/linux-manually.html>

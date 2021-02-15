@@ -7,6 +7,8 @@ images: [deepequal-is-slow/cover-deepequal-is-slow.png]
 draft: true
 tags: []
 author: Maël Valais
+devtoId: 0
+devtoPublished: false
 ---
 
 <!--

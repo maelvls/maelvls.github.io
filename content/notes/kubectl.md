@@ -3,6 +3,8 @@ title: Some kubectl stuff
 date: 2019-01-03
 tags: []
 author: Maël Valais
+devtoId: 365843
+devtoPublished: false
 ---
 
 ```sh
@@ -91,8 +93,7 @@ PING 10.24.9.3 (10.24.9.3) 56(84) bytes of data.
 % bash-5.0# nc -v 10.24.9.21 9000
 ```
 
-Let's take another pod that is on host A. It's minio, which serves on port
-10.24.9.21:9000:
+Let's take another pod that is on host A. It's minio, which serves on port 10.24.9.21:9000:
 
 ```sh
 bash-5.0# ping 10.24.9.21
@@ -110,8 +111,7 @@ I0125 12:30:37.882376       1 service.go:334] Updating existing service port "tr
 I0125 12:31:35.093785       1 proxier.go:675] Stale udp service kube-system/kube-dns:dns -> 10.27.240.10
 ```
 
-Now, let's trace in iptables on host B:
-<https://www.opsist.com/blog/2015/08/11/how-do-i-see-what-iptables-is-doing.html>
+Now, let's trace in iptables on host B: <https://www.opsist.com/blog/2015/08/11/how-do-i-see-what-iptables-is-doing.html>
 
 ```sh
 % sudo iptables -t nat -I PREROUTING 1 -j LOG
@@ -155,11 +155,7 @@ Let's try again with the TRACE module:
 [90332.596840] TRACE: nat:POSTROUTING:policy:4                 IN=     OUT=eth0 PHYSIN=veth4a3719bc SRC=10.24.10.2 DST=10.24.9.3     LEN=82 TOS=0x00 PREC=0x00 TTL=63 ID=43592 PROTO=UDP SPT=36775 DPT=53 LEN=62
 ```
 
-Note that using TRACE is extremely expensive. For example, using `-p icmp`
-would result in pings going from 1ms (without tracing) to 500ms. I also
-overloaded one of the nodes by adding a rule that was "too wide" and nearly
-killed the entire node. Use tracing filters (`-s`, `-p`, `-d`) as narrow as
-possible!
+Note that using TRACE is extremely expensive. For example, using `-p icmp` would result in pings going from 1ms (without tracing) to 500ms. I also overloaded one of the nodes by adding a rule that was "too wide" and nearly killed the entire node. Use tracing filters (`-s`, `-p`, `-d`) as narrow as possible!
 
 ## Other experiment: icmp
 
@@ -167,8 +163,7 @@ At this point, I recreated both nodes which changed all the IP CIDRs.
 
 - Host A CIDR is `10.24.9.0/24`,
 - Host B CIDR is `10.24.11.0/24`,
-- We use the traefik pod (`10.24.11.7`) on host B for reproducing the
-  connectivity issue.
+- We use the traefik pod (`10.24.11.7`) on host B for reproducing the connectivity issue.
 - KubeDNS is running on `10.24.9.14`.
 
 Host B:
@@ -280,11 +275,7 @@ Definitely something wrong with anything else than 80/tcp!
 
 ## OMG it was a missing firewall rule
 
-I realised that only 80/tcp, 443/tcp and icmp packets would get routed.
-It's surprisingly very specific: what if the VPC firewall rules were off.
-Maybe these 80/tcp and 443/tcp are correspond to the rule
-"akrobateo-fw-traefik" I had added when I wanted to load-balance traffic
-direclty from the cluster (as opposed as external load balancing).
+I realised that only 80/tcp, 443/tcp and icmp packets would get routed. It's surprisingly very specific: what if the VPC firewall rules were off. Maybe these 80/tcp and 443/tcp are correspond to the rule "akrobateo-fw-traefik" I had added when I wanted to load-balance traffic direclty from the cluster (as opposed as external load balancing).
 
 ```sh
 % gcloud compute firewall-rules list
@@ -296,9 +287,7 @@ default-allow-rdp                    default  INGRESS    65534     tcp:3389     
 default-allow-ssh                    default  INGRESS    65534     tcp:22                              False
 ```
 
-No rule for traffic in `10.24.0.0/14`! This CIDR is the subnet used for
-distributing CIDRs to each node. So I added a new rule "all"; here is the
-new list of rules:
+No rule for traffic in `10.24.0.0/14`! This CIDR is the subnet used for distributing CIDRs to each node. So I added a new rule "all"; here is the new list of rules:
 
 ```sh
 % gcloud compute firewall-rules list

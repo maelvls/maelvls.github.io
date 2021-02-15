@@ -7,6 +7,8 @@ images: [setting-up-concourse/cover-setting-up-concourse.png]
 draft: true
 tags: []
 author: Maël Valais
+devtoId: 0
+devtoPublished: false
 ---
 
 ```sh
@@ -25,18 +27,14 @@ or enter token manually:
 target saved
 ```
 
-Can `-t main` be remembered by default like contexts and namespaces with
-`kubectl config set-context`? See:
+Can `-t main` be remembered by default like contexts and namespaces with `kubectl config set-context`? See:
+
 - [issue 213](https://github.com/concourse/fly/issues/213):
 -
 - [issue 1933](https://github.com/concourse/concourse/issues/1933):
-  > Could `fly` remember the target? Either with `FLY_TARGET` env var or
-  > setting a default in ~/.flyrc?
+  > Could `fly` remember the target? Either with `FLY_TARGET` env var or setting a default in ~/.flyrc?
   >
-  > Response: The `-t` flag is intentionally stateless and must be
-  > explicitly added to each command. This reduces the risk of accidentally
-  > running a command against the wrong environment when you have multiple
-  > targets defined.
+  > Response: The `-t` flag is intentionally stateless and must be explicitly added to each command. This reduces the risk of accidentally running a command against the wrong environment when you have multiple targets defined.
 
 OK. I hate that kind of stubborness.
 
@@ -73,9 +71,4 @@ EOF
 fly -t main set-pipeline -pmaster -c pipeline.yml
 ```
 
-> "[Configuring gdn
-> server](https://concourse-ci.org/concourse-worker.html#configuring-gdn-server)":
-> On Linux, the concourse binary is packaged alongside a `gdn` binary. This
-> binary is used for running Guardian, which is a Garden backend
-> implementation which runs containers via `runc` (the same technology
-> underlying tools like Docker).
+> "[Configuring gdn server](https://concourse-ci.org/concourse-worker.html#configuring-gdn-server)": On Linux, the concourse binary is packaged alongside a `gdn` binary. This binary is used for running Guardian, which is a Garden backend implementation which runs containers via `runc` (the same technology underlying tools like Docker).

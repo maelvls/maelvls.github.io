@@ -3,42 +3,29 @@ title: What I know about shells
 date: 2016-07-09
 tags: []
 author: Maël Valais
+devtoId: 365825
+devtoPublished: false
 ---
 
-- [General information](#general-information)
-- [Sed](#sed)
-- [Shell, terminal, console, command line](#shell-terminal-console-command-line)
-- [`.bash_profile` vs `.bashrc`](#bash_profile-vs-bashrc)
-- [Tty, pty, interactive vs non-interactive](#tty-pty-interactive-vs-non-interactive)
-- [Login vs. non-login shells](#login-vs-non-login-shells)
-- [Use `bashrc` also on login shell](#use-bashrc-also-on-login-shell)
-- [Parallelize xargs](#parallelize-xargs)
-- [Discrepencies between /bin/sh versions](#discrepencies-between-binsh-versions)
+1. [General information](#general-information)
+2. [Sed](#sed)
+3. [Shell, terminal, console, command line](#shell-terminal-console-command-line)
+4. [`.bash_profile` vs `.bashrc`](#bash_profile-vs-bashrc)
+5. [Tty, pty, interactive vs non-interactive](#tty-pty-interactive-vs-non-interactive)
+6. [Login vs. non-login shells](#login-vs-non-login-shells)
+7. [Use `bashrc` also on login shell](#use-bashrc-also-on-login-shell)
+8. [Parallelize xargs](#parallelize-xargs)
+9. [Discrepencies between /bin/sh versions](#discrepencies-between-binsh-versions)
 
 ## General information
 
-- Xargs for creating positionnals through stdin
-  `included_figures.sh | xargs git add`
+- Xargs for creating positionnals through stdin `included_figures.sh | xargs git add`
 
-- Avoid the sub-shell problem when `while read a`
-  `while read a; do ...; done < <(ls)`
-  pour éviter d'avoir le while dans un sous-shell
-  C.f. Process Substitution dans man bash
+- Avoid the sub-shell problem when `while read a` `while read a; do ...; done < <(ls)` pour éviter d'avoir le while dans un sous-shell C.f. Process Substitution dans man bash
 
-- Parameter Expansion (man bash -> /Parameter Expansion)
-  `${a:-text}` if $a isn't set, the${} expression returns "text"
-  `${a:+text}` if $a isn't set, the${} expression returns nothing
-  `${a:=text}` same but \$a is also set to "text"
-  `${a// /_/}` substitutes all spaces to `_` in the content of a
-- iterate on each space-separated elements of a list
-  for e in `echo "a b c d e"`; do
-  echo \$e
-  done
-- To know if a variable is empty or not (`man test`):
-  -n STRING
-  the length of STRING is nonzero
-  -z STRING
-  the length of STRING is zero
+- Parameter Expansion (man bash -> /Parameter Expansion) `${a:-text}` if $a isn't set, the${} expression returns "text" `${a:+text}` if $a isn't set, the${} expression returns nothing `${a:=text}` same but \$a is also set to "text" `${a// /_/}` substitutes all spaces to `_` in the content of a
+- iterate on each space-separated elements of a list for e in `echo "a b c d e"`; do echo \$e done
+- To know if a variable is empty or not (`man test`): -n STRING the length of STRING is nonzero -z STRING the length of STRING is zero
 
 ## Sed
 
@@ -48,27 +35,14 @@ Substitute dots to `_` in filenames:
 
 ## Shell, terminal, console, command line
 
-- Terminal
-  text input/output environment (also means a specific file in Unix world)
-  ttys001, ttys002... are Unix "terminal" files. These are provided by the
-  kernel
-- Virtual/emulated terminal
-  layer over the plain Unix terminal (iTerm2,
-  etc)
-- Console
-  local physical terminal (with screen and keyboard)
-- Shell
-  when launching a terminal (ttys001...), it is the program that allows to
-  launch other programs (commands like `ls`)
-- Command-line shell
-  A shell specialized for interpreting commands
-- Bash
-  one of the many command-line shells
-- `tty`: Teletype, meaning interactive terminal, as opposed to
-  tty-less/headless terminal.
-- `pty`: pseudo-teletype is a tty that does not directly talk to a end-user
-  terminal but instead talks to another terminal. Most terminal emulators
-  such as iTerm2, xterm... use a pty instead of a tty.
+- Terminal text input/output environment (also means a specific file in Unix world) ttys001, ttys002... are Unix "terminal" files. These are provided by the kernel
+- Virtual/emulated terminal layer over the plain Unix terminal (iTerm2, etc)
+- Console local physical terminal (with screen and keyboard)
+- Shell when launching a terminal (ttys001...), it is the program that allows to launch other programs (commands like `ls`)
+- Command-line shell A shell specialized for interpreting commands
+- Bash one of the many command-line shells
+- `tty`: Teletype, meaning interactive terminal, as opposed to tty-less/headless terminal.
+- `pty`: pseudo-teletype is a tty that does not directly talk to a end-user terminal but instead talks to another terminal. Most terminal emulators such as iTerm2, xterm... use a pty instead of a tty.
 
 What happens when I want to launch some bourne-shell commands:
 
@@ -91,9 +65,7 @@ A login shell is a shell where \$0 == "-"
 
 ## Login vs. non-login shells
 
-An interactive login shell is the shell launched when using ssh, iTerm2 or
-xterm. In interactive login shell, `.profile` and `.bash_profile` are used.
-To know if you are in a login shell:
+An interactive login shell is the shell launched when using ssh, iTerm2 or xterm. In interactive login shell, `.profile` and `.bash_profile` are used. To know if you are in a login shell:
 
 ```sh
 $ echo $0
@@ -121,29 +93,26 @@ fi
 
     /usr/local/bin/code --list-extensions | xargs -L 1 -P 4 /usr/local/bin/code-insiders --install-extension
 
-
 ## Discrepencies between /bin/sh versions
 
-On Ubuntu, `/bin/sh` is hard-linked to `/bin/dash`. On macOS, `/bin/sh` is
-hard-linked to `/bin/bash`. None of them are the original "Bourne shell"!
+On Ubuntu, `/bin/sh` is hard-linked to `/bin/dash`. On macOS, `/bin/sh` is hard-linked to `/bin/bash`. None of them are the original "Bourne shell"!
 
-On top of that, `make` always uses `/bin/sh`, which means there are
-discrepancies between Ubuntu and macOS:
+On top of that, `make` always uses `/bin/sh`, which means there are discrepancies between Ubuntu and macOS:
 
 - bash knows about `<<<` (here-string), but dash doesn't
 - bash knows about `<()` (process substitution), but dash doesn't
 - bash knows about `${a/b/c}` (glob variable content replace) but dash doesn't
   ```sh
-	% bash -c 'A=foo; echo ${A/foo/bar}'
+  '
   bar
   % dash -c 'A=foo; echo ${A/foo/bar}'
   dash: 1: Bad substitution
-```
+  ```
+
+````
 
 **Workaround**: force `make` to use a well known shell, e.g. in your Makefile:
 
 ```sh
 SHELL := /bin/bash
-```
-
-
+````

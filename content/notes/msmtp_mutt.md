@@ -3,14 +3,15 @@ title: Using mutt and msmtp with Gmail
 date: 2018-06-30
 tags: []
 author: Maël Valais
+devtoId: 365837
+devtoPublished: false
 ---
 
 On macOS, install msmtp:
 
     brew install mutt msmtp
 
-I read this thread:
-<https://www.engadget.com/2010/05/04/msmtp-a-free-tool-to-send-email-from-terminal/>
+I read this thread: <https://www.engadget.com/2010/05/04/msmtp-a-free-tool-to-send-email-from-terminal/>
 
 In order to use msmtp from command-line 'mail'
 
@@ -20,8 +21,7 @@ In order to use msmtp from command-line 'mail'
    set sendmail=/usr/local/bin/msmtp
    ```
 
-2. In Keychain Access.app, go to File > New Password Item (Cmd+N)
-   and fill it with
+2. In Keychain Access.app, go to File > New Password Item (Cmd+N) and fill it with
 
    ```plain
        smtp://smtp.gmail.com
@@ -29,9 +29,7 @@ In order to use msmtp from command-line 'mail'
        mypassword
    ```
 
-3. In Keychain Access.app, select System Roots, select all certificates
-   and File > Export Items (Shift+Cmd+E) > Privacy Enhanced Mail (.pem)
-   and save it as 'Certificates.pem' in your \$HOME.
+3. In Keychain Access.app, select System Roots, select all certificates and File > Export Items (Shift+Cmd+E) > Privacy Enhanced Mail (.pem) and save it as 'Certificates.pem' in your \$HOME.
 
 4. Test the configuration with
 
@@ -41,8 +39,7 @@ In order to use msmtp from command-line 'mail'
 
 Troubleshooting:
 
-- Check in keychain Access.app that there is only ONE Internet password using the
-  email@gmail.com and smtp://smtp.gmail.com.
+- Check in keychain Access.app that there is only ONE Internet password using the email@gmail.com and smtp://smtp.gmail.com.
 - If the SMTP of Google says that you should go to some adress, with the error:
 
       send-mail: server message: 534-5.7.14 <https://accounts.google.com/signin/continue?sarp=1&scc=1&plt=AKgnsbtk
@@ -59,16 +56,12 @@ Troubleshooting:
 
 ## Set up Mutt
 
-I followed the instructions of <https://gist.github.com/chrismytton/3976435> except
-for the keychain stuff:
+I followed the instructions of <https://gist.github.com/chrismytton/3976435> except for the keychain stuff:
 
-1. We are going to re-use the Keychain thing we created earlier. In order to show
-   the password, use
+1. We are going to re-use the Keychain thing we created earlier. In order to show the password, use
 
    ```shell
    security find-internet-password -s smtp.gmail.com -a email@gmail.com -w
    ```
 
-   where '-w' tells him to only show the password, '-s' means server (in my case I
-   had used 'smtp://smtp.gmail.com' but you must remove the protocol smtp://) and
-   '-a' means account.
+   where '-w' tells him to only show the password, '-s' means server (in my case I had used 'smtp://smtp.gmail.com' but you must remove the protocol smtp://) and '-a' means account.

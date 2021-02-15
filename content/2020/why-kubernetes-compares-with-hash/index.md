@@ -3,16 +3,18 @@ title: "Why Kubernetes Compares With Hash"
 description: ""
 date: 2020-07-08T11:55:27+02:00
 url: /why-kubernetes-compares-with-hash
-images: [why-kubernetes-compares-with-hash/cover-why-kubernetes-compares-with-hash.png]
+images:
+  [
+    why-kubernetes-compares-with-hash/cover-why-kubernetes-compares-with-hash.png,
+  ]
 draft: true
 tags: []
 author: Maël Valais
+devtoId: 0
+devtoPublished: false
 ---
 
-In Kubernetes, the replica set controller uses a hashing mechanism to
-compare objects. Pods that are owned by a replica set have a label that is
-used to remember what the hash of the pod template that led to this pod
-spec:
+In Kubernetes, the replica set controller uses a hashing mechanism to compare objects. Pods that are owned by a replica set have a label that is used to remember what the hash of the pod template that led to this pod spec:
 
 ```yaml
 kind: Pod
@@ -21,22 +23,15 @@ metadata:
     pod-template-hash: 775855699b
 ```
 
-In this post, I want to present the advantages and limitations of using a
-hash function in this context.
+In this post, I want to present the advantages and limitations of using a hash function in this context.
 
-✅ **Pros**: works around the fact that child object might get mutated or
-defaulted, which means the `reflect.DeepEqual` can't work (**what about
-performance???**)
+✅ **Pros**: works around the fact that child object might get mutated or defaulted, which means the `reflect.DeepEqual` can't work (**what about performance???**)
 
-❌ **Cons**: if the child gets updated, the parent cannot know that it has
-been changed since the hash only works in one way. (**talk about
-replica set mapping to multiple pods**)
+❌ **Cons**: if the child gets updated, the parent cannot know that it has been changed since the hash only works in one way. (**talk about replica set mapping to multiple pods**)
 
 - why is it a label and not an annotation?
 
-Looks like the hash is created [in the replicaset sync func][rs-sync] and
-it uses the [`ComputeHash`][ComputeHash] func which uses
-[fnv.New32a](https://golang.org/pkg/hash/fnv/#New32) from the std lib:
+Looks like the hash is created [in the replicaset sync func][rs-sync] and it uses the [`ComputeHash`][computehash] func which uses [fnv.New32a](https://golang.org/pkg/hash/fnv/#New32) from the std lib:
 
 ```go
 // ComputeHash returns a hash value calculated from pod template and
@@ -57,7 +52,7 @@ func ComputeHash(template *v1.PodTemplateSpec, collisionCount *int32) string {
 }
 ```
 
-and the [`DeepHashObject`][DeepHashObject] looks like this:
+and the [`DeepHashObject`][deephashobject] looks like this:
 
 ```go
 // DeepHashObject writes specified object to hash using the spew library
@@ -75,14 +70,11 @@ func DeepHashObject(hasher hash.Hash, objectToWrite interface{}) {
 }
 ```
 
-So the hashing mechanism uses
-[davecgh/go-spew](https://github.com/davecgh/go-spew) to turn the object
-into a string, and then uses the `fnv` std library to hash that string.
+So the hashing mechanism uses [davecgh/go-spew](https://github.com/davecgh/go-spew) to turn the object into a string, and then uses the `fnv` std library to hash that string.
 
 [rs-sync]: https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/deployment/sync.go#L189
-[ComputeHash]: https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/controller_utils.go#L1130-L1145
-[DeepHashObject]: https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/util/hash/hash.go#L25-L37
-
+[computehash]: https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/controller/controller_utils.go#L1130-L1145
+[deephashobject]: https://github.com/kubernetes/kubernetes/blob/7e75a5ef/pkg/util/hash/hash.go#L25-L37
 
 ## Benchmarking two hashing functions
 
@@ -141,9 +133,7 @@ func DeepHashObject(hasher hash.Hash, objectToWrite interface{}) {
 }
 ```
 
-The winner seems to be the Kubernetes' ComputeHash function, although it
-relies on spew to generate a string. I guess most of the time spent by
-hashstructure.Hash is due to the reflect package?
+The winner seems to be the Kubernetes' ComputeHash function, although it relies on spew to generate a string. I guess most of the time spent by hashstructure.Hash is due to the reflect package?
 
 ```sh
 % go test -bench .

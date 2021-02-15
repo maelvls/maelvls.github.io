@@ -6,6 +6,8 @@ url: /bgp-101
 images: [bgp-101/cover-bgp-101.png]
 draft: true
 author: Maël Valais
+devtoId: 0
+devtoPublished: false
 ---
 
 ```sh
@@ -156,7 +158,3 @@ RPKI validation codes: V valid, I invalid, N Not found
  * i                   66.198.127.81          100     85      0 6453 13335 i
  * i                   4.68.73.153            100     85      0 3356 13335 i
 ```
-
-
-
-

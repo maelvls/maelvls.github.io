@@ -3,17 +3,15 @@ title: It's always the DNS' fault
 date: 2020-07-25
 tags: [networking]
 author: Maël Valais
+devtoId: 410260
+devtoPublished: false
 ---
 
 ## Terms
 
-A domain name (or just "domain") is a string the form `bar.foo.com.`. Not
-all domains refer to physical machines; for example, one of my domains,
-`k.maelvls.dev.`, do not point to any physical machine.
+A domain name (or just "domain") is a string the form `bar.foo.com.`. Not all domains refer to physical machines; for example, one of my domains, `k.maelvls.dev.`, do not point to any physical machine.
 
-We often represent the domain name space using a tree. Each node is a
-domain. Leaves and nodes may have `A` records. Here is a simple example of
-the domain space represented as a tree:
+We often represent the domain name space using a tree. Each node is a domain. Leaves and nodes may have `A` records. Here is a simple example of the domain space represented as a tree:
 
 ```sh
 .
@@ -24,16 +22,9 @@ the domain space represented as a tree:
 └── io.
 ```
 
-A [zone][rfc1034-terms] is a subtree of the domain space that is under the
-authority of a given name server. In the following, I will use "subtree"
-and "zone" interchangeably and I identify a zone (or subtree) by its apex
-domain; the apex is domain name at the root of a zone.
+A [zone][rfc1034-terms] is a subtree of the domain space that is under the authority of a given name server. In the following, I will use "subtree" and "zone" interchangeably and I identify a zone (or subtree) by its apex domain; the apex is domain name at the root of a zone.
 
-> I decided to put domain names directly in each node; note that the [RFC
-> 1034][rfc1034-space] represents the domain space as a tree of labels (a
-> label is of the form `foo` or `foo-bar`). In this tree, the domain name
-> of a node has to be reconstructed by concatenating the labels starting
-> from the node and ending with the root of the domain space tree.
+> I decided to put domain names directly in each node; note that the [RFC 1034][rfc1034-space] represents the domain space as a tree of labels (a label is of the form `foo` or `foo-bar`). In this tree, the domain name of a node has to be reconstructed by concatenating the labels starting from the node and ending with the root of the domain space tree.
 
 From the above example, my zone is:
 
@@ -42,17 +33,9 @@ maelvls.dev.
 └── k.maelvls.dev.
 ```
 
-A zone has "authority" over its subtree as long as one of its parent
-domains has an `NS` record to a name server that has the records for that
-zone. I told my registrar (Google Domains) to use the Google DNS name
-servers, which means that the `dev.` name servers now have `NS` records
-that point to Google DNS' name servers. With this `NS` record, the `dev.`
-zone "delegates" the `maelvls.dev.` zone to Google DNS' name servers.
+A zone has "authority" over its subtree as long as one of its parent domains has an `NS` record to a name server that has the records for that zone. I told my registrar (Google Domains) to use the Google DNS name servers, which means that the `dev.` name servers now have `NS` records that point to Google DNS' name servers. With this `NS` record, the `dev.` zone "delegates" the `maelvls.dev.` zone to Google DNS' name servers.
 
-> Note: recursivity and delegation are different: a recursive DNS makes the
-> subsequent calls on behalf of its client, while delegating a DNS zone means
-> that a certain domain of a zone is "forwarded" to another name server using
-> the `NS` record.
+> Note: recursivity and delegation are different: a recursive DNS makes the subsequent calls on behalf of its client, while delegating a DNS zone means that a certain domain of a zone is "forwarded" to another name server using the `NS` record.
 
 For example, let us use `dig` to see all intermediate DNS queries at once:
 
@@ -72,10 +55,7 @@ minio.k.maelvls.dev.           300     IN  A       91.211.152.190
 
 ## Client-side name guessing
 
-In some cases, the DNS query may omit the right-most part of the domain.
-For example, in Kubernetes, you may either use the fully-qualified domain
-name (FQDN, which is a domain that contains the `.` root domain), or just
-use a part of the domain name:
+In some cases, the DNS query may omit the right-most part of the domain. For example, in Kubernetes, you may either use the fully-qualified domain name (FQDN, which is a domain that contains the `.` root domain), or just use a part of the domain name:
 
 ```sh
 nslookup kubernetes.default.svc.cluster.local    # works (FQDN)
@@ -85,9 +65,7 @@ nslookup kubernetes.default                      # works
 nslookup kubernetes                              # works (guesses namespace)
 ```
 
-In CoreDNS, you can give the apex domain name (by default, in Kubernetes,
-the apex is `cluster.local.`). The Corefile needs to load the [kubernetes
-plugin][kubernetes-plugin]:
+In CoreDNS, you can give the apex domain name (by default, in Kubernetes, the apex is `cluster.local.`). The Corefile needs to load the [kubernetes plugin][kubernetes-plugin]:
 
 ```sh
 .:53 {
@@ -95,9 +73,7 @@ plugin][kubernetes-plugin]:
 }
 ```
 
-> Note that `kubernetes.default` is not a subdomain; a [subdomain][rfc7719]
-> of a domain is a domain that contains the domain itself on it right-most
-> side.
+> Note that `kubernetes.default` is not a subdomain; a [subdomain][rfc7719] of a domain is a domain that contains the domain itself on it right-most side.
 >
 > ```plain
 > minio.k.maelvls.dev   is subdomain of     k.maelvls.dev
@@ -105,9 +81,7 @@ plugin][kubernetes-plugin]:
 > k.maelvls.dev         is subdomain of       maelvls.dev
 > ```
 
-Whenever a container is given to resolve any kind of name (even one that
-looks like an FQDN; the client doesn't known, really), it will go through
-the "search domain names" list configured in `/etc/resolv.conf`:
+Whenever a container is given to resolve any kind of name (even one that looks like an FQDN; the client doesn't known, really), it will go through the "search domain names" list configured in `/etc/resolv.conf`:
 
 ```sh
 % cat /etc/resolv.conf
@@ -132,25 +106,21 @@ Name:	kubernetes.default.svc.cluster.local
 Address: 10.96.0.1
 ```
 
-The client (the container `foo`) has to do two consecutive queries in order
-to get an answer; as you can see, the way partial domain name guessing is
-done is quite dumb and relies on many client-side queries:
+The client (the container `foo`) has to do two consecutive queries in order to get an answer; as you can see, the way partial domain name guessing is done is quite dumb and relies on many client-side queries:
 
 | queried name                         | queries count |
 | ------------------------------------ | ------------- |
 | kubernetes                           | 1             |
 | kubernetes.default                   | 2             |
 | kubernetes.default.svc               | 3             |
-| kubernetes.default.svc.cluster       | (*)           |
+| kubernetes.default.svc.cluster       | (\*)          |
 | kubernetes.default.svc.cluster.local | 4             |
 | foo (the container's name)           | 4             |
 | google.com                           | 4             |
 
-> (*) since the search domain name `cluster` doesn't exist in
-> `/etc/resolv.conf`, this name can't be resolved.
+> (\*) since the search domain name `cluster` doesn't exist in `/etc/resolv.conf`, this name can't be resolved.
 
-I noticed something unexpected when querying `foo` (which is the
-container's name). I was expecting the name to be picked from `/etc/hosts`:
+I noticed something unexpected when querying `foo` (which is the container's name). I was expecting the name to be picked from `/etc/hosts`:
 
 ```sh
 % cat /etc/hosts
@@ -187,8 +157,7 @@ Name:	foo
 Address: 127.0.0.1
 ```
 
-Whenever a container queries a name that is outside of Kubernetes, it has
-to go through all these four   NSDOMA  ` before actually getting a response:
+Whenever a container queries a name that is outside of Kubernetes, it has to go through all these four NSDOMA ` before actually getting a response:
 
 ```sh
 % tcpdump "udp port 53"
@@ -209,20 +178,14 @@ Name:	google.com
 Address: 172.217.18.206
 ```
 
-
-The DHCP answer from my router contains the [option header
-15](https://tools.ietf.org/html/rfc2132#section-3.17) "Domain Name"; in my
-case, the only domain name returned is `home`. Which means that anytime the
-client (my machine) wants to query a name, say `macbook-pro`, it will try
-in this order:
+The DHCP answer from my router contains the [option header 15](https://tools.ietf.org/html/rfc2132#section-3.17) "Domain Name"; in my case, the only domain name returned is `home`. Which means that anytime the client (my machine) wants to query a name, say `macbook-pro`, it will try in this order:
 
 ```sh
 macbook-pro.home.
 macbook-pro.
 ```
 
-Here is a capture of my machine trying to figure out the name
-`macbook-pro`:
+Here is a capture of my machine trying to figure out the name `macbook-pro`:
 
 ```sh
 % tcpdump -ien0 '(udp port 53 && (src 192.168.1.1 || dst 192.168.1.1))'
@@ -233,8 +196,7 @@ listening on en0, link-type EN10MB (Ethernet), capture size 262144 bytes
 12:04:34.948013 IP 192.168.1.1.domain > 192.168.1.14.53531: 9166* 2/0/0 A 192.168.1.14, A 192.168.1.21 (71)
 ```
 
-- a hierarchical DNS (also called DNS chaining or DNS delegation) is when a
-  DNS has a record `NS` to another DNS server.
+- a hierarchical DNS (also called DNS chaining or DNS delegation) is when a DNS has a record `NS` to another DNS server.
 
 [kubernetes-plugin]: https://github.com/coredns/coredns/tree/master/plugin/kubernetes
 [rfc1123]: https://tools.ietf.org/html/rfc1123
@@ -243,17 +205,13 @@ listening on en0, link-type EN10MB (Ethernet), capture size 262144 bytes
 [rfc1034-space]: https://tools.ietf.org/html/rfc1034#section-3.1 "Domain space"
 [rfc7719]: https://tools.ietf.org/html/rfc7719 "DNS terminology"
 
-One single [SOA record](https://simpledns.plus/help/soa-records) (start of
-authority) exists for every given zone. As you can see here, my zone is
-`maelvls.dev.`.
+One single [SOA record](https://simpledns.plus/help/soa-records) (start of authority) exists for every given zone. As you can see here, my zone is `maelvls.dev.`.
 
 ## Playing with `k8s_gateway`
 
-The Corefile is available
-[here](https://github.com/maelvls/k.maelvls.dev/blob/0e77a838251b209646f433a2b1d5e1a440f8e856/helm/ext-coredns.yaml#L13-L31).
+The Corefile is available [here](https://github.com/maelvls/k.maelvls.dev/blob/0e77a838251b209646f433a2b1d5e1a440f8e856/helm/ext-coredns.yaml#L13-L31).
 
-Before, my top-level DNS would be littered with records created by
-ExternalDNS:
+Before, my top-level DNS would be littered with records created by ExternalDNS:
 
 ```sh
 % gcloud dns record-sets list --zone=maelvls

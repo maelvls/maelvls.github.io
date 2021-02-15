@@ -10,8 +10,7 @@ To create a new post:
 hugo new -k bundle 2020/client-go-transitive-hell
 ```
 
-The `-k` flag tells hugo to use `archetypes/bundle` ([see
-doc](https://gohugo.io/content-management/archetypes/#directory-based-archetypes)).
+The `-k` flag tells hugo to use `archetypes/bundle` ([see doc](https://gohugo.io/content-management/archetypes/#directory-based-archetypes)).
 
 Locally serve:
 

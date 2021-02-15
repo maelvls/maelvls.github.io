@@ -3,11 +3,11 @@ title: Epson scanner, large PDFs and ImageMagick (convert CLI)
 date: 2017-09-12
 tags: []
 author: Maël Valais
+devtoId: 365833
+devtoPublished: false
 ---
 
-The Epson iPrint soft is producing PDFs in 300dpi but the 300 information does
-not seem to be stored in the PDF metadata; thus, the PDF reader thinks
-by default that it is a 72 dpi PDF and thus the huge size:
+The Epson iPrint soft is producing PDFs in 300dpi but the 300 information does not seem to be stored in the PDF metadata; thus, the PDF reader thinks by default that it is a 72 dpi PDF and thus the huge size:
 
     87,49 × 123,72 cm
 
@@ -57,8 +57,7 @@ mogrify -despeckle -fuzz 5% -fill white -opaque white -gamma 0.8 -colorspace gra
 
 ## To black and white
 
-A SO link talking about that:
-<https://stackoverflow.com/questions/15211428/conversion-of-tiff-to-pdf-with-ghostscript>.
+A SO link talking about that: <https://stackoverflow.com/questions/15211428/conversion-of-tiff-to-pdf-with-ghostscript>.
 
 ```shell
 gs -dQUIET -dNOPAUSE -r200 -dBATCH -sPAPERSIZE=a4 -sDEVICE=tiffg3 -sOutputFile=temp.tiff -sColorConversionStrategy=Mono -sColorConversionStrategyForImages=/Mono -dProcessColorModel=/DeviceGray "a.pdf"

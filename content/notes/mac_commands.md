@@ -3,6 +3,8 @@ title: Interesting macOS-specific commands
 date: 2016-10-20
 tags: []
 author: Maël Valais
+devtoId: 365826
+devtoPublished: false
 ---
 
 ```shell
