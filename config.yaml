@@ -57,6 +57,9 @@ params:
     - name: Twitter
       icon: fab fa-twitter
       url: "https://twitter.com/maelvls"
+    - name: Maël Valais's DEV Community Profile
+      icon: fab fa-dev
+      url: https://dev.to/maelvls
 
 # menu:
 #   main:
