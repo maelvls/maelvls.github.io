@@ -67,32 +67,32 @@
 </code></pre></div><p>In this short post, I will explain why <code>GO111MODULE</code> exists, its caveats and interesting bits that you need to know when dealing with Go Modules.</p>
 <hr>
 <p><strong>Table of content:</strong></p>
-<ol>
+<ul>
 <li><a href="#from-gopath-to-go111module">From <code>GOPATH</code> to <code>GO111MODULE</code></a></li>
 <li><a href="#the-go111module-environment-variable">The <code>GO111MODULE</code> environment variable</a>
-<ol>
+<ul>
 <li><a href="#go111module-with-go-111-and-112"><code>GO111MODULE</code> with Go 1.11 and 1.12</a></li>
 <li><a href="#go111module-with-go-113"><code>GO111MODULE</code> with Go 1.13</a></li>
 <li><a href="#go111module-with-go-114"><code>GO111MODULE</code> with Go 1.14</a></li>
 <li><a href="#so-why-is-go111module-everywhere">So, why is <code>GO111MODULE</code> everywhere?!</a></li>
 <li><a href="#the-pitfall-of-gomod-being-silently-updated">The pitfall of <code>go.mod</code> being silently updated</a></li>
 <li><a href="#the--u-and-version-pitfall">The <code>-u</code> and <code>@version</code> pitfall</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#caveats-when-using-go-modules">Caveats when using Go Modules</a>
-<ol>
+<ul>
 <li><a href="#remember-that-go-get-also-updates-your-gomod">Remember that <code>go get</code> also updates your <code>go.mod</code></a></li>
 <li><a href="#where-are-the-sources-of-the-dependencies-with-go-modules">Where are the sources of the dependencies with Go Modules</a></li>
 <li><a href="#set-go111module-on-a-per-folder-basis-with-direnv">Set <code>GO111MODULE</code> on a per-folder basis with <code>direnv</code></a></li>
 <li><a href="#private-go-modules-and-dockerfile">Private Go Modules and Dockerfile</a>
-<ol>
+<ul>
 <li><a href="#solution-1-vendoring">Solution 1: vendoring</a></li>
 <li><a href="#solution-2-no-vendoring">Solution 2: no vendoring</a></li>
-</ol>
+</ul>
 </li>
-</ol>
+</ul>
 </li>
-</ol>
+</ul>
 <hr>
 <h2 id="from-gopath-to-go111module">From <code>GOPATH</code> to <code>GO111MODULE</code></h2>
 <p>First off, let&rsquo;s talk about GOPATH. When Go was first introduced in 2009, it was not shipped with a package manager. Instead, <code>go get</code> would fetch all the sources by using their import paths and store them in <code>$GOPATH/src</code>. There was no versioning and the &lsquo;master&rsquo; branch would represent a stable version of the package.</p>
