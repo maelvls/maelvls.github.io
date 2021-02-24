@@ -3,7 +3,8 @@ title: "Github Actions with a private Terraform module"
 description: Terraform makes it easy to manage infrastructure at scale; you might want to share code between modules, and that's where it becomes tricky. In this post, I try to give some clues on how to use terraform across private Github repos.
 date: 2020-05-09T16:02:26+02:00
 url: /gh-actions-with-tf-private-repo
-images: [gh-actions-with-tf-private-repo/cover-gh-actions-with-tf-private-repo.png]
+images:
+  [gh-actions-with-tf-private-repo/cover-gh-actions-with-tf-private-repo.png]
 tags: [terraform, github-actions]
 author: Maël Valais
 devtoId: 331169

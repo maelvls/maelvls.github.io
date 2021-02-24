@@ -1,17 +1,17 @@
 ---
 title: Writing a good Go SDK
-description: ''
+description: ""
 date: 2020-05-08T15:00:27.000+02:00
 url: "/writing-a-good-go-sdk"
 images:
-- writing-a-good-go-sdk/cover-writing-a-good-go-sdk.png
+  - writing-a-good-go-sdk/cover-writing-a-good-go-sdk.png
 tags: []
 author: Maël Valais
 devtoId: "0"
 devtoPublished: false
 draft: true
-
 ---
+
 The typical way of building a client in Go is to pass a `*http.Client` in order to let the caller set timeouts and so on. See [godo](https://github.com/digitalocean/godo/blob/97ac73b1d53e23afa2700e9f97d5eeb1f3641e3f/godo.go#L153-L188) (Digital Ocean API client) for a good way of doing it.
 
 Another good practice is to avoid hidden network calls. For example, most Go users do not expect a `NewClient` function to do a network call. Prefer using a dedicated function such as `client.Auth`.
