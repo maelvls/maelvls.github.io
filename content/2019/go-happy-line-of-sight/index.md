@@ -8,7 +8,7 @@ url: "/go-happy-line-of-sight"
 images:
   - go-happy-line-of-sight/cover-happy-line-of-sight.png
 author: Maël Valais
-devtoId: "210090"
+devtoId: 210090
 devtoPublished: true
 ---
 
