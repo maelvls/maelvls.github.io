@@ -155,10 +155,10 @@ We see a lot of variance across projects. In late 2017, we saw some uncertainty 
 
 ## Conditions vs. State machine
 
-[api-conventions]: https://github.com/kubernetes/community/blob/a2cdce5/contributors/devel/sig-architecture/api-conventions.md
-[principles]: https://github.com/kubernetes/community/blob/06207d2/contributors/design-proposals/architecture/principles
+[api-conventions.md]: https://github.com/kubernetes/community/blob/4c9ef2d/contributors/devel/sig-architecture/api-conventions.md
+[principles.md]: https://github.com/kubernetes/community/blob/4c9ef2d/contributors/design-proposals/architecture/principles.md
 
-> ([api-conventions][], July 2017) Conditions are observations and not, themselves, state machines.
+> ([api-conventions.md][], July 2017) Conditions are observations and not, themselves, state machines.
 
 So, what is the difference between a state in a state machine and an observation? A state machine has a known a fixed state. In comparison, conditions offers an 'open-world' perspective with the Unknown value. For example, the status of a Pod is partly constructed by the kube-scheduler, partly by the kubelet.
 
@@ -168,7 +168,7 @@ But when an object gets created, no conditions are present. What does that mean?
 
 In the end, this set of conditions are just a way of communicating changes of state between components, and this state can always be reconstructed by observing the system:
 
-> ([principles][], 2015) Object status must be 100% reconstructable by observation. Any history kept (E.g., through conditions or other fields in 'status') must be just an optimization and not required for correct operation.
+> ([principles.md][], 2015) Object status must be 100% reconstructable by observation. Any history kept (E.g., through conditions or other fields in 'status') must be just an optimization and not required for correct operation.
 >
 > Do not define comprehensive state machines for objects with behaviors associated with state transitions and/or "assumed" states that cannot be ascertained by observation.
 
@@ -228,7 +228,7 @@ Do I really need to bother with this `.status.conditions` array, can I just use 
 
 At first, Kubernetes would rely on many Reasons:
 
-> ([api-conventions][], July 2017) In condition types, and everywhere else they appear in the API, `Reason` is intended to be a one-word, CamelCase representation of the category of cause of the current status, and `Message` is intended to be a human-readable phrase or sentence, which may contain specific details of the individual occurrence.
+> ([api-conventions.md][], July 2017) In condition types, and everywhere else they appear in the API, `Reason` is intended to be a one-word, CamelCase representation of the category of cause of the current status, and `Message` is intended to be a human-readable phrase or sentence, which may contain specific details of the individual occurrence.
 >
 > `Reason` is intended to be used in concise output, such as one-line kubectl get output, and in summarizing occurrences of causes, whereas `Message` is intended to be presented to users in detailed status explanations, such as kubectl describe output.
 
@@ -268,11 +268,11 @@ If you think that the 'Errored' state can be useful for other components or the 
 
 Regarding the naming of condition types, here is some advice:
 
-> ([api-conventions][], July 2017) Condition types should indicate state in the "abnormal-true" polarity. For example, if the condition indicates when a policy is invalid, the "is valid" case is probably the norm, so the condition should be called "Invalid".
+> ([api-conventions.md][], July 2017) Condition types should indicate state in the "abnormal-true" polarity. For example, if the condition indicates when a policy is invalid, the "is valid" case is probably the norm, so the condition should be called "Invalid".
 
 Also, remember that these types are part of your API and you should keep in mind that they require maintaining backwards- and forwards-compatibility. Adding a new condition is not free: you must maintain them over time.
 
-> ([api-conventions][], July 2017) The meaning of a Condition can not be changed arbitrarily - it becomes part of the API, and has the same backwards- and forwards-compatibility concerns of any other part of the API.
+> ([api-conventions.md][], July 2017) The meaning of a Condition can not be changed arbitrarily - it becomes part of the API, and has the same backwards- and forwards-compatibility concerns of any other part of the API.
 
 Conditions are also a clean way of letting third-party components (such as the cluster-api controller) to add their own 'named' conditions to an existing object, e.g. to a Pod (see [pod-readiness-gate][]):
 

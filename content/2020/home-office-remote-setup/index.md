@@ -23,7 +23,7 @@ Here is my current setup:
 - Apple Magic Keyboard. I also use a [Sharkoon PureWriter TKL](https://fr.sharkoon.com/product/PureWriter%20TKL) from time to time when I want to bother my collegues with the clank-clank sound of the red switches
 - [Logitech MX Master](https://www.amazon.co.uk/Logitech-Master-Wireless-Bluetooth-Windows/dp/B00ULNAOMA) Just an excellent mouse
 - [LG 27UL850-W 27 inches 4K monitor](https://www.amazon.com/LG-27UL850-W-Display-DisplayHDR-Connectivity/dp/B07MKT1W65/ref=cm_cr_arp_d_product_top?ie=UTF8)
-- [Griffin Elevator stand](https://griffintechnology.com/products/stands-and-mounts/elevator)
+- [Griffin Elevator stand](https://griffintechnology.com/products/elevator)
 - AUKEY mousepad XXL
 - USB-C hub Ugreen and AUKEY USB3 hub
 - The [Flexispot standing desk E5B](https://www.amazon.co.uk/FlexiSpot-Adjustable-Electric-Standing-Automatic/dp/B071G2NSRP/ref=sr_1_fkmr0_1?keywords=flexispot%2BE5B&qid=1563776981&s=electronics&sr=8-1-fkmr0&th=1) (B = black) with a €25 wood board I mounted on top.

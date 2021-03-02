@@ -46,7 +46,7 @@ params:
 
   # Custom css is expected to be in static/css/.
   customCSS: maelvls.css
-  subtitle: Systems software engineer. I write mostly about Kubernetes and Go. [About](/about)
+  subtitle: Systems software engineer. I write mostly about Kubernetes and Go. [About](/about/)
   avatar: /img/mael.jpg
   disableDisqusTypes:
     - page

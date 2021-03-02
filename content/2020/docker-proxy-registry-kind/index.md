@@ -174,11 +174,11 @@ EOF
 
 **Note 2:** the mirror prefix (`docker.io`) can be omitted for images stored on Docker Hub. For other registries such as `gcr.io`, this mirror prefix has to be given. Here is a table with some examples of image names that are first prepended with "docker.io" if the mirror prefix is not present, and we get the final address by mapping these mirror prefixes with mirror entries:
 
-| image name                  | "actual" image name         | registry address w.r.t. mirrors        |
-| --------------------------- | --------------------------- | -------------------------------------- |
-| alpine                      | docker.io/alpine            | https://registry-1.docker.io/v2/alpine |
-| gcr.io/istio-release/galley | gcr.io/istio-release/galley | https://gcr.io/v2/istio-release/galley |
-| something/someimage         | something/someimage         | https://something/v2/someimage         |
+| image name                  | "actual" image name         | registry address w.r.t. mirrors                                   |
+| --------------------------- | --------------------------- | ----------------------------------------------------------------- |
+| alpine                      | docker.io/alpine            | <https://registry-1.docker.io/v2/library/alpine/manifests/latest> |
+| gcr.io/istio-release/pilot  | gcr.io/istio-release/pilot  | <https://gcr.io/v2/istio-release/pilot/manifests/1.9.1>           |
+| foo.org/something/someimage | foo.org/something/someimage | <https://foo.org/v2/something/someimage/manifests/latest>         |
 
 ## Check that the caching proxy registry works
 
@@ -436,7 +436,7 @@ If you use Tilt, you might also want to tell Tilt that it can use the local regi
 kind get nodes | xargs -L1 -I% kubectl annotate node % tilt.dev/registry=localhost:5000 --overwrite
 ```
 
-then Tilt [will use](legacy-annotation-based-registry-discovery) `docker push localhost:5000/you-image` (from your host, not from the cluster container) in order to speed up things. Note that there is a proposal ([KEP 1755](https://github.com/kubernetes/enhancements/tree/master/keps/sig-cluster-lifecycle/generic/1755-communicating-a-local-registry)) that aims at standardizing the discovery of local registries using a configmap. Tilt already supports it, so you may use it!
+then Tilt will use `docker push localhost:5000/you-image` (from your host, not from the cluster container) in order to speed up things. Note that there is a proposal ([KEP 1755](https://github.com/kubernetes/enhancements/tree/master/keps/sig-cluster-lifecycle/generic/1755-communicating-a-local-registry)) that aims at standardizing the discovery of local registries using a configmap. Tilt already supports it, so you may use it!
 
 ## Improving the ClusterAPI docker provider to use a given network
 

@@ -21,7 +21,7 @@ So, how come the packet can come back ~~and does it use conntrack~~ and does Goo
 
 > **Update 14th April:** I initially thought that the conntrack kernel module would not register anything when using DNAT. [@networkop1](https://twitter.com/networkop1) showed me that conntrack registers the connection even for stateless DNATing.
 
-> [conntrack](https://netfilter.org/documentation/HOWTO/netfilter-hacking-HOWTO-3.html#ss3.3) is a part of the netfilter suite in the Linux kernel. It is in charge of remembering connections that are forwarded. The initial packet hits the iptables machinery and conntrack remembers it so that further packets don't need to go through iptables again. You can list the tracked connections using the [conntrack(8)](https://manpages.debian.org/testing/conntrack/conntrack.8.en.html) tool. I mention it in "[Debugging Kubernetes Networking](/debugging-kubernetes-networking)".
+> [conntrack](https://netfilter.org/documentation/HOWTO/netfilter-hacking-HOWTO-3.html#ss3.3) is a part of the netfilter suite in the Linux kernel. It is in charge of remembering connections that are forwarded. The initial packet hits the iptables machinery and conntrack remembers it so that further packets don't need to go through iptables again. You can list the tracked connections using the [conntrack(8)](https://manpages.debian.org/testing/conntrack/conntrack.8.en.html) tool. I mention it in "[Debugging Kubernetes Networking](/debugging-kubernetes-networking/)".
 
 Let us dive a bit more and add the "response" packets. For the following diagram, I used the excellent [textik](https://textik.com/) ascii drawing tool.
 

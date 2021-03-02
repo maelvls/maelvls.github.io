@@ -14,7 +14,7 @@ devtoPublished: true
 
 In Oct 2019, Ahmet Alp Balkan wrote [this blog post](https://ahmet.im/blog/kubectl-man-in-the-middle) that explains how to use `mitmproxy` to observe the requests made by `kubectl`. But I couldn't use the tutorial for two reasons:
 
-- I use `kind` to create local clusters which means I hit the Go `net/http` limitation (skips proxying for hosts `localhost` and `127.0.0.1`, see [this blog post](<(https://maelvls.dev/go-ignores-proxy-localhost/)>))
+- I use `kind` to create local clusters which means I hit the Go `net/http` limitation (skips proxying for hosts `localhost` and `127.0.0.1`, see [this blog post](https://maelvls.dev/go-ignores-proxy-localhost/))
 - I use client certs authentication, which can't work with the method presented by Ahmet; it can only work for header-based authentication (e.g. token) but not for client certs.
 
 In the following, I detail how I managed to make all that work.
