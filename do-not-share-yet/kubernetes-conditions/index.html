@@ -34,7 +34,7 @@
   </div>
 
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
-  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
       <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
@@ -237,7 +237,7 @@
 <p>We see a lot of variance across projects. In late 2017, we saw some uncertainty about Conditions disappearing. In the remaining of this post, I will try to give answers as to why you should use conditions and how to do so.</p>
 <h2 id="conditions-vs-state-machine">Conditions vs. State machine</h2>
 <blockquote>
-<p>(<a href="https://github.com/kubernetes/community/blob/a2cdce5/contributors/devel/sig-architecture/api-conventions.md">api-conventions</a>, July 2017) Conditions are observations and not, themselves, state machines.</p>
+<p>(<a href="https://github.com/kubernetes/community/blob/4c9ef2d/contributors/devel/sig-architecture/api-conventions.md">api-conventions.md</a>, July 2017) Conditions are observations and not, themselves, state machines.</p>
 </blockquote>
 <p>So, what is the difference between a state in a state machine and an observation? A state machine has a known a fixed state. In comparison, conditions offers an &lsquo;open-world&rsquo; perspective with the Unknown value. For example, the status of a Pod is partly constructed by the kube-scheduler, partly by the kubelet.</p>
 <p>But when an object gets created, no conditions are present. What does that mean?</p>
@@ -246,7 +246,7 @@
 </blockquote>
 <p>In the end, this set of conditions are just a way of communicating changes of state between components, and this state can always be reconstructed by observing the system:</p>
 <blockquote>
-<p>(<a href="https://github.com/kubernetes/community/blob/06207d2/contributors/design-proposals/architecture/principles">principles</a>, 2015) Object status must be 100% reconstructable by observation. Any history kept (E.g., through conditions or other fields in &lsquo;status&rsquo;) must be just an optimization and not required for correct operation.</p>
+<p>(<a href="https://github.com/kubernetes/community/blob/4c9ef2d/contributors/design-proposals/architecture/principles.md">principles.md</a>, 2015) Object status must be 100% reconstructable by observation. Any history kept (E.g., through conditions or other fields in &lsquo;status&rsquo;) must be just an optimization and not required for correct operation.</p>
 <p>Do not define comprehensive state machines for objects with behaviors associated with state transitions and/or &ldquo;assumed&rdquo; states that cannot be ascertained by observation.</p>
 </blockquote>
 <p>One last comment that explains why the Kubernetes docs don&rsquo;t have any state-machine diagram:</p>
@@ -294,7 +294,7 @@
 <p>Do I really need to bother with this <code>.status.conditions</code> array, can I just use <code>.status.phase</code> with a simple enum? Or just a <code>reason</code> as part of an existing &lsquo;Ready&rsquo; condition?</p>
 <p>At first, Kubernetes would rely on many Reasons:</p>
 <blockquote>
-<p>(<a href="https://github.com/kubernetes/community/blob/a2cdce5/contributors/devel/sig-architecture/api-conventions.md">api-conventions</a>, July 2017) In condition types, and everywhere else they appear in the API, <code>Reason</code> is intended to be a one-word, CamelCase representation of the category of cause of the current status, and <code>Message</code> is intended to be a human-readable phrase or sentence, which may contain specific details of the individual occurrence.</p>
+<p>(<a href="https://github.com/kubernetes/community/blob/4c9ef2d/contributors/devel/sig-architecture/api-conventions.md">api-conventions.md</a>, July 2017) In condition types, and everywhere else they appear in the API, <code>Reason</code> is intended to be a one-word, CamelCase representation of the category of cause of the current status, and <code>Message</code> is intended to be a human-readable phrase or sentence, which may contain specific details of the individual occurrence.</p>
 <p><code>Reason</code> is intended to be used in concise output, such as one-line kubectl get output, and in summarizing occurrences of causes, whereas <code>Message</code> is intended to be presented to users in detailed status explanations, such as kubectl describe output.</p>
 </blockquote>
 <p>Later, they mode to non-orthogonal (read: may-be-corrolated conditions):</p>
@@ -324,11 +324,11 @@
 <p>If you think that the &lsquo;Errored&rsquo; state can be useful for other components or the user (e.g. <code>kubectl wait --for=condition=errored</code>), then add it. If you think it is important for other components or for the user to know that something is in progress, go ahead and add a &lsquo;InProgress&rsquo; condition.</p>
 <p>Regarding the naming of condition types, here is some advice:</p>
 <blockquote>
-<p>(<a href="https://github.com/kubernetes/community/blob/a2cdce5/contributors/devel/sig-architecture/api-conventions.md">api-conventions</a>, July 2017) Condition types should indicate state in the &ldquo;abnormal-true&rdquo; polarity. For example, if the condition indicates when a policy is invalid, the &ldquo;is valid&rdquo; case is probably the norm, so the condition should be called &ldquo;Invalid&rdquo;.</p>
+<p>(<a href="https://github.com/kubernetes/community/blob/4c9ef2d/contributors/devel/sig-architecture/api-conventions.md">api-conventions.md</a>, July 2017) Condition types should indicate state in the &ldquo;abnormal-true&rdquo; polarity. For example, if the condition indicates when a policy is invalid, the &ldquo;is valid&rdquo; case is probably the norm, so the condition should be called &ldquo;Invalid&rdquo;.</p>
 </blockquote>
 <p>Also, remember that these types are part of your API and you should keep in mind that they require maintaining backwards- and forwards-compatibility. Adding a new condition is not free: you must maintain them over time.</p>
 <blockquote>
-<p>(<a href="https://github.com/kubernetes/community/blob/a2cdce5/contributors/devel/sig-architecture/api-conventions.md">api-conventions</a>, July 2017) The meaning of a Condition can not be changed arbitrarily - it becomes part of the API, and has the same backwards- and forwards-compatibility concerns of any other part of the API.</p>
+<p>(<a href="https://github.com/kubernetes/community/blob/4c9ef2d/contributors/devel/sig-architecture/api-conventions.md">api-conventions.md</a>, July 2017) The meaning of a Condition can not be changed arbitrarily - it becomes part of the API, and has the same backwards- and forwards-compatibility concerns of any other part of the API.</p>
 </blockquote>
 <p>Conditions are also a clean way of letting third-party components (such as the cluster-api controller) to add their own &lsquo;named&rsquo; conditions to an existing object, e.g. to a Pod (see <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate">pod-readiness-gate</a>):</p>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">Kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">

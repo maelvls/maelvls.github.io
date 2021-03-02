@@ -34,7 +34,7 @@
   </div>
 
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
-  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
       <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
@@ -165,52 +165,50 @@ One controller
 <tbody>
 <tr>
 <td>kube-controller-manager</td>
-<td>[<code>syncDeployment</code>][syncdeployment]</td>
+<td><a href="https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/deployment/deployment_controller.go#L560-L649"><code>syncDeployment</code></a></td>
 <td>Pod</td>
 <td>ReplicaSet</td>
 <td>Deployment</td>
 </tr>
 <tr>
 <td>kube-controller-manager</td>
-<td>[<code>syncReplicaSet</code>][syncreplicaset]</td>
+<td><a href="https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/replicaset/replica_set.go#L653-L721"><code>syncReplicaSet</code></a></td>
 <td></td>
 <td>Pod</td>
 <td></td>
 </tr>
 <tr>
 <td>kubelet</td>
-<td>[<code>syncPod</code>][syncpod]</td>
+<td><a href="https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/kubelet/status/status_manager.go#L514-L567"><code>syncPod</code></a></td>
 <td></td>
 <td></td>
 <td>Pod</td>
 </tr>
 <tr>
 <td>kube-scheduler</td>
-<td>[<code>scheduleOne</code>][scheduleone]</td>
+<td><a href="https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/scheduler/scheduler.go#L589-L762"><code>scheduleOne</code></a></td>
 <td></td>
 <td></td>
 <td>Pod</td>
 </tr>
 <tr>
 <td>kubelet</td>
-<td>[<code>syncNodeStatus</code>][syncnodestatus]</td>
+<td><a href="https://github.com/kubernetes/kubernetes/blob/5bac42bff9bfb9dfe0f2ea40f1c80cac47fc12b2/pkg/kubelet/kubelet_node_status.go#L374-L391"><code>syncNodeStatus</code></a></td>
 <td></td>
 <td></td>
 <td>Node</td>
 </tr>
 </tbody>
 </table>
-<p>[scheduleone]: <a href="https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/scheduler/scheduler.go#L589-L762">https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/scheduler/scheduler.go#L589-L762</a> [syncdeployment]: <a href="https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/deployment/deployment_controller.go#L560-L649">https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/deployment/deployment_controller.go#L560-L649</a> [syncreplicaset]: <a href="https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/replicaset/replica_set.go#L653-L721">https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/controller/replicaset/replica_set.go#L653-L721</a> [syncpod]: <a href="https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/kubelet/status/status_manager.go#L514-L567">https://github.com/kubernetes/kubernetes/blob/5bac42bf/pkg/kubelet/status/status_manager.go#L514-L567</a> [syncnodestatus]: <a href="https://github.com/kubernetes/kubernetes/blob/5bac42bff9bfb9dfe0f2ea40f1c80cac47fc12b2/pkg/kubelet/kubelet_node_status.go#L374-L391">https://github.com/kubernetes/kubernetes/blob/5bac42bff9bfb9dfe0f2ea40f1c80cac47fc12b2/pkg/kubelet/kubelet_node_status.go#L374-L391</a></p>
 </li>
-<li>
-<p>The podcast episode &ldquo;<a href="https://changelog.com/gotime/105">Gotime #105 – Kubernetes and Cloud Native</a>&rdquo; (Oct. 2019) with Joe Beda (initiator of Kubernetes) and Kris Nova is very interesting and tells us more about the genesis of the project, which things like why is Kubernetes written in Go and why client-go feels like Java. For example:</p>
+</ul>
+<ul>
+<li>The podcast episode &ldquo;<a href="https://changelog.com/gotime/105">Gotime #105 – Kubernetes and Cloud Native</a>&rdquo; (Oct. 2019) with Joe Beda (initiator of Kubernetes) and Kris Nova is very interesting and tells us more about the genesis of the project, which things like why is Kubernetes written in Go and why client-go feels like Java. For example:
 <blockquote>
 <p><strong>Kris Nova:</strong> I think there’s a fourth role. I think there’s what we called in the book an infrastructure engineer. These are effectively the folks like Joe and myself. These are the folks who are writing software to manage and mutate infrastructure behind the scenes. Folks who are contributing to Kubernetes, folks who are writing the software for the operators, folks who are writing admission controller implementations and so forth… I think it’s this very new engineer role, that we haven’t seen until we’ve started having – effectively, as Joe likes to put it, a platform-platform.</p>
 </blockquote>
 </li>
-<li>
-<p>The <a href="https://github.com/operator-framework/operator-sdk">operator-sdk</a> (RedHat) is a package that aims at helping dealing with the whole scafollding when writing a sync loop. It relies on <a href="https://github.com/kubernetes-sigs/controller-runtime">controller-runtime</a>. I don&rsquo;t use either of them but taking a look at these projects helps getting more understanding about the challenges (read: boilerplate) that comes when writing controllers. I personally write all the controller-related boilerplate myself (creating the queue, setting event handlers, running the loop itself&hellip;).</p>
-</li>
+<li>The <a href="https://github.com/operator-framework/operator-sdk">operator-sdk</a> (RedHat) is a package that aims at helping dealing with the whole scafollding when writing a sync loop. It relies on <a href="https://github.com/kubernetes-sigs/controller-runtime">controller-runtime</a>. I don&rsquo;t use either of them but taking a look at these projects helps getting more understanding about the challenges (read: boilerplate) that comes when writing controllers. I personally write all the controller-related boilerplate myself (creating the queue, setting event handlers, running the loop itself&hellip;).</li>
 </ul>
 <p>And a final note: CRDs are not necessary for writing a controller! You can write a tiny controller that watches the &ldquo;standard&rdquo; Kubernetes objects. That&rsquo;s exactly what ingress controllers do: they watch for Service objects.</p>
 <ul>

@@ -34,7 +34,7 @@
   </div>
 
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
-  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
       <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
@@ -203,17 +203,17 @@ docker.io/metallb/speaker             v0.9.3              f241be9dae666       19
 <tr>
 <td>alpine</td>
 <td>docker.io/alpine</td>
-<td><a href="https://registry-1.docker.io/v2/alpine">https://registry-1.docker.io/v2/alpine</a></td>
+<td><a href="https://registry-1.docker.io/v2/library/alpine/manifests/latest">https://registry-1.docker.io/v2/library/alpine/manifests/latest</a></td>
 </tr>
 <tr>
-<td>gcr.io/istio-release/galley</td>
-<td>gcr.io/istio-release/galley</td>
-<td><a href="https://gcr.io/v2/istio-release/galley">https://gcr.io/v2/istio-release/galley</a></td>
+<td>gcr.io/istio-release/pilot</td>
+<td>gcr.io/istio-release/pilot</td>
+<td><a href="https://gcr.io/v2/istio-release/pilot/manifests/1.9.1">https://gcr.io/v2/istio-release/pilot/manifests/1.9.1</a></td>
 </tr>
 <tr>
-<td>something/someimage</td>
-<td>something/someimage</td>
-<td>https://something/v2/someimage</td>
+<td>foo.org/something/someimage</td>
+<td>foo.org/something/someimage</td>
+<td><a href="https://foo.org/v2/something/someimage/manifests/latest">https://foo.org/v2/something/someimage/manifests/latest</a></td>
 </tr>
 </tbody>
 </table>
@@ -449,7 +449,7 @@ latest: digest: sha256:a15790640a6690aa1730c38cf0a440e2aa44aaca9b0e8931a9f2b0d7c
 Image is up to date <span class="k">for</span> sha256:a24bb4013296f61e89ba57005a7b3e52274d8edd3ae2077d04395f806b63d83e
 </code></pre></div><p>If you use Tilt, you might also want to tell Tilt that it can use the local registry. I find it a bit weird to have to set an annotation (hidden Tilt API?) but whatever. If you set this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">kind get nodes <span class="p">|</span> xargs -L1 -I% kubectl annotate node % tilt.dev/registry<span class="o">=</span>localhost:5000 --overwrite
-</code></pre></div><p>then Tilt <a href="legacy-annotation-based-registry-discovery">will use</a> <code>docker push localhost:5000/you-image</code> (from your host, not from the cluster container) in order to speed up things. Note that there is a proposal (<a href="https://github.com/kubernetes/enhancements/tree/master/keps/sig-cluster-lifecycle/generic/1755-communicating-a-local-registry">KEP 1755</a>) that aims at standardizing the discovery of local registries using a configmap. Tilt already supports it, so you may use it!</p>
+</code></pre></div><p>then Tilt will use <code>docker push localhost:5000/you-image</code> (from your host, not from the cluster container) in order to speed up things. Note that there is a proposal (<a href="https://github.com/kubernetes/enhancements/tree/master/keps/sig-cluster-lifecycle/generic/1755-communicating-a-local-registry">KEP 1755</a>) that aims at standardizing the discovery of local registries using a configmap. Tilt already supports it, so you may use it!</p>
 <h2 id="improving-the-clusterapi-docker-provider-to-use-a-given-network">Improving the ClusterAPI docker provider to use a given network</h2>
 <p>When I play with ClusterAPI, I usually use the CAPD provider (ClusterAPI Provider Docker). This provider <a href="https://github.com/kubernetes-sigs/cluster-api/blob/master/test/infrastructure/docker">is kept in-tree</a> inside the cluster-api projet.</p>
 <p>I want to use the caching mechanism presented above. But to do that, I need to make sure the clusters created by CAPD are not created on the default network (<a href="https://sigs.k8s.io/cluster-api/test/infrastructure/docker/docker/kind_manager.go#L178">current implementation</a> creates CAPD clusters on the default &ldquo;bridge&rdquo; network).</p>

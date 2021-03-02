@@ -34,7 +34,7 @@
   </div>
 
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
-  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about">About</a></p><div id=social>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
       <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
@@ -69,7 +69,7 @@
 
 <p>In Oct 2019, Ahmet Alp Balkan wrote <a href="https://ahmet.im/blog/kubectl-man-in-the-middle">this blog post</a> that explains how to use <code>mitmproxy</code> to observe the requests made by <code>kubectl</code>. But I couldn&rsquo;t use the tutorial for two reasons:</p>
 <ul>
-<li>I use <code>kind</code> to create local clusters which means I hit the Go <code>net/http</code> limitation (skips proxying for hosts <code>localhost</code> and <code>127.0.0.1</code>, see <a href="(https://maelvls.dev/go-ignores-proxy-localhost/)">this blog post</a>)</li>
+<li>I use <code>kind</code> to create local clusters which means I hit the Go <code>net/http</code> limitation (skips proxying for hosts <code>localhost</code> and <code>127.0.0.1</code>, see <a href="https://maelvls.dev/go-ignores-proxy-localhost/">this blog post</a>)</li>
 <li>I use client certs authentication, which can&rsquo;t work with the method presented by Ahmet; it can only work for header-based authentication (e.g. token) but not for client certs.</li>
 </ul>
 <p>In the following, I detail how I managed to make all that work.</p>
