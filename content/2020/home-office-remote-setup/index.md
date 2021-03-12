@@ -42,7 +42,7 @@ In this post, I document the changes to my office setup through time.
 - [LG 27UL850-W 27 inches 4K monitor](https://www.amazon.com/LG-27UL850-W-Display-DisplayHDR-Connectivity/dp/B07MKT1W65/ref=cm_cr_arp_d_product_top?ie=UTF8)
 - [Griffin Elevator stand](https://griffintechnology.com/products/elevator)
 - The [Flexispot standing desk E5B](https://www.amazon.co.uk/FlexiSpot-Adjustable-Electric-Standing-Automatic/dp/B071G2NSRP/ref=sr_1_fkmr0_1?keywords=flexispot%2BE5B&qid=1563776981&s=electronics&sr=8-1-fkmr0&th=1) (B = black) with a €25 wood board I mounted on top.
-- I use the [Beats Solo 3](https://www.beatsbydre.com/fr/headphones/solo3-wireless) headphones. I only use it for audio output. I never use the mic in Bluetooth mode since it greatly degrades my colleague's listening experience.
+- I use the [Beats Solo 3](https://www.beatsbydre.com/headphones/solo3-wireless) headphones. I only use it for audio output. I never use the mic in Bluetooth mode since it greatly degrades my colleague's listening experience.
 - [Blue Yeti](https://www.bluedesigns.com/products/yeti) USB microphone
   > Why a standalone mic just for Zoom? One very important aspect of the remote-only work setup is the importance of being properly understood. I take this very seriously and think that the sound quality of the mic I use every day influences how effective my meetings are. I also make a number of calls to potential candidates, which means I should sound perfect.
 - [Logitech K760](https://www.amazon.com/Logitech-Wireless-Solar-Kebyoard-iPhone/dp/B007VL8Y2C) (wireless solar keyboard).
