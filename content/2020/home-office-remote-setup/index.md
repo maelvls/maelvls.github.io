@@ -1,6 +1,6 @@
 ---
 title: The evolution of my home office from 2019 to 2021
-description: I present what hardware I have been using and I changed between 2019 and 2021!
+description: I present what hardware I have been using and what changed between 2019 and 2021!
 date: 2020-03-30
 url: /evolution-of-my-home-office
 aliases: [/home-office-2020]
@@ -24,6 +24,7 @@ In this post, I document the changes to my office setup through time.
 - Two [UTEBIT tabletop arms](https://www.amazon.com/UTEBIT-Shooting-Adjustable-Aluminum-Tabletop/dp/B08PYY95LJ/ref=sr_1_3?dchild=1&keywords=UTEBIT+Desk+Mount+Metal+Tabletop+Light+Stand+Adjustable&qid=1615567111&sr=8-3) that I use to hold the flood lights.
 - Two [NEEWER bi-color 660 flood lights](https://www.amazon.com/Neewer-Pieces-Bi-color-Video-Light/dp/B06XW3B81V).
 - A set of UTEBIT 1/4 to 3/8 screw adapters.
+- 24 panels of the [t.akustik WAS-7 Absorber](https://www.thomann.de/gb/the_takustik_was7_absorber_8erset.htm). It greatly reduced the amount of echo/reberb in the room, and allows me to put the microphone a bit further away without losing on sound quality.
 
 ## 2020 Update
 
