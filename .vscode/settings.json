@@ -1,4 +1,5 @@
 {
     "markdown.extension.toc.githubCompatibility": true,
-    "markdown.extension.toc.orderedList": true
+    "markdown.extension.toc.orderedList": true,
+    "gitdoc.enabled": false
 }

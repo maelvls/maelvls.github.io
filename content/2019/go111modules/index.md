@@ -21,21 +21,21 @@ In this short post, I will explain why `GO111MODULE` exists, its caveats and int
 
 **Table of content:**
 
-- [From `GOPATH` to `GO111MODULE`](#from-gopath-to-go111module)
-- [The `GO111MODULE` environment variable](#the-go111module-environment-variable)
-  - [`GO111MODULE` with Go 1.11 and 1.12](#go111module-with-go-111-and-112)
-  - [`GO111MODULE` with Go 1.13](#go111module-with-go-113)
-  - [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
-  - [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
-  - [The pitfall of `go.mod` being silently updated](#the-pitfall-of-gomod-being-silently-updated)
-  - [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
-- [Caveats when using Go Modules](#caveats-when-using-go-modules)
-  - [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
-  - [Where are the sources of the dependencies with Go Modules](#where-are-the-sources-of-the-dependencies-with-go-modules)
-  - [Set `GO111MODULE` on a per-folder basis with `direnv`](#set-go111module-on-a-per-folder-basis-with-direnv)
-  - [Private Go Modules and Dockerfile](#private-go-modules-and-dockerfile)
-    - [Solution 1: vendoring](#solution-1-vendoring)
-    - [Solution 2: no vendoring](#solution-2-no-vendoring)
+1. [From `GOPATH` to `GO111MODULE`](#from-gopath-to-go111module)
+2. [The `GO111MODULE` environment variable](#the-go111module-environment-variable)
+   1. [`GO111MODULE` with Go 1.11 and 1.12](#go111module-with-go-111-and-112)
+   2. [`GO111MODULE` with Go 1.13](#go111module-with-go-113)
+   3. [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
+   4. [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
+   5. [The pitfall of `go.mod` being silently updated](#the-pitfall-of-gomod-being-silently-updated)
+   6. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
+3. [Caveats when using Go Modules](#caveats-when-using-go-modules)
+   1. [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
+   2. [Where are the sources of the dependencies with Go Modules](#where-are-the-sources-of-the-dependencies-with-go-modules)
+   3. [Set `GO111MODULE` on a per-folder basis with `direnv`](#set-go111module-on-a-per-folder-basis-with-direnv)
+   4. [Private Go Modules and Dockerfile](#private-go-modules-and-dockerfile)
+      1. [Solution 1: vendoring](#solution-1-vendoring)
+      2. [Solution 2: no vendoring](#solution-2-no-vendoring)
 
 ---
 
