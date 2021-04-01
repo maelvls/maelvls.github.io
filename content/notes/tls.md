@@ -190,3 +190,26 @@ Certificate:
 ```
 
 [cheatsheet]: https://www.sslshopper.com/article-most-common-openssl-commands.html
+
+## Fun things about X.509
+
+In [crypto/x509/verify.go](https://github.com/golang/go/blob/e6ac2df2/src/crypto/x509/verify.go#L700-L715):
+
+```go
+// KeyUsage status flags are ignored. From Engineering Security, Peter
+// Gutmann: A European government CA marked its signing certificates as
+// being valid for encryption only, but no-one noticed. Another
+// European CA marked its signature keys as not being valid for
+// signatures. A different CA marked its own trusted root certificate
+// as being invalid for certificate signing. Another national CA
+// distributed a certificate to be used to encrypt data for the
+// country’s tax authority that was marked as only being usable for
+// digital signatures but not for encryption. Yet another CA reversed
+// the order of the bit flags in the keyUsage due to confusion over
+// encoding endianness, essentially setting a random keyUsage in
+// certificates that it issued. Another CA created a self-invalidating
+// certificate by adding a certificate policy statement stipulating
+// that the certificate had to be used strictly as specified in the
+// keyUsage, and a keyUsage containing a flag indicating that the RSA
+// encryption key could only be used for Diffie-Hellman key agreement.
+```
