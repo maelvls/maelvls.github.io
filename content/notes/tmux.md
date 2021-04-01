@@ -3,8 +3,7 @@ title: Memo for Tmux
 date: 2018-11-03
 tags: []
 author: Maël Valais
-devtoId: 365842
-devtoPublished: false
+devtoSkip: true
 ---
 
 I installed <https://gist.github.com/cybic/6375457> in `~/.bash_completion` (file) to get the bash completion.

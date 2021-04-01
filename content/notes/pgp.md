@@ -3,8 +3,7 @@ title: Some stuff about gpg
 date: 2017-11-08
 tags: []
 author: Maël Valais
-devtoId: 365834
-devtoPublished: false
+devtoSkip: true
 ---
 
 1. [Sign my message](#sign-my-message)

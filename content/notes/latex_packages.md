@@ -3,8 +3,7 @@ title: Managing Basic Texlive instead of Full Texlive/Mactex
 date: 2017-05-25
 tags: []
 author: Maël Valais
-devtoId: 365831
-devtoPublished: false
+devtoSkip: true
 ---
 
 ```shell

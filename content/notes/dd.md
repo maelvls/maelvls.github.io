@@ -3,8 +3,7 @@ title: Using dd
 date: 2018-10-08
 tags: []
 author: Maël Valais
-devtoId: 365840
-devtoPublished: false
+devtoSkip: true
 ---
 
 ```shell

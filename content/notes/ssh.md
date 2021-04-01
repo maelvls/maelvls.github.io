@@ -3,20 +3,19 @@ title: How client-server SSH authentication works
 date: 2019-05-28
 tags: []
 author: Maël Valais
-devtoId: 365846
-devtoPublished: false
+devtoSkip: true
 ---
 
-1. [Difference between CA and cert](#difference-between-ca-and-cert)
-2. [Ssh authentication themes](#ssh-authentication-themes)
-   1. [Case A: unknown host](#case-a-unknown-host)
-   2. [Case B: host already in known_host but ip changed](#case-b-host-already-in-known_host-but-ip-changed)
-   3. [Case C: host already known (ip/fqdn in `~/.ssh/known_hosts`)](#case-c-host-already-known-ipfqdn-in-sshknown_hosts)
-   4. [Case D: host has client's pub key in authorized_keys](#case-d-host-has-clients-pub-key-in-authorized_keys)
-3. [Ssh + certificates](#ssh--certificates)
-4. [Reason why `ssh host cmd` not using .bashrc/.login/.zshrc](#reason-why-ssh-host-cmd-not-using-bashrcloginzshrc)
-5. [Passwordless connexion to a server](#passwordless-connexion-to-a-server)
-6. [Glossary](#glossary)
+- [Difference between CA and cert](#difference-between-ca-and-cert)
+- [Ssh authentication themes](#ssh-authentication-themes)
+  - [Case A: unknown host](#case-a-unknown-host)
+  - [Case B: host already in known_host but ip changed](#case-b-host-already-in-known_host-but-ip-changed)
+  - [Case C: host already known (ip/fqdn in `~/.ssh/known_hosts`)](#case-c-host-already-known-ipfqdn-in-sshknown_hosts)
+  - [Case D: host has client's pub key in authorized_keys](#case-d-host-has-clients-pub-key-in-authorized_keys)
+- [Ssh + certificates](#ssh--certificates)
+- [Reason why `ssh host cmd` not using .bashrc/.login/.zshrc](#reason-why-ssh-host-cmd-not-using-bashrcloginzshrc)
+- [Passwordless connexion to a server](#passwordless-connexion-to-a-server)
+- [Glossary](#glossary)
 
 **WARNING:** many things in this memo are wrong or very wrong. Do not take any of it as good information.
 

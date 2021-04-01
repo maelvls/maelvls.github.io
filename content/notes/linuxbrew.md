@@ -3,8 +3,7 @@ title: Using Linyxbrew on university servers
 date: 2016-12-15
 tags: []
 author: Maël Valais
-devtoId: 365827
-devtoPublished: false
+devtoSkip: true
 ---
 
 On the university server azteca or inca (must use vpn or sassh through-pass)

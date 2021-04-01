@@ -3,8 +3,7 @@ title: Nice diagram about TLS, certificates and keys
 date: 2020-01-20
 tags: []
 author: Maël Valais
-devtoId: 365848
-devtoPublished: false
+devtoSkip: true
 ---
 
 <div class="nohighlight">

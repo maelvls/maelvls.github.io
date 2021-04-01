@@ -3,8 +3,7 @@ title: Avoid typing the SSH passphrase on Ubuntu using ssh-agent
 date: 2017-06-01
 tags: []
 author: Maël Valais
-devtoId: 365832
-devtoPublished: false
+devtoSkip: true
 ---
 
 Here: <https://unix.stackexchange.com/questions/12195/how-to-avoid-being-asked-passphrase-each-time-i-push-to-bitbucket>

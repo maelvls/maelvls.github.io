@@ -3,8 +3,7 @@ title: Get lighter PDFs
 date: 2017-01-30
 tags: []
 author: Maël Valais
-devtoId: 365828
-devtoPublished: false
+devtoSkip: true
 ---
 
 ```shell

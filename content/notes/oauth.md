@@ -3,8 +3,7 @@ title: Notes on OAuth
 date: 2019-02-17
 tags: []
 author: Maël Valais
-devtoId: 365844
-devtoPublished: false
+devtoSkip: true
 ---
 
 I know two main ways of using OAuth2

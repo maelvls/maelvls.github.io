@@ -3,8 +3,7 @@ title: Epson scanner, large PDFs and ImageMagick (convert CLI)
 date: 2017-09-12
 tags: []
 author: Maël Valais
-devtoId: 365833
-devtoPublished: false
+devtoSkip: true
 ---
 
 The Epson iPrint soft is producing PDFs in 300dpi but the 300 information does not seem to be stored in the PDF metadata; thus, the PDF reader thinks by default that it is a 72 dpi PDF and thus the huge size:

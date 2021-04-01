@@ -3,8 +3,7 @@ title: Some kubectl stuff
 date: 2019-01-03
 tags: []
 author: Maël Valais
-devtoId: 365843
-devtoPublished: false
+devtoSkip: true
 ---
 
 ```sh

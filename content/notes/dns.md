@@ -3,8 +3,7 @@ title: It's always the DNS' fault
 date: 2020-07-25
 tags: [networking]
 author: Maël Valais
-devtoId: 410260
-devtoPublished: false
+devtoSkip: true
 ---
 
 ## Terms

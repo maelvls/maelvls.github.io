@@ -3,8 +3,7 @@ title: Everything I know about TCP
 date: 2018-02-19
 tags: []
 author: Maël Valais
-devtoId: 365836
-devtoPublished: false
+devtoSkip: true
 ---
 
 ## How is a TCP connection uniquely identified
