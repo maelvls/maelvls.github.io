@@ -227,7 +227,25 @@ Certificate:
          fe:75:8b:02:b2:f0:d9:3b:5d:7c:1b:a8:45:b8:b1:4d:d8:3c:
          66:2b:2b:33:1e:9f:dc:b8:5e:3b:fe:0a:e4:b2:5b:eb:41:48:
          59:10:6b:63
-</code></pre></div>
+</code></pre></div><h2 id="fun-things-about-x509">Fun things about X.509</h2>
+<p>In <a href="https://github.com/golang/go/blob/e6ac2df2/src/crypto/x509/verify.go#L700-L715">crypto/x509/verify.go</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// KeyUsage status flags are ignored. From Engineering Security, Peter
+</span><span class="c1">// Gutmann: A European government CA marked its signing certificates as
+</span><span class="c1">// being valid for encryption only, but no-one noticed. Another
+</span><span class="c1">// European CA marked its signature keys as not being valid for
+</span><span class="c1">// signatures. A different CA marked its own trusted root certificate
+</span><span class="c1">// as being invalid for certificate signing. Another national CA
+</span><span class="c1">// distributed a certificate to be used to encrypt data for the
+</span><span class="c1">// country’s tax authority that was marked as only being usable for
+</span><span class="c1">// digital signatures but not for encryption. Yet another CA reversed
+</span><span class="c1">// the order of the bit flags in the keyUsage due to confusion over
+</span><span class="c1">// encoding endianness, essentially setting a random keyUsage in
+</span><span class="c1">// certificates that it issued. Another CA created a self-invalidating
+</span><span class="c1">// certificate by adding a certificate policy statement stipulating
+</span><span class="c1">// that the certificate had to be used strictly as specified in the
+</span><span class="c1">// keyUsage, and a keyUsage containing a flag indicating that the RSA
+</span><span class="c1">// encryption key could only be used for Diffie-Hellman key agreement.
+</span></code></pre></div>
 </div>
 <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/notes/tls.md">📝 Edit this page and propose a change!</a>
 <div class="tags">
