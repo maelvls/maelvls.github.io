@@ -1,8 +1,8 @@
 ---
-title: "Why is GO111MODULE everywhere, and everything about Go Modules"
+title: "Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.16)"
 tags: [go, go-modules]
 date: 2019-11-13
-description: "GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with 1.13 and will changed a last time in 1.14."
+description: "GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with Go 1.13 and Go 1.15 and changed a last time in Go 1.16."
 url: /go111module-everywhere
 images: [go111module-everywhere/cover-go-modules-sad.jpg]
 devtoId: 204994
