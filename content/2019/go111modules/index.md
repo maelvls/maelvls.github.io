@@ -28,7 +28,7 @@ In this short post, I will explain why `GO111MODULE` exists, its caveats and int
    3. [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
    4. [`GO111MODULE` with Go 1.16](#go111module-with-go-116)
    5. [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
-   6. [_[Fixed in Go 1.16]_ The pitfall of `go.mod` being silently updated](#fixed-in-go-116-the-pitfall-of-gomod-being-silently-updated)
+   6. [The pitfall of `go.mod` being silently updated](#the-pitfall-of-gomod-being-silently-updated)
    7. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
 3. [Caveats when using Go Modules](#caveats-when-using-go-modules)
    1. [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
@@ -148,7 +148,7 @@ GO111MODULE=on go get golang.org/x/tools/gopls@v0.1.8
 GO111MODULE="on" go get sigs.k8s.io/kind@v0.7.0
 ```
 
-### _[Fixed in Go 1.16]_ The pitfall of `go.mod` being silently updated
+### The pitfall of `go.mod` being silently updated
 
 And to make matters even worse, you may have encountered this weird one-liner in READMEs:
 
