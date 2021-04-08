@@ -3,17 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://maelvls.dev/do-not-share-yet/2021/</loc>
+    <lastmod>2021-03-31T14:51:20+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/</loc>
+    <lastmod>2021-03-31T14:51:20+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/optimistic-locking-is-hard/</loc>
+    <lastmod>2021-03-31T14:51:20+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://maelvls.dev/do-not-share-yet/2020/</loc>
     <lastmod>2021-02-26T15:22:05+01:00</lastmod>
   </url>
   
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/kubernetes-api-deprecation-timeline/</loc>
-    <lastmod>2021-02-26T15:22:05+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/</loc>
     <lastmod>2021-02-26T15:22:05+01:00</lastmod>
   </url>
   
