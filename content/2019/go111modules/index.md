@@ -26,9 +26,10 @@ In this short post, I will explain why `GO111MODULE` exists, its caveats and int
    1. [`GO111MODULE` with Go 1.11 and 1.12](#go111module-with-go-111-and-112)
    2. [`GO111MODULE` with Go 1.13](#go111module-with-go-113)
    3. [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
-   4. [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
-   5. [The pitfall of `go.mod` being silently updated](#the-pitfall-of-gomod-being-silently-updated)
-   6. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
+   4. [`GO111MODULE` with Go 1.16](#go111module-with-go-116)
+   5. [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
+   6. [_[Fixed in Go 1.16]_ The pitfall of `go.mod` being silently updated](#fixed-in-go-116-the-pitfall-of-gomod-being-silently-updated)
+   7. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
 3. [Caveats when using Go Modules](#caveats-when-using-go-modules)
    1. [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
    2. [Where are the sources of the dependencies with Go Modules](#where-are-the-sources-of-the-dependencies-with-go-modules)
@@ -82,6 +83,57 @@ Note that some slight changes in behaviors unrelated to `GO111MODULE` happened:
 - The `vendor/` is picked up automatically. That has the tendency of breaking Gomock ([issue](https://github.com/golang/mock/issues/415)) which were unknowingly not using `vendor/` before 1.14.
 - You still need to use `cd && GO111MODULE=on go get` when you don't want to mess up your current project’s `go.mod` (that's so annoying).
 
+### `GO111MODULE` with Go 1.16
+
+As of Go 1.16, the default behavior is `GO111MODULE=on`, meaning that if you want to keep using the old `GOPATH` way, you will have to force Go not to use the Go Modules feature:
+
+```sh
+export GO111MODULE=off
+```
+
+The best news in Go 1.16 is that we finally get a dedicated command for installing Go tools instead of relying on the does-it-all `go get` that keeps [updating](#the-pitfall-of-gomod-being-silently-updated) your `go.mod`. Instead of:
+
+```sh
+# Old way
+(cd && go install golang.org/x/tools/gopls@latest)
+```
+
+you can now run:
+
+```sh
+go install golang.org/x/tools/gopls@latest
+```
+
+One caveat is that the semantics of `go install` is slightly different from `go get`. As detailed on the [Go
+blog](https://blog.golang.org/go116-module-changes):
+
+> In order to eliminate ambiguity about which versions are used, there are several restrictions on what directives may be present in the program's `go.mod` file when using this install syntax. In particular, **replace and exclude directives are not allowed**, at least for now. In the long term, once the new `go install program@version` is working well for enough use cases, we plan to make `go get` stop installing command binaries. See [issue 43684](https://github.com/golang/go/issues/43684) for details.
+
+As an example, you cannot (as of April 2021) install the master version of [gopls](https://github.com/golang/tools/tree/master/gopls):
+
+```sh
+% go install golang.org/x/tools/gopls@master
+go: downloading golang.org/x/tools v0.1.1-0.20210316190639-9e9211a98eaa
+go: downloading golang.org/x/tools/gopls v0.0.0-20210316190639-9e9211a98eaa
+go install golang.org/x/tools/gopls@master: golang.org/x/tools/gopls@v0.0.0-20210316190639-9e9211a98eaa
+        The go.mod file for the module providing named packages contains one or
+        more replace directives. It must not contain directives that would cause
+        it to be interpreted differently than if it were the main module.
+```
+
+The replace directive in the [go.mod](https://github.com/golang/tools/blob/master/gopls/go.mod) file looks like this:
+
+```go
+replace golang.org/x/tools => ../
+```
+
+Fortunately, the gopls project makes sure to remove the `replace` directive before each release, which means you can use the `latest` tag:
+
+```sh
+go install golang.org/x/tools/gopls@latest
+#                                   ^^^^^^
+```
+
 ### So, why is `GO111MODULE` everywhere?!
 
 Now that we know that `GO111MODULE` can be very useful for enabling the Go Modules behavior, here is the answer: that's because `GO111MODULE=on` allows you to select a version. Without Go Modules, `go get` fetches the latest commit from master. With Go Modules, you can select a specific version based on git tags.
@@ -96,36 +148,27 @@ GO111MODULE=on go get golang.org/x/tools/gopls@v0.1.8
 GO111MODULE="on" go get sigs.k8s.io/kind@v0.7.0
 ```
 
-### The pitfall of `go.mod` being silently updated
+### _[Fixed in Go 1.16]_ The pitfall of `go.mod` being silently updated
 
-And to make things even worse, some projects have an even more complicated one-liners:
+And to make matters even worse, you may have encountered this weird one-liner in READMEs:
 
 ```sh
 (cd && GO111MODULE=on go get golang.org/x/tools/gopls@latest)
 ```
 
-> Note: the `@latest` suffix will use the latest git tag of gopls. Note that `-u` (which means 'update') is not needed for `@v0.1.8` since this is a 'fixed' version, and updating a fixed version does not really make sense. It is also interesting to note that with `@v0.1`, `go get` will fetch the latest patch version for that tag.
-
-That's yet another Go ideocracy: by default (and you can't turn that off), if you are in a folder that has a `go.mod`, `go get` will update that `go.mod` with what you just installed. And in the case of development binaries like [gopls](https://github.com/golang/tools/tree/master/gopls) or [kind](https://github.com/kubernetes-sigs/kind), you definitely don't want to have these appearing in the `go.mod` file!
-
-So the workaround is to give a one-liner that makes sure that you won't be in a `go.mod`-enabled folder: `(cd && go get)` does exactly that.
-
-I hope that (sooner or later) we will have a clear separation of concerns between `go get` that is adding a dependency to your `go.mod` (like npm install) and `go install` that is meant to install a binary without messing up your `go.mod`.
-
-- First caveat: we all use `go get` to install dev dependencies, so moving to `go install` would kind of not work (habits...)
-- Second caveat: `go install` doesn’t allow you to give a version (e.g., `@latest` or `@v1.4.5`), and `go run` either by the way. So `go install` isn't that useful after all... 😞
+This weird line was meant for Go 1.15 and below; in Go 1.15 and below and was fixed in Go 1.16. With Go 1.16, the above line becomes:
 
 ```sh
-$ export GO111MODULE=on
-
-$ go get golang.org/x/tools/gopls@v0.1.8              # ✅
-
-$ go install golang.org/x/tools/gopls@v0.1.8          # ❌
-can t load package: package golang.org/x/tools/gopls@v0.1.8: cannot use path@version syntax in GOPATH mode
-
-$ go run golang.org/x/tools/gopls@v0.1.8              # ❌
-package golang.org/x/tools/gopls@v0.1.8: can only use path@version syntax with 'go get'
+go install golang.org/x/tools/gopls@latest
 ```
+
+> **Note:** the `@latest` suffix will use the latest git tag of gopls. Note that `-u` (which means 'update') is not needed for `@v0.1.8` since this is a 'fixed' version, and updating a fixed version does not really make sense. It is also interesting to note that with `@v0.1`, `go get` will fetch the latest patch version for that tag.
+
+So, why did we need to use this contrived command that calls a subshell and moves to your HOME? That's yet another Go ideocracy that was fixed with Go 1.16: in Go 1.15 and below, by default (and you can't turn that off), if you are in a folder that has a `go.mod`, `go get` will update that `go.mod` with what you just installed. And in the case of development binaries like [gopls](https://github.com/golang/tools/tree/master/gopls) or [kind](https://github.com/kubernetes-sigs/kind), you definitely don't want to have these appearing in the `go.mod` file!
+
+So the workaround for anyone using Go 1.15 and below was to give a one-liner that makes sure that you won't be in a `go.mod`-enabled folder: `(cd && go get)` does exactly that.
+
+I hope that (sooner or later) we will have a clear separation of concerns between `go get` that is adding a dependency to your `go.mod` (like npm install) and `go install` that is meant to install a binary without messing up your `go.mod`.
 
 ### The `-u` and `@version` pitfall
 
@@ -138,7 +181,7 @@ So if you see this:
 GO111MODULE=on go get -u golang.org/x/tools/gopls@latest
 ```
 
-then you will immediately realize that it is wrong: you want to be using the recorded versions given in `go.sum` when go-getting a binary!
+then you will immediately realize that (1) it uses the old preGo .1.16 way of installing a Go binary, and (2) you want to be using the recorded versions given in `go.sum` when go-getting a binary!
 
 Rebecca Stambler [reminds us](https://github.com/golang/go/issues/35868#issuecomment-564151454) that we should not use `-u` in conjunction with a version:
 
@@ -152,9 +195,9 @@ Now, let's go through some caveats I encountered when working with Go Modules.
 
 ### Remember that `go get` also updates your `go.mod`
 
-That’s one of the weird things with `go get`: sometimes, it serves the purpose of installing binaries or downloading packages. But with Go modules, if you are in a repo with a `go.mod`, it will silently add the package you go get to your go.mod.
+Before Go 1.16 came out, that was one of the weird things with `go get`: sometimes, it served the purpose of installing binaries or downloading packages. And with Go modules, if you were in a repo with a `go.mod`, it would silently add the binary that you were `go get`-ing to your `go.mod`!
 
-That’s one of the catches of Go modules! 😁
+Fortunately, with Go 1.16, `go install` has [learnt](https://blog.golang.org/go116-module-changes) about the `@version` suffix. With `go install foo@version`, your local `go.mod` won't be affected!
 
 ### Where are the sources of the dependencies with Go Modules
 
@@ -174,11 +217,11 @@ where `../beers` is a local copy I made of the dependency I want to inspect and 
 
 ### Set `GO111MODULE` on a per-folder basis with `direnv`
 
-During the migration from GOPATH-based projects (mainly using Dep) to Go Modules, I found myself struggling with two different places: inside and outside GOPATH. All Go Modules had to be kept outside of GOPATH, which meant my projects were in different folders.
+On older versions of Go (1.15 and below), while migrating from GOPATH-based projects (mainly using Dep) to Go Modules, I found myself struggling with two different places: inside and outside GOPATH. All Go Modules had to be kept outside of GOPATH, which meant my projects were in different folders. To remediate that, I used `GO111MODULE` extensively. I would keep all my projects in the GOPATH, and for the Go Modules-enabled projects, I would set `export GO111MODULE=on`.
 
-To remediate that, I used `GO111MODULE` extensively. I would keep all my projects in the GOPATH, and for the Go Modules-enabled projects, I would set `export GO111MODULE=on`.
+> **Note:** since the default behavior in Go 1.16 is now `GO111MODULE=on`, this trick isn't necessary anymore.
 
-This is where [`direnv`](https://direnv.net/) comes in handy. Direnv is a lightweight command written in Go that will load a file, `.envrc`, whenever you enter a directory and `.envrc` is present. For every Go Module-enabled project, I would have this `.envrc`:
+This is where [`direnv`](https://direnv.net/) came in handy. Direnv is a lightweight command written in Go that will load a file, `.envrc`, whenever you enter a directory and `.envrc` is present. For every Go Module-enabled project, I would have this `.envrc`:
 
 ```sh
 # .envrc
@@ -187,11 +230,11 @@ export GOPRIVATE=github.com/mycompany/\*
 export GOFLAGS=-mod=vendor
 ```
 
-The GOPRIVATE disables the Go Proxy (Go 1.13) for certain import paths. I also found useful to set `-mod=vendor` so that every command uses the `vendor` folder (`go mod vendor`).
+The `GOPRIVATE` environment variable disables the Go Proxy (introduced in Go 1.13) for certain import paths. I also found useful to set `-mod=vendor` so that every command uses the `vendor` folder (`go mod vendor`).
 
 ### Private Go Modules and Dockerfile
 
-At my company, we use a lot of private repositories. As explained above, we can use `GOPRIVATE` in order to tell Go 1.13 to skip the package proxy and fetch our private packages directly from Github.
+Many companies choose to use private repositories as import paths. As explained above, we can use `GOPRIVATE` in order to tell Go (as of Go 1.13) to skip the package proxy and fetch our private packages directly from Github.
 
 But what about building Docker images? How can `go get` fetch our private repositories from a docker build?
 
@@ -213,4 +256,5 @@ export GOPRIVATE=github.com/company/\*
 
 _Illustration by Bailey Beougher, from The Illustrated Children's Guide to Kubernetes._
 
-**Update 22 June 2020:** it said `use replace` instead of just `replace`
+**Update 22 June 2020:** it said `use replace` instead of just `replace`.
+**Update 8 April 2021:** update with Go 1.16.

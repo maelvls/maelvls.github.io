@@ -13,6 +13,12 @@ devtoId: 313912
 devtoPublished: true
 ---
 
+<!--
+
+Examples: https://github.com/jetstack/cert-manager/pull/3795/files#r600322397
+
+-->
+
 Comments are one of these topics that we seem to never agree on ([stackoverflow](https://softwareengineering.stackexchange.com/questions/1/comments-are-a-code-smell) says so). I often hear that comments add noise to the code and that comments never get properly updated.
 
 The solution seems to be to properly self-document code. And I love Go for that; one of the Go proverbs even [says](https://go-proverbs.github.io/):

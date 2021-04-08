@@ -1,5 +1,15 @@
 {
-    "markdown.extension.toc.githubCompatibility": true,
-    "markdown.extension.toc.orderedList": true,
-    "gitdoc.enabled": false
+  "markdown.extension.toc.githubCompatibility": true,
+  "markdown.extension.toc.orderedList": true,
+  "gitdoc.enabled": false,
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": false,
+    "rewrap.autoWrap.enabled": true,
+    "rewrap.reformat": true,
+    "rewrap.wrappingColumn": -1
+  },
+  "grammarly.hideUnavailablePremiumAlerts": true,
+  "grammarly.showDeletedTextInQuickFix": true,
+  "grammarly.autoActivate": false
 }
