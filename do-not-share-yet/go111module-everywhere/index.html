@@ -76,7 +76,7 @@
 <li><a href="#go111module-with-go-114"><code>GO111MODULE</code> with Go 1.14</a></li>
 <li><a href="#go111module-with-go-116"><code>GO111MODULE</code> with Go 1.16</a></li>
 <li><a href="#so-why-is-go111module-everywhere">So, why is <code>GO111MODULE</code> everywhere?!</a></li>
-<li><a href="#fixed-in-go-116-the-pitfall-of-gomod-being-silently-updated">_[Fixed in Go 1.16]_ The pitfall of <code>go.mod</code> being silently updated</a></li>
+<li><a href="#the-pitfall-of-gomod-being-silently-updated">The pitfall of <code>go.mod</code> being silently updated</a></li>
 <li><a href="#the--u-and-version-pitfall">The <code>-u</code> and <code>@version</code> pitfall</a></li>
 </ol>
 </li>
@@ -166,7 +166,7 @@ go install golang.org/x/tools/gopls@master: golang.org/x/tools/gopls@v0.0.0-2021
 <span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@v0.1
 <span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@v0.1.8
 <span class="nv">GO111MODULE</span><span class="o">=</span><span class="s2">&#34;on&#34;</span> go get sigs.k8s.io/kind@v0.7.0
-</code></pre></div><h3 id="_fixed-in-go-116_-the-pitfall-of-gomod-being-silently-updated"><em>[Fixed in Go 1.16]</em> The pitfall of <code>go.mod</code> being silently updated</h3>
+</code></pre></div><h3 id="the-pitfall-of-gomod-being-silently-updated">The pitfall of <code>go.mod</code> being silently updated</h3>
 <p>And to make matters even worse, you may have encountered this weird one-liner in READMEs:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="o">(</span><span class="nb">cd</span> <span class="o">&amp;&amp;</span> <span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest<span class="o">)</span>
 </code></pre></div><p>This weird line was meant for Go 1.15 and below; in Go 1.15 and below and was fixed in Go 1.16. With Go 1.16, the above line becomes:</p>
