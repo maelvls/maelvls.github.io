@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.75.1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Kubernetes Kind vs Resource Type" />
+<meta property="og:description" content="This is a summary of the official api-concepts that I wrote to remember the difference between the various terms used to designate &ldquo;objects&rdquo; in Kubernetes.
+In Kubernetes, the term &ldquo;resource&rdquo; is a term coming from the RESTful terminology. Let us have a YAML manifest example:
+# (1)apiVersion:acme.cert-manager.io/v1alpha2kind:Challengemetadata:name:example-1namespace:fooThe resource corresponding would be:
+GET /apis/acme.cert-manager.io/v1alpha2/namespaces/foo/challenges/example-1 # &lt;---------------&gt; &lt;-(2)--&gt; &lt;--(1)---&gt; &lt;--(5)--&gt; # &lt;-------------------------(2) resource--------------------------&gt; In the following table, I focus on the &ldquo;object&rdquo; class of resource types." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/kubernetes-kind-vs-resource-type/" />
+<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/kubernetes-kind-vs-resource-type/cover-kubernetes-kind-vs-resource-type.png" />
+<meta property="article:published_time" content="2021-04-09T12:04:10+02:00" />
+<meta property="article:modified_time" content="2021-04-09T12:04:10+02:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/kubernetes-kind-vs-resource-type/cover-kubernetes-kind-vs-resource-type.png"/>
+
+<meta name="twitter:title" content="Kubernetes Kind vs Resource Type"/>
+<meta name="twitter:description" content="This is a summary of the official api-concepts that I wrote to remember the difference between the various terms used to designate &ldquo;objects&rdquo; in Kubernetes.
+In Kubernetes, the term &ldquo;resource&rdquo; is a term coming from the RESTful terminology. Let us have a YAML manifest example:
+# (1)apiVersion:acme.cert-manager.io/v1alpha2kind:Challengemetadata:name:example-1namespace:fooThe resource corresponding would be:
+GET /apis/acme.cert-manager.io/v1alpha2/namespaces/foo/challenges/example-1 # &lt;---------------&gt; &lt;-(2)--&gt; &lt;--(1)---&gt; &lt;--(5)--&gt; # &lt;-------------------------(2) resource--------------------------&gt; In the following table, I focus on the &ldquo;object&rdquo; class of resource types."/>
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/maelvls.css" /><title>Kubernetes Kind vs Resource Type | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/do-not-share-yet/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="meta">
+<div class="date">
+<span class="day">09</span>
+<span class="rest">Apr 2021</span>
+</div>
+</div>
+
+<div class="matter">
+<h1 class="title">Kubernetes Kind vs Resource Type</h1>
+</div>
+</div>
+<div class="markdown">
+<p>This is a summary of the official
+<a href="https://kubernetes.io/docs/reference/using-api/api-concepts/">api-concepts</a>
+that I wrote to remember the difference between the various terms used to
+designate &ldquo;objects&rdquo; in Kubernetes.</p>
+<p>In Kubernetes, the term &ldquo;resource&rdquo; is a term coming from the RESTful
+terminology. Let us have a YAML manifest example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># (1)</span><span class="w">
+</span><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">acme.cert-manager.io/v1alpha2</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Challenge</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">example-1</span><span class="w">
+</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">foo</span><span class="w">
+</span></code></pre></div><p>The resource corresponding would be:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">GET /apis/acme.cert-manager.io/v1alpha2/namespaces/foo/challenges/example-1
+<span class="c1">#           &lt;---------------&gt; &lt;-(2)--&gt;                &lt;--(1)---&gt; &lt;--(5)--&gt;</span>
+<span class="c1">#           &lt;-------------------------(2) resource--------------------------&gt;</span>
+</code></pre></div><p>In the following table, I focus on the &ldquo;object&rdquo; class of resource types. For
+example, the resource type <code>pods</code> belongs to the &ldquo;object&rdquo; class of resource
+types like most resource types in Kubernetes. The other possible resource type
+category in Kubernetes is the &ldquo;virtual&rdquo; class of resource types, for example
+<code>subjectaccessreviews</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th></th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(1) object resource type</td>
+<td>Lower-case plural noun that appears in the URL</td>
+<td><code>challenges</code></td>
+</tr>
+<tr>
+<td>(2) object resource</td>
+<td>URL of one instance of the resource type</td>
+<td><code>/apis/acme.cert-manager.io/v1alpha2/namespaces/foo/challenges/example-1</code></td>
+</tr>
+<tr>
+<td>(3) object resource name</td>
+<td>Name of one instance of the resource type</td>
+<td><code>example-1</code></td>
+</tr>
+<tr>
+<td>(4) object</td>
+<td>one concrete representation of a resource</td>
+<td>The above YAML manifest</td>
+</tr>
+<tr>
+<td>kind</td>
+<td>represents the object schema of the resource</td>
+<td><code>Challenge</code></td>
+</tr>
+<tr>
+<td>apiVersion</td>
+<td></td>
+<td><code>acme.cert-manager.io/v1alpha2</code></td>
+</tr>
+<tr>
+<td>version</td>
+<td></td>
+<td><code>acme.cert-manager.io/v1alpha2</code></td>
+</tr>
+<tr>
+<td>collection</td>
+<td>all instance of the resource type</td>
+<td><code>/apis/acme.cert-manager.io/v1alpha2/challenges</code></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2021/kubernetes-kind-vs-resource-type/index.md">📝 Edit this page and propose a change!</a>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+</div>
+
+<script
+  src="https://utteranc.es/client.js"
+  repo="maelvls/maelvls.github.io"
+  issue-term="pathname"
+  label="💬"
+  theme="github-light"
+  crossorigin="anonymous"
+  async
+></script>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>

@@ -6,10 +6,22 @@
     <description>Recent content on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 31 Mar 2021 14:51:20 +0200</lastBuildDate>
+    <lastBuildDate>Fri, 09 Apr 2021 12:04:10 +0200</lastBuildDate>
     
     <atom:link href="https://maelvls.dev/do-not-share-yet/index.xml" rel="self" type="application/rss+xml" />
     
+    <item>
+      <title>Kubernetes Kind vs Resource Type</title>
+      <link>https://maelvls.dev/do-not-share-yet/kubernetes-kind-vs-resource-type/</link>
+      <pubDate>Fri, 09 Apr 2021 12:04:10 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/kubernetes-kind-vs-resource-type/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
     <item>
       <title>Optimistic Locking Is Hard</title>
       <link>https://maelvls.dev/do-not-share-yet/optimistic-locking-is-hard/</link>
