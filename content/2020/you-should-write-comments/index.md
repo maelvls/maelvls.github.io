@@ -1,6 +1,6 @@
 ---
-title: You should write comments
-description: "We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself."
+title: Comments are great and here is why
+description: "We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to refactor comments into useful comments."
 date: 2021-04-15
 url: "/you-should-write-comments"
 images:
@@ -16,7 +16,7 @@ devtoPublished: false
 draft: true
 ---
 
-In his book [Clean Code](https://www.oreilly.com/library/view/clean-code-a/9780136083238/), Robert C. Martin makes a strong case against comments:
+In his book _[Clean Code](https://www.oreilly.com/library/view/clean-code-a/9780136083238/)_, Robert C. Martin makes a strong case against comments:
 
 > You don't need comments if you write clean code.
 
@@ -32,9 +32,25 @@ The concerning part about these "initial comments" is that they often end up com
 
 In this article, using four different examples, I will show how to refactor these "initial comments" into useful comments.
 
-#### Example 1
+**Contents:**
 
-In the following example taken from [Google's Technical Writing](https://developers.google.com/tech-writing/two/code-comments) book, the developer had to shuffle some integers:
+1. [Refactoring comments: from the "what" to the "why"](#refactoring-comments-from-the-what-to-the-why)
+   1. [Code example 1](#code-example-1)
+   2. [Code example 2](#code-example-2)
+   3. [Code example 3](#code-example-3)
+   4. [Code example 4](#code-example-4)
+   5. [Code example 5](#code-example-5)
+   6. [Other examples](#other-examples)
+2. [Discussion](#discussion)
+   1. [Good naming takes time](#good-naming-takes-time)
+   2. [Comments are disposable, don't copy them over](#comments-are-disposable-dont-copy-them-over)
+3. [Conclusion](#conclusion)
+
+## Refactoring comments: from the "what" to the "why"
+
+### Code example 1
+
+First, let's dig into the difference between the "why" and the "what" with an example taken from the [Google's Technical Writing](https://developers.google.com/tech-writing/two/code-comments) book. In this code snippet, the developer wants to randomly shuffle a slice of integers:
 
 ```go
 func Shuffle(slice []int) {
@@ -49,7 +65,7 @@ func Shuffle(slice []int) {
 }
 ```
 
-The comment focus on the "what" and paraphrases what immediately follows. The comment does not help the reader, since the logic itself is trivial. Refactoring this comment consists in focusing on the "why":
+The only comment in this snippet focuses on the "what": it paraphrases the code that immediately follows. The comment does not help the reader since the logic itself is trivial. Refactoring this comment consists in moving away from the "what" and focusing on the "why":
 
 ```go
 func Shuffle(slice []int) {
@@ -80,7 +96,7 @@ Starting comments with the "why" helps glanceability: the reader only needs to r
 1. When the code is not self-explanatory, a "what" comment may avoid the reader the struggle of googling;
 2. When a block of code is lenghy, adding "what" comments may help create "sections", helping the reader quicly find the part they are interested in.
 
-#### Example 2
+### Code example 2
 
 The next example [comes](https://github.com/jetstack/cert-manager/pull/3872) from cert-manager. The original comment focuses on the "what":
 
@@ -124,7 +140,7 @@ if cond == nil {
 }
 ```
 
-#### Example 3
+### Code example 3
 
 The next [example](https://github.com/jetstack/cert-manager/blob/1dad685e/pkg/controller/ingress-shim/sync.go#L145) comes from another part of the cert-manager codebase:
 
@@ -150,7 +166,7 @@ if len(errs) > 0 {
 }
 ```
 
-#### Example 4
+### Code example 4
 
 The next example [comes](https://github.com/jetstack/cert-manager/blob/1dad685e4/pkg/controller/ingress-shim/sync.go#L180-L209) from the same file as the previous example:
 
@@ -234,7 +250,7 @@ newCrts = append(newCrts, crt)
 Note that I removed the `else` statement for the purpose of readability. Since "creating a certificate" seems to be the happy path of this function, it makes sense to unindent the code that relates to this happy path.
 
 <!--
-### Example 5
+### Code example 5
 
 Let us study a case of lack of comments in the same file as above. The following [snippet](https://github.com/jetstack/cert-manager/blob/1dad685e/pkg/controller/ingress-shim/sync.go#L84-L90) does an update of a Certificate object, but this object does not seem to have been changed:
 
@@ -264,7 +280,137 @@ for _, crt := range updateCrts {
 
 -->
 
-### From design philosophy to useful comments
+### Code example 5
+
+HAProxy, written in C, is an example of codebase where comments are not only useful, but also interesting to read. For example, the [freq_ctr.h](https://github.com/haproxy/haproxy/blob/530408f976e5fe2f2f2b4b733b39da36770b566f/include/proto/freq_ctr.h#L138-L248) file has an extraordinarily well-written comment that details how and why some statistics are computed:
+
+```c
+/* While the functions above report average event counts per period, we are
+ * also interested in average values per event. For this we use a different
+ * method. The principle is to rely on a long tail which sums the new value
+ * with a fraction of the previous value, resulting in a sliding window of
+ * infinite length depending on the precision we're interested in.
+ *
+ * The idea is that we always keep (N-1)/N of the sum and add the new sampled
+ * value. The sum over N values can be computed with a simple program for a
+ * constant value 1 at each iteration :
+ *
+ *     N
+ *   ,---
+ *    \       N - 1              e - 1
+ *     >  ( --------- )^x ~= N * -----
+ *    /         N                  e
+ *   '---
+ *   x = 1
+ *
+ * Note: I'm not sure how to demonstrate this but at least this is easily
+ * verified with a simple program, the sum equals N * 0.632120 for any N
+ * moderately large (tens to hundreds).
+ *
+ * Inserting a constant sample value V here simply results in :
+ *
+ *    sum = V * N * (e - 1) / e
+ *
+ * But we don't want to integrate over a small period, but infinitely. Let's
+ * cut the infinity in P periods of N values. Each period M is exactly the same
+ * as period M-1 with a factor of ((N-1)/N)^N applied. A test shows that given a
+ * large N :
+ *
+ *      N - 1           1
+ *   ( ------- )^N ~=  ---
+ *        N             e
+ *
+ * Our sum is now a sum of each factor times  :
+ *
+ *    N*P                                     P
+ *   ,---                                   ,---
+ *    \         N - 1               e - 1    \     1
+ *     >  v ( --------- )^x ~= VN * -----  *  >   ---
+ *    /           N                   e      /    e^x
+ *   '---                                   '---
+ *   x = 1                                  x = 0
+ *
+ * For P "large enough", in tests we get this :
+ *
+ *    P
+ *  ,---
+ *   \     1        e
+ *    >   --- ~=  -----
+ *   /    e^x     e - 1
+ *  '---
+ *  x = 0
+ *
+ * This simplifies the sum above :
+ *
+ *    N*P
+ *   ,---
+ *    \         N - 1
+ *     >  v ( --------- )^x = VN
+ *    /           N
+ *   '---
+ *   x = 1
+ *
+ * So basically by summing values and applying the last result an (N-1)/N factor
+ * we just get N times the values over the long term, so we can recover the
+ * constant value V by dividing by N. In order to limit the impact of integer
+ * overflows, we'll use this equivalence which saves us one multiply :
+ *
+ *               N - 1                   1             x0
+ *    x1 = x0 * -------   =  x0 * ( 1 - --- )  = x0 - ----
+ *                 N                     N              N
+ *
+ * And given that x0 is discrete here we'll have to saturate the values before
+ * performing the divide, so the value insertion will become :
+ *
+ *               x0 + N - 1
+ *    x1 = x0 - ------------
+ *                    N
+ *
+ * A value added at the entry of the sliding window of N values will thus be
+ * reduced to 1/e or 36.7% after N terms have been added. After a second batch,
+ * it will only be 1/e^2, or 13.5%, and so on. So practically speaking, each
+ * old period of N values represents only a quickly fading ratio of the global
+ * sum :
+ *
+ *   period    ratio
+ *     1       36.7%
+ *     2       13.5%
+ *     3       4.98%
+ *     4       1.83%
+ *     5       0.67%
+ *     6       0.25%
+ *     7       0.09%
+ *     8       0.033%
+ *     9       0.012%
+ *    10       0.0045%
+ *
+ * So after 10N samples, the initial value has already faded out by a factor of
+ * 22026, which is quite fast. If the sliding window is 1024 samples wide, it
+ * means that a sample will only count for 1/22k of its initial value after 10k
+ * samples went after it, which results in half of the value it would represent
+ * using an arithmetic mean. The benefit of this method is that it's very cheap
+ * in terms of computations when N is a power of two. This is very well suited
+ * to record response times as large values will fade out faster than with an
+ * arithmetic mean and will depend on sample count and not time.
+ *
+ * Demonstrating all the above assumptions with maths instead of a program is
+ * left as an exercise for the reader.
+ */
+```
+
+I think we all enjoy reading this type of great comments, and that well commented code is an art.
+
+### Other examples
+
+Some projects like HAProxy, Git or the Linux kernel have done an amazing job at keeping knowledge accessible as opposed to knowledge locked in and scattered across many brains. Take a look at these other examples:
+
+- [`ebtree/ebtree.h`](https://github.com/haproxy/haproxy/blob/530408f976e5fe2f2f2b4b733b39da36770b566f/ebtree/ebtree.h#L23) (HAProxy)
+- [`unpack-trees.c`](https://github.com/git/git/blob/2d2118b814c11f509e1aa76cb07110f7231668dc/unpack-trees.c#L821-L836) (Git)
+- [`kernel/sched/core.c`](https://github.com/torvalds/linux/blob/bfdc6d91a25f4545bcd1b12e3219af4838142ef1/kernel/sched/core.c#L157-L171) (Linux kernel).
+
+Absolute delights.
+
+## Discussion
 
 Bill Kennedy [shared](https://changelog.com/gotime/172) the importance of making a concious effort towards having a common set of values that help a team write good software. Like anything, the team probably needs to find their own set of values, but the two values that Bill talked about in the Gotime episode seem valuable to me:
 
@@ -273,18 +419,6 @@ Bill Kennedy [shared](https://changelog.com/gotime/172) the importance of making
 3. Early use of abstractions and other sorts of indirection hurt.
 
 In my mind, being precise also applies to comments. Precision in comments avoid the reader having to wonder "is that what they really meant?". I think that the values and ideas contained in a design philosophy not only apply to code, but also to comments.
-
-Comments are one of these topics that we seem to never agree on ([stackoverflow](https://softwareengineering.stackexchange.com/questions/1/comments-are-a-code-smell) says so). I often hear that comments add noise to the code and that comments never get properly updated.
-
-The solution seems to be to properly self-document code. And I love Go for that; one of the Go proverbs even [says](https://go-proverbs.github.io/):
-
-> Clear is better than clever.
-
-It is true that Go favors easy-to-read code rather than smart-but-hard-to-parse code, which really helps to keep the level of comments low. But there are still many reasons comments are still needed.
-
-### Fighting tribal knowledge
-
-Excellent naming and structure cannot help with the "why" of a piece of code. Complex math operations is a typical example of code that needs to be thougouly commented. Teams want to keep the amount of "tribal knowledge" as low as possible, and the only way in this kind of situation is to write comments. Take a look at [this](https://github.com/haproxy/haproxy/blob/530408f976e5fe2f2f2b4b733b39da36770b566f/include/proto/freq_ctr.h#L138-L248) for example.
 
 ### Good naming takes time
 
@@ -300,11 +434,9 @@ Now, let's talk about the issue of comments becoming outdated. Over time, commen
 
 During code reviews, I pay extra attention to these comments. And yes, very often, comments don't make sense anymore because of some copy-paste of code. We must delete any copy-pasted comment and rewrite it. Spreading copy-pasted comments that we don't really know why they were added in the first place is a plague.
 
----
+## Conclusion
 
 As a final word, I want us to remember that yes, maintaining comments is a pain. Comments will eventually start lying if you don't delete and rewrite them. But would you rather have no comments at all and let the amount of tribal knowledge creep in every part of your codebase, making it harder and harder for new engineers to join the team?
-
-I think we all enjoy reading good comments. Well commented code is an art. Some projects like HAProxy, Git or the Linux kernel have done an amazing job at keeping knowledge accessible as opposed to knowledge locked in and scattered across many brains. Just take a look at [`ebtree/ebtree.h`](https://github.com/haproxy/haproxy/blob/530408f976e5fe2f2f2b4b733b39da36770b566f/ebtree/ebtree.h#L23) (HAProxy), [`unpack-trees.c`](https://github.com/git/git/blob/2d2118b814c11f509e1aa76cb07110f7231668dc/unpack-trees.c#L821-L836) (Git) and [`kernel/sched/core.c`](https://github.com/torvalds/linux/blob/bfdc6d91a25f4545bcd1b12e3219af4838142ef1/kernel/sched/core.c#L157-L171) (Linux kernel). Absolute delights.
 
 <!--
 Join the discussion on Twitter:
