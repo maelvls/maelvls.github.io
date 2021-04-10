@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.75.1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="author" content="Maël Valais"><meta name="keywords" content="go,software-engineering"><meta name="description" content="We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the &#39;what&#39; and the &#39;why&#39;."><meta property="og:title" content="The &#34;why&#34; and the &#34;what&#34; for writing good comments" />
+<meta property="og:description" content="We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the &#39;what&#39; and the &#39;why&#39;." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/comments-the-what-and-the-why/" />
+<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/you-should-write-comments/cover-you-should-write-comments.png" />
+<meta property="article:published_time" content="2021-04-15T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-04-15T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/you-should-write-comments/cover-you-should-write-comments.png"/>
+
+<meta name="twitter:title" content="The &#34;why&#34; and the &#34;what&#34; for writing good comments"/>
+<meta name="twitter:description" content="We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the &#39;what&#39; and the &#39;why&#39;."/>
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/maelvls.css" /><title>The &#34;why&#34; and the &#34;what&#34; for writing good comments | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/do-not-share-yet/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+<div class="author">
+
+</div>
+<div class="post-header">
+
+<div class="meta">
+<div class="date">
+<span class="day">15</span>
+<span class="rest">Apr 2021</span>
+</div>
+</div>
+
+<div class="matter">
+<h1 class="title">The &#34;why&#34; and the &#34;what&#34; for writing good comments</h1>
+</div>
+</div>
+<div class="markdown">
+<p>In his book <em><a href="https://www.oreilly.com/library/view/clean-code-a/9780136083238/">Clean Code</a></em>, Robert C. Martin makes a strong case against comments:</p>
+<blockquote>
+<p>You don&rsquo;t need comments if you write clean code.</p>
+</blockquote>
+<p>This short sentence seems to have created a &ldquo;no comment&rdquo; movement; on <a href="https://softwareengineering.stackexchange.com/questions/1/comments-are-a-code-smell">stackoverflow</a>, we can read that comments are a &ldquo;code smell&rdquo;, that they are adding &ldquo;noise&rdquo; and are often out of sync with the code. This movement seems to have grown from the misinterpration of Robert&rsquo;s sentence, which started as a way of saying that some comments (the &ldquo;what&rdquo;, as we will see below), are not useful to the reader. To some extent, the sentence has become:</p>
+<blockquote>
+<p>If you write any kind of comment, it means you code isn&rsquo;t clean.</p>
+</blockquote>
+<p>I think that this confusion around what comments are good for is unfortunate. Comments can be extremely valuable, and I want to prove it.</p>
+<p>We usually write comments as a way to guide our mind through the intense process of writing code. These &ldquo;initial comments&rdquo; often serve as a to-do list, and naturally reflect the way we program. &ldquo;Initial comments&rdquo; often start with &ldquo;if&rdquo; and are focused on the &ldquo;what&rdquo;.</p>
+<p>The concerning part about these &ldquo;initial comments&rdquo; is that they often end up commited as-is.</p>
+<p>In this article, using four different examples, I will show how to refactor these &ldquo;initial comments&rdquo; into useful comments.</p>
+<p><strong>Contents:</strong></p>
+<ol>
+<li><a href="#refactoring-comments-from-the-what-to-the-why">Refactoring comments: from the &ldquo;what&rdquo; to the &ldquo;why&rdquo;</a>
+<ol>
+<li><a href="#code-example-1">Code example 1</a></li>
+<li><a href="#code-example-2">Code example 2</a></li>
+<li><a href="#code-example-3">Code example 3</a></li>
+<li><a href="#code-example-4">Code example 4</a></li>
+<li><a href="#code-example-5">Code example 5</a></li>
+<li><a href="#other-examples">Other examples</a></li>
+</ol>
+</li>
+<li><a href="#discussion">Discussion</a>
+<ol>
+<li><a href="#good-naming-takes-time">Good naming takes time</a></li>
+<li><a href="#comments-are-disposable-dont-copy-them-over">Comments are disposable, don&rsquo;t copy them over</a></li>
+</ol>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ol>
+<h2 id="refactoring-comments-from-the-what-to-the-why">Refactoring comments: from the &ldquo;what&rdquo; to the &ldquo;why&rdquo;</h2>
+<h3 id="code-example-1">Code example 1</h3>
+<p>First, let&rsquo;s dig into the difference between the &ldquo;why&rdquo; and the &ldquo;what&rdquo; with an example taken from the <a href="https://developers.google.com/tech-writing/two/code-comments">Google&rsquo;s Technical Writing</a> book. In this code snippet, the developer wants to randomly shuffle a slice of integers:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Shuffle</span><span class="p">(</span><span class="nx">slice</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">curIndex</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">slice</span><span class="p">)</span>
+
+    <span class="c1">// If the current index is 0, return directly.
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="nx">curIndex</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></div><p>The only comment in this snippet focuses on the &ldquo;what&rdquo;: it paraphrases the code that immediately follows. The comment does not help the reader since the logic itself is trivial. Refactoring this comment consists in moving away from the &ldquo;what&rdquo; and focusing on the &ldquo;why&rdquo;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Shuffle</span><span class="p">(</span><span class="nx">slice</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">curIndex</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">slice</span><span class="p">)</span>
+
+      <span class="c1">// No need to shuffle an array with zero elements.
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="nx">curIndex</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></div><p>The &ldquo;why&rdquo; brings more value to the reader because the first instinctive question the reader would have:</p>
+<blockquote>
+<p>Why on earth are we returning now?</p>
+</blockquote>
+<p>Starting comments with the &ldquo;why&rdquo; helps glanceability: the reader only needs to read the first few words to get the idea. Here is how I would diffenciate the &ldquo;why&rdquo; from the &ldquo;what&rdquo;:</p>
+<table>
+<thead>
+<tr>
+<th>Content in a comment</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The &ldquo;why&rdquo;</td>
+<td>Helps you understand how this piece of code came to life.</td>
+</tr>
+<tr>
+<td>The &ldquo;what&rdquo;</td>
+<td>Paraphrases what code does in a human-readable format.*</td>
+</tr>
+</tbody>
+</table>
+<p>*sometimes, commenting on the &ldquo;what&rdquo; can still be valuable for readability purposes. I see three reasons to comment on the &ldquo;what&rdquo;:</p>
+<ol>
+<li>When the code is not self-explanatory, a &ldquo;what&rdquo; comment may avoid the reader the struggle of googling;</li>
+<li>When a block of code is lenghy, adding &ldquo;what&rdquo; comments may help create &ldquo;sections&rdquo;, helping the reader quicly find the part they are interested in.</li>
+</ol>
+<h3 id="code-example-2">Code example 2</h3>
+<p>The next example <a href="https://github.com/jetstack/cert-manager/pull/3872">comes</a> from cert-manager. The original comment focuses on the &ldquo;what&rdquo;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// If the certificate request has been denied, set the last failure time to
+</span><span class="c1">// now, and set the Issuing status condition to False with reason. We only
+</span><span class="c1">// perform this check if the request also doesn&#39;t have a Ready condition,
+</span><span class="c1">// since some issuers may not honor a Denied condition, and will sign and
+</span><span class="c1">// set the Ready condition to True anyway. We would still want to complete
+</span><span class="c1">// issuance for requests where the issuer doesn&#39;t respect approval.
+</span><span class="c1"></span><span class="nx">cond</span> <span class="o">:=</span> <span class="nx">apiutil</span><span class="p">.</span><span class="nf">GetCertificateRequestCondition</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">cmapi</span><span class="p">.</span><span class="nx">CertificateRequestConditionReady</span><span class="p">)</span>
+<span class="k">if</span> <span class="nx">cond</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">apiutil</span><span class="p">.</span><span class="nf">CertificateRequestIsDenied</span><span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">failIssueCertificate</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">log</span><span class="p">,</span> <span class="nx">crt</span><span class="p">,</span> <span class="nx">apiutil</span><span class="p">.</span><span class="nf">GetCertificateRequestCondition</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">cmapi</span><span class="p">.</span><span class="nx">CertificateRequestConditionDenied</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></div><p>The first few words are paraphrasing what the code does, and the &ldquo;why&rdquo; is buried at the 6th line. We often naturally end up with this form of comment while programming: it helps us lay out the logic.</p>
+<p>To refactor this comment, we want to enphasise on the &ldquo;why&rdquo;. Notice that the &ldquo;what&rdquo; has not totally disappeared, but has been moved to the end of the comment. In this example, the code itself is not trivial due to the nesting of two conditions:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Some issuers won&#39;t honor the &#34;Denied=True&#34; condition, and we don&#39;t want
+</span><span class="c1">// to break these issuers. To avoid breaking these issuers, we skip bubbling
+</span><span class="c1">// up the &#34;Denied=True&#34; condition from the certificate request object to the
+</span><span class="c1">// certificate object when the issuer ignores the &#34;Denied&#34; state.
+</span><span class="c1">//
+</span><span class="c1">// To know whether or not an issuer ignores the &#34;Denied&#34; state, we pay
+</span><span class="c1">// attention to the &#34;Ready&#34; condition on the certificate request. If a
+</span><span class="c1">// certificate request is &#34;Denied=True&#34; and that the issuer still proceeds
+</span><span class="c1">// to adding the &#34;Ready&#34; condition (to either true or false), then we
+</span><span class="c1">// consider that this issuer has ignored the &#34;Denied&#34; state.
+</span><span class="c1"></span><span class="nx">cond</span> <span class="o">:=</span> <span class="nx">apiutil</span><span class="p">.</span><span class="nf">GetCertificateRequestCondition</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">cmapi</span><span class="p">.</span><span class="nx">CertificateRequestConditionReady</span><span class="p">)</span>
+<span class="k">if</span> <span class="nx">cond</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">apiutil</span><span class="p">.</span><span class="nf">CertificateRequestIsDenied</span><span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">failIssueCertificate</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">log</span><span class="p">,</span> <span class="nx">crt</span><span class="p">,</span> <span class="nx">apiutil</span><span class="p">.</span><span class="nf">GetCertificateRequestCondition</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">cmapi</span><span class="p">.</span><span class="nx">CertificateRequestConditionDenied</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="code-example-3">Code example 3</h3>
+<p>The next <a href="https://github.com/jetstack/cert-manager/blob/1dad685e/pkg/controller/ingress-shim/sync.go#L145">example</a> comes from another part of the cert-manager codebase:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">errs</span> <span class="o">:=</span> <span class="nf">validateIngressTLSBlock</span><span class="p">(</span><span class="nx">tls</span><span class="p">)</span>
+<span class="c1">// if this tls entry is invalid, record an error event on Ingress object and continue to the next tls entry
+</span><span class="c1"></span><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">errs</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+    <span class="nx">errMsg</span> <span class="o">:=</span> <span class="nx">utilerrors</span><span class="p">.</span><span class="nf">NewAggregate</span><span class="p">(</span><span class="nx">errs</span><span class="p">).</span><span class="nf">Error</span><span class="p">()</span>
+    <span class="nx">c</span><span class="p">.</span><span class="nx">recorder</span><span class="p">.</span><span class="nf">Eventf</span><span class="p">(</span><span class="nx">ing</span><span class="p">,</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">EventTypeWarning</span><span class="p">,</span> <span class="s">&#34;BadConfig&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;TLS entry %d is invalid: %s&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">errMsg</span><span class="p">))</span>
+    <span class="k">continue</span>
+<span class="p">}</span>
+</code></pre></div><p>Let&rsquo;s refactor the comment by focusing on the &ldquo;why&rdquo;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Let the user know that an TLS entry has been skipped due to being invalid.
+</span><span class="c1"></span><span class="nx">errs</span> <span class="o">:=</span> <span class="nf">validateIngressTLSBlock</span><span class="p">(</span><span class="nx">tls</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">errs</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+    <span class="nx">errMsg</span> <span class="o">:=</span> <span class="nx">utilerrors</span><span class="p">.</span><span class="nf">NewAggregate</span><span class="p">(</span><span class="nx">errs</span><span class="p">).</span><span class="nf">Error</span><span class="p">()</span>
+    <span class="nx">c</span><span class="p">.</span><span class="nx">recorder</span><span class="p">.</span><span class="nf">Eventf</span><span class="p">(</span><span class="nx">ing</span><span class="p">,</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">EventTypeWarning</span><span class="p">,</span> <span class="s">&#34;BadConfig&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;TLS entry %d is invalid: %s&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">errMsg</span><span class="p">))</span>
+    <span class="k">continue</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="code-example-4">Code example 4</h3>
+<p>The next example <a href="https://github.com/jetstack/cert-manager/blob/1dad685e4/pkg/controller/ingress-shim/sync.go#L180-L209">comes</a> from the same file as the previous example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// check if a Certificate for this TLS entry already exists, and if it
+</span><span class="c1">// does then skip this entry
+</span><span class="c1"></span><span class="k">if</span> <span class="nx">existingCrt</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span> <span class="o">:=</span> <span class="nx">logs</span><span class="p">.</span><span class="nf">WithRelatedResource</span><span class="p">(</span><span class="nx">log</span><span class="p">,</span> <span class="nx">existingCrt</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">DebugLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate already exists for ingress resource, ensuring it is up to date&#34;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nx">metav1</span><span class="p">.</span><span class="nf">GetControllerOf</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">)</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">InfoLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource has no owner. refusing to update non-owned certificate resource for ingress&#34;</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">!</span><span class="nx">metav1</span><span class="p">.</span><span class="nf">IsControlledBy</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">ing</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">InfoLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource is not owned by this ingress. refusing to update non-owned certificate resource for ingress&#34;</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">!</span><span class="nf">certNeedsUpdate</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">DebugLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource is already up to date for ingress&#34;</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="p">}</span>
+
+    <span class="nx">updateCrt</span> <span class="o">:=</span> <span class="nx">existingCrt</span><span class="p">.</span><span class="nf">DeepCopy</span><span class="p">()</span>
+
+    <span class="nx">updateCrt</span><span class="p">.</span><span class="nx">Spec</span> <span class="p">=</span> <span class="nx">crt</span><span class="p">.</span><span class="nx">Spec</span>
+    <span class="nx">updateCrt</span><span class="p">.</span><span class="nx">Labels</span> <span class="p">=</span> <span class="nx">crt</span><span class="p">.</span><span class="nx">Labels</span>
+    <span class="nf">setIssuerSpecificConfig</span><span class="p">(</span><span class="nx">updateCrt</span><span class="p">,</span> <span class="nx">ing</span><span class="p">)</span>
+    <span class="nx">updateCrts</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">updateCrts</span><span class="p">,</span> <span class="nx">updateCrt</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">newCrts</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">newCrts</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>As in the previous examples, refactoring this example is about moving the &ldquo;why&rdquo; to the start of the comment:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// The &#34;secretName&#34; field may already refer to an existing Certificate object.
+</span><span class="c1">// We still want this existing Certificate to be .
+</span><span class="c1">//
+</span><span class="c1">// For example, imagine that the certificate named &#34;example-tls&#34; already exists.
+</span><span class="c1">//
+</span><span class="c1">//     kind: Ingress
+</span><span class="c1">//     spec:
+</span><span class="c1">//       tls:
+</span><span class="c1">//         - secretName: example-tls
+</span><span class="c1">//           hosts: [example.com]
+</span><span class="c1">//
+</span><span class="c1"></span><span class="k">if</span> <span class="nx">existingCrt</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span> <span class="o">:=</span> <span class="nx">logs</span><span class="p">.</span><span class="nf">WithRelatedResource</span><span class="p">(</span><span class="nx">log</span><span class="p">,</span> <span class="nx">existingCrt</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">DebugLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate already exists for ingress resource, ensuring it is up to date&#34;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nx">metav1</span><span class="p">.</span><span class="nf">GetControllerOf</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">)</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">InfoLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource has no owner. refusing to update non-owned certificate resource for ingress&#34;</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">!</span><span class="nx">metav1</span><span class="p">.</span><span class="nf">IsControlledBy</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">ing</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">InfoLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource is not owned by this ingress. refusing to update non-owned certificate resource for ingress&#34;</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">!</span><span class="nf">certNeedsUpdate</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">DebugLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource is already up to date for ingress&#34;</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="p">}</span>
+
+    <span class="nx">updateCrt</span> <span class="o">:=</span> <span class="nx">existingCrt</span><span class="p">.</span><span class="nf">DeepCopy</span><span class="p">()</span>
+
+    <span class="nx">updateCrt</span><span class="p">.</span><span class="nx">Spec</span> <span class="p">=</span> <span class="nx">crt</span><span class="p">.</span><span class="nx">Spec</span>
+    <span class="nx">updateCrt</span><span class="p">.</span><span class="nx">Labels</span> <span class="p">=</span> <span class="nx">crt</span><span class="p">.</span><span class="nx">Labels</span>
+    <span class="nf">setIssuerSpecificConfig</span><span class="p">(</span><span class="nx">updateCrt</span><span class="p">,</span> <span class="nx">ing</span><span class="p">)</span>
+    <span class="nx">updateCrts</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">updateCrts</span><span class="p">,</span> <span class="nx">updateCrt</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">newCrts</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">newCrts</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span>
+</code></pre></div><p>Note that I removed the <code>else</code> statement for the purpose of readability. Since &ldquo;creating a certificate&rdquo; seems to be the happy path of this function, it makes sense to unindent the code that relates to this happy path.</p>
+<!--
+### Code example 5
+
+Let us study a case of lack of comments in the same file as above. The following [snippet](https://github.com/jetstack/cert-manager/blob/1dad685e/pkg/controller/ingress-shim/sync.go#L84-L90) does an update of a Certificate object, but this object does not seem to have been changed:
+
+```go
+for _, crt := range updateCrts {
+    _, err := c.cmClient.CertmanagerV1().Certificates(crt.Namespace).Update(ctx, crt, metav1.UpdateOptions{})
+    if err != nil {
+        return err
+    }
+    c.recorder.Eventf(ing, corev1.EventTypeNormal, "UpdateCertificate", "Successfully updated Certificate %q", crt.Name)
+}
+```
+
+From my experience, we often do this when we want to trigger a re-sync of the object, so that's my hypothesis on the "what". But I have no idea "why": why do we need to re-sync the Certificate immediately? What change are we expecting to happen when we do?
+
+A comment would have helped me realize that
+
+```go
+for _, crt := range updateCrts {
+    _, err := c.cmClient.CertmanagerV1().Certificates(crt.Namespace).Update(ctx, crt, metav1.UpdateOptions{})
+    if err != nil {
+        return err
+    }
+    c.recorder.Eventf(ing, corev1.EventTypeNormal, "UpdateCertificate", "Successfully updated Certificate %q", crt.Name)
+}
+```
+
+-->
+<h3 id="code-example-5">Code example 5</h3>
+<p>HAProxy, written in C, is an example of codebase where comments are not only useful, but also interesting to read. For example, the <a href="https://github.com/haproxy/haproxy/blob/530408f976e5fe2f2f2b4b733b39da36770b566f/include/proto/freq_ctr.h#L138-L248">freq_ctr.h</a> file has an extraordinarily well-written comment that details how and why some statistics are computed:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/* While the functions above report average event counts per period, we are
+</span><span class="cm"> * also interested in average values per event. For this we use a different
+</span><span class="cm"> * method. The principle is to rely on a long tail which sums the new value
+</span><span class="cm"> * with a fraction of the previous value, resulting in a sliding window of
+</span><span class="cm"> * infinite length depending on the precision we&#39;re interested in.
+</span><span class="cm"> *
+</span><span class="cm"> * The idea is that we always keep (N-1)/N of the sum and add the new sampled
+</span><span class="cm"> * value. The sum over N values can be computed with a simple program for a
+</span><span class="cm"> * constant value 1 at each iteration :
+</span><span class="cm"> *
+</span><span class="cm"> *     N
+</span><span class="cm"> *   ,---
+</span><span class="cm"> *    \       N - 1              e - 1
+</span><span class="cm"> *     &gt;  ( --------- )^x ~= N * -----
+</span><span class="cm"> *    /         N                  e
+</span><span class="cm"> *   &#39;---
+</span><span class="cm"> *   x = 1
+</span><span class="cm"> *
+</span><span class="cm"> * Note: I&#39;m not sure how to demonstrate this but at least this is easily
+</span><span class="cm"> * verified with a simple program, the sum equals N * 0.632120 for any N
+</span><span class="cm"> * moderately large (tens to hundreds).
+</span><span class="cm"> *
+</span><span class="cm"> * Inserting a constant sample value V here simply results in :
+</span><span class="cm"> *
+</span><span class="cm"> *    sum = V * N * (e - 1) / e
+</span><span class="cm"> *
+</span><span class="cm"> * But we don&#39;t want to integrate over a small period, but infinitely. Let&#39;s
+</span><span class="cm"> * cut the infinity in P periods of N values. Each period M is exactly the same
+</span><span class="cm"> * as period M-1 with a factor of ((N-1)/N)^N applied. A test shows that given a
+</span><span class="cm"> * large N :
+</span><span class="cm"> *
+</span><span class="cm"> *      N - 1           1
+</span><span class="cm"> *   ( ------- )^N ~=  ---
+</span><span class="cm"> *        N             e
+</span><span class="cm"> *
+</span><span class="cm"> * Our sum is now a sum of each factor times  :
+</span><span class="cm"> *
+</span><span class="cm"> *    N*P                                     P
+</span><span class="cm"> *   ,---                                   ,---
+</span><span class="cm"> *    \         N - 1               e - 1    \     1
+</span><span class="cm"> *     &gt;  v ( --------- )^x ~= VN * -----  *  &gt;   ---
+</span><span class="cm"> *    /           N                   e      /    e^x
+</span><span class="cm"> *   &#39;---                                   &#39;---
+</span><span class="cm"> *   x = 1                                  x = 0
+</span><span class="cm"> *
+</span><span class="cm"> * For P &#34;large enough&#34;, in tests we get this :
+</span><span class="cm"> *
+</span><span class="cm"> *    P
+</span><span class="cm"> *  ,---
+</span><span class="cm"> *   \     1        e
+</span><span class="cm"> *    &gt;   --- ~=  -----
+</span><span class="cm"> *   /    e^x     e - 1
+</span><span class="cm"> *  &#39;---
+</span><span class="cm"> *  x = 0
+</span><span class="cm"> *
+</span><span class="cm"> * This simplifies the sum above :
+</span><span class="cm"> *
+</span><span class="cm"> *    N*P
+</span><span class="cm"> *   ,---
+</span><span class="cm"> *    \         N - 1
+</span><span class="cm"> *     &gt;  v ( --------- )^x = VN
+</span><span class="cm"> *    /           N
+</span><span class="cm"> *   &#39;---
+</span><span class="cm"> *   x = 1
+</span><span class="cm"> *
+</span><span class="cm"> * So basically by summing values and applying the last result an (N-1)/N factor
+</span><span class="cm"> * we just get N times the values over the long term, so we can recover the
+</span><span class="cm"> * constant value V by dividing by N. In order to limit the impact of integer
+</span><span class="cm"> * overflows, we&#39;ll use this equivalence which saves us one multiply :
+</span><span class="cm"> *
+</span><span class="cm"> *               N - 1                   1             x0
+</span><span class="cm"> *    x1 = x0 * -------   =  x0 * ( 1 - --- )  = x0 - ----
+</span><span class="cm"> *                 N                     N              N
+</span><span class="cm"> *
+</span><span class="cm"> * And given that x0 is discrete here we&#39;ll have to saturate the values before
+</span><span class="cm"> * performing the divide, so the value insertion will become :
+</span><span class="cm"> *
+</span><span class="cm"> *               x0 + N - 1
+</span><span class="cm"> *    x1 = x0 - ------------
+</span><span class="cm"> *                    N
+</span><span class="cm"> *
+</span><span class="cm"> * A value added at the entry of the sliding window of N values will thus be
+</span><span class="cm"> * reduced to 1/e or 36.7% after N terms have been added. After a second batch,
+</span><span class="cm"> * it will only be 1/e^2, or 13.5%, and so on. So practically speaking, each
+</span><span class="cm"> * old period of N values represents only a quickly fading ratio of the global
+</span><span class="cm"> * sum :
+</span><span class="cm"> *
+</span><span class="cm"> *   period    ratio
+</span><span class="cm"> *     1       36.7%
+</span><span class="cm"> *     2       13.5%
+</span><span class="cm"> *     3       4.98%
+</span><span class="cm"> *     4       1.83%
+</span><span class="cm"> *     5       0.67%
+</span><span class="cm"> *     6       0.25%
+</span><span class="cm"> *     7       0.09%
+</span><span class="cm"> *     8       0.033%
+</span><span class="cm"> *     9       0.012%
+</span><span class="cm"> *    10       0.0045%
+</span><span class="cm"> *
+</span><span class="cm"> * So after 10N samples, the initial value has already faded out by a factor of
+</span><span class="cm"> * 22026, which is quite fast. If the sliding window is 1024 samples wide, it
+</span><span class="cm"> * means that a sample will only count for 1/22k of its initial value after 10k
+</span><span class="cm"> * samples went after it, which results in half of the value it would represent
+</span><span class="cm"> * using an arithmetic mean. The benefit of this method is that it&#39;s very cheap
+</span><span class="cm"> * in terms of computations when N is a power of two. This is very well suited
+</span><span class="cm"> * to record response times as large values will fade out faster than with an
+</span><span class="cm"> * arithmetic mean and will depend on sample count and not time.
+</span><span class="cm"> *
+</span><span class="cm"> * Demonstrating all the above assumptions with maths instead of a program is
+</span><span class="cm"> * left as an exercise for the reader.
+</span><span class="cm"> */</span>
+</code></pre></div><p>I think we all enjoy reading this type of great comments, and that well commented code is an art.</p>
+<h3 id="other-examples">Other examples</h3>
+<p>Some projects like HAProxy, Git or the Linux kernel have done an amazing job at keeping knowledge accessible as opposed to knowledge locked in and scattered across many brains. Take a look at these other examples:</p>
+<ul>
+<li><a href="https://github.com/haproxy/haproxy/blob/530408f976e5fe2f2f2b4b733b39da36770b566f/ebtree/ebtree.h#L23"><code>ebtree/ebtree.h</code></a> (HAProxy)</li>
+<li><a href="https://github.com/git/git/blob/2d2118b814c11f509e1aa76cb07110f7231668dc/unpack-trees.c#L821-L836"><code>unpack-trees.c</code></a> (Git)</li>
+<li><a href="https://github.com/torvalds/linux/blob/bfdc6d91a25f4545bcd1b12e3219af4838142ef1/kernel/sched/core.c#L157-L171"><code>kernel/sched/core.c</code></a> (Linux kernel).</li>
+</ul>
+<p>Absolute delights.</p>
+<h2 id="discussion">Discussion</h2>
+<p>Bill Kennedy <a href="https://changelog.com/gotime/172">shared</a> the importance of making a concious effort towards having a common set of values that help a team write good software. Like anything, the team probably needs to find their own set of values, but the two values that Bill talked about in the Gotime episode seem valuable to me:</p>
+<ol>
+<li>Be precise. Letting uncertainty and inprecision creep into variable names, function names and package mames greatly decreases the chance for someone to understand the concepts captured by your code.</li>
+<li>Don’t make things easy to do; instead, make things easy to understand. That&rsquo;s an other</li>
+<li>Early use of abstractions and other sorts of indirection hurt.</li>
+</ol>
+<p>In my mind, being precise also applies to comments. Precision in comments avoid the reader having to wonder &ldquo;is that what they really meant?&rdquo;. I think that the values and ideas contained in a design philosophy not only apply to code, but also to comments.</p>
+<h3 id="good-naming-takes-time">Good naming takes time</h3>
+<p>Finding a good name that properly carries the exact intent and help self-documenting takes time. It always takes a few iterations before the code becomes self-documenting enough to be able to remove comments.</p>
+<p><img src="chart-comments-over-time.svg" alt="Number of comments lowers with time"></p>
+<p>As shown by the diagram, the amount of comments for a given codebase decreases thanks to PR reviews and refactorings. The more we learn and understand our codebase, the better we become at self-documenting.</p>
+<h3 id="comments-are-disposable-dont-copy-them-over">Comments are disposable, don&rsquo;t copy them over</h3>
+<p>Now, let&rsquo;s talk about the issue of comments becoming outdated. Over time, comments start lying. That&rsquo;s where my second point comes into play: deleting and rewriting comments is part of our job. I would even say that it takes around 40% of my time spent coding.</p>
+<p>During code reviews, I pay extra attention to these comments. And yes, very often, comments don&rsquo;t make sense anymore because of some copy-paste of code. We must delete any copy-pasted comment and rewrite it. Spreading copy-pasted comments that we don&rsquo;t really know why they were added in the first place is a plague.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>As a final word, I want us to remember that yes, maintaining comments is a pain. Comments will eventually start lying if you don&rsquo;t delete and rewrite them. But would you rather have no comments at all and let the amount of tribal knowledge creep in every part of your codebase, making it harder and harder for new engineers to join the team?</p>
+<!--
+Join the discussion on Twitter:
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">I know I know comments always end up outdated and so on. But I really think we should still write beautiful comments! 😇<a href="https://t.co/704lUCDzo2">https://t.co/704lUCDzo2</a></p>&mdash; Maël Valais (@maelvls) <a href="https://twitter.com/maelvls/status/1233140530017644544?ref_src=twsrc%5Etfw">February 27, 2020</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+\-->
+
+</div>
+<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/you-should-write-comments/index.md">📝 Edit this page and propose a change!</a>
+<div class="tags">
+
+
+
+
+
+
+
+
+
+
+<div style="float: right;">
+<p>Tags:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a href="/tags/go/"> go </a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a href="/tags/software-engineering/"> software-engineering </a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+<div class="clearit"></div>
+
+
+
+
+
+</div>
+
+<script
+  src="https://utteranc.es/client.js"
+  repo="maelvls/maelvls.github.io"
+  issue-term="pathname"
+  label="💬"
+  theme="github-light"
+  crossorigin="anonymous"
+  async
+></script>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>
