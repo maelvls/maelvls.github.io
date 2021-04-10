@@ -6,10 +6,34 @@
     <description>Recent content in Tags on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 15 Apr 2021 00:00:00 +0000</lastBuildDate>
     
     <atom:link href="https://maelvls.dev/do-not-share-yet/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    <item>
+      <title>go</title>
+      <link>https://maelvls.dev/do-not-share-yet/tags/go/</link>
+      <pubDate>Thu, 15 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/tags/go/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
+    <item>
+      <title>software-engineering</title>
+      <link>https://maelvls.dev/do-not-share-yet/tags/software-engineering/</link>
+      <pubDate>Thu, 15 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/tags/software-engineering/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
     <item>
       <title>networking</title>
       <link>https://maelvls.dev/do-not-share-yet/tags/networking/</link>
@@ -244,30 +268,6 @@
       <pubDate>Mon, 30 Mar 2020 00:00:00 +0000</pubDate>
       
       <guid>https://maelvls.dev/do-not-share-yet/tags/setup/</guid>
-      <description>
-      
-      
-      
-      </description>
-    </item>
-    <item>
-      <title>go</title>
-      <link>https://maelvls.dev/do-not-share-yet/tags/go/</link>
-      <pubDate>Thu, 27 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://maelvls.dev/do-not-share-yet/tags/go/</guid>
-      <description>
-      
-      
-      
-      </description>
-    </item>
-    <item>
-      <title>software-engineering</title>
-      <link>https://maelvls.dev/do-not-share-yet/tags/software-engineering/</link>
-      <pubDate>Thu, 27 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://maelvls.dev/do-not-share-yet/tags/software-engineering/</guid>
       <description>
       
       
