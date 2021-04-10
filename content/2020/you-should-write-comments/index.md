@@ -1,5 +1,5 @@
 ---
-title: The "why" and the "what" for writing good comments
+title: 'Writing useful comments: the "why" and the "what"'
 description: "We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the 'what' and the 'why'."
 date: 2021-04-15
 url: "/comments-the-what-and-the-why"
