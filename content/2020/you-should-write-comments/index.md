@@ -1,8 +1,8 @@
 ---
-title: Comments are great and here is why
-description: "We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to refactor comments into useful comments."
+title: The "why" and the "what" for writing good comments
+description: "We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the 'what' and the 'why'."
 date: 2021-04-15
-url: "/you-should-write-comments"
+url: "/comments-the-what-and-the-why"
 images:
   - you-should-write-comments/cover-you-should-write-comments.png
 tags:
