@@ -11,14 +11,14 @@
     <atom:link href="https://maelvls.dev/do-not-share-yet/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>You should write comments</title>
+      <title>Comments are great and here is why</title>
       <link>https://maelvls.dev/do-not-share-yet/you-should-write-comments/</link>
       <pubDate>Thu, 15 Apr 2021 00:00:00 +0000</pubDate>
       
       <guid>https://maelvls.dev/do-not-share-yet/you-should-write-comments/</guid>
       <description>
       
-      We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself.
+      We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to refactor comments into useful comments.
       
       </description>
     </item>
