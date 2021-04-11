@@ -70,10 +70,7 @@
 <blockquote>
 <p>If you write any kind of comment, it means you code isn&rsquo;t clean.</p>
 </blockquote>
-<p>I think that this confusion around what comments are good for is unfortunate. Comments can be extremely valuable, and I want to prove it.</p>
-<p>We usually write comments as a way to guide our mind through the intense process of writing code. These &ldquo;initial comments&rdquo; often serve as a to-do list, and naturally reflect the way we program. &ldquo;Initial comments&rdquo; often start with &ldquo;if&rdquo; and are focused on the &ldquo;what&rdquo;.</p>
-<p>The concerning part about these &ldquo;initial comments&rdquo; is that they often end up commited as-is.</p>
-<p>In this article, using four different examples, I will show how to refactor these &ldquo;initial comments&rdquo; into useful comments.</p>
+<p>This &ldquo;no comment&rdquo; trend is worrying. Without comments, developers have no way to express the &ldquo;why&rdquo; in their code logic. In this article, using four different examples, I will show what good comments look like, and how to refactor &ldquo;what&rdquo; comments into useful &ldquo;why&rdquo; comments.</p>
 <p><strong>Contents:</strong></p>
 <ol>
 <li><a href="#refactoring-comments-from-the-what-to-the-why">Refactoring comments: from the &ldquo;what&rdquo; to the &ldquo;why&rdquo;</a>
@@ -95,6 +92,7 @@
 <li><a href="#conclusion">Conclusion</a></li>
 </ol>
 <h2 id="refactoring-comments-from-the-what-to-the-why">Refactoring comments: from the &ldquo;what&rdquo; to the &ldquo;why&rdquo;</h2>
+<p>We usually write comments as a way to guide our mind through the intense process of writing code. These &ldquo;initial comments&rdquo; often serve as a to-do list, and naturally reflect the way we program. &ldquo;Initial comments&rdquo; often start with &ldquo;if&rdquo; and are focused on the &ldquo;what&rdquo;. The concerning part about these &ldquo;initial comments&rdquo; is that they often end up commited as-is.</p>
 <h3 id="code-example-1">Code example 1</h3>
 <p>First, let&rsquo;s dig into the difference between the &ldquo;why&rdquo; and the &ldquo;what&rdquo; with an example taken from the <a href="https://developers.google.com/tech-writing/two/code-comments">Google&rsquo;s Technical Writing</a> book. In this code snippet, the developer wants to randomly shuffle a slice of integers:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Shuffle</span><span class="p">(</span><span class="nx">slice</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
