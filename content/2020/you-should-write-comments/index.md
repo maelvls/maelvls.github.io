@@ -24,13 +24,7 @@ This short sentence seems to have created a "no comment" movement; on [stackover
 
 > If you write any kind of comment, it means you code isn't clean.
 
-I think that this confusion around what comments are good for is unfortunate. Comments can be extremely valuable, and I want to prove it.
-
-We usually write comments as a way to guide our mind through the intense process of writing code. These "initial comments" often serve as a to-do list, and naturally reflect the way we program. "Initial comments" often start with "if" and are focused on the "what".
-
-The concerning part about these "initial comments" is that they often end up commited as-is.
-
-In this article, using four different examples, I will show how to refactor these "initial comments" into useful comments.
+This "no comment" trend is worrying. Without comments, developers have no way to express the "why" in their code logic. In this article, using four different examples, I will show what good comments look like, and how to refactor "what" comments into useful "why" comments.
 
 **Contents:**
 
@@ -47,6 +41,8 @@ In this article, using four different examples, I will show how to refactor thes
 3. [Conclusion](#conclusion)
 
 ## Refactoring comments: from the "what" to the "why"
+
+We usually write comments as a way to guide our mind through the intense process of writing code. These "initial comments" often serve as a to-do list, and naturally reflect the way we program. "Initial comments" often start with "if" and are focused on the "what". The concerning part about these "initial comments" is that they often end up commited as-is.
 
 ### Code example 1
 
