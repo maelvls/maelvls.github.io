@@ -16,6 +16,13 @@ devtoPublished: false
 draft: true
 ---
 
+Before:
+
+Set the Ready condition to False when a CertificateRequest has been denied for all CertificateRequests that reference a cert-manager.io signer ([#3892](https://github.com/jetstack/cert-manager/pull/3892), [@JoshVanL](https://github.com/JoshVanL))
+
+After:
+Fixes a regression that was introduced in v1.3. Before v1.3, a CertificateRequest that would fail would have the condition `Ready=False` added to it. After v1.3, the `Ready=False` was not set anymore due to the addition of the Approval API. ([#3892](https://github.com/jetstack/cert-manager/pull/3892), [@JoshVanL](https://github.com/JoshVanL))
+
 In his book _[Clean Code](https://www.oreilly.com/library/view/clean-code-a/9780136083238/)_, Robert C. Martin makes a strong case against comments:
 
 > You don't need comments if you write clean code.
