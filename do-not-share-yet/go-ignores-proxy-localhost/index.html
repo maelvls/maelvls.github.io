@@ -45,24 +45,35 @@
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">06</span>
-<span class="rest">Jan 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">What to do when Go ignores HTTP_PROXY for 127.0.0.1</h1>
-</div>
-</div>
-<div class="markdown">
-<p>I use <a href="https://proxyman.io">Proxyman</a> for inspecting the HTTP and HTTPS traffic coming from applications. For example, you may want to know which API calls are made by <code>docker</code> when running <code>docker search</code>. What I would do is</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">06</span>
+                <span class="rest">
+                    
+                    Jan2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">What to do when Go ignores HTTP_PROXY for 127.0.0.1</h1>
+        </div>
+        
+        <span style="font-size: xx-small; text-align: right">
+            cross-post <a href="https://dev.to/maelvls/what-to-do-when-go-ignores-httpproxy-for-127-0-0-1-54nn">
+                <i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i>
+            </a>
+        </span>
+        
+    </div>
+    <div class="markdown">
+        <p>I use <a href="https://proxyman.io">Proxyman</a> for inspecting the HTTP and HTTPS traffic coming from applications. For example, you may want to know which API calls are made by <code>docker</code> when running <code>docker search</code>. What I would do is</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nv">HTTPS_PROXY</span><span class="o">=</span>http://localhost:9090 docker search ubuntu
 </code></pre></div><p>Since Proxyman acts like a proxy listening on 0.0.0.0:9090, I can see and replay all the HTTP calls, similarly to what you would do with the Chrome DevTools.</p>
 <p><img src="proxyman.png" alt="Screenshot with macOS' Proxyman for a local Openstack instance"></p>
@@ -205,180 +216,180 @@ Twitter](https://twitter.com/maelvls/status/1214242197119406080) or post a
 message here
 -->
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/go-proxy-localhost-ignored/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/go/"> go </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/proxyman/"> proxyman </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/go-proxy-localhost-ignored/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/go/"> go </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/proxyman/"> proxyman </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

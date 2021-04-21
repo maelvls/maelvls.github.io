@@ -49,24 +49,29 @@ Woah! Because interface values in Go are represented by two pointers causing ass
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">16</span>
-<span class="rest">Apr 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Deep Dive into Go Assembly</h1>
-</div>
-</div>
-<div class="markdown">
-<p>Last month, Sylvain Wallez, author of the excellent &ldquo;<a href="https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/">Go: the Good, the Bad and the Ugly</a>&rdquo;, wrote:</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">16</span>
+                <span class="rest">
+                    
+                    Apr2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Deep Dive into Go Assembly</h1>
+        </div>
+        
+    </div>
+    <div class="markdown">
+        <p>Last month, Sylvain Wallez, author of the excellent &ldquo;<a href="https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/">Go: the Good, the Bad and the Ugly</a>&rdquo;, wrote:</p>
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Woah! Because interface values in Go are represented by two pointers causing assignment to not be atomic, you can easily write concurrent code that swaps one of the pointers, leading to completely unpredictable behaviour. Demonstrated with an RCE... <a href="https://t.co/DsMWzpYuQ4">https://t.co/DsMWzpYuQ4</a></p>&mdash; Sylvain Wallez (@bluxte) <a href="https://twitter.com/bluxte/status/1192945301604184065?ref_src=twsrc%5Etfw">November 8, 2019</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
@@ -338,19 +343,19 @@ Woah! Because interface values in Go are represented by two pointers causing ass
 <div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s">	<span class="nf">v2.f</span><span class="p">()</span>
   <span class="mh">0x10995b6</span>		<span class="n">e805ffffff</span>		<span class="n">CALL</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
 </code></pre></div>
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/deep-dive-go-assembly/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/deep-dive-go-assembly/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

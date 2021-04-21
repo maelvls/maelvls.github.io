@@ -49,24 +49,29 @@ This idea will seem a bit far-fetched, but why wouldn&rsquo;t we use the notion 
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">31</span>
-<span class="rest">Mar 2021</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Optimistic Locking Is Hard</h1>
-</div>
-</div>
-<div class="markdown">
-<blockquote>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">31</span>
+                <span class="rest">
+                    
+                    Mar2021
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Optimistic Locking Is Hard</h1>
+        </div>
+        
+    </div>
+    <div class="markdown">
+        <blockquote>
 <p>Each one of these controllers actually only manages a very specific subset of the Certificate status</p>
 </blockquote>
 <p>That&rsquo;s something I have always been wary about: although it is recommended that each part of the status is only managed by a single controller, we currently have multiple controllers operating on the same <code>Issuing</code> condition.</p>
@@ -75,19 +80,19 @@ This idea will seem a bit far-fetched, but why wouldn&rsquo;t we use the notion 
 <div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">if trigger controller sees         Issuing=False         and         lastFailure set              →           set Issuing=True
 if issuing controller sees        Issuing=False         and         lastFailure set              →           set Issuing=True
 </code></pre></div>
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2021/optimistic-locking-is-hard/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2021/optimistic-locking-is-hard/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

@@ -45,24 +45,35 @@
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">22</span>
-<span class="rest">Apr 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Learning Kubernetes Controllers</h1>
-</div>
-</div>
-<div class="markdown">
-<p>Kubernetes' extensibility is probably its biggest strength. Controllers and CRDs are all over the place. But finding the right information to begin writing a controller isn&rsquo;t easy due to the sheer amount of tribal knowledge scattered everywhere. This post intends to help you start with controllers.</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">22</span>
+                <span class="rest">
+                    
+                    Apr2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Learning Kubernetes Controllers</h1>
+        </div>
+        
+        <span style="font-size: xx-small; text-align: right">
+            cross-post <a href="https://dev.to/maelvls/learning-kubernetes-controllers-496j">
+                <i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i>
+            </a>
+        </span>
+        
+    </div>
+    <div class="markdown">
+        <p>Kubernetes' extensibility is probably its biggest strength. Controllers and CRDs are all over the place. But finding the right information to begin writing a controller isn&rsquo;t easy due to the sheer amount of tribal knowledge scattered everywhere. This post intends to help you start with controllers.</p>
 <!--
 
 > A "Kubernetes controller" is a binary that runs reconciliation loops. A
@@ -216,180 +227,180 @@ One controller
 <li><strong>Update 2 May 2020</strong>: Rephrased the &ldquo;terminology&rdquo; bullet points to make them clearer and added a note on CRD vs. controller binary.</li>
 </ul>
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/learning-kubernetes-controllers/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/controllers/"> controllers </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/kubernetes/"> kubernetes </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/learning-kubernetes-controllers/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/controllers/"> controllers </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/kubernetes/"> kubernetes </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

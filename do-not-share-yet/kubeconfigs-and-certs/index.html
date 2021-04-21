@@ -49,24 +49,29 @@ kubectl config view -ojson --flatten \  | jq &#39;.users[] | .user.&#34;client-c
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">18</span>
-<span class="rest">Apr 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Kubeconfigs and Certs</h1>
-</div>
-</div>
-<div class="markdown">
-<p>Let&rsquo;s go through the client-certificate in my kube config. This kube config contains one user, &ldquo;kind-kind&rdquo;. Instead of inspecting the certificate PEM with openssl, I use <a href="https://github.com/square/certigo">certigo</a> (much nicer experience!)</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">18</span>
+                <span class="rest">
+                    
+                    Apr2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Kubeconfigs and Certs</h1>
+        </div>
+        
+    </div>
+    <div class="markdown">
+        <p>Let&rsquo;s go through the client-certificate in my kube config. This kube config contains one user, &ldquo;kind-kind&rdquo;. Instead of inspecting the certificate PEM with openssl, I use <a href="https://github.com/square/certigo">certigo</a> (much nicer experience!)</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">kubectl config view -ojson --flatten <span class="se">\
 </span><span class="se"></span>  <span class="p">|</span> jq <span class="s1">&#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39;</span> -r <span class="se">\
 </span><span class="se"></span>  <span class="p">|</span> base64 -d <span class="se">\
@@ -197,19 +202,19 @@ lego -server<span class="o">=</span>https://me:14000/dir -domains me -email foo@
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">curl -O https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/pebble-and-lego.mitmproxy
 mitmproxy -r pebble-and-lego.mitmproxy
 </code></pre></div>
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/kubeconfigs-and-certs/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/kubeconfigs-and-certs/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

@@ -45,24 +45,35 @@
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">26</span>
-<span class="rest">Jan 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Debugging Kubernetes Networking: my kube-dns is not working!</h1>
-</div>
-</div>
-<div class="markdown">
-<p>When I scaled my GKE cluster from one node to two nodes, I realised there was some DNS issues with one of the pods on the new Node 2 (that&rsquo;s what I initially thought).</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">26</span>
+                <span class="rest">
+                    
+                    Jan2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Debugging Kubernetes Networking: my kube-dns is not working!</h1>
+        </div>
+        
+        <span style="font-size: xx-small; text-align: right">
+            cross-post <a href="https://dev.to/maelvls/deep-dive-into-kubernetes-networking-my-kube-dns-is-not-working-2b8j">
+                <i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i>
+            </a>
+        </span>
+        
+    </div>
+    <div class="markdown">
+        <p>When I scaled my GKE cluster from one node to two nodes, I realised there was some DNS issues with one of the pods on the new Node 2 (that&rsquo;s what I initially thought).</p>
 <p><img src="diagram-node-2-dns-not-working.png" alt="network diagram of the cluster where DNS not working in a pod of Node 2"></p>
 <p>So I went into pod-on-2 (10.24.12.40) and checked that DNS wasn&rsquo;t working. What I did is run</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% gcloud compute ssh node-2
@@ -231,180 +242,180 @@ If you with to leave a comment, here is a Twitter thread:
 
 -->
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/debug-kubernetes-networking/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/kubernetes/"> kubernetes </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/networking/"> networking </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/debug-kubernetes-networking/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/kubernetes/"> kubernetes </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/networking/"> networking </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

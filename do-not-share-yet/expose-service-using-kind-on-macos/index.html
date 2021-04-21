@@ -49,24 +49,29 @@ The idea is to have a Kind cluster (right box) in which we run a service type=Lo
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">21</span>
-<span class="rest">Jul 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Expose Service Using Kind on Macos</h1>
-</div>
-</div>
-<div class="markdown">
-<p><a href="https://github.com/sshuttle/sshuttle">Sshuttle</a> is a tool that lets you proxy traffic for an IP range (using iptables on Linux or pf on BSD derivatives including macOS) to a host through ssh.</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">21</span>
+                <span class="rest">
+                    
+                    Jul2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Expose Service Using Kind on Macos</h1>
+        </div>
+        
+    </div>
+    <div class="markdown">
+        <p><a href="https://github.com/sshuttle/sshuttle">Sshuttle</a> is a tool that lets you proxy traffic for an IP range (using iptables on Linux or pf on BSD derivatives including macOS) to a host through ssh.</p>
 <p>I use Telepresence which makes sshuttle easier to use with Kubernetes. But I wondered: what happens under the hood? How come I am able to expose a service type=LoadBalancer using MetalLB on macOS using <a href="https://github.com/kubernetes-sigs/kind">Kind</a>?</p>
 <p>The idea is to have a Kind cluster (right box) in which we run a service type=LoadBalancer controller (MetalLB) and a simple pod. Making an HTTP request from the host should hit the pod thanks to sshuttle:</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">                                      +------------------------------+
@@ -152,180 +157,180 @@ iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 172.17.0.0/16 -p udp -dport
 </code></pre></div></li>
 </ul>
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/expose-service-using-kind-on-macos/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/networking/"> networking </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/sshuttle/"> sshuttle </a>
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/expose-service-using-kind-on-macos/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/networking/"> networking </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/sshuttle/"> sshuttle </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

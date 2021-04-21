@@ -45,24 +45,35 @@
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">03</span>
-<span class="rest">Jul 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Pull-through Docker registry on Kind clusters</h1>
-</div>
-</div>
-<div class="markdown">
-<!--
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">03</span>
+                <span class="rest">
+                    
+                    Jul2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Pull-through Docker registry on Kind clusters</h1>
+        </div>
+        
+        <span style="font-size: xx-small; text-align: right">
+            cross-post <a href="https://dev.to/maelvls/pull-through-docker-registry-on-kind-clusters-cpo">
+                <i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i>
+            </a>
+        </span>
+        
+    </div>
+    <div class="markdown">
+        <!--
 Diagram on macOS + Docker: https://textik.com/#b185c1a72a6e782d
 -->
 <p><strong>TL;DR:</strong></p>
@@ -469,186 +480,186 @@ Image is up to date <span class="k">for</span> sha256:a24bb4013296f61e89ba57005a
 </span><span class="w">      </span><span class="nt">network</span><span class="p">:</span><span class="w"> </span><span class="l">kind # 🔰 This field does not exist yet.</span><span class="w">
 </span></code></pre></div><p><strong>Update 26 July 2020</strong>: added a section about local registry vs. caching proxy. Reworked the whole post (less noise, more useful information).</p>
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/docker-proxy-registry-kind/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/dns/"> dns </a>
-
-
-
-
-
-<a href="/tags/docker/"> docker </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/kind/"> kind </a>
-
-
-
-
-
-
-
-
-
-<a href="/tags/kubernetes/"> kubernetes </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/networking/"> networking </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/docker-proxy-registry-kind/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/dns/"> dns </a>
+                
+                
+                
+                
+                
+                <a href="/tags/docker/"> docker </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/kind/"> kind </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/kubernetes/"> kubernetes </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/networking/"> networking </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

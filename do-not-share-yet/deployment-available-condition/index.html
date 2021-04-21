@@ -45,24 +45,35 @@
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">07</span>
-<span class="rest">Jul 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Understanding the Available condition of a Kubernetes deployment</h1>
-</div>
-</div>
-<div class="markdown">
-<p>The various conditions that may appear in a deployment status are not documented in the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/">API reference</a>. For example, we can see what are the fields for <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#deploymentcondition-v1-apps">DeploymentConditions</a>, but it lacks the description of what conditions can appear in this field.</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">07</span>
+                <span class="rest">
+                    
+                    Jul2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Understanding the Available condition of a Kubernetes deployment</h1>
+        </div>
+        
+        <span style="font-size: xx-small; text-align: right">
+            cross-post <a href="https://dev.to/maelvls/understanding-the-available-condition-of-a-kubernetes-deployment-51li">
+                <i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i>
+            </a>
+        </span>
+        
+    </div>
+    <div class="markdown">
+        <p>The various conditions that may appear in a deployment status are not documented in the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/">API reference</a>. For example, we can see what are the fields for <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#deploymentcondition-v1-apps">DeploymentConditions</a>, but it lacks the description of what conditions can appear in this field.</p>
 <p>In this post, I dig into what the <code>Available</code> condition type is about and how it is computed.</p>
 <p>Since the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/">API reference</a> does not contain any information about conditions, the only way to learn more is to dig into the Kubernetes codebase; quite deep into the code, <a href="https://github.com/kubernetes/kubernetes/blob/3615291/pkg/apis/apps/types.go#L461-L473">we can read some comments</a> about the three possible conditions for a deployment:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Available means the deployment is available, ie. at least the minimum available
@@ -321,180 +332,180 @@
 </table>
 <p><strong>Update 9 July 2020:</strong> added a paragraph on the default value for <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#max-unavailable">maxUnavailable</a>, and fixed the yaml example where I had mixed <code>unavailableReplicas</code> with <code>maxUnavailable</code>.</p>
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/deployment-available-condition/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/conditions/"> conditions </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/kubernetes/"> kubernetes </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/deployment-available-condition/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/conditions/"> conditions </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/kubernetes/"> kubernetes </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

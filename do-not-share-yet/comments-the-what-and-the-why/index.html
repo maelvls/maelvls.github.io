@@ -45,23 +45,38 @@
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">15</span>
-<span class="rest">Apr 2021</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Writing useful comments: the &#34;why&#34; and the &#34;what&#34;</h1>
-</div>
-</div>
-<div class="markdown">
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">15</span>
+                <span class="rest">
+                    
+                    Apr2021
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Writing useful comments: the &#34;why&#34; and the &#34;what&#34;</h1>
+        </div>
+        
+        <span style="font-size: xx-small; text-align: right">
+            cross-post <a href="https://dev.to/maelvls/you-should-write-comments-36fd">
+                <i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i>
+            </a>
+        </span>
+        
+    </div>
+    <div class="markdown">
+        <p>Before:</p>
+<p>Set the Ready condition to False when a CertificateRequest has been denied for all CertificateRequests that reference a cert-manager.io signer (<a href="https://github.com/jetstack/cert-manager/pull/3892">#3892</a>, <a href="https://github.com/JoshVanL">@JoshVanL</a>)</p>
+<p>After:
+Fixes a regression that was introduced in v1.3. Before v1.3, a CertificateRequest that would fail would have the condition <code>Ready=False</code> added to it. After v1.3, the <code>Ready=False</code> was not set anymore due to the addition of the Approval API. (<a href="https://github.com/jetstack/cert-manager/pull/3892">#3892</a>, <a href="https://github.com/JoshVanL">@JoshVanL</a>)</p>
 <p>In his book <em><a href="https://www.oreilly.com/library/view/clean-code-a/9780136083238/">Clean Code</a></em>, Robert C. Martin makes a strong case against comments:</p>
 <blockquote>
 <p>You don&rsquo;t need comments if you write clean code.</p>
@@ -445,180 +460,180 @@ Join the discussion on Twitter:
 
 \-->
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/you-should-write-comments/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/go/"> go </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/software-engineering/"> software-engineering </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/you-should-write-comments/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/go/"> go </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/software-engineering/"> software-engineering </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

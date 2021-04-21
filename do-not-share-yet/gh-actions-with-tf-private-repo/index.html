@@ -45,24 +45,35 @@
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">09</span>
-<span class="rest">May 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Github Actions with a private Terraform module</h1>
-</div>
-</div>
-<div class="markdown">
-<p>A common way of sharing terraform modules is to move them in a separate repo. And for companies, that means a private repo. When <code>terraform init</code> is run, the terraform module is fetched and if this module is stored on a Github private repo, you will need to work around the authentication.</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">09</span>
+                <span class="rest">
+                    
+                    May2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Github Actions with a private Terraform module</h1>
+        </div>
+        
+        <span style="font-size: xx-small; text-align: right">
+            cross-post <a href="https://dev.to/maelvls/github-actions-with-a-private-terraform-module-5b85">
+                <i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i>
+            </a>
+        </span>
+        
+    </div>
+    <div class="markdown">
+        <p>A common way of sharing terraform modules is to move them in a separate repo. And for companies, that means a private repo. When <code>terraform init</code> is run, the terraform module is fetched and if this module is stored on a Github private repo, you will need to work around the authentication.</p>
 <p>Imagine that these shared modules are stored on the private Github repo &ldquo;github.com/your-org/terraform-modules&rdquo;. Importing this module from a different repo would look something like:</p>
 <div class="highlight"><pre class="chroma"><code class="language-hcl" data-lang="hcl"><span class="k">module</span> <span class="s2">&#34;some_instance_of_this_module&#34;</span> {
 <span class="n">  source</span> <span class="o">=</span><span class="n"> &#34;git@github.com:your-org/terraform-modules.git//path/to/module?ref</span><span class="o">=</span><span class="k">master</span><span class="err">&#34;</span>
@@ -125,180 +136,180 @@
 </span><span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w">
 </span><span class="w">    </span><span class="nt">credentials</span><span class="p">:</span><span class="w"> </span><span class="l">https://foo:{{secrets.GH_TOKEN}}@github.com</span><span class="w">
 </span></code></pre></div>
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/gh-actions-with-tf-private-repo/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/github-actions/"> github-actions </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/terraform/"> terraform </a>
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/gh-actions-with-tf-private-repo/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/github-actions/"> github-actions </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/terraform/"> terraform </a>
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

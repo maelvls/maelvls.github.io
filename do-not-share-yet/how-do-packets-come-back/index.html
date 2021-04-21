@@ -45,24 +45,35 @@
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">13</span>
-<span class="rest">Apr 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">How do packets find their way back?</h1>
-</div>
-</div>
-<div class="markdown">
-<p>In a previous post &ldquo;<a href="/packets-eye-kubernetes-service/">The Packet&rsquo;s-Eye View of a Kubernetes Service</a>&rdquo;, I studied how traffic flows in when using Kubernetes Services. In the last diagram of that post, I could not clearly see how traffic could make its way back to the user. In this article, I will try to understand how packets are able to flow back to the user and where stateless rewriting happens.</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">13</span>
+                <span class="rest">
+                    
+                    Apr2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">How do packets find their way back?</h1>
+        </div>
+        
+        <span style="font-size: xx-small; text-align: right">
+            cross-post <a href="https://dev.to/maelvls/how-do-packets-find-their-way-back-2mcm">
+                <i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i>
+            </a>
+        </span>
+        
+    </div>
+    <div class="markdown">
+        <p>In a previous post &ldquo;<a href="/packets-eye-kubernetes-service/">The Packet&rsquo;s-Eye View of a Kubernetes Service</a>&rdquo;, I studied how traffic flows in when using Kubernetes Services. In the last diagram of that post, I could not clearly see how traffic could make its way back to the user. In this article, I will try to understand how packets are able to flow back to the user and where stateless rewriting happens.</p>
 <p>In the following diagram, we can see a packet coming from a user, then being re-written by Google&rsquo;s VPC firewalls and finally coming into a VM &ldquo;node 1&rdquo;.</p>
 <p><img alt="Packet coming from a user hitting one going through Google's VPC"
 src="dnat-google-vpc-how-comes-back.svg" width="80%"/></p>
@@ -126,180 +137,180 @@ src="dnat-google-vpc-how-comes-back.svg" width="80%"/></p>
 </li>
 </ol>
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/how-do-packets-come-back/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/gcp/"> gcp </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/networking/"> networking </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/how-do-packets-come-back/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/gcp/"> gcp </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/networking/"> networking </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

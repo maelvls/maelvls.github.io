@@ -49,24 +49,29 @@ kind:Podmetadata:labels:pod-template-hash:775855699bIn this post, I want to pres
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">08</span>
-<span class="rest">Jul 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Why Kubernetes Compares With Hash</h1>
-</div>
-</div>
-<div class="markdown">
-<p>In Kubernetes, the replica set controller uses a hashing mechanism to compare objects. Pods that are owned by a replica set have a label that is used to remember what the hash of the pod template that led to this pod spec:</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">08</span>
+                <span class="rest">
+                    
+                    Jul2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Why Kubernetes Compares With Hash</h1>
+        </div>
+        
+    </div>
+    <div class="markdown">
+        <p>In Kubernetes, the replica set controller uses a hashing mechanism to compare objects. Pods that are owned by a replica set have a label that is used to remember what the hash of the pod template that led to this pod spec:</p>
 <div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
 </span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
 </span><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
@@ -174,19 +179,19 @@ BenchmarkKubernetesComputeHash-8          <span class="m">456028</span>         
   k3s.io/node-config-hash
 </code></pre>
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/why-kubernetes-compares-with-hash/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/why-kubernetes-compares-with-hash/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

@@ -45,24 +45,35 @@
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">30</span>
-<span class="rest">May 2020</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Epic journey with statically and dynamically-linked libraries (.a, .so)</h1>
-</div>
-</div>
-<div class="markdown">
-<p>Between May and June 2016, I worked with <a href="https://github.com/polazarus/ocamlyices">ocamlyices2</a>, an OCaml package that binds to the <a href="https://github.com/SRI-CSL/yices2">Yices</a> C++ library. Both projects (as well as many Linux projects) are built using the &ldquo;Autotools&rdquo; suite.</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">30</span>
+                <span class="rest">
+                    
+                    May2020
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Epic journey with statically and dynamically-linked libraries (.a, .so)</h1>
+        </div>
+        
+        <span style="font-size: xx-small; text-align: right">
+            cross-post <a href="https://dev.to/maelvls/epic-journey-with-statically-and-dynamically-linked-libraries-a-so-1khn">
+                <i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i>
+            </a>
+        </span>
+        
+    </div>
+    <div class="markdown">
+        <p>Between May and June 2016, I worked with <a href="https://github.com/polazarus/ocamlyices">ocamlyices2</a>, an OCaml package that binds to the <a href="https://github.com/SRI-CSL/yices2">Yices</a> C++ library. Both projects (as well as many Linux projects) are built using the &ldquo;Autotools&rdquo; suite.</p>
 <p>The Autotools suite includes tools like <a href="https://www.gnu.org/software/autoconf/">autoconf</a>, <a href="https://www.gnu.org/software/automake">automake</a> and <a href="https://www.gnu.org/software/libtool/">libtool</a>. These tools generate a bunch of shell scripts and Makefiles using shell scripts and the <a href="https://en.wikipedia.org/wiki/M4_(computer_language)">M4</a> macro language. The user of your projects ends up two simple commands to build your project:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">./configure
 make
@@ -621,184 +632,184 @@ ext/libyices_pic_no_gmp/lib/libyices.a<span class="o">(</span>libyices.o<span cl
 <li><strong>Update 31 May 2020</strong>: added the ascii &ldquo;dependency&rdquo; diagram to give a better sense of what the challenge was.</li>
 </ul>
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/static-libraries-and-autoconf-hell/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-<a href="/tags/autotools/"> autotools </a>
-
-
-
-
-
-<a href="/tags/c/"> c </a>
-
-
-
-
-
-<a href="/tags/c&#43;&#43;/"> c&#43;&#43; </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/ocaml/"> ocaml </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/static-libraries-and-autoconf-hell/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                <a href="/tags/autotools/"> autotools </a>
+                
+                
+                
+                
+                
+                <a href="/tags/c/"> c </a>
+                
+                
+                
+                
+                
+                <a href="/tags/c&#43;&#43;/"> c&#43;&#43; </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/ocaml/"> ocaml </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

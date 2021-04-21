@@ -49,24 +49,29 @@ diskutil list diskutil unmount /Volumes/BOOTCAMP sudo chmod 777 /dev/disk0s1 sud
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">20</span>
-<span class="rest">Apr 2019</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Use the Bootcamp partition under VirtualBox</h1>
-</div>
-</div>
-<div class="markdown">
-<p>From: <a href="https://apple.stackexchange.com/questions/220670/run-boot-camp-windows10-partition-inside-virtualbox">https://apple.stackexchange.com/questions/220670/run-boot-camp-windows10-partition-inside-virtualbox</a></p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">20</span>
+                <span class="rest">
+                    
+                    Apr2019
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Use the Bootcamp partition under VirtualBox</h1>
+        </div>
+        
+    </div>
+    <div class="markdown">
+        <p>From: <a href="https://apple.stackexchange.com/questions/220670/run-boot-camp-windows10-partition-inside-virtualbox">https://apple.stackexchange.com/questions/220670/run-boot-camp-windows10-partition-inside-virtualbox</a></p>
 <p>First, find which disks are EFI and BOOTCAMP with <code>diskutil list</code>.</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">diskutil list
 diskutil unmount /Volumes/BOOTCAMP
@@ -75,19 +80,19 @@ sudo chmod <span class="m">777</span> /dev/disk0s3
 sudo VBoxManage internalcommands createrawvmdk -rawdisk /dev/disk0 -filename win10raw.vmdk -partitions 1,3
 </code></pre></div><p>Uncheck &ldquo;Enable EFI&rdquo;, uncheck &ldquo;Enable VT-x/AMD-V&rdquo;</p>
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/notes/bootcamp_vm.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/notes/bootcamp_vm.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"

@@ -45,24 +45,35 @@
   </div>
 </header>
 <main><div class="post">
-<div class="author">
-
-</div>
-<div class="post-header">
-
-<div class="meta">
-<div class="date">
-<span class="day">13</span>
-<span class="rest">Nov 2019</span>
-</div>
-</div>
-
-<div class="matter">
-<h1 class="title">Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.16)</h1>
-</div>
-</div>
-<div class="markdown">
-<p>You might have noticed that <code>GO111MODULE=on</code> is flourishing everywhere. Many readmes have that:</p>
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">13</span>
+                <span class="rest">
+                    
+                    Nov2019
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.16)</h1>
+        </div>
+        
+        <span style="font-size: xx-small; text-align: right">
+            cross-post <a href="https://dev.to/maelvls/why-is-go111module-everywhere-and-everything-about-go-modules-24k">
+                <i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i>
+            </a>
+        </span>
+        
+    </div>
+    <div class="markdown">
+        <p>You might have noticed that <code>GO111MODULE=on</code> is flourishing everywhere. Many readmes have that:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest
 </code></pre></div><p>In this short post, I will explain why <code>GO111MODULE</code> exists, its caveats and interesting bits that you need to know when dealing with Go Modules.</p>
 <hr>
@@ -228,180 +239,180 @@ go install golang.org/x/tools/gopls@master: golang.org/x/tools/gopls@v0.0.0-2021
 <p><strong>Update 22 June 2020:</strong> it said <code>use replace</code> instead of just <code>replace</code>.
 <strong>Update 8 April 2021:</strong> update with Go 1.16.</p>
 
-</div>
-<a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2019/go111modules/index.md">📝 Edit this page and propose a change!</a>
-<div class="tags">
-
-
-
-
-
-
-
-
-
-
-<div style="float: right;">
-<p>Tags:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="/tags/go/"> go </a>
-
-
-
-
-
-
-
-
-
-<a href="/tags/go-modules/"> go-modules </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div class="clearit"></div>
-
-
-
-
-
-</div>
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2019/go111modules/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/go/"> go </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/go-modules/"> go-modules </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
 
 <script
   src="https://utteranc.es/client.js"
