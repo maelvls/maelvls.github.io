@@ -8,6 +8,7 @@ tags: [networking, gcp]
 author: Maël Valais
 devtoId: 313916
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/how-do-packets-find-their-way-back-2mcm
 ---
 
 In a previous post "[The Packet's-Eye View of a Kubernetes Service](/packets-eye-kubernetes-service/)", I studied how traffic flows in when using Kubernetes Services. In the last diagram of that post, I could not clearly see how traffic could make its way back to the user. In this article, I will try to understand how packets are able to flow back to the user and where stateless rewriting happens.

@@ -9,6 +9,7 @@ tags: [kubernetes, controllers]
 author: Maël Valais
 devtoId: 317339
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/learning-kubernetes-controllers-496j
 ---
 
 Kubernetes' extensibility is probably its biggest strength. Controllers and CRDs are all over the place. But finding the right information to begin writing a controller isn't easy due to the sheer amount of tribal knowledge scattered everywhere. This post intends to help you start with controllers.

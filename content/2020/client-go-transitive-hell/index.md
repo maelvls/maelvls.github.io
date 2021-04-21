@@ -8,6 +8,7 @@ author: Maël Valais
 tags: [go-modules, kubernetes, client-go]
 devtoId: 405305
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/the-client-go-transitive-hell-10j1
 ---
 
 > ⚠️ I'm not sure this is a transitive issue. It might just not be due to transitivity at all!

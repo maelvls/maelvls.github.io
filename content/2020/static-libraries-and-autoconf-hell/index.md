@@ -11,6 +11,7 @@ tags: [autotools, c++, c, ocaml]
 author: Maël Valais
 devtoId: 365849
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/epic-journey-with-statically-and-dynamically-linked-libraries-a-so-1khn
 ---
 
 Between May and June 2016, I worked with [ocamlyices2](https://github.com/polazarus/ocamlyices), an OCaml package that binds to the [Yices](https://github.com/SRI-CSL/yices2) C++ library. Both projects (as well as many Linux projects) are built using the "Autotools" suite.

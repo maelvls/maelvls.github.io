@@ -14,6 +14,7 @@ author: Maël Valais
 devtoId: 313912
 devtoPublished: false
 draft: true
+devtoUrl: https://dev.to/maelvls/you-should-write-comments-36fd
 ---
 
 Before:

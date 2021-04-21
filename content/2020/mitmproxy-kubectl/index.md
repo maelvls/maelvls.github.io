@@ -8,6 +8,7 @@ tags: [kubernetes, mitmproxy, networking, kind]
 author: Maël Valais
 devtoId: 377876
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/using-mitmproxy-to-understand-what-kubectl-does-under-the-hood-36om
 ---
 
 {{< youtube 30a0WrfaS2A >}}

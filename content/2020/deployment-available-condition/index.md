@@ -9,6 +9,7 @@ tags: [kubernetes, conditions]
 author: Maël Valais
 devtoId: 386691
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/understanding-the-available-condition-of-a-kubernetes-deployment-51li
 ---
 
 The various conditions that may appear in a deployment status are not documented in the [API reference][api-ref]. For example, we can see what are the fields for [DeploymentConditions][deploy-cond-doc], but it lacks the description of what conditions can appear in this field.

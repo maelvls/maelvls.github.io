@@ -10,6 +10,7 @@ tags:
 author: Maël Valais
 devtoId: 313914
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/migrating-from-gke-to-civo-s-k3s-9b5
 ---
 
 To learn and play with Kubernetes, I keep a "playground" cluster to try things on it (helm files I use are [here](https://github.com/maelvls/k.maelvls.dev)). Since 2019, I have been using GKE (Google's managed Kubernetes service), which works great with the one-year \$300 credit that you get initially. A few days ago, reality hit me hard with this message:

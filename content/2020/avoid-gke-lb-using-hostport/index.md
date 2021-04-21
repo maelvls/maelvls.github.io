@@ -8,6 +8,7 @@ images: [avoid-gke-lb-with-hostport/cover-external-dns.png]
 author: Maël Valais
 devtoId: 241275
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/avoid-gke-s-expensive-load-balancer-by-using-hostport-2ab9
 ---
 
 > **⚠️ Update 25 April 2020**: Akrobateo has been EOL in January 2020 due to the company going out of business. Their blog post regarding the EOL isn't available anymore and was probably shut down. Fortunately, the Wayback Machine [has a snapshot of the post](https://web.archive.org/web/20200107111252/https://blog.kontena.io/farewell/) (7th January 2020). Here is an excerpt:

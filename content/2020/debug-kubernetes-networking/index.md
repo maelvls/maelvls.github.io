@@ -8,6 +8,7 @@ images: [debugging-kubernetes-networking/cover-debug-kubernetes-networking.png]
 author: Maël Valais
 devtoId: 248756
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/deep-dive-into-kubernetes-networking-my-kube-dns-is-not-working-2b8j
 ---
 
 When I scaled my GKE cluster from one node to two nodes, I realised there was some DNS issues with one of the pods on the new Node 2 (that's what I initially thought).

@@ -7,6 +7,7 @@ url: /kubernetes-conditions
 images: [kubernetes-conditions/cover-kubernetes-conditions.png]
 devtoId: 204213
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/what-the-heck-are-kubernetes-conditions-for-4je7
 ---
 
 While building a Kubernetes controller using CRDs, I stumbled across 'conditions' in the status field. What are conditions and how should I implement them in my controller?

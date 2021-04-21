@@ -7,6 +7,7 @@ aliases: [/docker-proxy-registry-kind-macos]
 images: [docker-proxy-registry-kind/cover-docker-proxy-registry-kind.png]
 tags: [kubernetes, kind, docker, networking, dns]
 author: Maël Valais
+devtoUrl: https://dev.to/maelvls/pull-through-docker-registry-on-kind-clusters-cpo
 devtoId: 410837
 devtoPublished: true
 ---

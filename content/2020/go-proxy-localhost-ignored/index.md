@@ -9,6 +9,7 @@ disqus: true
 author: Maël Valais
 devtoId: 233226
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/what-to-do-when-go-ignores-httpproxy-for-127-0-0-1-54nn
 ---
 
 I use [Proxyman](https://proxyman.io) for inspecting the HTTP and HTTPS traffic coming from applications. For example, you may want to know which API calls are made by `docker` when running `docker search`. What I would do is

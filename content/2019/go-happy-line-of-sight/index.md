@@ -10,6 +10,7 @@ images:
 author: Maël Valais
 devtoId: 210090
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/go-happy-path-the-unindented-line-of-sight-25nc
 ---
 
 Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic. One of the [Go proverbs](https://www.reddit.com/r/ProgrammerTIL/comments/acweob/go_til_a_new_go_proverb_the_happy_path_is/) says:

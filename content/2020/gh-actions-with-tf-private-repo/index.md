@@ -9,6 +9,7 @@ tags: [terraform, github-actions]
 author: Maël Valais
 devtoId: 331169
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/github-actions-with-a-private-terraform-module-5b85
 ---
 
 A common way of sharing terraform modules is to move them in a separate repo. And for companies, that means a private repo. When `terraform init` is run, the terraform module is fetched and if this module is stored on a Github private repo, you will need to work around the authentication.

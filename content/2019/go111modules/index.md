@@ -7,6 +7,7 @@ url: /go111module-everywhere
 images: [go111module-everywhere/cover-go-modules-sad.jpg]
 devtoId: 204994
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/why-is-go111module-everywhere-and-everything-about-go-modules-24k
 ---
 
 You might have noticed that `GO111MODULE=on` is flourishing everywhere. Many readmes have that:

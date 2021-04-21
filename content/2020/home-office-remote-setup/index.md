@@ -10,6 +10,7 @@ author: Maël Valais
 tags: [setup, home-office]
 devtoId: 313915
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/my-home-office-setup-in-2020-220f
 ---
 
 In this post, I document the changes to my office setup through time.
