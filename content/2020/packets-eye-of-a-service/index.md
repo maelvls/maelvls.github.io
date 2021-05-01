@@ -8,7 +8,8 @@ images:
 tags: [kubernetes, networking, traefik]
 author: Maël Valais
 devtoId: 313913
-devtoPublished: false
+devtoPublished: true
+devtoUrl: https://dev.to/maelvls/the-packet-s-eye-view-of-a-kubernetes-service-1fog
 ---
 
 <!--
