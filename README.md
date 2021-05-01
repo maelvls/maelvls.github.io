@@ -4,6 +4,15 @@
 
 Code is in the branch `source`, gp-pages are in `master`.
 
+To synchronize my Hugo posts to <https://dev.to/maelvls>:
+
+```sh
+go install github.com/maelvls/hudevto@latest
+DEVTO_APIKEY=...
+hudevto status
+hudevto push
+```
+
 To create a new post:
 
 ```sh
