@@ -84,7 +84,7 @@
 <p>I call &ldquo;service-lb controller&rdquo; a binary that watches service objects that have the <code>LoadBalancer</code> type. Any time the Google&rsquo;s service-lb controller sees a new <code>LoadBalancer</code> service, it spins up a Network Load Balancer and sets up some firewall rules. In fact, Google&rsquo;s service-lb controller runs as a small closed-source binary that runs on your master node (but not visible as a pod) and acts as a service-lb controller.</p>
 <p>Here is a diagram that represents how GKE&rsquo;s service-lb controller interacts with the ingress controller:</p>
 <p><img alt="GKE service LoadBalancer controller and ingress controller
-interaction" src="kubernetes-service-controllers-with-gke-service.svg" width="80%"/></p>
+interaction" src="/packets-eye-kubernetes-service/kubernetes-service-controllers-with-gke-service.svg" width="80%"/></p>
 <p>So, how does external traffic make it to the pod? The following diagram shows how a packet is forwarded to the right pod. Notice how many iptable rewriting happen (which corresponds to one connection managed by conntrack):</p>
 <img alt="Packet coming from a user hitting the GKE network balancer and forwarded to the right pod" src="kubernetes-traffic-with-gke-lb.svg" width="80%"/>
 <p>Now, let&rsquo;s see how it goes when using <a href="https://github.com/kontena/akrobateo">Akrobateo</a> (I detailed that <a href="/avoid-gke-lb-with-hostport/">here</a>). Instead of using an external compute resource, we use the node&rsquo;s IP in order to let traffic in.</p>
@@ -135,6 +135,8 @@ src="kubernetes-traffic-with-akrobateo.svg" width="70%"/></p>
         
         <div style="float: right;">
             <p>Tags:
+                
+                
                 
                 
                 
