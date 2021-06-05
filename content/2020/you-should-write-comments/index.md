@@ -12,8 +12,8 @@ aliases:
   - /you-should-write-comments
 author: Maël Valais
 devtoId: 313912
-devtoPublished: false
-draft: true
+devtoPublished: true
+draft: false
 devtoUrl: https://dev.to/maelvls/you-should-write-comments-36fd
 ---
 
