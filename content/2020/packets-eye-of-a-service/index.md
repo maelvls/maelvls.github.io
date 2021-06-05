@@ -41,7 +41,7 @@ I call "service-lb controller" a binary that watches service objects that have t
 Here is a diagram that represents how GKE's service-lb controller interacts with the ingress controller:
 
 <img alt="GKE service LoadBalancer controller and ingress controller
-interaction" src="kubernetes-service-controllers-with-gke-service.svg" width="80%"/>
+interaction" src="/packets-eye-kubernetes-service/kubernetes-service-controllers-with-gke-service.svg" width="80%"/>
 
 So, how does external traffic make it to the pod? The following diagram shows how a packet is forwarded to the right pod. Notice how many iptable rewriting happen (which corresponds to one connection managed by conntrack):
 
