@@ -255,7 +255,7 @@ Note that I removed the `else` statement for the purpose of readability. Since "
 
 ## Conclusion
 
-As a developer, I want to write code that is readable and maintainable. I found that putting myself in the place of the future reader helps write comments that focus on the context.
+As a developer, I want to write code that is readable and maintainable, and keeping track of the "why" (i.e., the context) in a codebase is essential for readability and maintainability. I found that putting myself in the place of the future reader helps me write comments that focus on the "why".
 
 HAProxy, Git or the Linux kernel are great examples of projects where there is a great focus on well-documented code:
 
