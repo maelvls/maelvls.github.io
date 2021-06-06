@@ -224,77 +224,38 @@
     <span class="k">continue</span>
 <span class="p">}</span>
 </code></pre></div><h2 id="code-example-4">Code example 4</h2>
-<p>The next example <a href="https://github.com/jetstack/cert-manager/blob/1dad685e4/pkg/controller/ingress-shim/sync.go#L180-L209">comes</a> from the same file as the previous example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// check if a Certificate for this TLS entry already exists, and if it
-</span><span class="c1">// does then skip this entry
-</span><span class="c1"></span><span class="k">if</span> <span class="nx">existingCrt</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span> <span class="o">:=</span> <span class="nx">logs</span><span class="p">.</span><span class="nf">WithRelatedResource</span><span class="p">(</span><span class="nx">log</span><span class="p">,</span> <span class="nx">existingCrt</span><span class="p">)</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">DebugLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate already exists for ingress resource, ensuring it is up to date&#34;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nx">metav1</span><span class="p">.</span><span class="nf">GetControllerOf</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">)</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">InfoLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource has no owner. refusing to update non-owned certificate resource for ingress&#34;</span><span class="p">)</span>
+<p>The next example <a href="https://github.com/jetstack/cert-manager/blob/1dad685e4/pkg/controller/ingress-shim/sync.go#L180-L209">is inspired</a> by an other place in cert-manager.</p>
+<p>This is another example of in-flight comment focusing on the &ldquo;what&rdquo;. The context around this block of code is not obvious, which means this comment should refactored to focus on the &ldquo;why&rdquo;.</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// check if a Certificate for this secret name exists, and if it
+</span><span class="c1">// does then skip this secret name.
+</span><span class="c1"></span><span class="nx">expectedCrt</span> <span class="o">:=</span> <span class="nf">expectedCrt</span><span class="p">(</span><span class="nx">ingress</span><span class="p">)</span>
+<span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Certificates</span><span class="p">(</span><span class="nx">namespace</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">ingress</span><span class="p">.</span><span class="nx">secretName</span><span class="p">)</span>
+<span class="k">if</span> <span class="nx">existingCrt</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">!</span><span class="nf">certMatchesUpdate</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">continue</span>
     <span class="p">}</span>
 
-    <span class="k">if</span> <span class="p">!</span><span class="nx">metav1</span><span class="p">.</span><span class="nf">IsControlledBy</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">ing</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">InfoLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource is not owned by this ingress. refusing to update non-owned certificate resource for ingress&#34;</span><span class="p">)</span>
-        <span class="k">continue</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="p">!</span><span class="nf">certNeedsUpdate</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">DebugLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource is already up to date for ingress&#34;</span><span class="p">)</span>
-        <span class="k">continue</span>
-    <span class="p">}</span>
-
-    <span class="nx">updateCrt</span> <span class="o">:=</span> <span class="nx">existingCrt</span><span class="p">.</span><span class="nf">DeepCopy</span><span class="p">()</span>
-
-    <span class="nx">updateCrt</span><span class="p">.</span><span class="nx">Spec</span> <span class="p">=</span> <span class="nx">crt</span><span class="p">.</span><span class="nx">Spec</span>
-    <span class="nx">updateCrt</span><span class="p">.</span><span class="nx">Labels</span> <span class="p">=</span> <span class="nx">crt</span><span class="p">.</span><span class="nx">Labels</span>
-    <span class="nf">setIssuerSpecificConfig</span><span class="p">(</span><span class="nx">updateCrt</span><span class="p">,</span> <span class="nx">ing</span><span class="p">)</span>
-    <span class="nx">updateCrts</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">updateCrts</span><span class="p">,</span> <span class="nx">updateCrt</span><span class="p">)</span>
+    <span class="nx">toBeUpdated</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">toBeUpdated</span><span class="p">,</span> <span class="nf">updateToMatchExpected</span><span class="p">(</span><span class="nx">expectedCrt</span><span class="p">))</span>
 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">newCrts</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">newCrts</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span>
+    <span class="nx">toBeCreated</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">toBeCreated</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></div><p>As in the previous examples, refactoring this example is about moving the &ldquo;why&rdquo; to the start of the comment:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// The &#34;secretName&#34; field may already refer to an existing Certificate object.
-</span><span class="c1">// We still want this existing Certificate to be .
-</span><span class="c1">//
-</span><span class="c1">// For example, imagine that the certificate named &#34;example-tls&#34; already exists.
-</span><span class="c1">//
-</span><span class="c1">//     kind: Ingress
-</span><span class="c1">//     spec:
-</span><span class="c1">//       tls:
-</span><span class="c1">//         - secretName: example-tls
-</span><span class="c1">//           hosts: [example.com]
-</span><span class="c1">//
-</span><span class="c1"></span><span class="k">if</span> <span class="nx">existingCrt</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-    <span class="nx">log</span> <span class="o">:=</span> <span class="nx">logs</span><span class="p">.</span><span class="nf">WithRelatedResource</span><span class="p">(</span><span class="nx">log</span><span class="p">,</span> <span class="nx">existingCrt</span><span class="p">)</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">DebugLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate already exists for ingress resource, ensuring it is up to date&#34;</span><span class="p">)</span>
+</code></pre></div><p>In this case, the code itself would benefit from a bit of refactoring. Regarding the comment, we start with the &ldquo;why&rdquo;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// The secretName has an associated Certificate that has the same name. We want
+</span><span class="c1">// to make sure that this Certificate exists and that it matches the expected
+</span><span class="c1">// Certificate spec.
+</span><span class="c1"></span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Certificates</span><span class="p">(</span><span class="nx">namespace</span><span class="p">).</span><span class="nf">Get</span><span class="p">(</span><span class="nx">secretName</span><span class="p">)</span>
+<span class="nx">expectedCrt</span> <span class="o">:=</span> <span class="nf">expectedCrt</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="nx">metav1</span><span class="p">.</span><span class="nf">GetControllerOf</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">)</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">InfoLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource has no owner. refusing to update non-owned certificate resource for ingress&#34;</span><span class="p">)</span>
-        <span class="k">continue</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="p">!</span><span class="nx">metav1</span><span class="p">.</span><span class="nf">IsControlledBy</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">ing</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">InfoLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource is not owned by this ingress. refusing to update non-owned certificate resource for ingress&#34;</span><span class="p">)</span>
-        <span class="k">continue</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="p">!</span><span class="nf">certNeedsUpdate</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">log</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="nx">logf</span><span class="p">.</span><span class="nx">DebugLevel</span><span class="p">).</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;certificate resource is already up to date for ingress&#34;</span><span class="p">)</span>
-        <span class="k">continue</span>
-    <span class="p">}</span>
-
-    <span class="nx">updateCrt</span> <span class="o">:=</span> <span class="nx">existingCrt</span><span class="p">.</span><span class="nf">DeepCopy</span><span class="p">()</span>
-
-    <span class="nx">updateCrt</span><span class="p">.</span><span class="nx">Spec</span> <span class="p">=</span> <span class="nx">crt</span><span class="p">.</span><span class="nx">Spec</span>
-    <span class="nx">updateCrt</span><span class="p">.</span><span class="nx">Labels</span> <span class="p">=</span> <span class="nx">crt</span><span class="p">.</span><span class="nx">Labels</span>
-    <span class="nf">setIssuerSpecificConfig</span><span class="p">(</span><span class="nx">updateCrt</span><span class="p">,</span> <span class="nx">ing</span><span class="p">)</span>
-    <span class="nx">updateCrts</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">updateCrts</span><span class="p">,</span> <span class="nx">updateCrt</span><span class="p">)</span>
+<span class="k">if</span> <span class="nx">existingCrt</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">toBeCreated</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">toBeCreated</span><span class="p">,</span> <span class="nx">expectedCrt</span><span class="p">)</span>
+    <span class="k">continue</span>
 <span class="p">}</span>
 
-<span class="nx">newCrts</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">newCrts</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span>
+<span class="k">if</span> <span class="nf">certMatchesExpected</span><span class="p">(</span><span class="nx">existingCrt</span><span class="p">,</span> <span class="nx">expectedCrt</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">continue</span>
+<span class="p">}</span>
+
+<span class="nx">toBeUpdated</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">toBeUpdated</span><span class="p">,</span> <span class="nf">updateToMatchExpected</span><span class="p">(</span><span class="nx">expectedCrt</span><span class="p">))</span>
 </code></pre></div><p>Note that I removed the <code>else</code> statement for the purpose of readability. Since &ldquo;creating a certificate&rdquo; seems to be the happy path of this function, it makes sense to unindent the code that relates to this happy path.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>As a developer, I want to write code that is readable and maintainable, and keeping track of the &ldquo;why&rdquo; (i.e., the context) in a codebase is essential for readability and maintainability. I found that putting myself in the place of the future reader helps me write comments that focus on the &ldquo;why&rdquo;.</p>
