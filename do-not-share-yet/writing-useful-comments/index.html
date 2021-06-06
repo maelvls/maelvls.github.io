@@ -297,7 +297,7 @@
 <span class="nx">newCrts</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">newCrts</span><span class="p">,</span> <span class="nx">crt</span><span class="p">)</span>
 </code></pre></div><p>Note that I removed the <code>else</code> statement for the purpose of readability. Since &ldquo;creating a certificate&rdquo; seems to be the happy path of this function, it makes sense to unindent the code that relates to this happy path.</p>
 <h2 id="conclusion">Conclusion</h2>
-<p>As a developer, I want to write code that is readable and maintainable. I found that putting myself in the place of the future reader helps write comments that focus on the context.</p>
+<p>As a developer, I want to write code that is readable and maintainable, and keeping track of the &ldquo;why&rdquo; (i.e., the context) in a codebase is essential for readability and maintainability. I found that putting myself in the place of the future reader helps me write comments that focus on the &ldquo;why&rdquo;.</p>
 <p>HAProxy, Git or the Linux kernel are great examples of projects where there is a great focus on well-documented code:</p>
 <ul>
 <li><a href="https://github.com/haproxy/haproxy/blob/530408f976e5fe2f2f2b4b733b39da36770b566f/ebtree/ebtree.h#L23"><code>ebtree/ebtree.h</code></a> (HAProxy)</li>
