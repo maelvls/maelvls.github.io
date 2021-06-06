@@ -172,83 +172,45 @@ if len(errs) > 0 {
 
 ## Code example 4
 
-The next example [comes](https://github.com/jetstack/cert-manager/blob/1dad685e4/pkg/controller/ingress-shim/sync.go#L180-L209) from the same file as the previous example:
+The next example [is inspired](https://github.com/jetstack/cert-manager/blob/1dad685e4/pkg/controller/ingress-shim/sync.go#L180-L209) by an other place in cert-manager.
+
+This is another example of in-flight comment focusing on the "what". The context around this block of code is not obvious, which means this comment should refactored to focus on the "why".
 
 ```go
-// check if a Certificate for this TLS entry already exists, and if it
-// does then skip this entry
+// check if a Certificate for this secret name exists, and if it
+// does then skip this secret name.
+expectedCrt := expectedCrt(ingress)
+existingCrt, _ := client.Certificates(namespace).Get(ingress.secretName)
 if existingCrt != nil {
-    log := logs.WithRelatedResource(log, existingCrt)
-    log.V(logf.DebugLevel).Info("certificate already exists for ingress resource, ensuring it is up to date")
-
-    if metav1.GetControllerOf(existingCrt) == nil {
-        log.V(logf.InfoLevel).Info("certificate resource has no owner. refusing to update non-owned certificate resource for ingress")
+    if !certMatchesUpdate(existingCrt, crt) {
         continue
     }
 
-    if !metav1.IsControlledBy(existingCrt, ing) {
-        log.V(logf.InfoLevel).Info("certificate resource is not owned by this ingress. refusing to update non-owned certificate resource for ingress")
-        continue
-    }
-
-    if !certNeedsUpdate(existingCrt, crt) {
-        log.V(logf.DebugLevel).Info("certificate resource is already up to date for ingress")
-        continue
-    }
-
-    updateCrt := existingCrt.DeepCopy()
-
-    updateCrt.Spec = crt.Spec
-    updateCrt.Labels = crt.Labels
-    setIssuerSpecificConfig(updateCrt, ing)
-    updateCrts = append(updateCrts, updateCrt)
+    toBeUpdated = append(toBeUpdated, updateToMatchExpected(expectedCrt))
 } else {
-    newCrts = append(newCrts, crt)
+    toBeCreated = append(toBeCreated, crt)
 }
 ```
 
-As in the previous examples, refactoring this example is about moving the "why" to the start of the comment:
+In this case, the code itself would benefit from a bit of refactoring. Regarding the comment, we start with the "why":
 
 ```go
-// The "secretName" field may already refer to an existing Certificate object.
-// We still want this existing Certificate to be .
-//
-// For example, imagine that the certificate named "example-tls" already exists.
-//
-//     kind: Ingress
-//     spec:
-//       tls:
-//         - secretName: example-tls
-//           hosts: [example.com]
-//
-if existingCrt != nil {
-    log := logs.WithRelatedResource(log, existingCrt)
-    log.V(logf.DebugLevel).Info("certificate already exists for ingress resource, ensuring it is up to date")
+// The secretName has an associated Certificate that has the same name. We want
+// to make sure that this Certificate exists and that it matches the expected
+// Certificate spec.
+existingCrt, _ := client.Certificates(namespace).Get(secretName)
+expectedCrt := expectedCrt()
 
-    if metav1.GetControllerOf(existingCrt) == nil {
-        log.V(logf.InfoLevel).Info("certificate resource has no owner. refusing to update non-owned certificate resource for ingress")
-        continue
-    }
-
-    if !metav1.IsControlledBy(existingCrt, ing) {
-        log.V(logf.InfoLevel).Info("certificate resource is not owned by this ingress. refusing to update non-owned certificate resource for ingress")
-        continue
-    }
-
-    if !certNeedsUpdate(existingCrt, crt) {
-        log.V(logf.DebugLevel).Info("certificate resource is already up to date for ingress")
-        continue
-    }
-
-    updateCrt := existingCrt.DeepCopy()
-
-    updateCrt.Spec = crt.Spec
-    updateCrt.Labels = crt.Labels
-    setIssuerSpecificConfig(updateCrt, ing)
-    updateCrts = append(updateCrts, updateCrt)
+if existingCrt == nil {
+    toBeCreated = append(toBeCreated, expectedCrt)
+    continue
 }
 
-newCrts = append(newCrts, crt)
+if certMatchesExpected(existingCrt, expectedCrt) {
+    continue
+}
+
+toBeUpdated = append(toBeUpdated, updateToMatchExpected(expectedCrt))
 ```
 
 Note that I removed the `else` statement for the purpose of readability. Since "creating a certificate" seems to be the happy path of this function, it makes sense to unindent the code that relates to this happy path.
