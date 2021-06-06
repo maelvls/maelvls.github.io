@@ -213,7 +213,7 @@ if certMatchesExpected(existingCrt, expectedCrt) {
 toBeUpdated = append(toBeUpdated, updateToMatchExpected(expectedCrt))
 ```
 
-Note that I removed the `else` statement for the purpose of readability. Since "creating a certificate" seems to be the happy path of this function, it makes sense to unindent the code that relates to this happy path.
+Note that we removed the `else` statement for the purpose of readability. The happy path is now clearly "updating the certificate".
 
 ## Conclusion
 
