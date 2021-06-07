@@ -146,26 +146,24 @@ if cond == nil {
 
 ## Code example 3
 
-The next [example](https://github.com/jetstack/cert-manager/blob/1dad685e/pkg/controller/ingress-shim/sync.go#L145) comes from another part of the cert-manager codebase:
+Another example [inspired](https://github.com/jetstack/cert-manager/blob/1dad685e/pkg/controller/ingress-shim/sync.go#L145) by the cert-manager codebase:
 
 ```go
 errs := validateIngressTLSBlock(tls)
 // if this tls entry is invalid, record an error event on Ingress object and continue to the next tls entry
 if len(errs) > 0 {
-    errMsg := utilerrors.NewAggregate(errs).Error()
-    c.recorder.Eventf(ing, corev1.EventTypeWarning, "BadConfig", fmt.Sprintf("TLS entry %d is invalid: %s", i, errMsg))
+    rec.Eventf(ingress, "Warning", "BadConfig", fmt.Sprintf("TLS entry %d is invalid: %s", i, errs))
     continue
 }
 ```
 
-Let's refactor the comment by focusing on the "why":
+Once again, the in-flight comment can be rewritten to focus on the "why":
 
 ```go
 // Let the user know that an TLS entry has been skipped due to being invalid.
 errs := validateIngressTLSBlock(tls)
 if len(errs) > 0 {
-    errMsg := utilerrors.NewAggregate(errs).Error()
-    c.recorder.Eventf(ing, corev1.EventTypeWarning, "BadConfig", fmt.Sprintf("TLS entry %d is invalid: %s", i, errMsg))
+    rec.Eventf(ingress, "Warning", "BadConfig", fmt.Sprintf("TLS entry %d is invalid: %s", i, errs))
     continue
 }
 ```
