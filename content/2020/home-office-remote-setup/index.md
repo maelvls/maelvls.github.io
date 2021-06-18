@@ -19,7 +19,7 @@ In this post, I document the changes to my office setup through time.
 
 ![](mael-home-office-desk-2021-06-18.jpg)
 
-As you can see in the above picture, I went from a Macbook Pro to a custom PC I built!! I wanted a machine purposed for Linux and with as much CPU as I could afford.
+As you can see in the above picture, I went from a Macbook Pro to a custom PC I built!! I wanted a machine purposed for Linux and with as much CPU as I could afford. I made a [gist](https://gist.github.com/maelvls/3028862dd516005403cf728f4705f4bb) with all the tips I have learned from my experience of switching from macOS to Linux.
 
 ![](mael-home-office-desk-2021-06-mael-home-office-desk-2021-06-18-close-up-pc.jpg)
 
