@@ -15,6 +15,31 @@ devtoUrl: https://dev.to/maelvls/my-home-office-setup-in-2020-220f
 
 In this post, I document the changes to my office setup through time.
 
+## 2021 Second Update
+
+![](mael-home-office-desk-2021-06-18.jpg)
+
+As you can see in the above picture, I went from a Macbook Pro to a custom PC I built!! I wanted a machine purposed for Linux and with as much CPU as I could afford.
+
+![](mael-home-office-desk-2021-06-mael-home-office-desk-2021-06-18-close-up-pc.jpg)
+
+Here is the part list (also available on [pcpartpicker](https://pcpartpicker.com/list/FcxPkX)):
+
+| Part         | Name                                                                                        | Price (01 May 2021)  |
+| ------------ | ------------------------------------------------------------------------------------------- | -------------------- |
+| CPU          | ~~AMD Ryzen 9 5900X 3.4 GHz 12-Core Processor~~ (I sent it back)                            | € 708 (street price) |
+| CPU          | AMD Ryzen 9 5950X 3.4 GHz 16-Core Processor (bought on AMD.com at MSRP)                     | € 795 (MSRP)         |
+| CPU Cooler   | Noctua NH-D15 CHROMAX.BLACK 82.52 CFM CPU Cooler                                            | € 99                 |
+| Motherboard  | Gigabyte X570 AORUS MASTER ATX AM4 Motherboard                                              | € 359                |
+| Memory       | G.Skill Trident Z RGB 32 GB (2 x 16 GB) DDR4-3600 CL16 Memory                               | € 304                |
+| Storage      | Samsung 980 Pro 1 TB M.2-2280 NVME Solid State Drive                                        | € 219                |
+| Video Card   | ~~Gigabyte Radeon RX 6700 XT 12 GB EAGLE~~ (I sent it back)                                 | € 858 (street price) |
+| Video Card   | AMD Radeon RX 6800 16 GB (bought on AMD.com at MSRP)                                        | € 579 (MSRP)         |
+| Case         | Fractal Design Define 7 Compact ATX Mid Tower Case                                          | € 133                |
+| Power Supply | be quiet! Dark Power Pro 11 750 W 80+ Platinum Semi-modular ATX Power Supply                | € 243                |
+| Case Fan × 4 | [be quiet! Silent Wings 3 59.5 CFM 140 mm Fan PWM](https://www.bequiet.com/en/casefans/717) | € 29 × 4             |
+| Total        |                                                                                             | € 2847               |
+
 ## 2021 Update
 
 ![My home office in 2020](mael-home-office-desk-2021.jpg)
