@@ -21,8 +21,6 @@ In this post, I document the changes to my office setup through time.
 
 As you can see in the above picture, I went from a Macbook Pro to a custom PC I built!! I wanted a machine purposed for Linux and with as much CPU as I could afford. I made a [gist](https://gist.github.com/maelvls/3028862dd516005403cf728f4705f4bb) with all the tips I have learned from my experience of switching from macOS to Linux.
 
-![](mael-home-office-desk-2021-06-18-close-up-pc.jpg)
-
 Here is the part list (also available on [pcpartpicker](https://pcpartpicker.com/list/FcxPkX)):
 
 | Part         | Name                                                                                        | Price (01 May 2021)  |
@@ -39,6 +37,8 @@ Here is the part list (also available on [pcpartpicker](https://pcpartpicker.com
 | Power Supply | be quiet! Dark Power Pro 11 750 W 80+ Platinum Semi-modular ATX Power Supply                | € 243                |
 | Case Fan × 4 | [be quiet! Silent Wings 3 59.5 CFM 140 mm Fan PWM](https://www.bequiet.com/en/casefans/717) | € 29 × 4             |
 | Total        |                                                                                             | € 2847               |
+
+![](mael-home-office-desk-2021-06-18-close-up-pc.jpg)
 
 ## 2021 Update
 
