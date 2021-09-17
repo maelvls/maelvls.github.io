@@ -212,3 +212,17 @@ In [crypto/x509/verify.go](https://github.com/golang/go/blob/e6ac2df2/src/crypto
 // keyUsage, and a keyUsage containing a flag indicating that the RSA
 // encryption key could only be used for Diffie-Hellman key agreement.
 ```
+
+## Encoding vs. format
+
+Source: [James Roper, 2019](https://github.com/jetstack/cert-manager/issues/843#issuecomment-566054175)
+
+There are multiple axes of encodings standards, there's PEM and DER, and there's
+PKCS*. So you can have PEM encoded PKCS1, DER encoded PKCS8, PEM encoded PKCS8
+etc. PKCS* is more commonly referred to as the format (in some places its called
+the syntax), while PEM and DER are the ascii and binary encodings of whichever
+format you've chosen, and so are more commonly referred to as the encoding. That
+said, openssl just calls them all formats. It's really a mess.
+
+DER = pure ASN.1, which is a binary format.
+PEM = ASN.1 base64-encoded.
