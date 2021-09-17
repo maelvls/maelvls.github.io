@@ -24,7 +24,7 @@ outputFormats:
     mediaType: application/json
     notAlternative: true
 
-paginate: 1000
+paginate: 10000
 pygmentsstyle: abap # will deprecate soon since we use goldmark now
 pygmentsUseClasses: true # hugo gen chromastyles --style=abap >> static/css/maelvls.css
 pygmentscodefences: true
@@ -42,7 +42,7 @@ params:
     vars: [title, summary, date, publishdate, expirydate, permalink]
     params: [categories, tags]
 
-  mainSections: ["2020", "2019"]
+  mainSections: ["2021", "2020", "2019"]
 
   # Custom css is expected to be in static/css/.
   customCSS: maelvls.css
