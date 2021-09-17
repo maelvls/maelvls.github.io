@@ -83,16 +83,14 @@
       </description>
     </item>
     <item>
-      <title></title>
-      <link>https://maelvls.dev/do-not-share-yet/2021/windows-missing-gateway/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>Missing Gateway on Windows</title>
+      <link>https://maelvls.dev/do-not-share-yet/missing-gateway-windows/</link>
+      <pubDate>Sat, 27 Feb 2021 14:20:21 +0200</pubDate>
       
-      <guid>https://maelvls.dev/do-not-share-yet/2021/windows-missing-gateway/</guid>
+      <guid>https://maelvls.dev/do-not-share-yet/missing-gateway-windows/</guid>
       <description>
       
-      packet was coming as
-Incoming packet:
-src: 10.8.8.10 dst: 10.4.0.2  The Windows VM receives the packet on nic2. IIS, whi...
+      
       
       </description>
     </item>
