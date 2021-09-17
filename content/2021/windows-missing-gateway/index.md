@@ -1,4 +1,15 @@
-
+---
+title: "Missing Gateway on Windows"
+description: ""
+date: 2021-02-27T14:20:21+02:00
+url: /missing-gateway-windows/
+images: [missing-gateway-windows/cover-missing-gateway-windows.png]
+draft: true
+tags: [networking, windows]
+author: Maël Valais
+devtoId: 0
+devtoPublished: false
+---
 
 packet was coming as
 
