@@ -1,0 +1,61 @@
+<!doctype html><html lang=en><head><meta name=generator content="Hugo 0.75.1"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=author content="Maël Valais"><meta name=description content><meta property="og:title" content><meta property="og:description" content="packet was coming as
+Incoming packet:
+src: 10.8.8.10 dst: 10.4.0.2  The Windows VM receives the packet on nic2. IIS, which is listening on all interfaces, handles the connection and sends the response to 10.8.8.10.
+The Windows IP stack looks at its routes:
+C:\> route print IPv4 Route Table =========================================================================== Active Routes: Network Destination Netmask Gateway Interface Metric 0.0.0.0 0.0.0.0 10.132.0.1 10.132.0.13 5 0.0.0.0 0.0.0.0 10.4.0.1 10.4.0.2 261 10.4.0.0 255.255.240.0 On-link 10."><meta property="og:type" content="article"><meta property="og:url" content="https://maelvls.dev/2021/windows-missing-gateway/"><meta property="og:image" content="https://maelvls.dev/img/mael.jpg"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://maelvls.dev/img/mael.jpg"><meta name=twitter:title content><meta name=twitter:description content="packet was coming as
+Incoming packet:
+src: 10.8.8.10 dst: 10.4.0.2  The Windows VM receives the packet on nic2. IIS, which is listening on all interfaces, handles the connection and sends the response to 10.8.8.10.
+The Windows IP stack looks at its routes:
+C:\> route print IPv4 Route Table =========================================================================== Active Routes: Network Destination Netmask Gateway Interface Metric 0.0.0.0 0.0.0.0 10.132.0.1 10.132.0.13 5 0.0.0.0 0.0.0.0 10.4.0.1 10.4.0.2 261 10.4.0.0 255.255.240.0 On-link 10."><link rel=icon type=image/png href=/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/favicon-16x16.png sizes=16x16><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/main.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/all.css><link rel=stylesheet type=text/css media=screen href=https://maelvls.dev/css/maelvls.css><title>| maelvls dev blog</title></head><body><header><div id=avatar><a href=https://maelvls.dev/><img src=/img/mael.jpg alt="maelvls dev blog"></a></div><div id=titletext><h2 id=title><a href=https://maelvls.dev/>maelvls dev blog</a></h2></div><div id=title-description><p id=subtitle>Systems software engineer. I write mostly about Kubernetes and Go. <a href=/about/>About</a></p><div id=social><nav><ul><li><a href=https://github.com/maelvls><i title=Github class="icons fab fa-github"></i></a></li><li><a href=https://twitter.com/maelvls><i title=Twitter class="icons fab fa-twitter"></i></a></li><li><a href=https://dev.to/maelvls><i title="Maël Valais's DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul></nav></div></div><div id=mainmenu></div></header><main><div class=post><div class=author></div><div class=post-header><div class=matter><h1 class=title></h1></div></div><div class=markdown><p>packet was coming as</p><p>Incoming packet:</p><pre><code>src: 10.8.8.10
+dst: 10.4.0.2
+</code></pre><p>The Windows VM receives the packet on <code>nic2</code>. IIS, which is listening on all
+interfaces, handles the connection and sends the response to 10.8.8.10.</p><p>The Windows IP stack looks at its routes:</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>C:\&gt; route print
+IPv4 Route Table
+===========================================================================
+Active Routes:
+Network Destination        Netmask          Gateway       Interface  Metric
+          0.0.0.0          0.0.0.0       10.132.0.1      10.132.0.13      5
+          0.0.0.0          0.0.0.0         10.4.0.1         10.4.0.2    261
+         10.4.0.0    255.255.240.0         On-link          10.4.0.2    261
+         10.4.0.2  255.255.255.255         On-link          10.4.0.2    261
+      10.4.15.255  255.255.255.255         On-link          10.4.0.2    261
+       10.132.0.0    255.255.240.0       10.132.0.1      10.132.0.13      6
+       10.132.0.1  255.255.255.255         On-link       10.132.0.13      6
+      10.132.0.13  255.255.255.255         On-link       10.132.0.13    261
+===========================================================================
+Persistent Routes:
+  Network Address          Netmask  Gateway Address  Metric
+  169.254.169.254  255.255.255.255         On-link        1
+          0.0.0.0          0.0.0.0         10.4.0.1  Default
+===========================================================================
+</code></pre></div><p><img src=remmina_Quick%20Connect_localhost_2021812-2141.png alt></p><p>The response IP headers:</p><pre><code>src: 10.4.0.2
+dst: 10.8.8.10
+</code></pre><p>Since the address <code>10.8.8.10</code> is</p><p>When the nic 2 has an empty gateway:</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>C:\&gt; route print
+IPv4 Route Table
+===========================================================================
+Active Routes:
+Network Destination        Netmask          Gateway       Interface  Metric
+          0.0.0.0          0.0.0.0       10.132.0.1      10.132.0.13      5
+         10.4.0.0    255.255.240.0         On-link          10.4.0.2    261
+         10.4.0.2  255.255.255.255         On-link          10.4.0.2    261
+      10.4.15.255  255.255.255.255         On-link          10.4.0.2    261
+       10.132.0.0    255.255.240.0       10.132.0.1      10.132.0.13      6
+       10.132.0.1  255.255.255.255         On-link       10.132.0.13      6
+      10.132.0.13  255.255.255.255         On-link       10.132.0.13    261
+        127.0.0.0        255.0.0.0         On-link         127.0.0.1    331
+        127.0.0.1  255.255.255.255         On-link         127.0.0.1    331
+  127.255.255.255  255.255.255.255         On-link         127.0.0.1    331
+  169.254.169.254  255.255.255.255         On-link       10.132.0.13      6
+  169.254.169.254  255.255.255.255         On-link          10.4.0.2    261
+        224.0.0.0        240.0.0.0         On-link         127.0.0.1    331
+        224.0.0.0        240.0.0.0         On-link          10.4.0.2    261
+        224.0.0.0        240.0.0.0         On-link       10.132.0.13    261
+  255.255.255.255  255.255.255.255         On-link         127.0.0.1    331
+  255.255.255.255  255.255.255.255         On-link          10.4.0.2    261
+  255.255.255.255  255.255.255.255         On-link       10.132.0.13    261
+===========================================================================
+Persistent Routes:
+  Network Address          Netmask  Gateway Address  Metric
+  169.254.169.254  255.255.255.255         On-link        1
+===========================================================================
+</code></pre></div><p><img src=remmina_Quick%20Connect_localhost_2021812-21538.png alt></p><p>Hypotheses:</p><ol><li>The packet arrives into the VM but the TCP connection cannot be initiated.</li><li>The reason the TCP connection cannot be initiated is that Windows fails sending an ACK packet because it does not have a gateway IP set for this network card.</li><li>The ACK cannot be sent because Windows does not find an entry for 10.8.8.10 in its ARP table, and since no gateway is set, it cannot figure out to which MAC address the ACK packet should be addressed.</li></ol><p>Is it the same on Linux?</p></div><a href=https://github.com/maelvls/maelvls.github.io/edit/source/content/2021/windows-missing-gateway/index.md>📝 Edit this page</a><div class=tags></div><script src=https://utteranc.es/client.js repo=maelvls/maelvls.github.io issue-term=pathname label=💬 theme=github-light crossorigin=anonymous async></script></div></main><footer><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-88710120-3','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></footer></body></html>

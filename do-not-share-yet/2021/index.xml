@@ -6,10 +6,46 @@
     <description>Recent content in 2021s on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 10 May 2021 18:13:09 +0200</lastBuildDate>
+    <lastBuildDate>Fri, 17 Sep 2021 10:31:09 +0200</lastBuildDate>
     
     <atom:link href="https://maelvls.dev/do-not-share-yet/2021/index.xml" rel="self" type="application/rss+xml" />
     
+    <item>
+      <title>Wireshark Debug Mitmproxy</title>
+      <link>https://maelvls.dev/do-not-share-yet/wireshark-debug-mitmproxy/</link>
+      <pubDate>Fri, 17 Sep 2021 10:31:09 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/wireshark-debug-mitmproxy/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
+    <item>
+      <title>Cert Manager Webhook Debug Guide</title>
+      <link>https://maelvls.dev/do-not-share-yet/cert-manager-webhook-debug-guide/</link>
+      <pubDate>Tue, 14 Sep 2021 11:17:19 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/cert-manager-webhook-debug-guide/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
+    <item>
+      <title>Go Flaky Test</title>
+      <link>https://maelvls.dev/do-not-share-yet/go-flaky-test/</link>
+      <pubDate>Thu, 02 Sep 2021 15:07:38 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/go-flaky-test/</guid>
+      <description>
+      
+      
+      
+      </description>
+    </item>
     <item>
       <title>Go Good Practices</title>
       <link>https://maelvls.dev/do-not-share-yet/go-good-practices/</link>
@@ -43,6 +79,20 @@
       <description>
       
       
+      
+      </description>
+    </item>
+    <item>
+      <title></title>
+      <link>https://maelvls.dev/do-not-share-yet/2021/windows-missing-gateway/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/2021/windows-missing-gateway/</guid>
+      <description>
+      
+      packet was coming as
+Incoming packet:
+src: 10.8.8.10 dst: 10.4.0.2  The Windows VM receives the packet on nic2. IIS, whi...
       
       </description>
     </item>
