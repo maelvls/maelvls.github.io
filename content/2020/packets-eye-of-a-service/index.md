@@ -1,7 +1,7 @@
 ---
 title: "The Packet's-Eye View of a Kubernetes Service"
 description: "The Service and Ingress respectively brings L4 and L7 traffics to your pods. In this article, I focus on how traffic flows in and what are the interactions between the ingress controller and the service-lb controller (the thing that creates the external load balancer). I also detail how the `hostPort` approach shapes traffic."
-date: 20200314T15:10Z
+date: 2020-03-14T15:10:10+02:00
 url: /packets-eye-kubernetes-service
 images:
   [packets-eye-kubernetes-service/cover-packets-eye-kubernetes-service.png]
