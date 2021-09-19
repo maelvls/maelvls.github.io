@@ -419,6 +419,18 @@
       </description>
     </item>
     <item>
+      <title>The Packet&#39;s-Eye View of a Kubernetes Service</title>
+      <link>https://maelvls.dev/do-not-share-yet/packets-eye-kubernetes-service/</link>
+      <pubDate>Sat, 14 Mar 2020 15:10:10 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/packets-eye-kubernetes-service/</guid>
+      <description>
+      
+      The Service and Ingress respectively brings L4 and L7 traffics to your pods. In this article, I focus on how traffic flows in and what are the interactions between the ingress controller and the service-lb controller (the thing that creates the external load balancer). I also detail how the `hostPort` approach shapes traffic.
+      
+      </description>
+    </item>
+    <item>
       <title>Debugging Kubernetes Networking: my kube-dns is not working!</title>
       <link>https://maelvls.dev/do-not-share-yet/debugging-kubernetes-networking/</link>
       <pubDate>Sun, 26 Jan 2020 00:00:00 +0000</pubDate>
@@ -451,18 +463,6 @@
       <description>
       
       At some point, the Go team chose to disable the proxy for requests coming from localhost or 127.0.0.1. This is annoying when debugging services locally.
-      
-      </description>
-    </item>
-    <item>
-      <title>The Packet&#39;s-Eye View of a Kubernetes Service</title>
-      <link>https://maelvls.dev/do-not-share-yet/packets-eye-kubernetes-service/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://maelvls.dev/do-not-share-yet/packets-eye-kubernetes-service/</guid>
-      <description>
-      
-      The Service and Ingress respectively brings L4 and L7 traffics to your pods. In this article, I focus on how traffic flows in and what are the interactions between the ingress controller and the service-lb controller (the thing that creates the external load balancer). I also detail how the `hostPort` approach shapes traffic.
       
       </description>
     </item>

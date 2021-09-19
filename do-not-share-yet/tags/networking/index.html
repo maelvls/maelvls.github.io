@@ -152,6 +152,23 @@ In one of my previous posts, I studied how traffic flows when using Kubernetes S
 <div class="post-header">
 <div class="meta">
 <div class="date">
+<span class="day">14</span>
+<span class="rest">Mar 2020</span>
+</div>
+</div>
+<div class="matter">
+<h3 class="title small"><a href="/do-not-share-yet/packets-eye-kubernetes-service/">The Packet&#39;s-Eye View of a Kubernetes Service</a></h3>
+<span class="description">
+
+The Service and Ingress respectively brings L4 and L7 traffics to your pods. In this article, I focus on how traffic flows in and what are the interactions between the ingress controller and the service-lb controller (the thing that creates the external load balancer). I also detail how the `hostPort` approach shapes traffic.
+
+</span>
+</div>
+</div>
+</li><li class="post">
+<div class="post-header">
+<div class="meta">
+<div class="date">
 <span class="day">26</span>
 <span class="rest">Jan 2020</span>
 </div>
@@ -178,23 +195,6 @@ Some pods were unable to connect to the kube-proxy pod on one of my GKE Kubernet
 <span class="description">
 
 I want to avoid using the expensive Google Network Load Balancer and instead do the load balancing in-cluster using akrobateo, which acts as a LoadBalancer controller.
-
-</span>
-</div>
-</div>
-</li><li class="post">
-<div class="post-header">
-<div class="meta">
-<div class="date">
-<span class="day">01</span>
-<span class="rest">Jan 1</span>
-</div>
-</div>
-<div class="matter">
-<h3 class="title small"><a href="/do-not-share-yet/packets-eye-kubernetes-service/">The Packet&#39;s-Eye View of a Kubernetes Service</a></h3>
-<span class="description">
-
-The Service and Ingress respectively brings L4 and L7 traffics to your pods. In this article, I focus on how traffic flows in and what are the interactions between the ingress controller and the service-lb controller (the thing that creates the external load balancer). I also detail how the `hostPort` approach shapes traffic.
 
 </span>
 </div>

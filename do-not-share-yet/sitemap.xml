@@ -353,6 +353,16 @@
   </url>
   
   <url>
+    <loc>https://maelvls.dev/do-not-share-yet/packets-eye-kubernetes-service/</loc>
+    <lastmod>2020-03-14T15:10:10+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/traefik/</loc>
+    <lastmod>2020-03-14T15:10:10+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://maelvls.dev/do-not-share-yet/debugging-kubernetes-networking/</loc>
     <lastmod>2020-01-26T00:00:00+00:00</lastmod>
   </url>
@@ -523,14 +533,6 @@
   
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/series/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/packets-eye-kubernetes-service/</loc>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/traefik/</loc>
   </url>
   
 </urlset>
