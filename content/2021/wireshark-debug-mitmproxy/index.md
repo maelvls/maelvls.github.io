@@ -98,10 +98,10 @@ You can see the full PCAP traces by downloading
 
 The difference between both TLS flows seemed to be the second `Change Cipher Spec` that happens in the first flow (without mitmproxy). I knew from previous experiment that our TPP instance was using TLS renegociation whenever the VEDAuth IIS endpoint's SSL "Client Certificate" was set to "Accept", such as in the following screenshot:
 
-![](ssl-ssl-settings-accept.png)
+![](ssl-settings-accept.png)
 
 This behavior is detailed in the vcert issue [Venafi Issuer error when configuring cert-manager. "local error: tls: no renegotiation"](https://github.com/Venafi/vcert/issues/148).
 
 And sure enough, disabling the client certificate option worked! After switching the option from "Accept" to "Ignore", vcert with mitmproxy started working!
 
-![](ssl-ssl-settings-ignore.png)
+![](ssl-settings-ignore.png)
