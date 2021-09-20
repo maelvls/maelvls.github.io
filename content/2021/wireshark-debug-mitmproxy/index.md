@@ -40,8 +40,6 @@ Looking at the "Detail" tab for the HTTP call recorded in mitmproxy, I can see t
 
 For some reason, the response never arrives. At this point, I had the following hypothesis:
 
--
-
 When using mitmproxy, I hit an issue with vcert: the vcert HTTP requests would
 not be responded to with mitmproxy in-between.
 
@@ -98,14 +96,12 @@ the HTTP request is correctly sent and aknowledged, but hangs after that:
 You can see the full PCAP traces by downloading
 [vcert-with-and-without-mitmproxy-through-iap.pcapng](vcert-with-and-without-mitmproxy-through-iap.pcapng).
 
-The difference between both TLS flows seemed to be the second `Change Cipher Spec` that happens in the first flow (without mitmproxy). I knew from previous
-experiment that our TPP instance was using TLS renegociation whenever the
-VEDAuth IIS endpoint's SSL "Client Certificate" was set to "Accept". This
-behavior is detailed in the vcert issue [Venafi Issuer error when configuring
-cert-manager. "local error: tls: no
-renegotiation"](https://github.com/Venafi/vcert/issues/148).
+The difference between both TLS flows seemed to be the second `Change Cipher Spec` that happens in the first flow (without mitmproxy). I knew from previous experiment that our TPP instance was using TLS renegociation whenever the VEDAuth IIS endpoint's SSL "Client Certificate" was set to "Accept", such as in the following screenshot:
 
-And sure enough, disabling the client certificate option worked! After switching
-the option from "Accept" to "Disable", vcert with mitmproxy started working!
+![](ssl-ssl-settings-accept.png)
 
-![](disable-client-certs.png)
+This behavior is detailed in the vcert issue [Venafi Issuer error when configuring cert-manager. "local error: tls: no renegotiation"](https://github.com/Venafi/vcert/issues/148).
+
+And sure enough, disabling the client certificate option worked! After switching the option from "Accept" to "Ignore", vcert with mitmproxy started working!
+
+![](ssl-ssl-settings-ignore.png)
