@@ -134,10 +134,10 @@ the HTTP request is correctly sent and aknowledged, but hangs after that:</p>
 </code></pre></div><p>You can see the full PCAP traces by downloading
 <a href="vcert-with-and-without-mitmproxy-through-iap.pcapng">vcert-with-and-without-mitmproxy-through-iap.pcapng</a>.</p>
 <p>The difference between both TLS flows seemed to be the second <code>Change Cipher Spec</code> that happens in the first flow (without mitmproxy). I knew from previous experiment that our TPP instance was using TLS renegociation whenever the VEDAuth IIS endpoint&rsquo;s SSL &ldquo;Client Certificate&rdquo; was set to &ldquo;Accept&rdquo;, such as in the following screenshot:</p>
-<p><img src="ssl-ssl-settings-accept.png" alt=""></p>
+<p><img src="ssl-settings-accept.png" alt=""></p>
 <p>This behavior is detailed in the vcert issue <a href="https://github.com/Venafi/vcert/issues/148">Venafi Issuer error when configuring cert-manager. &ldquo;local error: tls: no renegotiation&rdquo;</a>.</p>
 <p>And sure enough, disabling the client certificate option worked! After switching the option from &ldquo;Accept&rdquo; to &ldquo;Ignore&rdquo;, vcert with mitmproxy started working!</p>
-<p><img src="ssl-ssl-settings-ignore.png" alt=""></p>
+<p><img src="ssl-settings-ignore.png" alt=""></p>
 
     </div>
     <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2021/wireshark-debug-mitmproxy/index.md">📝 Edit this page</a>
