@@ -1,8 +1,8 @@
 ---
-title: "Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.16)"
+title: "Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.17)"
 tags: [go, go-modules]
 date: 2019-11-13
-description: "GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with Go 1.13 and Go 1.15 and changed a last time in Go 1.16."
+description: "GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with Go 1.13 and Go 1.15 and changed a last time in Go 1.16, and is stable since then."
 url: /go111module-everywhere
 images: [go111module-everywhere/cover-go-modules-sad.jpg]
 devtoId: 204994
@@ -16,7 +16,13 @@ You might have noticed that `GO111MODULE=on` is flourishing everywhere. Many rea
 GO111MODULE=on go get golang.org/x/tools/gopls@latest
 ```
 
-In this short post, I will explain why `GO111MODULE` exists, its caveats and interesting bits that you need to know when dealing with Go Modules.
+Note that `go get` has been deprecated for installing binaries since Go 1.17 and will be become impossible in Go 1.18. If you are using Go 1.16 or above, you should use instead:
+
+```
+go install golang.org/x/tools/gopls@latest
+```
+
+In this short post, I will explain why `GO111MODULE` was introduced in Go 1.11, its caveats and interesting bits that you need to know when dealing with Go Modules.
 
 ---
 
@@ -28,9 +34,10 @@ In this short post, I will explain why `GO111MODULE` exists, its caveats and int
    2. [`GO111MODULE` with Go 1.13](#go111module-with-go-113)
    3. [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
    4. [`GO111MODULE` with Go 1.16](#go111module-with-go-116)
-   5. [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
-   6. [The pitfall of `go.mod` being silently updated](#the-pitfall-of-gomod-being-silently-updated)
-   7. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
+   5. [`GO111MODULE` with Go 1.17](#go111module-with-go-117)
+   6. [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
+   7. [The pitfall of `go.mod` being silently updated](#the-pitfall-of-gomod-being-silently-updated)
+   8. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
 3. [Caveats when using Go Modules](#caveats-when-using-go-modules)
    1. [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
    2. [Where are the sources of the dependencies with Go Modules](#where-are-the-sources-of-the-dependencies-with-go-modules)
@@ -135,6 +142,112 @@ go install golang.org/x/tools/gopls@latest
 #                                   ^^^^^^
 ```
 
+### `GO111MODULE` with Go 1.17
+
+Go 1.17 was released on August 16, 2021. As for 1.16, `GO111MODULE=on` is the default behavior, and `GO111MODULE=auto` is equivalent to `GO111MODULE=on`. If you still want to use the `GOPATH` way, you will have to force Go not to use the Go Modules feature using `GO111MODULE=off` (see [the section about `direnv`](#set-go111module-on-a-per-folder-basis-with-direnv)).
+
+The two most important changes are:
+
+1. If you decide to update the `go` line in your `go.mod` to take advantage of the new [module graph pruning](https://golang.org/ref/mod#graph-pruning), your `go.mod` will want to get updated. The first time you will want to use `go build`, you will see the following error:
+
+   ```
+   go build ./...
+   go: updates to go.mod needed; to update it:
+           go mod tidy
+   ```
+
+   After running `go mod tidy`, you will see that your `go.mod` changed quite a lot with a new `require` block:
+
+   ```diff
+   diff --git a/go.mod b/go.mod
+   index 3af719e..26ed354 100644
+   --- a/go.mod
+   +++ b/go.mod
+   @@ -1,12 +1,12 @@
+    module github.com/maelvls/users-grpc
+
+   -go 1.12
+   +go 1.17
+
+    require (
+    	github.com/MakeNowJust/heredoc/v2 v2.0.1
+    	github.com/fsnotify/fsnotify v1.4.9 // indirect
+    	github.com/golang/mock v1.4.4
+   -	github.com/golang/protobuf v1.4.3
+   +	github.com/golang/protobuf v1.5.2
+    	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
+    	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
+    	github.com/hashicorp/go-memdb v1.3.0
+   @@ -37,8 +37,25 @@ require (
+    	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+    	google.golang.org/genproto v0.0.0-20201116205149-79184cff4dfe // indirect
+    	google.golang.org/grpc v1.33.2
+   -	google.golang.org/protobuf v1.25.0
+   +	google.golang.org/protobuf v1.27.1
+    	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
+    	gopkg.in/ini.v1 v1.62.0 // indirect
+    	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
+    )
+   +
+   +require (
+   +	github.com/beorn7/perks v1.0.0 // indirect
+   +	github.com/davecgh/go-spew v1.1.1 // indirect
+   +	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
+   +	github.com/hashicorp/golang-lru v0.5.4 // indirect
+   +	github.com/hashicorp/hcl v1.0.0 // indirect
+   +	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+   +	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
+   +	github.com/pmezard/go-difflib v1.0.0 // indirect
+   +	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
+   +	github.com/prometheus/common v0.4.0 // indirect
+   +	github.com/prometheus/procfs v0.0.0-20190507164030-5867b95ac084 // indirect
+   +	github.com/spf13/pflag v1.0.5 // indirect
+   +	github.com/subosito/gotenv v1.2.0 // indirect
+   +	gopkg.in/yaml.v2 v2.3.0 // indirect
+   +)
+   ```
+
+2. You cannot use `go get` in Go module mode anymore, and the following error is shown when you try doing so:
+
+   ```sh
+   $ GO111MODULE=on go get golang.org/x/tools/gopls@latest
+   go get: installing executables with 'go get' in module mode is deprecated.
+        Use 'go install pkg@version' instead.
+        For more information, see https://golang.org/doc/go-get-install-deprecation
+        or run 'go help get' or 'go help install'.
+   ```
+
+   To work around this warning, you can use `go install` that was taught how to deal with `@version` in Go 1.16:
+
+   ```sh
+   go get golang.org/x/tools/gopls@latest
+   ```
+
+   Notice that `@version` implies the Go module mode, meaning that you don't have to add `GO111MODULE=on` at the beginning of the command when you are not in a Go project that has a `go.mod`.
+
+3. The `go run` command was taught how to deal with `@version`! Like `go install`, it implies `GO111MODULE=on`. Up to now, if you wanted to run a binary once, you had two ways:
+
+   - If you were running the binary from a `go.mod` enabled project, you could specify the version of the binary you want to run in your `go.mod` and then run `go run -mod=mod`.
+
+     ```
+     # Before Go 1.17:
+     go get github.com/golang/mock/mockgen@v1.3.1
+     go run -mod=mod github.com/golang/mock/mockgen
+
+     # With Go 1.17:
+     go run github.com/golang/mock/mockgen@v1.3.1
+     ```
+
+     This is great if you use `//go:generate` to generate mocks. For example, in the project [users-grpc](https://github.com/maelvls/users-grpc/ blob/ master/schema/placeholder.go), I was able to replace
+
+     ```go
+     // Old way, before 1.17:
+     //go:generate go run -mod=mod github.com/golang/mock/mockgen -build_flags=-mod=mod -package mocks -destination ./mock_service.go -source=../   user.go
+
+     // New way, Go 1.17:
+     //go:generate go run github.com/golang/mock/mockgen@v1.4.4 -package mocks -destination ./mock_service.go -source=../user.go
+     ```
+
 ### So, why is `GO111MODULE` everywhere?!
 
 Now that we know that `GO111MODULE` can be very useful for enabling the Go Modules behavior, here is the answer: that's because `GO111MODULE=on` allows you to select a version. Without Go Modules, `go get` fetches the latest commit from master. With Go Modules, you can select a specific version based on git tags.
@@ -198,7 +311,7 @@ Now, let's go through some caveats I encountered when working with Go Modules.
 
 Before Go 1.16 came out, that was one of the weird things with `go get`: sometimes, it served the purpose of installing binaries or downloading packages. And with Go modules, if you were in a repo with a `go.mod`, it would silently add the binary that you were `go get`-ing to your `go.mod`!
 
-Fortunately, with Go 1.16, `go install` has [learnt](https://blog.golang.org/go116-module-changes) about the `@version` suffix. With `go install foo@version`, your local `go.mod` won't be affected!
+Fortunately, with Go 1.16, `go install` has [learnt](https://blog.golang.org/go116-module-changes) about the `@version` suffix. With `go install foo@version`, your local `go.mod` won't be affected! And in Go 1.18, `go get` won't install binaries anymore, and will only ever be used for adding dependencies to your `go.mod`.
 
 ### Where are the sources of the dependencies with Go Modules
 
