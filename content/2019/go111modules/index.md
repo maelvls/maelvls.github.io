@@ -35,6 +35,9 @@ In this short post, I will explain why `GO111MODULE` was introduced in Go 1.11, 
    3. [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
    4. [`GO111MODULE` with Go 1.16](#go111module-with-go-116)
    5. [`GO111MODULE` with Go 1.17](#go111module-with-go-117)
+      1. [Faster downloading of dependencies if you are using Git to fetch modules](#faster-downloading-of-dependencies-if-you-are-using-git-to-fetch-modules)
+      2. [Installing binaries with `GO111MODULE=on go get` is deprecated](#installing-binaries-with-go111moduleon-go-get-is-deprecated)
+      3. [`go run` knows about `@version` (finally!)](#go-run-knows-about-version-finally)
    6. [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
    7. [The pitfall of `go.mod` being silently updated](#the-pitfall-of-gomod-being-silently-updated)
    8. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
@@ -146,107 +149,131 @@ go install golang.org/x/tools/gopls@latest
 
 Go 1.17 was released on August 16, 2021. As for 1.16, `GO111MODULE=on` is the default behavior, and `GO111MODULE=auto` is equivalent to `GO111MODULE=on`. If you still want to use the `GOPATH` way, you will have to force Go not to use the Go Modules feature using `GO111MODULE=off` (see [the section about `direnv`](#set-go111module-on-a-per-folder-basis-with-direnv)).
 
-The two most important changes are:
+The three important changes that may affect how you use `GO111MODULE` are the following:
 
-1. If you decide to update the `go` line in your `go.mod` to take advantage of the new [module graph pruning](https://golang.org/ref/mod#graph-pruning), your `go.mod` will want to get updated. The first time you will want to use `go build`, you will see the following error:
+#### Faster downloading of dependencies if you are using Git to fetch modules
 
-   ```
-   go build ./...
-   go: updates to go.mod needed; to update it:
-           go mod tidy
-   ```
+If you decide to update the `go` line in your `go.mod` to take advantage of the new [module graph pruning](https://golang.org/ref/mod#graph-pruning), your `go.mod` will want to get updated. The first time you will want to use `go build`, you will see the following error:
 
-   After running `go mod tidy`, you will see that your `go.mod` changed quite a lot with a new `require` block:
+```
+go build ./...
+go: updates to go.mod needed; to update it:
+        go mod tidy
+```
 
-   ```diff
-   diff --git a/go.mod b/go.mod
-   index 3af719e..26ed354 100644
-   --- a/go.mod
-   +++ b/go.mod
-   @@ -1,12 +1,12 @@
-    module github.com/maelvls/users-grpc
+After running `go mod tidy`, you will see that your `go.mod` changed quite a lot with a new `require` block:
 
-   -go 1.12
-   +go 1.17
+```diff
+diff --git a/go.mod b/go.mod
+index 3af719e..26ed354 100644
+--- a/go.mod
++++ b/go.mod
+@@ -1,12 +1,12 @@
+   module github.com/maelvls/users-grpc
 
-    require (
-    	github.com/MakeNowJust/heredoc/v2 v2.0.1
-    	github.com/fsnotify/fsnotify v1.4.9 // indirect
-    	github.com/golang/mock v1.4.4
-   -	github.com/golang/protobuf v1.4.3
-   +	github.com/golang/protobuf v1.5.2
-    	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
-    	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
-    	github.com/hashicorp/go-memdb v1.3.0
-   @@ -37,8 +37,25 @@ require (
-    	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-    	google.golang.org/genproto v0.0.0-20201116205149-79184cff4dfe // indirect
-    	google.golang.org/grpc v1.33.2
-   -	google.golang.org/protobuf v1.25.0
-   +	google.golang.org/protobuf v1.27.1
-    	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
-    	gopkg.in/ini.v1 v1.62.0 // indirect
-    	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
-    )
-   +
-   +require (
-   +	github.com/beorn7/perks v1.0.0 // indirect
-   +	github.com/davecgh/go-spew v1.1.1 // indirect
-   +	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
-   +	github.com/hashicorp/golang-lru v0.5.4 // indirect
-   +	github.com/hashicorp/hcl v1.0.0 // indirect
-   +	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-   +	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-   +	github.com/pmezard/go-difflib v1.0.0 // indirect
-   +	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
-   +	github.com/prometheus/common v0.4.0 // indirect
-   +	github.com/prometheus/procfs v0.0.0-20190507164030-5867b95ac084 // indirect
-   +	github.com/spf13/pflag v1.0.5 // indirect
-   +	github.com/subosito/gotenv v1.2.0 // indirect
-   +	gopkg.in/yaml.v2 v2.3.0 // indirect
-   +)
-   ```
+-go 1.12
++go 1.17
 
-2. You cannot use `go get` in Go module mode anymore, and the following error is shown when you try doing so:
+   require (
+   github.com/MakeNowJust/heredoc/v2 v2.0.1
+   github.com/fsnotify/fsnotify v1.4.9 // indirect
+   github.com/golang/mock v1.4.4
+-	github.com/golang/protobuf v1.4.3
++	github.com/golang/protobuf v1.5.2
+   github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
+   github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
+   github.com/hashicorp/go-memdb v1.3.0
+@@ -37,8 +37,25 @@ require (
+   golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+   google.golang.org/genproto v0.0.0-20201116205149-79184cff4dfe // indirect
+   google.golang.org/grpc v1.33.2
+-	google.golang.org/protobuf v1.25.0
++	google.golang.org/protobuf v1.27.1
+   gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
+   gopkg.in/ini.v1 v1.62.0 // indirect
+   gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
+   )
++
++require (
++	github.com/beorn7/perks v1.0.0 // indirect
++	github.com/davecgh/go-spew v1.1.1 // indirect
++	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
++	github.com/hashicorp/golang-lru v0.5.4 // indirect
++	github.com/hashicorp/hcl v1.0.0 // indirect
++	github.com/inconshreveable/mousetrap v1.0.0 // indirect
++	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
++	github.com/pmezard/go-difflib v1.0.0 // indirect
++	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
++	github.com/prometheus/common v0.4.0 // indirect
++	github.com/prometheus/procfs v0.0.0-20190507164030-5867b95ac084 // indirect
++	github.com/spf13/pflag v1.0.5 // indirect
++	github.com/subosito/gotenv v1.2.0 // indirect
++	gopkg.in/yaml.v2 v2.3.0 // indirect
++)
+```
 
-   ```sh
-   $ GO111MODULE=on go get golang.org/x/tools/gopls@latest
-   go get: installing executables with 'go get' in module mode is deprecated.
-        Use 'go install pkg@version' instead.
-        For more information, see https://golang.org/doc/go-get-install-deprecation
-        or run 'go help get' or 'go help install'.
-   ```
+The new `require` block adds even more `// indirect` lines. Thanks to these new lines, Go commands such as `go get` have less downloading to do (the mechanism is called [lazy modules loading](https://go.googlesource.com/proposal/+/master/design/36460-lazy-module-loading.md)). Previously, `go get` had to download every single project in order to access their `go.mod` files, even if some of these projects were not actually used by your code. That was a big problem for git-based projects, and less of a problem for people using `GOPROXY` (i.e., everyone else) since the `go.mod` can be fetched without fetching the whole repository when using the `GOPROXY` mechanism.
 
-   To work around this warning, you can use `go install` that was taught how to deal with `@version` in Go 1.16:
+For example, using the `GOPROXY` mechanism, the number of HTTP GET calls is reduced from 252 to 169 (49% less HTTP requests) with the cert-manager project for the tag v1.4.0. The number of HTTP calls was calculated using mitmproxy using `GOCACHE=off`. Although the number of HTTP calls has been reduced, I did not notice any significant time reduction.
 
-   ```sh
-   go get golang.org/x/tools/gopls@latest
-   ```
+The biggest difference will happen for people who are relying on Git for downloading repositories. Each time Go needs to read a `go.mod`, it needs to download the whole Git repository. We can force Go to clone the Git repositories by using `GOPRIVATE=*`:
 
-   Notice that `@version` implies the Go module mode, meaning that you don't have to add `GO111MODULE=on` at the beginning of the command when you are not in a Go project that has a `go.mod`.
+```sh
+# With Go 1.16:
+$ time GOPATH=$(mktemp -d) GOPRIVATE='*' go get ./...
+161.65s user 34.07s system 38% cpu 8:23.58 total
 
-3. The `go run` command was taught how to deal with `@version`! Like `go install`, it implies `GO111MODULE=on`. Up to now, if you wanted to run a binary once, you had two ways:
 
-   - If you were running the binary from a `go.mod` enabled project, you could specify the version of the binary you want to run in your `go.mod` and then run `go run -mod=mod`.
+# With Go 1.17:
+$ time GOPATH=$(mktemp -d) GOPRIVATE='*' go get ./...
+158.09s user 33.39s system 39% cpu 7:59.63 total
+```
 
-     ```
-     # Before Go 1.17:
-     go get github.com/golang/mock/mockgen@v1.3.1
-     go run -mod=mod github.com/golang/mock/mockgen
+That's 5% faster (24 seconds less with a 30 Mbit/s DSL connection). I would have expected a better result, but that number will depend on the `go.mod` you have!
 
-     # With Go 1.17:
-     go run github.com/golang/mock/mockgen@v1.3.1
-     ```
+#### Installing binaries with `GO111MODULE=on go get` is deprecated
 
-     This is great if you use `//go:generate` to generate mocks. For example, in the project [users-grpc](https://github.com/maelvls/users-grpc/ blob/ master/schema/placeholder.go), I was able to replace
+In Go 1.17, the use of `go get` to install binaries is now showing the following warning:
 
-     ```go
-     // Old way, before 1.17:
-     //go:generate go run -mod=mod github.com/golang/mock/mockgen -build_flags=-mod=mod -package mocks -destination ./mock_service.go -source=../   user.go
+```sh
+$ GO111MODULE=on go get golang.org/x/tools/gopls@latest
+go get: installing executables with 'go get' in module mode is deprecated.
+     Use 'go install pkg@version' instead.
+     For more information, see https://golang.org/doc/go-get-install-deprecation
+     or run 'go help get' or 'go help install'.
+```
 
-     // New way, Go 1.17:
-     //go:generate go run github.com/golang/mock/mockgen@v1.4.4 -package mocks -destination ./mock_service.go -source=../user.go
-     ```
+To work around this warning, you can use `go install` that was taught how to deal with `@version` in Go 1.16:
+
+```sh
+go install golang.org/x/tools/gopls@latest
+```
+
+Notice that `@version` implies the Go module mode, meaning that you don't have to add `GO111MODULE=on` at the beginning of the command when you are not in a Go project that has a `go.mod`.
+
+#### `go run` knows about `@version` (finally!)
+
+The `go run` command was taught how to deal with `@version`! Like `go install`, it implies `GO111MODULE=on`. Up to now, if you wanted to run a binary once, you had two ways:
+
+- If you were running the binary from a `go.mod` enabled project, you could specify the version of the binary you want to run in your `go.mod` and then run `go run -mod=mod`.
+
+```
+# Before Go 1.17:
+go get github.com/golang/mock/mockgen@v1.3.1
+go run -mod=mod github.com/golang/mock/mockgen
+
+# With Go 1.17:
+go run github.com/golang/mock/mockgen@v1.3.1
+```
+
+This is great if you use `//go:generate` to generate mocks. For example, in the project [users-grpc](https://github.com/maelvls/users-grpc/blob/ master/schema/placeholder.go), I was able to replace my `//go:generate` directive:
+
+```go
+// Old way, before 1.17:
+//go:generate go run -mod=mod github.com/golang/mock/mockgen -build_flags=-mod=mod -package mocks -destination ./mock_service.go -source=../  user.go
+// New way, Go 1.17:
+//go:generate go run github.com/golang/mock/mockgen@v1.4.4 -package mocks -destination ./mock_service.go -source=../user.go
+```
 
 ### So, why is `GO111MODULE` everywhere?!
 
@@ -370,5 +397,6 @@ export GOPRIVATE=github.com/company/\*
 
 _Illustration by Bailey Beougher, from The Illustrated Children's Guide to Kubernetes._
 
-**Update 22 June 2020:** it said `use replace` instead of just `replace`.
-**Update 8 April 2021:** update with Go 1.16.
+- **Update 22 June 2020:** it said `use replace` instead of just `replace`.
+- **Update 8 April 2021:** update with Go 1.16.
+- **Update 20 Sept 2021:** update with Go 1.17.
