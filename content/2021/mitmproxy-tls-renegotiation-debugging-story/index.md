@@ -38,19 +38,19 @@ vCert: 2021/09/19 19:29:20 Getting credentials...
 vCert: 2021/09/19 19:29:50 Post "https://venafi-tpp.platform-ops.jetstack.net/vedauth/authorize/oauth": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
 ```
 
-![](vcert-hanging.png)
+![vcert-hanging](vcert-hanging.png)
 
 Looking at the "Detail" tab for the HTTP call recorded in mitmproxy, I can see that the HTTP request was acknowledged by the TPP server (see the "Request complete" time). For some reason, the response never arrives.
 
-![](mitmproxy-request-received.png)
+![mitmproxy-request-received](mitmproxy-request-received.png)
 
 Let us dig a bit deeper and see what is the difference between "with" and "without" mitmproxy using [WireShark](https://www.wireshark.org/). Without mitmproxy, `vcert` succeeds:
 
-![](vcert-without-mitmproxy-encrypted.png)
+![vcert-without-mitmproxy-encrypted](vcert-without-mitmproxy-encrypted.png)
 
 But with mitmproxy, `vcert` hangs:
 
-![](vcert-with-mitmproxy-encrypted.png)
+![vcert-with-mitmproxy-encrypted](vcert-with-mitmproxy-encrypted.png)
 
 The difference between both flows seems to be the "Encrypted Handshake Message" that occurs right after the HTTP requests has been sent.
 
@@ -58,7 +58,7 @@ The difference between both flows seems to be the "Encrypted Handshake Message" 
 
 Now, let us decrypt this TLS flow. WireShark being a passive capture tool (unlike mitmproxy), it won't be able to decrypt traffic. Fortunately, mitmproxy is able to dump the master secret (see the page [Wireshark and SSL/TLS Master Secrets](https://docs.mitmproxy.org/stable/howto-wireshark-tls/). After giving the master secret to WireShark, we can see the decrypted traffic:
 
-![](vcert-with-mitmproxy-decrypted.png)
+![vcert-with-mitmproxy-decrypted](vcert-with-mitmproxy-decrypted.png)
 
 The above screenshot validates the fact that the "Application Data" that we could see in the previous two screenshots was in fact the HTTP request.
 
@@ -82,11 +82,13 @@ It seems like mitmproxy does not support server-side initiated TLS renegotiation
 
 Now, why would TLS renegotiation be necessary after the HTTP request is sent? The issue named [Venafi Issuer error when configuring cert-manager. "local error: tls: no renegotiation"](https://github.com/Venafi/vcert/issues/148) gives us a clue: Microsoft IIS, which is the web server used by Venafi TPP, is capable of authenticating an incoming connection using a client certificate depending on the HTTP request's URL path. Looking at the IIS configuration, we can see that the `/vedauth` endpoint has its "client certificate" settings configured to "Accept":
 
-![](ssl-settings-accept.png)
+![ssl-settings-accept](ssl-settings-accept.png)
 
-Let us see this behavior in action by creating a TLS tunnel using openssl. With the path `/vedsdk`, we can see that openssl does not seem to renegotiate the TLS connection:
+Let us see this behavior in action by creating a TLS tunnel using openssl. With the path `/vedsdk`, we can see that openssl does the initial TLS handshake and no renegotiation seem to happen after sending the HTTP request:
 
-<script id="asciicast-cAS7XfBwpKby1F7vHZOXRAqZK" src="https://asciinema.org/a/cAS7XfBwpKby1F7vHZOXRAqZK.js" async></script>
+{{< asciinema 438003 >}}
+
+<!-- https://asciinema.org/a/cAS7XfBwpKby1F7vHZOXRAqZK -->
 
 The HTTP request I made was:
 
@@ -96,9 +98,11 @@ Host: venafi-tpp.platform-ops.jetstack.net
 Content-Length: 0
 ```
 
-With the endpoint `/vedauth`, which is the one for which mitmproxy is hanging on, openssl does two TLS negotiations:
+With the endpoint `/vedauth`, which is the one for which mitmproxy is hanging on, openssl does the initial TLS handshake, sends the HTTP request and then a TLS renegotiation is triggered:
 
-<script id="asciicast-nrlOK86ycQ8Legbz7wtYaoUWA" src="https://asciinema.org/a/nrlOK86ycQ8Legbz7wtYaoUWA.js" async></script>
+{{< asciinema 438004 >}}
+
+<!-- https://asciinema.org/a/nrlOK86ycQ8Legbz7wtYaoUWA -->
 
 The request was:
 
@@ -114,10 +118,10 @@ The only explanation for this behavior is that this allows IIS to refuse clients
 
 The only workaround I have come up with is to turn the client certificate option to "Ignore":
 
-![](ssl-settings-ignore.png)
+![ssl-settings-ignore](ssl-settings-ignore.png)
 
 This time, vcert over mitmproxy works!
 
-![](vcert-working.png)
+![vcert-working](vcert-working.png)
 
 One thing I would like to do in the future is to add support for TLS renegotiation to mitmproxy!
