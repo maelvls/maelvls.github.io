@@ -79,19 +79,19 @@ vCert: 2021/09/19 19:24:05 unexpected status code on TPP Authorize. Status: <spa
 <div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ HTTPS_PROXY=:9090 vcert getcred --username foo --password bar --client-id=duh --verbose
 vCert: 2021/09/19 19:29:20 Getting credentials...
 vCert: 2021/09/19 19:29:50 Post &#34;https://venafi-tpp.platform-ops.jetstack.net/vedauth/authorize/oauth&#34;: context deadline exceeded (Client.Timeout exceeded while awaiting headers)
-</code></pre></div><p><img src="vcert-hanging.png" alt=""></p>
+</code></pre></div><p><img src="vcert-hanging.png" alt="vcert-hanging"></p>
 <p>Looking at the &ldquo;Detail&rdquo; tab for the HTTP call recorded in mitmproxy, I can see that the HTTP request was acknowledged by the TPP server (see the &ldquo;Request complete&rdquo; time). For some reason, the response never arrives.</p>
-<p><img src="mitmproxy-request-received.png" alt=""></p>
+<p><img src="mitmproxy-request-received.png" alt="mitmproxy-request-received"></p>
 <p>Let us dig a bit deeper and see what is the difference between &ldquo;with&rdquo; and &ldquo;without&rdquo; mitmproxy using <a href="https://www.wireshark.org/">WireShark</a>. Without mitmproxy, <code>vcert</code> succeeds:</p>
-<p><img src="vcert-without-mitmproxy-encrypted.png" alt=""></p>
+<p><img src="vcert-without-mitmproxy-encrypted.png" alt="vcert-without-mitmproxy-encrypted"></p>
 <p>But with mitmproxy, <code>vcert</code> hangs:</p>
-<p><img src="vcert-with-mitmproxy-encrypted.png" alt=""></p>
+<p><img src="vcert-with-mitmproxy-encrypted.png" alt="vcert-with-mitmproxy-encrypted"></p>
 <p>The difference between both flows seems to be the &ldquo;Encrypted Handshake Message&rdquo; that occurs right after the HTTP requests has been sent.</p>
 <blockquote>
 <p>Note that you can see the above two PCAP traces by downloading <a href="vcert-with-and-without-mitmproxy-through-iap.pcapng">vcert-with-and-without-mitmproxy-through-iap.pcapng</a>.</p>
 </blockquote>
 <p>Now, let us decrypt this TLS flow. WireShark being a passive capture tool (unlike mitmproxy), it won&rsquo;t be able to decrypt traffic. Fortunately, mitmproxy is able to dump the master secret (see the page <a href="https://docs.mitmproxy.org/stable/howto-wireshark-tls/">Wireshark and SSL/TLS Master Secrets</a>. After giving the master secret to WireShark, we can see the decrypted traffic:</p>
-<p><img src="vcert-with-mitmproxy-decrypted.png" alt=""></p>
+<p><img src="vcert-with-mitmproxy-decrypted.png" alt="vcert-with-mitmproxy-decrypted"></p>
 <p>The above screenshot validates the fact that the &ldquo;Application Data&rdquo; that we could see in the previous two screenshots was in fact the HTTP request.</p>
 <p>We also notice that the mysterious &ldquo;Encrypted Handshake Message&rdquo; is a Hello Request, signifying a TLS renegotiation as described in <a href="https://datatracker.ietf.org/doc/html/rfc5246#section-7.4.1.1">RFC 5246</a>.</p>
 <blockquote>
@@ -107,15 +107,17 @@ CLIENT_TRAFFIC_SECRET_0 caa526a0b8e35551a2feee9de685e74547a7b0abc3ae5422a4bebe42
 </blockquote>
 <p>It seems like mitmproxy does not support server-side initiated TLS renegotiation. Looking at its source code, it seems like everything after the end of the first handshake is considered to be data, and subsequent Handshake Messages make mitmproxy &ldquo;hang&rdquo;.</p>
 <p>Now, why would TLS renegotiation be necessary after the HTTP request is sent? The issue named <a href="https://github.com/Venafi/vcert/issues/148">Venafi Issuer error when configuring cert-manager. &ldquo;local error: tls: no renegotiation&rdquo;</a> gives us a clue: Microsoft IIS, which is the web server used by Venafi TPP, is capable of authenticating an incoming connection using a client certificate depending on the HTTP request&rsquo;s URL path. Looking at the IIS configuration, we can see that the <code>/vedauth</code> endpoint has its &ldquo;client certificate&rdquo; settings configured to &ldquo;Accept&rdquo;:</p>
-<p><img src="ssl-settings-accept.png" alt=""></p>
-<p>Let us see this behavior in action by creating a TLS tunnel using openssl. With the path <code>/vedsdk</code>, we can see that openssl does not seem to renegotiate the TLS connection:</p>
-<script id="asciicast-cAS7XfBwpKby1F7vHZOXRAqZK" src="https://asciinema.org/a/cAS7XfBwpKby1F7vHZOXRAqZK.js" async></script>
+<p><img src="ssl-settings-accept.png" alt="ssl-settings-accept"></p>
+<p>Let us see this behavior in action by creating a TLS tunnel using openssl. With the path <code>/vedsdk</code>, we can see that openssl does the initial TLS handshake and no renegotiation seem to happen after sending the HTTP request:</p>
+<script id="asciicast-438003" src="https://asciinema.org/a/438003.js" async></script>
+<!-- https://asciinema.org/a/cAS7XfBwpKby1F7vHZOXRAqZK -->
 <p>The HTTP request I made was:</p>
 <div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="err">HTTP /vedsdk/ HTTP/1.1
 </span><span class="err">Host: venafi-tpp.platform-ops.jetstack.net
 </span><span class="err">Content-Length: 0
-</span></code></pre></div><p>With the endpoint <code>/vedauth</code>, which is the one for which mitmproxy is hanging on, openssl does two TLS negotiations:</p>
-<script id="asciicast-nrlOK86ycQ8Legbz7wtYaoUWA" src="https://asciinema.org/a/nrlOK86ycQ8Legbz7wtYaoUWA.js" async></script>
+</span></code></pre></div><p>With the endpoint <code>/vedauth</code>, which is the one for which mitmproxy is hanging on, openssl does the initial TLS handshake, sends the HTTP request and then a TLS renegotiation is triggered:</p>
+<script id="asciicast-438004" src="https://asciinema.org/a/438004.js" async></script>
+<!-- https://asciinema.org/a/nrlOK86ycQ8Legbz7wtYaoUWA -->
 <p>The request was:</p>
 <div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="err">HTTP /vedauth/ HTTP/1.1
 </span><span class="err">Host: venafi-tpp.platform-ops.jetstack.net
@@ -123,9 +125,9 @@ CLIENT_TRAFFIC_SECRET_0 caa526a0b8e35551a2feee9de685e74547a7b0abc3ae5422a4bebe42
 </span></code></pre></div><p>In the first example (<code>/vedsdk</code>), the HTTP response is sent immediately without any TLS negotiation. In the second example (<code>/vedauth</code>), a TLS renegotiation is performed right after the HTTP request is sent, and the HTTP response is sent over this new TLS session.</p>
 <p>The only explanation for this behavior is that this allows IIS to refuse clients that present an invalid client certificates only for paths for which client certificates are enabled, instead of refusing to serve all paths. I would need to learn a bit more about TLS and how IIS is able to give the information about the identity of a client certificate to the HTTP layer to know whether it should look for an <code>Authorization: Bearer foo</code> HTTP header.</p>
 <p>The only workaround I have come up with is to turn the client certificate option to &ldquo;Ignore&rdquo;:</p>
-<p><img src="ssl-settings-ignore.png" alt=""></p>
+<p><img src="ssl-settings-ignore.png" alt="ssl-settings-ignore"></p>
 <p>This time, vcert over mitmproxy works!</p>
-<p><img src="vcert-working.png" alt=""></p>
+<p><img src="vcert-working.png" alt="vcert-working"></p>
 <p>One thing I would like to do in the future is to add support for TLS renegotiation to mitmproxy!</p>
 
     </div>
