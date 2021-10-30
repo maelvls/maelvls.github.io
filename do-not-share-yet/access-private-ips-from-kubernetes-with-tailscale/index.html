@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Access Private IPs From Kubernetes With Tailscale" />
-<meta property="og:description" content="Access Private IPs From Kubernetes With Tailscale I want to give all my Kubernetes nodes access to a VM that is on a private network. The VM has Tailscale installed.
-   Machine GCP IP Tailscale IP     aorus (my PC)  100.127.221.57   relay 10.132.0.16 100.82.245.178   test 10.132.0.17     sudo /usr/sbin/iptables-legacy -t nat -A POSTROUTING -j SNAT &ndash;to-source 100.82.245.178" />
+<meta property="og:description" content="Access Private IPs From Kubernetes With Tailscale I want to give all my Kubernetes pods access to my PC that is on a private network. The plan is to use a GCP VM as a &ldquo;relay&rdquo; where Tailscale is running and configure the VPC to forward traffic to the relay.
+   Machine GCP IPs Tailscale IPs     aorus (my PC)  100.127.221.57   relay 10." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/do-not-share-yet/access-private-ips-from-kubernetes-with-tailscale/" />
 <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/access-private-ips-from-kubernetes-with-tailscale/cover-access-private-ips-from-kubernetes-with-tailscale.png" />
@@ -17,8 +17,8 @@
 <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/access-private-ips-from-kubernetes-with-tailscale/cover-access-private-ips-from-kubernetes-with-tailscale.png"/>
 
 <meta name="twitter:title" content="Access Private IPs From Kubernetes With Tailscale"/>
-<meta name="twitter:description" content="Access Private IPs From Kubernetes With Tailscale I want to give all my Kubernetes nodes access to a VM that is on a private network. The VM has Tailscale installed.
-   Machine GCP IP Tailscale IP     aorus (my PC)  100.127.221.57   relay 10.132.0.16 100.82.245.178   test 10.132.0.17     sudo /usr/sbin/iptables-legacy -t nat -A POSTROUTING -j SNAT &ndash;to-source 100.82.245.178"/>
+<meta name="twitter:description" content="Access Private IPs From Kubernetes With Tailscale I want to give all my Kubernetes pods access to my PC that is on a private network. The plan is to use a GCP VM as a &ldquo;relay&rdquo; where Tailscale is running and configure the VPC to forward traffic to the relay.
+   Machine GCP IPs Tailscale IPs     aorus (my PC)  100.127.221.57   relay 10."/>
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -70,14 +70,13 @@
     </div>
     <div class="markdown">
         <h1 id="access-private-ips-from-kubernetes-with-tailscale">Access Private IPs From Kubernetes With Tailscale</h1>
-<p>I want to give all my Kubernetes nodes access to a VM that is on a private
-network. The VM has Tailscale installed.</p>
+<p>I want to give all my Kubernetes pods access to my PC that is on a private network. The plan is to use a GCP VM as a &ldquo;relay&rdquo; where Tailscale is running and configure the VPC to forward traffic to the relay.</p>
 <table>
 <thead>
 <tr>
 <th>Machine</th>
-<th>GCP IP</th>
-<th>Tailscale IP</th>
+<th>GCP IPs</th>
+<th>Tailscale IPs</th>
 </tr>
 </thead>
 <tbody>
@@ -98,18 +97,17 @@ network. The VM has Tailscale installed.</p>
 </tr>
 </tbody>
 </table>
-<p>sudo /usr/sbin/iptables-legacy -t nat -A POSTROUTING -j SNAT &ndash;to-source 100.82.245.178</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nv">TOKEN</span><span class="o">=</span>
+<p>The first step is to get an ephemeral token on Tailscale:</p>
+<p><img src="tailscale-get-token.png" alt=""></p>
+<p>Now, let us create the relay VM:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nv">TOKEN</span><span class="o">=</span>...
 gcloud compute instances create relay --machine-type f1-micro --zone europe-west1-c <span class="se">\
 </span><span class="se"></span>    --project jetstack-mael-valais --can-ip-forward <span class="se">\
 </span><span class="se"></span>    --metadata<span class="o">=</span>startup-script<span class="o">=</span><span class="s2">&#34;sudo tee -a /etc/sysctl.conf &lt;&lt;&lt;</span>$<span class="s2">&#39;net.ipv4.ip_forward=1\nnet.ipv6.conf.all.forwarding=1&#39; &amp;&amp; tee .profile -a &lt;&lt;&lt;&#39;PATH=\$PATH:/sbin:/usr/sbin&#39; &amp;&amp; sudo update-alternatives --set iptables /usr/sbin/iptables-legacy &amp;&amp; curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.gpg | sudo apt-key add - &amp;&amp; curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.list | sudo tee /etc/apt/sources.list.d/tailscale.list &amp;&amp; sudo apt-get update &amp;&amp; sudo apt-get install tailscale &amp;&amp; sudo tailscale up --authkey </span><span class="nv">$TOKEN</span><span class="s2">&#34;</span>
 </code></pre></div><blockquote>
-<p>The <code>update-alternatives</code> trick above is due to the fact that we are using
-Debian 10 that defaults <code>iptables</code> to its NF version. Here, we want to be
-using the legacy way.</p>
+<p>Note: the <code>update-alternatives</code> trick above is due to the fact that we are using Debian 10 that defaults <code>iptables</code> to its NF version. Here, we want to be using the legacy way.</p>
 </blockquote>
-<p>Now, let us make sure that all traffic that has the Tailscale IP as destination
-on my GCP project get routed to the relay VM:</p>
+<p>Now, let us make sure that all traffic that has the Tailscale IP as destination on my GCP project get routed to the relay VM:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">gcloud compute routes create tailscale --destination-range<span class="o">=</span>100.64.0.0/10 <span class="se">\
 </span><span class="se"></span>    --next-hop-instance<span class="o">=</span>relay --project jetstack-mael-valais
 </code></pre></div><div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">$ gcloud compute ssh relay -- tailscale status
