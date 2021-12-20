@@ -77,7 +77,7 @@
 <p>In this post, I will explain what &lsquo;status conditions&rsquo; are in Kubernetes and show how they can be used in your own controllers.</p>
 <hr>
 <p>Table of contents:</p>
-<ol>
+<ul>
 <li><a href="#pod-example">Pod example</a></li>
 <li><a href="#what-other-projects-do">What other projects do</a></li>
 <li><a href="#conditions-vs-state-machine">Conditions vs. State machine</a></li>
@@ -86,7 +86,7 @@
 <li><a href="#are-conditions-still-used">Are Conditions still used?</a></li>
 <li><a href="#conditions-vs-reasons">Conditions vs. Reasons</a></li>
 <li><a href="#how-many-conditions">How many conditions?</a></li>
-</ol>
+</ul>
 <hr>
 <p>In the following, a &lsquo;component&rsquo; is considered to be one sync loop. A sync loop (also called reconciliation loop) is what must be done in order to synchronize the &lsquo;desired state&rsquo; with the &lsquo;observed state&rsquo;.</p>
 <p>Kubernetes itself is made of multiple binaries (kubelet on each node, one apiserver, one kube-controller-manager and one kube-scheduler). And each of these binaries have multiple components (i.e., sync loops):</p>
@@ -295,7 +295,7 @@
 </blockquote>
 <p>Here is what I think: you should definitely use conditions, but don&rsquo;t bother with orthogonality. Just use conditions that represent important changes for the object, beginning with the &lsquo;Ready&rsquo; condition type. &lsquo;Ready&rsquo; is the strongest condition of all and indicates something 100% operational.</p>
 <h2 id="are-conditions-still-used">Are Conditions still used?</h2>
-<p>There was an extensive dicussion about removing or keeping these conditions. They were described by <a href="https://issues.k8s.io/7856#issuecomment-323196033">Brian Grant in Aug 2017</a> as cumbersome (an array is harder to deal with than top-level fields) and confusing because of the open-ended statuses (True, False, Unknown). In 2019, the Kubernetes stated that conditions are still what controller authors should use:</p>
+<p>There was <a href="https://github.com/kubernetes/kubernetes/issues/7856">an extensive discussion</a>, started in 2015, about removing or keeping the &ldquo;phase&rdquo; field. In 2017, the same thread turned into &ldquo;should we keep using conditions?&quot;; <a href="https://issues.k8s.io/7856#issuecomment-323196033">Brian Grant</a> found conditions cumbersome (an array is harder to deal with than top-level fields) and confusing because of the open-ended statuses (True, False, Unknown). In late 2017, Brian Grant <a href="https://github.com/kubernetes/kubernetes/issues/7856#issuecomment-324219862">did a survey</a> and found out that conditions are still what controller authors should use. In 2019, Daniel Smith reminded us that conditions are not going away:</p>
 <blockquote>
 <p>(<a href="https://issues.k8s.io/7856#issuecomment-492812566">Daniel Smith, May 2019</a>) Conditions are not going to be removed.</p>
 <p>The ground truth is set as conditions by the components that are nearby, e.g. kubelet sets &ldquo;DiskPressure = True&rdquo;.</p>
@@ -359,6 +359,7 @@ Discussion is happening here:
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 -->
+<p><strong>Update 20 Dec 2021:</strong> Xiang Yuxuan kindly nudged me about the fact that I was was saying that the 2017 thread was talking about removing conditions, but it was initially to remove the &lsquo;phase&rsquo; field.</p>
 
     </div>
     <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2019/kubernetes-conditions/index.md">📝 Edit this page</a>
