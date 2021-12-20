@@ -18,14 +18,14 @@ In this post, I will explain what 'status conditions' are in Kubernetes and show
 
 Table of contents:
 
-1. [Pod example](#pod-example)
-2. [What other projects do](#what-other-projects-do)
-3. [Conditions vs. State machine](#conditions-vs-state-machine)
-4. [Conditions vs. Events](#conditions-vs-events)
-5. [Orthogonality vs. Extensibility](#orthogonality-vs-extensibility)
-6. [Are Conditions still used?](#are-conditions-still-used)
-7. [Conditions vs. Reasons](#conditions-vs-reasons)
-8. [How many conditions?](#how-many-conditions)
+- [Pod example](#pod-example)
+- [What other projects do](#what-other-projects-do)
+- [Conditions vs. State machine](#conditions-vs-state-machine)
+- [Conditions vs. Events](#conditions-vs-events)
+- [Orthogonality vs. Extensibility](#orthogonality-vs-extensibility)
+- [Are Conditions still used?](#are-conditions-still-used)
+- [Conditions vs. Reasons](#conditions-vs-reasons)
+- [How many conditions?](#how-many-conditions)
 
 ---
 
@@ -215,7 +215,7 @@ Here is what I think: you should definitely use conditions, but don't bother wit
 
 ## Are Conditions still used?
 
-There was an extensive dicussion about removing or keeping these conditions. They were described by [Brian Grant in Aug 2017](https://issues.k8s.io/7856#issuecomment-323196033) as cumbersome (an array is harder to deal with than top-level fields) and confusing because of the open-ended statuses (True, False, Unknown). In 2019, the Kubernetes stated that conditions are still what controller authors should use:
+There was [an extensive discussion](https://github.com/kubernetes/kubernetes/issues/7856), started in 2015, about removing or keeping the "phase" field. In 2017, the same thread turned into "should we keep using conditions?"; [Brian Grant](https://issues.k8s.io/7856#issuecomment-323196033) found conditions cumbersome (an array is harder to deal with than top-level fields) and confusing because of the open-ended statuses (True, False, Unknown). In late 2017, Brian Grant [did a survey](https://github.com/kubernetes/kubernetes/issues/7856#issuecomment-324219862) and found out that conditions are still what controller authors should use. In 2019, Daniel Smith reminded us that conditions are not going away:
 
 > ([Daniel Smith, May 2019](https://issues.k8s.io/7856#issuecomment-492812566)) Conditions are not going to be removed.
 >
@@ -297,3 +297,5 @@ Discussion is happening here:
 
 {{< twitter 1195058503695642627 >}}
 -->
+
+**Update 20 Dec 2021:** Xiang Yuxuan kindly nudged me about the fact that I was was saying that the 2017 thread was talking about removing conditions, but it was initially to remove the 'phase' field.
