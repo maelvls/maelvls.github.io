@@ -86,6 +86,7 @@
 <li><a href="#code-example-2">Code example 2</a></li>
 <li><a href="#code-example-3">Code example 3</a></li>
 <li><a href="#code-example-4">Code example 4</a></li>
+<li><a href="#shaping-comments">Shaping comments</a></li>
 <li><a href="#conclusion">Conclusion</a></li>
 </ol>
 <h2 id="code-example-1">Code example 1</h2>
@@ -255,7 +256,43 @@
 
 <span class="nx">toBeUpdated</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">toBeUpdated</span><span class="p">,</span> <span class="nf">updateToMatchExpected</span><span class="p">(</span><span class="nx">expectedCrt</span><span class="p">))</span>
 </code></pre></div><p>Note that we removed the <code>else</code> statement for the purpose of readability. The happy path is now clearly &ldquo;updating the certificate&rdquo;.</p>
-<h2 id="conclusion">Conclusion</h2>
+<h2 id="shaping-comments">Shaping comments</h2>
+<p>To help with readability, I suggest hard-wrapping comments at 80
+characters. Above 80 characters, the comments will become hard to read in
+PR suggestion comments.</p>
+<p>Take this example comment:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// To reduce the memory footprint of the controller-manager,
+</span><span class="c1">// we do not cache Secrets.
+</span><span class="c1">// We only cache the metadata of Secrets
+</span><span class="c1">// which is enough to allow the EnqueueRequestsFromMapFunc to lookup the associated Issuer or ClusterIssuer.
+</span><span class="c1">// In NewManager we also use the option ClientDisableCache
+</span><span class="c1">// to configure the client to not cache Secrets
+</span><span class="c1">// when the token manager Gets and Lists them.
+</span></code></pre></div><p>Each sentence is started on a new line. This sort of style is fine in a
+Markdown document where these soft breaks are rendered as a single
+paragraph.</p>
+<p>The problem with the &ldquo;random&rdquo; length of each line is that the reader has to
+do more work while parsing the text. It is also less aesthetic than a
+well-wrapped 80 characters comment. Rewrapping the above comment at 80
+chars looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// To reduce the memory footprint of the controller-manager, we do not
+</span><span class="c1">// cache Secrets. We only cache the metadata of Secrets which is enough to
+</span><span class="c1">// allow the EnqueueRequestsFromMapFunc to lookup the associated Issuer or
+</span><span class="c1">// ClusterIssuer. In NewManager we also use the option ClientDisableCache
+</span><span class="c1">// to configure the client to not cache Secrets when the token manager Gets
+</span><span class="c1">// and Lists them.
+</span></code></pre></div><p>You can obtain the re-wrapping by using the <code>qq</code> command on Vim, or the
+<a href="https://github.com/stkb/Rewrap">Rewrap</a> extension on VSCode.</p>
+<p>If you still want to do separate paragraphs, I&rsquo;d recommend separating each paragraph with two new line breaks:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// To reduce the memory footprint of the controller-manager, we do not
+</span><span class="c1">// cache Secrets. We only cache the metadata of Secrets which is enough to
+</span><span class="c1">// allow the EnqueueRequestsFromMapFunc to lookup the associated Issuer or
+</span><span class="c1">// ClusterIssuer.
+</span><span class="c1">//
+</span><span class="c1">// We use this option along with ClientDisableCache in NewManager to
+</span><span class="c1">// configure the client to not cache Secrets when the token manager Gets
+</span><span class="c1">// and Lists them.
+</span></code></pre></div><h2 id="conclusion">Conclusion</h2>
 <p>As a developer, I want to write code that is readable and maintainable, and keeping track of the &ldquo;why&rdquo; (i.e., the context) in a codebase is essential for readability and maintainability. I found that putting myself in the place of the future reader helps me write comments that focus on the &ldquo;why&rdquo;.</p>
 <p>HAProxy, Git or the Linux kernel are great examples of projects where there is a great focus on well-documented code:</p>
 <ul>
@@ -301,6 +338,10 @@ Join the discussion on Twitter:
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 \-->
+<p>Updates:</p>
+<ul>
+<li><strong>24 Feb 2022</strong>: add the section &ldquo;Shaping comments&rdquo;.</li>
+</ul>
 
     </div>
     <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/you-should-write-comments/index.md">📝 Edit this page</a>
