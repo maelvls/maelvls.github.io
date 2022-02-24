@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="keywords" content="go,software-engineering"><meta name="description" content="We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the &#39;what&#39; and the &#39;why&#39;."><meta property="og:title" content="Writing useful comments" />
-<meta property="og:description" content="We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the &#39;what&#39; and the &#39;why&#39;." />
+<meta name="author" content="Maël Valais"><meta name="keywords" content="go,software-engineering"><meta name="description" content="We often talk about avoiding unnecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the &#39;what&#39; and the &#39;why&#39;."><meta property="og:title" content="Writing useful comments" />
+<meta property="og:description" content="We often talk about avoiding unnecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the &#39;what&#39; and the &#39;why&#39;." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://maelvls.dev/do-not-share-yet/writing-useful-comments/" />
 <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/writing-useful-comments/cover-writing-useful-comments.png" />
@@ -16,7 +16,7 @@
 <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/writing-useful-comments/cover-writing-useful-comments.png"/>
 
 <meta name="twitter:title" content="Writing useful comments"/>
-<meta name="twitter:description" content="We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the &#39;what&#39; and the &#39;why&#39;."/>
+<meta name="twitter:description" content="We often talk about avoiding unnecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the &#39;what&#39; and the &#39;why&#39;."/>
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -257,10 +257,7 @@
 <span class="nx">toBeUpdated</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">toBeUpdated</span><span class="p">,</span> <span class="nf">updateToMatchExpected</span><span class="p">(</span><span class="nx">expectedCrt</span><span class="p">))</span>
 </code></pre></div><p>Note that we removed the <code>else</code> statement for the purpose of readability. The happy path is now clearly &ldquo;updating the certificate&rdquo;.</p>
 <h2 id="shaping-comments">Shaping comments</h2>
-<p>To help with readability, I suggest hard-wrapping comments at 80
-characters. Above 80 characters, the comments will become hard to read in
-PR suggestion comments.</p>
-<p>Take this example comment:</p>
+<p>To help with readability, I suggest hard-wrapping comments at 80 characters. Above 80 characters, the comments will become hard to read in PR suggestion comments. Take this example comment:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// To reduce the memory footprint of the controller-manager,
 </span><span class="c1">// we do not cache Secrets.
 </span><span class="c1">// We only cache the metadata of Secrets
@@ -268,21 +265,15 @@ PR suggestion comments.</p>
 </span><span class="c1">// In NewManager we also use the option ClientDisableCache
 </span><span class="c1">// to configure the client to not cache Secrets
 </span><span class="c1">// when the token manager Gets and Lists them.
-</span></code></pre></div><p>Each sentence is started on a new line. This sort of style is fine in a
-Markdown document where these soft breaks are rendered as a single
-paragraph.</p>
-<p>The problem with the &ldquo;random&rdquo; length of each line is that the reader has to
-do more work while parsing the text. It is also less aesthetic than a
-well-wrapped 80 characters comment. Rewrapping the above comment at 80
-chars looks like this:</p>
+</span></code></pre></div><p>Each sentence is started on a new line. This sort of style is fine in a Markdown document where these soft breaks are rendered as a single paragraph.</p>
+<p>The problem with the &ldquo;random&rdquo; length of each line is that the reader has to do more work while parsing the text. It is also less aesthetic than a well-wrapped 80 characters comment. Rewrapping the above comment at 80 chars looks like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// To reduce the memory footprint of the controller-manager, we do not
 </span><span class="c1">// cache Secrets. We only cache the metadata of Secrets which is enough to
 </span><span class="c1">// allow the EnqueueRequestsFromMapFunc to lookup the associated Issuer or
 </span><span class="c1">// ClusterIssuer. In NewManager we also use the option ClientDisableCache
 </span><span class="c1">// to configure the client to not cache Secrets when the token manager Gets
 </span><span class="c1">// and Lists them.
-</span></code></pre></div><p>You can obtain the re-wrapping by using the <code>qq</code> command on Vim, or the
-<a href="https://github.com/stkb/Rewrap">Rewrap</a> extension on VSCode.</p>
+</span></code></pre></div><p>You can obtain the re-wrapping by using the <code>qq</code> command on Vim, or the <a href="https://github.com/stkb/Rewrap">Rewrap</a> extension on VSCode.</p>
 <p>If you still want to do separate paragraphs, I&rsquo;d recommend separating each paragraph with two new line breaks:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// To reduce the memory footprint of the controller-manager, we do not
 </span><span class="c1">// cache Secrets. We only cache the metadata of Secrets which is enough to
