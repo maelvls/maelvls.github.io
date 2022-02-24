@@ -1,11 +1,10 @@
 ---
-title: The evolution of my home office from 2019 to 2021
-description: I present what hardware I have been using and what changed between 2019 and 2021!
+title: The evolution of my home office from 2019 to 2022
+description: I present what hardware I have been using and what changed between 2019 and 2022!
 date: 2020-03-30
 url: /evolution-of-my-home-office
 aliases: [/home-office-2020]
 images: [/evolution-of-my-home-office/mael-home-office-desk-2021.jpg]
-tags: [home-office]
 author: Maël Valais
 tags: [setup, home-office]
 devtoId: 313915
@@ -14,6 +13,12 @@ devtoUrl: https://dev.to/maelvls/my-home-office-setup-in-2020-220f
 ---
 
 In this post, I document the changes to my office setup through time.
+
+## 2022 Update
+
+![](mael-home-office-desk-2022.jpg)
+
+I added a second monitor. It is the same as the one I bought in 2019.
 
 ## 2021 Second Update
 
