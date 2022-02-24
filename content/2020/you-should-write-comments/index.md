@@ -1,6 +1,6 @@
 ---
 title: "Writing useful comments"
-description: "We often talk about avoiding unecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the 'what' and the 'why'."
+description: "We often talk about avoiding unnecessary comments that needlessly paraphrase what the code does. In this article, I gathered some thoughts about why writing comments is as important as writing the code itself, and how to spot comments that should be refactored using the 'what' and the 'why'."
 date: 2021-06-05
 url: "/writing-useful-comments"
 images:
@@ -33,7 +33,8 @@ In this article, I present a few examples meant to showcase how comments may be 
 2. [Code example 2](#code-example-2)
 3. [Code example 3](#code-example-3)
 4. [Code example 4](#code-example-4)
-5. [Conclusion](#conclusion)
+5. [Shaping comments](#shaping-comments)
+6. [Conclusion](#conclusion)
 
 ## Code example 1
 
@@ -213,6 +214,48 @@ toBeUpdated = append(toBeUpdated, updateToMatchExpected(expectedCrt))
 
 Note that we removed the `else` statement for the purpose of readability. The happy path is now clearly "updating the certificate".
 
+## Shaping comments
+
+To help with readability, I suggest hard-wrapping comments at 80 characters. Above 80 characters, the comments will become hard to read in PR suggestion comments. Take this example comment:
+
+```go
+// To reduce the memory footprint of the controller-manager,
+// we do not cache Secrets.
+// We only cache the metadata of Secrets
+// which is enough to allow the EnqueueRequestsFromMapFunc to lookup the associated Issuer or ClusterIssuer.
+// In NewManager we also use the option ClientDisableCache
+// to configure the client to not cache Secrets
+// when the token manager Gets and Lists them.
+```
+
+Each sentence is started on a new line. This sort of style is fine in a Markdown document where these soft breaks are rendered as a single paragraph.
+
+The problem with the "random" length of each line is that the reader has to do more work while parsing the text. It is also less aesthetic than a well-wrapped 80 characters comment. Rewrapping the above comment at 80 chars looks like this:
+
+```go
+// To reduce the memory footprint of the controller-manager, we do not
+// cache Secrets. We only cache the metadata of Secrets which is enough to
+// allow the EnqueueRequestsFromMapFunc to lookup the associated Issuer or
+// ClusterIssuer. In NewManager we also use the option ClientDisableCache
+// to configure the client to not cache Secrets when the token manager Gets
+// and Lists them.
+```
+
+You can obtain the re-wrapping by using the `qq` command on Vim, or the [Rewrap](https://github.com/stkb/Rewrap) extension on VSCode.
+
+If you still want to do separate paragraphs, I'd recommend separating each paragraph with two new line breaks:
+
+```go
+// To reduce the memory footprint of the controller-manager, we do not
+// cache Secrets. We only cache the metadata of Secrets which is enough to
+// allow the EnqueueRequestsFromMapFunc to lookup the associated Issuer or
+// ClusterIssuer.
+//
+// We use this option along with ClientDisableCache in NewManager to
+// configure the client to not cache Secrets when the token manager Gets
+// and Lists them.
+```
+
 ## Conclusion
 
 As a developer, I want to write code that is readable and maintainable, and keeping track of the "why" (i.e., the context) in a codebase is essential for readability and maintainability. I found that putting myself in the place of the future reader helps me write comments that focus on the "why".
@@ -260,3 +303,7 @@ Join the discussion on Twitter:
 
 {{< twitter 1233140530017644544 >}}
 \-->
+
+Updates:
+
+- **24 Feb 2022**: add the section "Shaping comments".
