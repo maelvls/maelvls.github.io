@@ -14,6 +14,12 @@ devtoUrl: https://dev.to/maelvls/my-home-office-setup-in-2020-220f
 
 In this post, I document the changes to my office setup through time.
 
+## 2022 Update 2
+
+I decided to move my office out of my home! I am now located in a co-working space in the city of Toulouse. It is called "HarryCow".
+
+![](harrycow-2022-03-03.jpg)
+
 ## 2022 Update
 
 ![](mael-home-office-desk-2022.jpg)

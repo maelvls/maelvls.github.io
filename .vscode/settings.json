@@ -11,5 +11,8 @@
   },
   "grammarly.hideUnavailablePremiumAlerts": true,
   "grammarly.showDeletedTextInQuickFix": true,
-  "grammarly.autoActivate": false
+  "grammarly.autoActivate": false,
+  "rewrap.autoWrap.enabled": true,
+  "rewrap.reformat": true,
+  "rewrap.wrappingColumn": 0
 }
