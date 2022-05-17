@@ -924,6 +924,18 @@ export http_proxy=proxy.univ-tlse3.fr:3128 ...
       
       </description>
     </item>
+    <item>
+      <title>print-your-cert redirect</title>
+      <link>https://maelvls.dev/do-not-share-yet/print-your-cert/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/print-your-cert/</guid>
+      <description>
+      
+       // Old: // https://maelvls.dev/print-your-cert?asn1=MIICXDCCAgOgAwIBAgIQdPaTuGSUDeosii4dbdLBgTAKBggqhkjOPQQDAjAnMSUwIwY...
+      
+      </description>
+    </item>
     
   </channel>
 </rss>
