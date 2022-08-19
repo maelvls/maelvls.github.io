@@ -204,7 +204,7 @@ listening on en0, link-type EN10MB (Ethernet), capture size 262144 bytes
 [rfc1034-space]: https://tools.ietf.org/html/rfc1034#section-3.1 "Domain space"
 [rfc7719]: https://tools.ietf.org/html/rfc7719 "DNS terminology"
 
-One single [SOA record](https://simpledns.plus/help/soa-records) (start of authority) exists for every given zone. As you can see here, my zone is `maelvls.dev.`.
+One single [SOA record](https://www.nslookup.io/learning/dns-record-types/soa/) (start of authority) exists for every given zone. As you can see here, my zone is `maelvls.dev.`.
 
 ## Playing with `k8s_gateway`
 
