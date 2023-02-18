@@ -121,6 +121,21 @@
 <p>Since then, the interaction between the &lsquo;GOPATH behavior&rsquo; and the &lsquo;Go Modules behavior&rsquo; has become one of the biggest gotchas of Go. One environment variable is responsible for 95% of this pain: <code>GO111MODULE</code>.</p>
 <h2 id="the-go111module-environment-variable">The <code>GO111MODULE</code> environment variable</h2>
 <p><code>GO111MODULE</code> is an environment variable that can be set when using <code>go</code> for changing how Go imports packages. One of the first pain-points is that depending on the Go version, its semantics change.</p>
+<p><code>GO111MODULE</code> can be set in two different ways:</p>
+<ul>
+<li>
+<p>As an environment variable that you may set in your <code>~/.bashrc</code> or <code>~/.zshrc</code>, for example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">export</span> <span class="nv">GO111MODULE</span><span class="o">=</span>off
+</code></pre></div></li>
+<li>
+<p>As a global value only known by <code>go env</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">go env -w <span class="nv">GO111MODULE</span><span class="o">=</span>off
+</code></pre></div></li>
+</ul>
+<p>If you don&rsquo;t understand why Go doesn&rsquo;t behave the way you think it should, you should check both of these values:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">echo</span> <span class="nv">$GO111MODULE</span>
+go env GO111MODULE
+</code></pre></div><p>(note that the environment variable takes precedence over the value that was stored using <code>go env -w GO111MODULE</code>)</p>
 <h3 id="go111module-with-go-111-and-112"><code>GO111MODULE</code> with Go 1.11 and 1.12</h3>
 <ul>
 <li>
@@ -342,6 +357,7 @@ go run github.com/golang/mock/mockgen@v1.3.1
 <li><strong>Update 22 June 2020:</strong> it said <code>use replace</code> instead of just <code>replace</code>.</li>
 <li><strong>Update 8 April 2021:</strong> update with Go 1.16.</li>
 <li><strong>Update 20 Sept 2021:</strong> update with Go 1.17.</li>
+<li><strong>Update 20 Feb 2023:</strong> mention the <code>go env GO111MODULE</code> gotcha reported by <a href="https://github.com/jsoref">Josh Soref</a>.</li>
 </ul>
 
     </div>
