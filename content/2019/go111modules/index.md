@@ -63,6 +63,29 @@ Since then, the interaction between the 'GOPATH behavior' and the 'Go Modules be
 
 `GO111MODULE` is an environment variable that can be set when using `go` for changing how Go imports packages. One of the first pain-points is that depending on the Go version, its semantics change.
 
+`GO111MODULE` can be set in two different ways:
+
+- As an environment variable that you may set in your `~/.bashrc` or `~/.zshrc`, for example:
+
+  ```bash
+  export GO111MODULE=off
+  ```
+
+- As a global value only known by `go env`:
+
+  ```bash
+  go env -w GO111MODULE=off
+  ```
+
+If you don't understand why Go doesn't behave the way you think it should, you should check both of these values:
+
+```bash
+echo $GO111MODULE
+go env GO111MODULE
+```
+
+(note that the environment variable takes precedence over the value that was stored using `go env -w GO111MODULE`)
+
 ### `GO111MODULE` with Go 1.11 and 1.12
 
 - `GO111MODULE=on` will force using Go modules even if the project is in your GOPATH. Requires `go.mod` to work.
@@ -400,3 +423,4 @@ _Illustration by Bailey Beougher, from The Illustrated Children's Guide to Kuber
 - **Update 22 June 2020:** it said `use replace` instead of just `replace`.
 - **Update 8 April 2021:** update with Go 1.16.
 - **Update 20 Sept 2021:** update with Go 1.17.
+- **Update 20 Feb 2023:** mention the `go env GO111MODULE` gotcha reported by [Josh Soref](https://github.com/jsoref).

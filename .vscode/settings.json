@@ -4,7 +4,11 @@
   "gitdoc.enabled": false,
   "[markdown]": {
     "editor.wordWrap": "on",
-    "editor.quickSuggestions": false,
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    },
     "rewrap.autoWrap.enabled": true,
     "rewrap.reformat": true,
     "rewrap.wrappingColumn": -1
