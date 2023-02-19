@@ -87,10 +87,7 @@
 <li><a href="#go111module-with-go-111-and-112"><code>GO111MODULE</code> with Go 1.11 and 1.12</a></li>
 <li><a href="#go111module-with-go-113"><code>GO111MODULE</code> with Go 1.13</a></li>
 <li><a href="#go111module-with-go-114"><code>GO111MODULE</code> with Go 1.14</a></li>
-</ol>
-</li>
-<li><a href="#go111module-with-go-115"><code>GO111MODULE</code> with Go 1.15</a>
-<ol>
+<li><a href="#go111module-with-go-115"><code>GO111MODULE</code> with Go 1.15</a></li>
 <li><a href="#go111module-with-go-116"><code>GO111MODULE</code> with Go 1.16</a></li>
 <li><a href="#go111module-with-go-117"><code>GO111MODULE</code> with Go 1.17</a>
 <ol>
@@ -99,12 +96,9 @@
 <li><a href="#go-run-knows-about-version-finally"><code>go run</code> knows about <code>@version</code> (finally!)</a></li>
 </ol>
 </li>
-</ol>
-</li>
 <li><a href="#go111module-with-go-118"><code>GO111MODULE</code> with Go 1.18</a></li>
 <li><a href="#go111module-with-go-119"><code>GO111MODULE</code> with Go 1.19</a></li>
-<li><a href="#go111module-with-go-120"><code>GO111MODULE</code> with Go 1.20</a>
-<ol>
+<li><a href="#go111module-with-go-120"><code>GO111MODULE</code> with Go 1.20</a></li>
 <li><a href="#why-was-go111module-everywhere-go-115-and-below">Why was <code>GO111MODULE</code> everywhere? (Go 1.15 and below)</a></li>
 <li><a href="#the-pitfall-of-gomod-being-silently-updated-go-115-and-below">The pitfall of <code>go.mod</code> being silently updated (Go 1.15 and below)</a></li>
 <li><a href="#the--u-and-version-pitfall">The <code>-u</code> and <code>@version</code> pitfall</a></li>
@@ -172,7 +166,7 @@
 <li>The <code>vendor/</code> is picked up automatically. That has the tendency of breaking Gomock (<a href="https://github.com/golang/mock/issues/415">issue</a>) which were unknowingly not using <code>vendor/</code> before 1.14.</li>
 <li>You still need to use <code>cd &amp;&amp; GO111MODULE=on go get</code> when you don&rsquo;t want to mess up your current project’s <code>go.mod</code> (that&rsquo;s so annoying).</li>
 </ul>
-<h2 id="go111module-with-go-115"><code>GO111MODULE</code> with Go 1.15</h2>
+<h3 id="go111module-with-go-115"><code>GO111MODULE</code> with Go 1.15</h3>
 <p>Nothing with regards to <code>GO111MODULE</code> has changed with Go 1.15.</p>
 <h3 id="go111module-with-go-116"><code>GO111MODULE</code> with Go 1.16</h3>
 <p>As of Go 1.16, the default behavior is <code>GO111MODULE=on</code>, meaning that if you want to keep using the old <code>GOPATH</code> way, you will have to force Go not to use the Go Modules feature:</p>
@@ -293,11 +287,11 @@ go run github.com/golang/mock/mockgen@v1.3.1
 </span><span class="c1">//go:generate go run -mod=mod github.com/golang/mock/mockgen -build_flags=-mod=mod -package mocks -destination ./mock_service.go -source=../  user.go
 </span><span class="c1">// New way, Go 1.17:
 </span><span class="c1">//go:generate go run github.com/golang/mock/mockgen@v1.4.4 -package mocks -destination ./mock_service.go -source=../user.go
-</span></code></pre></div><h2 id="go111module-with-go-118"><code>GO111MODULE</code> with Go 1.18</h2>
+</span></code></pre></div><h3 id="go111module-with-go-118"><code>GO111MODULE</code> with Go 1.18</h3>
 <p>If you still need to use <code>go get</code> to install a binary, you will need to set <code>GO111MODULE=off</code>. The recommended way is to switch to using <code>go install</code> instead. Without <code>GO111MODULE=off</code>, <code>go get</code> will only update your <code>go.mod</code>. Otherwise, it won&rsquo;t do anything. All the READMEs on the Internet have to be updated; if they don&rsquo;t, people will get confused by not seeing the binary being installed.</p>
-<h2 id="go111module-with-go-119"><code>GO111MODULE</code> with Go 1.19</h2>
+<h3 id="go111module-with-go-119"><code>GO111MODULE</code> with Go 1.19</h3>
 <p>Nothing with regards to <code>GO111MODULE</code> has changed with Go 1.19.</p>
-<h2 id="go111module-with-go-120"><code>GO111MODULE</code> with Go 1.20</h2>
+<h3 id="go111module-with-go-120"><code>GO111MODULE</code> with Go 1.20</h3>
 <p>Nothing with regards to <code>GO111MODULE</code> has changed with Go 1.20.</p>
 <h3 id="why-was-go111module-everywhere-go-115-and-below">Why was <code>GO111MODULE</code> everywhere? (Go 1.15 and below)</h3>
 <p>Now that we know that <code>GO111MODULE</code> was very useful with Go 1.15 and below for enabling the Go Modules behavior, here is the answer: that&rsquo;s because <code>GO111MODULE=on</code> allows you to select a version. Without Go Modules, <code>go get</code> fetches the latest commit from master. With Go Modules, you can select a specific version based on git tags.</p>
