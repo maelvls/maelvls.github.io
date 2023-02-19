@@ -33,19 +33,19 @@ In this short post, I will explain why `GO111MODULE` was introduced in Go 1.11, 
    1. [`GO111MODULE` with Go 1.11 and 1.12](#go111module-with-go-111-and-112)
    2. [`GO111MODULE` with Go 1.13](#go111module-with-go-113)
    3. [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
-3. [`GO111MODULE` with Go 1.15](#go111module-with-go-115)
-   1. [`GO111MODULE` with Go 1.16](#go111module-with-go-116)
-   2. [`GO111MODULE` with Go 1.17](#go111module-with-go-117)
+   4. [`GO111MODULE` with Go 1.15](#go111module-with-go-115)
+   5. [`GO111MODULE` with Go 1.16](#go111module-with-go-116)
+   6. [`GO111MODULE` with Go 1.17](#go111module-with-go-117)
       1. [Faster downloading of dependencies if you are using Git to fetch modules](#faster-downloading-of-dependencies-if-you-are-using-git-to-fetch-modules)
       2. [Installing binaries with `GO111MODULE=on go get` is deprecated](#installing-binaries-with-go111moduleon-go-get-is-deprecated)
       3. [`go run` knows about `@version` (finally!)](#go-run-knows-about-version-finally)
-4. [`GO111MODULE` with Go 1.18](#go111module-with-go-118)
-5. [`GO111MODULE` with Go 1.19](#go111module-with-go-119)
-6. [`GO111MODULE` with Go 1.20](#go111module-with-go-120)
-   1. [Why was `GO111MODULE` everywhere? (Go 1.15 and below)](#why-was-go111module-everywhere-go-115-and-below)
-   2. [The pitfall of `go.mod` being silently updated (Go 1.15 and below)](#the-pitfall-of-gomod-being-silently-updated-go-115-and-below)
-   3. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
-7. [Caveats when using Go Modules](#caveats-when-using-go-modules)
+   7. [`GO111MODULE` with Go 1.18](#go111module-with-go-118)
+   8. [`GO111MODULE` with Go 1.19](#go111module-with-go-119)
+   9. [`GO111MODULE` with Go 1.20](#go111module-with-go-120)
+   10. [Why was `GO111MODULE` everywhere? (Go 1.15 and below)](#why-was-go111module-everywhere-go-115-and-below)
+   11. [The pitfall of `go.mod` being silently updated (Go 1.15 and below)](#the-pitfall-of-gomod-being-silently-updated-go-115-and-below)
+   12. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
+3. [Caveats when using Go Modules](#caveats-when-using-go-modules)
    1. [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
    2. [Where are the sources of the dependencies with Go Modules](#where-are-the-sources-of-the-dependencies-with-go-modules)
    3. [Set `GO111MODULE` on a per-folder basis with `direnv`](#set-go111module-on-a-per-folder-basis-with-direnv)
@@ -117,7 +117,7 @@ Note that some slight changes in behaviors unrelated to `GO111MODULE` happened:
 - The `vendor/` is picked up automatically. That has the tendency of breaking Gomock ([issue](https://github.com/golang/mock/issues/415)) which were unknowingly not using `vendor/` before 1.14.
 - You still need to use `cd && GO111MODULE=on go get` when you don't want to mess up your current project’s `go.mod` (that's so annoying).
 
-## `GO111MODULE` with Go 1.15
+### `GO111MODULE` with Go 1.15
 
 Nothing with regards to `GO111MODULE` has changed with Go 1.15.
 
@@ -302,15 +302,15 @@ This is great if you use `//go:generate` to generate mocks. For example, in the 
 //go:generate go run github.com/golang/mock/mockgen@v1.4.4 -package mocks -destination ./mock_service.go -source=../user.go
 ```
 
-## `GO111MODULE` with Go 1.18
+### `GO111MODULE` with Go 1.18
 
 If you still need to use `go get` to install a binary, you will need to set `GO111MODULE=off`. The recommended way is to switch to using `go install` instead. Without `GO111MODULE=off`, `go get` will only update your `go.mod`. Otherwise, it won't do anything. All the READMEs on the Internet have to be updated; if they don't, people will get confused by not seeing the binary being installed.
 
-## `GO111MODULE` with Go 1.19
+### `GO111MODULE` with Go 1.19
 
 Nothing with regards to `GO111MODULE` has changed with Go 1.19.
 
-## `GO111MODULE` with Go 1.20
+### `GO111MODULE` with Go 1.20
 
 Nothing with regards to `GO111MODULE` has changed with Go 1.20.
 
