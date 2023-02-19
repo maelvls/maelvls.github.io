@@ -1,5 +1,5 @@
 ---
-title: "Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.17)"
+title: "Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.20)"
 tags: [go, go-modules]
 date: 2019-11-13
 description: "GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with Go 1.13 and Go 1.15 and changed a last time in Go 1.16, and is stable since then."
@@ -33,15 +33,19 @@ In this short post, I will explain why `GO111MODULE` was introduced in Go 1.11, 
    1. [`GO111MODULE` with Go 1.11 and 1.12](#go111module-with-go-111-and-112)
    2. [`GO111MODULE` with Go 1.13](#go111module-with-go-113)
    3. [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
-   4. [`GO111MODULE` with Go 1.16](#go111module-with-go-116)
-   5. [`GO111MODULE` with Go 1.17](#go111module-with-go-117)
+3. [`GO111MODULE` with Go 1.15](#go111module-with-go-115)
+   1. [`GO111MODULE` with Go 1.16](#go111module-with-go-116)
+   2. [`GO111MODULE` with Go 1.17](#go111module-with-go-117)
       1. [Faster downloading of dependencies if you are using Git to fetch modules](#faster-downloading-of-dependencies-if-you-are-using-git-to-fetch-modules)
       2. [Installing binaries with `GO111MODULE=on go get` is deprecated](#installing-binaries-with-go111moduleon-go-get-is-deprecated)
       3. [`go run` knows about `@version` (finally!)](#go-run-knows-about-version-finally)
-   6. [So, why is `GO111MODULE` everywhere?!](#so-why-is-go111module-everywhere)
-   7. [The pitfall of `go.mod` being silently updated](#the-pitfall-of-gomod-being-silently-updated)
-   8. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
-3. [Caveats when using Go Modules](#caveats-when-using-go-modules)
+4. [`GO111MODULE` with Go 1.18](#go111module-with-go-118)
+5. [`GO111MODULE` with Go 1.19](#go111module-with-go-119)
+6. [`GO111MODULE` with Go 1.20](#go111module-with-go-120)
+   1. [Why was `GO111MODULE` everywhere? (Go 1.15 and below)](#why-was-go111module-everywhere-go-115-and-below)
+   2. [The pitfall of `go.mod` being silently updated (Go 1.15 and below)](#the-pitfall-of-gomod-being-silently-updated-go-115-and-below)
+   3. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
+7. [Caveats when using Go Modules](#caveats-when-using-go-modules)
    1. [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
    2. [Where are the sources of the dependencies with Go Modules](#where-are-the-sources-of-the-dependencies-with-go-modules)
    3. [Set `GO111MODULE` on a per-folder basis with `direnv`](#set-go111module-on-a-per-folder-basis-with-direnv)
@@ -65,26 +69,22 @@ Since then, the interaction between the 'GOPATH behavior' and the 'Go Modules be
 
 `GO111MODULE` can be set in two different ways:
 
-- As an environment variable that you may set in your `~/.bashrc` or `~/.zshrc`, for example:
+- The environment variable in your shell, e.g.: `export GO111MODULE=on`.
+- The "hidden" global configuration only known by `go env` using `go env -w GO111MODULE=on` (only available since Go 1.12).
 
-  ```bash
-  export GO111MODULE=off
-  ```
-
-- As a global value only known by `go env`:
-
-  ```bash
-  go env -w GO111MODULE=off
-  ```
-
-If you don't understand why Go doesn't behave the way you think it should, you should check both of these values:
+If Go seems to behave the way you think it should, it is recommended to check whether, in the past, you have set the global configuration using `go env -w GO111MODULE=on` (or `off`):
 
 ```bash
-echo $GO111MODULE
 go env GO111MODULE
 ```
 
-(note that the environment variable takes precedence over the value that was stored using `go env -w GO111MODULE`)
+Note that the environment variable takes precedence over the value that was stored using `go env -w GO111MODULE`.
+
+To unset the global configuration, you can do:
+
+```bash
+go env -u GO111MODULE
+```
 
 ### `GO111MODULE` with Go 1.11 and 1.12
 
@@ -116,6 +116,10 @@ Note that some slight changes in behaviors unrelated to `GO111MODULE` happened:
 
 - The `vendor/` is picked up automatically. That has the tendency of breaking Gomock ([issue](https://github.com/golang/mock/issues/415)) which were unknowingly not using `vendor/` before 1.14.
 - You still need to use `cd && GO111MODULE=on go get` when you don't want to mess up your current project’s `go.mod` (that's so annoying).
+
+## `GO111MODULE` with Go 1.15
+
+Nothing with regards to `GO111MODULE` has changed with Go 1.15.
 
 ### `GO111MODULE` with Go 1.16
 
@@ -298,13 +302,26 @@ This is great if you use `//go:generate` to generate mocks. For example, in the 
 //go:generate go run github.com/golang/mock/mockgen@v1.4.4 -package mocks -destination ./mock_service.go -source=../user.go
 ```
 
-### So, why is `GO111MODULE` everywhere?!
+## `GO111MODULE` with Go 1.18
 
-Now that we know that `GO111MODULE` can be very useful for enabling the Go Modules behavior, here is the answer: that's because `GO111MODULE=on` allows you to select a version. Without Go Modules, `go get` fetches the latest commit from master. With Go Modules, you can select a specific version based on git tags.
+If you still need to use `go get` to install a binary, you will need to set `GO111MODULE=off`. The recommended way is to switch to using `go install` instead. Without `GO111MODULE=off`, `go get` will only update your `go.mod`. Otherwise, it won't do anything. All the READMEs on the Internet have to be updated; if they don't, people will get confused by not seeing the binary being installed.
 
-I use `GO111MODULE=on` very often when I want to switch between the latest version and the HEAD version of `gopls` (the Go Language Server):
+## `GO111MODULE` with Go 1.19
 
-```sh
+Nothing with regards to `GO111MODULE` has changed with Go 1.19.
+
+## `GO111MODULE` with Go 1.20
+
+Nothing with regards to `GO111MODULE` has changed with Go 1.20.
+
+### Why was `GO111MODULE` everywhere? (Go 1.15 and below)
+
+Now that we know that `GO111MODULE` was very useful with Go 1.15 and below for enabling the Go Modules behavior, here is the answer: that's because `GO111MODULE=on` allows you to select a version. Without Go Modules, `go get` fetches the latest commit from master. With Go Modules, you can select a specific version based on git tags.
+
+Before Go 1.16 got released, I used to use `GO111MODULE=on` very often when I wanted to switch between the latest version and the HEAD version of `gopls` (the Go Language Server):
+
+```bash
+# With Go 1.15.
 GO111MODULE=on go get golang.org/x/tools/gopls@latest
 GO111MODULE=on go get golang.org/x/tools/gopls@master
 GO111MODULE=on go get golang.org/x/tools/gopls@v0.1
@@ -312,18 +329,19 @@ GO111MODULE=on go get golang.org/x/tools/gopls@v0.1.8
 GO111MODULE="on" go get sigs.k8s.io/kind@v0.7.0
 ```
 
-### The pitfall of `go.mod` being silently updated
+This became much easier with Go 1.16 though. I could do the same thing with:
 
-And to make matters even worse, you may have encountered this weird one-liner in READMEs:
+```bash
+# With Go 1.16.
+go install golang.org/x/tools/gopls@latest
+```
+
+### The pitfall of `go.mod` being silently updated (Go 1.15 and below)
+
+With Go 1.15 and below, our only option to install binaries was to use `go get`. You may have encountered this weird one-liner in READMEs:
 
 ```sh
 (cd && GO111MODULE=on go get golang.org/x/tools/gopls@latest)
-```
-
-This weird line was meant for Go 1.15 and below; in Go 1.15 and below and was fixed in Go 1.16. With Go 1.16, the above line becomes:
-
-```sh
-go install golang.org/x/tools/gopls@latest
 ```
 
 > **Note:** the `@latest` suffix will use the latest git tag of gopls. Note that `-u` (which means 'update') is not needed for `@v0.1.8` since this is a 'fixed' version, and updating a fixed version does not really make sense. It is also interesting to note that with `@v0.1`, `go get` will fetch the latest patch version for that tag.
@@ -332,7 +350,11 @@ So, why did we need to use this contrived command that calls a subshell and move
 
 So the workaround for anyone using Go 1.15 and below was to give a one-liner that makes sure that you won't be in a `go.mod`-enabled folder: `(cd && go get)` does exactly that.
 
-I hope that (sooner or later) we will have a clear separation of concerns between `go get` that is adding a dependency to your `go.mod` (like npm install) and `go install` that is meant to install a binary without messing up your `go.mod`.
+Fortunately, with Go 1.16, there is now a clear separation of concerns between `go get` that is adding a dependency to your `go.mod` (like npm install) and `go install` that is meant to install a binary without messing up your `go.mod`. With Go 1.16, the above `go get` becomes:
+
+```sh
+go install golang.org/x/tools/gopls@latest
+```
 
 ### The `-u` and `@version` pitfall
 
@@ -423,4 +445,4 @@ _Illustration by Bailey Beougher, from The Illustrated Children's Guide to Kuber
 - **Update 22 June 2020:** it said `use replace` instead of just `replace`.
 - **Update 8 April 2021:** update with Go 1.16.
 - **Update 20 Sept 2021:** update with Go 1.17.
-- **Update 20 Feb 2023:** mention the `go env GO111MODULE` gotcha reported by [Josh Soref](https://github.com/jsoref).
+- **Update 18 Feb 2023:** mention the `go env GO111MODULE` gotcha reported by [Josh Soref](https://github.com/jsoref). I also mentioned Go 1.18, Go 1.19, and Go 1.20. Finally, I reformulated "Why is GO111MODULE everywhere" to "Why was GO111MODULE everywhere in Go 1.15 and below" thanks to [Ed Randall](https://github.com/edrandall)'s remark.
