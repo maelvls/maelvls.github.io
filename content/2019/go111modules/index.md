@@ -12,13 +12,13 @@ devtoUrl: https://dev.to/maelvls/why-is-go111module-everywhere-and-everything-ab
 
 You might have noticed that `GO111MODULE=on` is flourishing everywhere. Many readmes have that:
 
-```sh
+```bash
 GO111MODULE=on go get golang.org/x/tools/gopls@latest
 ```
 
 Note that `go get` has been deprecated for installing binaries since Go 1.17 and will be become impossible in Go 1.18. If you are using Go 1.16 or above, you should use instead:
 
-```
+```bash
 go install golang.org/x/tools/gopls@latest
 ```
 
@@ -385,6 +385,13 @@ Before Go 1.16 came out, that was one of the weird things with `go get`: sometim
 
 Fortunately, with Go 1.16, `go install` has [learnt](https://blog.golang.org/go116-module-changes) about the `@version` suffix. With `go install foo@version`, your local `go.mod` won't be affected! And in Go 1.18, `go get` won't install binaries anymore, and will only ever be used for adding dependencies to your `go.mod`.
 
+And if you would like to run `go test` or `go build` without having `go.mod` updated, you can use the flag `-mod=readonly`. For example:
+
+```bash
+go test -mod=readonly ./...
+go build -mod=readonly ./...
+```
+
 ### Where are the sources of the dependencies with Go Modules
 
 When using Go Modules, the packages that are used during `go build` are stored in `$GOPATH/pkg/mod`. When trying to inspect an 'import' in vim or VSCode, you might end up in the GOPATH version of the package instead of the pkg/mod one used during compilation.
@@ -445,4 +452,4 @@ _Illustration by Bailey Beougher, from The Illustrated Children's Guide to Kuber
 - **Update 22 June 2020:** it said `use replace` instead of just `replace`.
 - **Update 8 April 2021:** update with Go 1.16.
 - **Update 20 Sept 2021:** update with Go 1.17.
-- **Update 18 Feb 2023:** mention the `go env GO111MODULE` gotcha reported by [Josh Soref](https://github.com/jsoref). I also mentioned Go 1.18, Go 1.19, and Go 1.20. Finally, I reformulated "Why is GO111MODULE everywhere" to "Why was GO111MODULE everywhere in Go 1.15 and below" thanks to [Ed Randall](https://github.com/edrandall)'s remark. I also fixed an issue reported by [DongHo Jung](https://github.com/0xF4D3C0D3).
+- **Update 18 Feb 2023:** mention the `go env GO111MODULE` gotcha reported by [Josh Soref](https://github.com/jsoref). I also mentioned Go 1.18, Go 1.19, and Go 1.20. Finally, I reformulated "Why is GO111MODULE everywhere" to "Why was GO111MODULE everywhere in Go 1.15 and below" thanks to [Ed Randall](https://github.com/edrandall)'s remark. I also added a note about `-mod=readonly` after a remark from [daodennis](https://dev.to/daodennis), and fixed an issue reported by [DongHo Jung](https://github.com/0xF4D3C0D3).

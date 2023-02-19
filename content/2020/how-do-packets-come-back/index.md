@@ -15,8 +15,7 @@ In a previous post "[The Packet's-Eye View of a Kubernetes Service](/packets-eye
 
 In the following diagram, we can see a packet coming from a user, then being re-written by Google's VPC firewalls and finally coming into a VM "node 1".
 
-<img alt="Packet coming from a user hitting one going through Google's VPC"
-src="dnat-google-vpc-how-comes-back.svg" width="80%"/>
+<img alt="Packet coming from a user hitting one going through Google's VPC" src="dnat-google-vpc-how-comes-back.svg" width="80%"/>
 
 So, how come the packet can come back ~~and does it use conntrack~~ and does Google's firewall have to remember some state?
 
