@@ -86,34 +86,34 @@ src="dnat-google-vpc-how-comes-back.svg" width="80%"/></p>
 </blockquote>
 <p>Let us dive a bit more and add the &ldquo;response&rdquo; packets. For the following diagram, I used the excellent <a href="https://textik.com/">textik</a> ascii drawing tool.</p>
 <div class="nohighlight">
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">                     D-NAT (dest-based NAT, also called port-forwarding)
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">           D-NAT (dest-based NAT, also called port-forwarding)
 
-          +--------------------------------------------------------------------------+
-          |   src: 90.76.45.149:32345                       src: 35.211.248.124:80   |
-          |   dst: 35.211.248.124:80                        dst: 90.76.45.149:32345  |
-          +------------------------------90.76.45.149--------------------------------+
-                         |                 (user)                     |
-                         |                                            |
-          +--------------------------------------------------------------------------+
-          |              |                one-to-one                  |              |
-          |              v              port forwarding               |              |
-          |   src: 90.76.45.149:32345          =          - src: 10.142.0.62:80      |
-          | - dst: 35.211.248.124:80      no need for     + src: 35.211.248.124:80   |
-          | + dst: 10.142.0.62:80         conntrack to      dst: 90.76.45.149:32345  |
-          |              |                 remember!                  ^              |
-          |              |                (stateless)                 |              |
-          |              |                                            |              |
-          +--------------|--------------35.211.248.124----------------|--------------+
-                         |              (Google&#39;s VPC)                |
-                         |                                            |
-                         |                                            |
-          +--------------|--------------------------------------------|--------------+
-          |              v             userland process               |              |
-          |   src: 90.76.45.149:32345      response         src: 10.142.0.62:80      |
-          |   dst: 10.142.0.62:80      ----------------&gt;    dst: 90.76.45.149:32345  |
-          |                                                                          |
-          +-------------------------------10.142.0.62--------------------------------+
-                                          (VM in VPC)
++--------------------------------------------------------------------------+
+|   src: 90.76.45.149:32345                       src: 35.211.248.124:80   |
+|   dst: 35.211.248.124:80                        dst: 90.76.45.149:32345  |
++------------------------------90.76.45.149--------------------------------+
+               |                 (user)                     |
+               |                                            |
++--------------------------------------------------------------------------+
+|              |                one-to-one                  |              |
+|              v              port forwarding               |              |
+|   src: 90.76.45.149:32345          =          - src: 10.142.0.62:80      |
+| - dst: 35.211.248.124:80      no need for     + src: 35.211.248.124:80   |
+| + dst: 10.142.0.62:80         conntrack to      dst: 90.76.45.149:32345  |
+|              |                 remember!                  ^              |
+|              |                (stateless)                 |              |
+|              |                                            |              |
++--------------|--------------35.211.248.124----------------|--------------+
+               |              (Google&#39;s VPC)                |
+               |                                            |
+               |                                            |
++--------------|--------------------------------------------|--------------+
+|              v             userland process               |              |
+|   src: 90.76.45.149:32345      response         src: 10.142.0.62:80      |
+|   dst: 10.142.0.62:80      ----------------&gt;    dst: 90.76.45.149:32345  |
+|                                                                          |
++-------------------------------10.142.0.62--------------------------------+
+                                (VM in VPC)
 </code></pre></div></div>
 <!-- https://textik.com/#0db10960397c06f5 -->
 <p>By reading through the diagram, we can see that the packet is re-written by Google&rsquo;s firewall using DNAT: the destination is replaced by a fixed IP, the one of the VM.</p>
