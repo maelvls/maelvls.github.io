@@ -133,7 +133,7 @@ The best news in Go 1.16 is that we finally get a dedicated command for installi
 
 ```sh
 # Old way
-(cd && go install golang.org/x/tools/gopls@latest)
+(cd && go get golang.org/x/tools/gopls@latest)
 ```
 
 you can now run:
@@ -445,4 +445,4 @@ _Illustration by Bailey Beougher, from The Illustrated Children's Guide to Kuber
 - **Update 22 June 2020:** it said `use replace` instead of just `replace`.
 - **Update 8 April 2021:** update with Go 1.16.
 - **Update 20 Sept 2021:** update with Go 1.17.
-- **Update 18 Feb 2023:** mention the `go env GO111MODULE` gotcha reported by [Josh Soref](https://github.com/jsoref). I also mentioned Go 1.18, Go 1.19, and Go 1.20. Finally, I reformulated "Why is GO111MODULE everywhere" to "Why was GO111MODULE everywhere in Go 1.15 and below" thanks to [Ed Randall](https://github.com/edrandall)'s remark.
+- **Update 18 Feb 2023:** mention the `go env GO111MODULE` gotcha reported by [Josh Soref](https://github.com/jsoref). I also mentioned Go 1.18, Go 1.19, and Go 1.20. Finally, I reformulated "Why is GO111MODULE everywhere" to "Why was GO111MODULE everywhere in Go 1.15 and below" thanks to [Ed Randall](https://github.com/edrandall)'s remark. I also fixed an issue reported by [DongHo Jung](https://github.com/0xF4D3C0D3).
