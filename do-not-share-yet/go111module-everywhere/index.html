@@ -74,9 +74,9 @@
     </div>
     <div class="markdown">
         <p>You might have noticed that <code>GO111MODULE=on</code> is flourishing everywhere. Many readmes have that:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest
 </code></pre></div><p>Note that <code>go get</code> has been deprecated for installing binaries since Go 1.17 and will be become impossible in Go 1.18. If you are using Go 1.16 or above, you should use instead:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">go install golang.org/x/tools/gopls@latest
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">go install golang.org/x/tools/gopls@latest
 </code></pre></div><p>In this short post, I will explain why <code>GO111MODULE</code> was introduced in Go 1.11, its caveats and interesting bits that you need to know when dealing with Go Modules.</p>
 <hr>
 <p><strong>Table of content:</strong></p>
@@ -331,7 +331,10 @@ go install golang.org/x/tools/gopls@latest
 <h3 id="remember-that-go-get-also-updates-your-gomod">Remember that <code>go get</code> also updates your <code>go.mod</code></h3>
 <p>Before Go 1.16 came out, that was one of the weird things with <code>go get</code>: sometimes, it served the purpose of installing binaries or downloading packages. And with Go modules, if you were in a repo with a <code>go.mod</code>, it would silently add the binary that you were <code>go get</code>-ing to your <code>go.mod</code>!</p>
 <p>Fortunately, with Go 1.16, <code>go install</code> has <a href="https://blog.golang.org/go116-module-changes">learnt</a> about the <code>@version</code> suffix. With <code>go install foo@version</code>, your local <code>go.mod</code> won&rsquo;t be affected! And in Go 1.18, <code>go get</code> won&rsquo;t install binaries anymore, and will only ever be used for adding dependencies to your <code>go.mod</code>.</p>
-<h3 id="where-are-the-sources-of-the-dependencies-with-go-modules">Where are the sources of the dependencies with Go Modules</h3>
+<p>And if you would like to run <code>go test</code> or <code>go build</code> without having <code>go.mod</code> updated, you can use the flag <code>-mod=readonly</code>. For example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">go <span class="nb">test</span> -mod<span class="o">=</span><span class="nb">readonly</span> ./...
+go build -mod<span class="o">=</span><span class="nb">readonly</span> ./...
+</code></pre></div><h3 id="where-are-the-sources-of-the-dependencies-with-go-modules">Where are the sources of the dependencies with Go Modules</h3>
 <p>When using Go Modules, the packages that are used during <code>go build</code> are stored in <code>$GOPATH/pkg/mod</code>. When trying to inspect an &lsquo;import&rsquo; in vim or VSCode, you might end up in the GOPATH version of the package instead of the pkg/mod one used during compilation.</p>
 <p>A second issue that arises is when you want to hack one of your dependencies, for example for testing purposes.</p>
 <p><strong>Solution 1</strong>: use <code>go mod vendor</code> + <code>go build -mod=vendor</code>. That will force <code>go</code> to use the vendor/ files instead of using the <code>$GOPATH/pkg/mod</code> ones. This option also solves the problem of vim and VSCode not opening the right version of a package’s file.</p>
@@ -367,7 +370,7 @@ go install golang.org/x/tools/gopls@latest
 <li><strong>Update 22 June 2020:</strong> it said <code>use replace</code> instead of just <code>replace</code>.</li>
 <li><strong>Update 8 April 2021:</strong> update with Go 1.16.</li>
 <li><strong>Update 20 Sept 2021:</strong> update with Go 1.17.</li>
-<li><strong>Update 18 Feb 2023:</strong> mention the <code>go env GO111MODULE</code> gotcha reported by <a href="https://github.com/jsoref">Josh Soref</a>. I also mentioned Go 1.18, Go 1.19, and Go 1.20. Finally, I reformulated &ldquo;Why is GO111MODULE everywhere&rdquo; to &ldquo;Why was GO111MODULE everywhere in Go 1.15 and below&rdquo; thanks to <a href="https://github.com/edrandall">Ed Randall</a>&rsquo;s remark. I also fixed an issue reported by <a href="https://github.com/0xF4D3C0D3">DongHo Jung</a>.</li>
+<li><strong>Update 18 Feb 2023:</strong> mention the <code>go env GO111MODULE</code> gotcha reported by <a href="https://github.com/jsoref">Josh Soref</a>. I also mentioned Go 1.18, Go 1.19, and Go 1.20. Finally, I reformulated &ldquo;Why is GO111MODULE everywhere&rdquo; to &ldquo;Why was GO111MODULE everywhere in Go 1.15 and below&rdquo; thanks to <a href="https://github.com/edrandall">Ed Randall</a>&rsquo;s remark. I also added a note about <code>-mod=readonly</code> after a remark from <a href="https://dev.to/daodennis">daodennis</a>, and fixed an issue reported by <a href="https://github.com/0xF4D3C0D3">DongHo Jung</a>.</li>
 </ul>
 
     </div>
