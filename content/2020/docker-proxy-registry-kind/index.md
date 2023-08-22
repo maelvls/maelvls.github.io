@@ -16,6 +16,8 @@ devtoPublished: true
 Diagram on macOS + Docker: https://textik.com/#b185c1a72a6e782d
 -->
 
+> **Note:** _(August 2023)_ As mentioned by Wolfgang Schnerring [in this comment](https://github.com/maelvls/maelvls.github.io/issues/7#issuecomment-688277166), the method presented in this document is very limited: many images are still being pulled directly and it only proxies a single "upstream" registry. Nowadays, `docker-registry-proxy` is a better alternative: https://github.com/rpardini/docker-registry-proxy#kind-cluster.
+
 **TL;DR:**
 
 - to create a local pull-through registry to speed up image pulling in a [Kind](https://kind.sigs.k8s.io/) cluster, run:
