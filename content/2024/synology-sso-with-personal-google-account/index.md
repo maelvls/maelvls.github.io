@@ -7,8 +7,8 @@ images: [synology-sso-with-personal-google-account/cover-synology-sso-with-perso
 draft: false
 tags: [Synology, NAS, Single Sign-On, Google, OIDC]
 author: Maël Valais
-devtoId: 0
-devtoPublished: false
+devtoId: 1826751
+devtoPublished: true
 ---
 
 ## Introduction
