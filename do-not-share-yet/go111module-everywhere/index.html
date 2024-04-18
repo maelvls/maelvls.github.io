@@ -80,21 +80,21 @@
 </code></pre></div><p>In this short post, I will explain why <code>GO111MODULE</code> was introduced in Go 1.11, its caveats and interesting bits that you need to know when dealing with Go Modules.</p>
 <hr>
 <p><strong>Table of content:</strong></p>
-<ol>
+<ul>
 <li><a href="#from-gopath-to-go111module">From <code>GOPATH</code> to <code>GO111MODULE</code></a></li>
 <li><a href="#the-go111module-environment-variable">The <code>GO111MODULE</code> environment variable</a>
-<ol>
+<ul>
 <li><a href="#go111module-with-go-111-and-112"><code>GO111MODULE</code> with Go 1.11 and 1.12</a></li>
 <li><a href="#go111module-with-go-113"><code>GO111MODULE</code> with Go 1.13</a></li>
 <li><a href="#go111module-with-go-114"><code>GO111MODULE</code> with Go 1.14</a></li>
 <li><a href="#go111module-with-go-115"><code>GO111MODULE</code> with Go 1.15</a></li>
 <li><a href="#go111module-with-go-116"><code>GO111MODULE</code> with Go 1.16</a></li>
 <li><a href="#go111module-with-go-117"><code>GO111MODULE</code> with Go 1.17</a>
-<ol>
+<ul>
 <li><a href="#faster-downloading-of-dependencies-if-you-are-using-git-to-fetch-modules">Faster downloading of dependencies if you are using Git to fetch modules</a></li>
 <li><a href="#installing-binaries-with-go111moduleon-go-get-is-deprecated">Installing binaries with <code>GO111MODULE=on go get</code> is deprecated</a></li>
 <li><a href="#go-run-knows-about-version-finally"><code>go run</code> knows about <code>@version</code> (finally!)</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#go111module-with-go-118"><code>GO111MODULE</code> with Go 1.18</a></li>
 <li><a href="#go111module-with-go-119"><code>GO111MODULE</code> with Go 1.19</a></li>
@@ -102,22 +102,22 @@
 <li><a href="#why-was-go111module-everywhere-go-115-and-below">Why was <code>GO111MODULE</code> everywhere? (Go 1.15 and below)</a></li>
 <li><a href="#the-pitfall-of-gomod-being-silently-updated-go-115-and-below">The pitfall of <code>go.mod</code> being silently updated (Go 1.15 and below)</a></li>
 <li><a href="#the--u-and-version-pitfall">The <code>-u</code> and <code>@version</code> pitfall</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#caveats-when-using-go-modules">Caveats when using Go Modules</a>
-<ol>
+<ul>
 <li><a href="#remember-that-go-get-also-updates-your-gomod">Remember that <code>go get</code> also updates your <code>go.mod</code></a></li>
 <li><a href="#where-are-the-sources-of-the-dependencies-with-go-modules">Where are the sources of the dependencies with Go Modules</a></li>
 <li><a href="#set-go111module-on-a-per-folder-basis-with-direnv">Set <code>GO111MODULE</code> on a per-folder basis with <code>direnv</code></a></li>
 <li><a href="#private-go-modules-and-dockerfile">Private Go Modules and Dockerfile</a>
-<ol>
+<ul>
 <li><a href="#solution-1-vendoring">Solution 1: vendoring</a></li>
 <li><a href="#solution-2-no-vendoring">Solution 2: no vendoring</a></li>
-</ol>
+</ul>
 </li>
-</ol>
+</ul>
 </li>
-</ol>
+</ul>
 <hr>
 <h2 id="from-gopath-to-go111module">From <code>GOPATH</code> to <code>GO111MODULE</code></h2>
 <p>First off, let&rsquo;s talk about GOPATH. When Go was first introduced in 2009, it was not shipped with a package manager. Instead, <code>go get</code> would fetch all the sources by using their import paths and store them in <code>$GOPATH/src</code>. There was no versioning and the &lsquo;master&rsquo; branch would represent a stable version of the package.</p>
@@ -171,7 +171,7 @@
 <h3 id="go111module-with-go-116"><code>GO111MODULE</code> with Go 1.16</h3>
 <p>As of Go 1.16, the default behavior is <code>GO111MODULE=on</code>, meaning that if you want to keep using the old <code>GOPATH</code> way, you will have to force Go not to use the Go Modules feature:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nb">export</span> <span class="nv">GO111MODULE</span><span class="o">=</span>off
-</code></pre></div><p>The best news in Go 1.16 is that we finally get a dedicated command for installing Go tools instead of relying on the does-it-all <code>go get</code> that keeps <a href="#the-pitfall-of-gomod-being-silently-updated">updating</a> your <code>go.mod</code>. Instead of:</p>
+</code></pre></div><p>The best news in Go 1.16 is that we finally get a dedicated command for installing Go tools instead of relying on the does-it-all <code>go get</code> that keeps <a href="#the-pitfall-of-gomod-being-silently-updated-go-115-and-below">updating</a> your <code>go.mod</code>. Instead of:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># Old way</span>
 <span class="o">(</span><span class="nb">cd</span> <span class="o">&amp;&amp;</span> go get golang.org/x/tools/gopls@latest<span class="o">)</span>
 </code></pre></div><p>you can now run:</p>
