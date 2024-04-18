@@ -4,7 +4,7 @@ description: "Learn how to simplify access to your Synology NAS by enabling sing
 date: 2024-04-17T19:50:33+02:00
 url: /synology-sso-with-personal-google-account
 images: [synology-sso-with-personal-google-account/cover-synology-sso-with-personal-google-account.png]
-draft: true
+draft: false
 tags: [Synology, NAS, Single Sign-On, Google, OIDC]
 author: Maël Valais
 devtoId: 0
