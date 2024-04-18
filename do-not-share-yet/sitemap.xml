@@ -3,17 +3,57 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://maelvls.dev/do-not-share-yet/2024/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/google/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/synology-sso-with-personal-google-account/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/nas/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/oidc/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/single-sign-on/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/synology/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://maelvls.dev/do-not-share-yet/2021/</loc>
     <lastmod>2021-10-30T14:53:37+02:00</lastmod>
   </url>
   
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/access-private-ips-from-kubernetes-with-tailscale/</loc>
-    <lastmod>2021-10-30T14:53:37+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/</loc>
     <lastmod>2021-10-30T14:53:37+02:00</lastmod>
   </url>
   
@@ -29,11 +69,6 @@
   
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/mitmproxy-tls-renegotiation-debugging-story/</loc>
-    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/</loc>
     <lastmod>2021-09-25T10:31:19+02:00</lastmod>
   </url>
   

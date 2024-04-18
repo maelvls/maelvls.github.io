@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+  <meta name="generator" content="Hugo 0.75.1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="author" content="Maël Valais"><meta name="keywords" content="Synology,NAS,Single Sign-On,Google,OIDC"><meta name="description" content="Learn how to simplify access to your Synology NAS by enabling single sign-on (SSO) with personal Google accounts."><meta property="og:title" content="Logging into Synology NAS with Personal Google Accounts" />
+<meta property="og:description" content="Learn how to simplify access to your Synology NAS by enabling single sign-on (SSO) with personal Google accounts." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/synology-sso-with-personal-google-account/" />
+<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/synology-sso-with-personal-google-account/cover-synology-sso-with-personal-google-account.png" />
+<meta property="article:published_time" content="2024-04-17T19:50:33+02:00" />
+<meta property="article:modified_time" content="2024-04-17T19:50:33+02:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/synology-sso-with-personal-google-account/cover-synology-sso-with-personal-google-account.png"/>
+
+<meta name="twitter:title" content="Logging into Synology NAS with Personal Google Accounts"/>
+<meta name="twitter:description" content="Learn how to simplify access to your Synology NAS by enabling single sign-on (SSO) with personal Google accounts."/>
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/maelvls.css" /><title>Logging into Synology NAS with Personal Google Accounts | maelvls dev blog</title></head>
+<body>
+
+<header>
+
+  <div id="avatar">
+    <a href="https://maelvls.dev/do-not-share-yet/">
+      <img src="/img/mael.jpg" alt="maelvls dev blog">
+    </a>
+  </div>
+
+  <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
+  <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
+    <nav>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+    </nav>
+  </div>
+  </div>
+  <div id="mainmenu">
+	
+  </div>
+</header>
+<main><div class="post">
+    <div class="author">
+        
+    </div>
+    <div class="post-header">
+        
+        <div class="meta">
+            <div class="date">
+                <span class="day">17</span>
+                <span class="rest">
+                    
+                    Apr2024
+                    
+                </span>
+            </div>
+        </div>
+        
+        <div class="matter">
+            <h1 class="title">Logging into Synology NAS with Personal Google Accounts</h1>
+        </div>
+        
+    </div>
+    <div class="markdown">
+        <h2 id="introduction">Introduction</h2>
+<p>My parents and I share a DS923+. We mainly use it for storing photos. To save energy, the NAS is stopped at night and restarted in the morning. Restarting the NAS means that you need to log in to the UI at least once every day.</p>
+<p>Over the past two years, my parents forgot their passwords a couple of times. They can&rsquo;t reset the password on their own (that&rsquo;s a limitation with Synology&rsquo;s &ldquo;local&rdquo; accounts), and I need to log in and reset the password for them.</p>
+<h2 id="challenges-with-local-accounts-and-sso">Challenges with Local Accounts and SSO</h2>
+<p>A couple of years ago, Synology introduced SSO (single sign-on). Since 7.2, DSM supports generic OIDC providers, and supports logging into local users (it used to be only possible for LDAP users).</p>
+<p>Since my parents are always signed in into their Google account, I figured it would be possible to use OIDC with Google&hellip; Except it won&rsquo;t work with local accounts.</p>
+<p>Here is what I tried: I created a My OIDC configuration for Google looked like this:</p>
+<p><img src="credentials-page-in-api-and-services-gcp-console.png" alt="Credentials page in API and Services in GCP&rsquo;s Console"></p>
+<p>Then, I configured my Synology to use Google&rsquo;s OIDC endpoint:</p>
+<p><img src="config-sso-client-using-google-oidc.png" alt="Configuration of the SSO Client using Google OIDC in DSM"></p>
+<p>The problem arose with the &ldquo;Username claim&rdquo;. I want to log into my local account <code>mael.valais</code>, but none of the claims in Google&rsquo;s ID tokens contain that username. Here is an example of a Google ID token:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;iss&#34;</span><span class="p">:</span> <span class="s2">&#34;https://accounts.google.com&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;aud&#34;</span><span class="p">:</span> <span class="s2">&#34;1234987819200.apps.googleusercontent.com&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;sub&#34;</span><span class="p">:</span> <span class="s2">&#34;10769150350006150715113082367&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;email&#34;</span><span class="p">:</span> <span class="s2">&#34;jsmith@example.com&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;email_verified&#34;</span><span class="p">:</span> <span class="s2">&#34;true&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;iat&#34;</span><span class="p">:</span> <span class="mi">1353601026</span><span class="p">,</span>
+  <span class="nt">&#34;exp&#34;</span><span class="p">:</span> <span class="mi">1353604926</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="forking-dex-to-use-it-as-an-oidc-middleware-for-google-oidc">Forking Dex to use it as an OIDC middleware for Google OIDC</h2>
+<p>I figured I could use Dex to act as a middleware between Synology&rsquo;s OIDC client and Google&rsquo;s OIDC server. My goal was to &ldquo;augment&rdquo; Google&rsquo;s JWTs with Synology&rsquo;s usernames by looking up the user by email.</p>
+<p>Dex isn&rsquo;t as flexible as I would have hoped. To make it work, I had to fork it to change the internals of the Google OIDC connector.</p>
+<p>Fork: <a href="https://github.com/maelvls/dex/tree/google-to-synology-sso">https://github.com/maelvls/dex/tree/google-to-synology-sso</a></p>
+<p>This fork is a fork of the fork presented in <a href="https://github.com/dexidp/dex/pull/2954">https://github.com/dexidp/dex/pull/2954</a>. It builds on the idea of the <code>ExtendPayload</code> interface, which I slightly adjusted to pass the original claims since I needed access to the email contained in the JWT provided by Google.</p>
+<p>With this fork, you will need to set three more environment variables:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">SYNO_PASSWD</span><span class="o">=</span>redacted
+<span class="nv">SYNO_USER</span><span class="o">=</span>mael.valais
+<span class="nv">SYNO_URL</span><span class="o">=</span>http://127.0.0.1:5000
+</code></pre></div><p>When the OIDC flow with Google is done and before Dex issues its own JWT, I added some code to add the claim <code>username</code>. With this modified Dex, the JWT looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;at_hash&#34;</span><span class="p">:</span> <span class="s2">&#34;-j6HZYvzDaqkQB2KxIgSyw&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;aud&#34;</span><span class="p">:</span> <span class="s2">&#34;caddy&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;c_hash&#34;</span><span class="p">:</span> <span class="s2">&#34;8SK3tobDYgaI3cnDzkmi5g&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;email&#34;</span><span class="p">:</span> <span class="s2">&#34;mael65@gmail.com&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;email_verified&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nt">&#34;exp&#34;</span><span class="p">:</span> <span class="mi">1713387587</span><span class="p">,</span>
+  <span class="nt">&#34;iat&#34;</span><span class="p">:</span> <span class="mi">1713301187</span><span class="p">,</span>
+  <span class="nt">&#34;iss&#34;</span><span class="p">:</span> <span class="s2">&#34;https://login.mysynodomain.dev/dex&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Maël Valais&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;nonce&#34;</span><span class="p">:</span> <span class="s2">&#34;MFZFSkESL1XqdQmbvr0T43Kn7v0CzLap&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;sub&#34;</span><span class="p">:</span> <span class="s2">&#34;ChUxMDAzNjk3OTQzNjg3MDAwOTk5MTISBmdvb2dsZQ&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;username&#34;</span><span class="p">:</span> <span class="s2">&#34;mael.valais&#34;</span>
+<span class="p">}</span>
+</code></pre></div><p>Here is the updated configuration in DSM:</p>
+<p><img src="./config-sso-client-with-dex-in-dsm.png" alt="Configuration of the SSO Client using Dex in DSM"></p>
+<h2 id="using-the-fork-of-dex">Using the fork of Dex</h2>
+<p>First, install <code>zig</code> and <code>ko</code>. That will allow you to cross-compile Dex to <code>linux/amd64</code> on macOS without Buildx (cross-compiling is required because Dex&rsquo;s sqlite library needs CGO)</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">brew install ko zig
+</code></pre></div><p>Clone the fork:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git clone https://github.com/maelvls/dex --branch google-to-synology-sso
+</code></pre></div><p>Then, build the image:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">CC</span><span class="o">=</span><span class="s2">&#34;zig cc -target x86_64-linux&#34;</span> <span class="nv">CXX</span><span class="o">=</span><span class="s2">&#34;zig c++ -target x86_64-linux&#34;</span> <span class="nv">CGO_ENABLED</span><span class="o">=</span><span class="m">1</span> <span class="se">\
+</span><span class="se"></span>  <span class="nv">KO_DOCKER_REPO</span><span class="o">=</span>ghcr.io/maelvls/dex <span class="se">\
+</span><span class="se"></span>  <span class="nv">KO_DEFAULTBASEIMAGE</span><span class="o">=</span>alpine <span class="se">\
+</span><span class="se"></span>  ko build ./cmd/dex --bare --tarball /tmp/out.tar --push<span class="o">=</span><span class="nb">false</span>  
+</code></pre></div><p>Then, copy the image to your NAS:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">ssh yournas /usr/local/bin/docker load &lt;/tmp/out.tar
+</code></pre></div><p>Then, create a file <code>dex.yaml</code> on your NAS:</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">issuer</span><span class="p">:</span><span class="w"> </span><span class="l">https://login.mysynodomain.dev/dex</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">storage</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">sqlite3</span><span class="w">
+</span><span class="w">  </span><span class="nt">config</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">file</span><span class="p">:</span><span class="w"> </span><span class="l">dex.sqlite</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">web</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span><span class="m">0.0.0.0</span><span class="p">:</span><span class="m">5556</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">logger</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="l">debug</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">oauth2</span><span class="p">:</span><span class="w">
+</span><span class="w">   </span><span class="nt">skipApprovalScreen</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">   </span><span class="nt">alwaysShowLoginScreen</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">staticClients</span><span class="p">:</span><span class="w">
+</span><span class="w"></span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">synology</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;Synology&#39;</span><span class="w">
+</span><span class="w">  </span><span class="nt">redirectURIs</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="s1">&#39;https://mysynodomain.dev/&#39;</span><span class="w">
+</span><span class="w">  </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l">foo # Use openssl rand -hex 16 to generate this.</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">connectors</span><span class="p">:</span><span class="w">
+</span><span class="w"></span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">google</span><span class="w">
+</span><span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">google</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Google</span><span class="w">
+</span><span class="w">  </span><span class="nt">config</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">issuer</span><span class="p">:</span><span class="w"> </span><span class="l">https://accounts.google.com</span><span class="w">
+</span><span class="w">    </span><span class="nt">clientID</span><span class="p">:</span><span class="w"> </span><span class="l">$GOOGLE_CLIENT_ID</span><span class="w">
+</span><span class="w">    </span><span class="nt">clientSecret</span><span class="p">:</span><span class="w"> </span><span class="l">$GOOGLE_CLIENT_SECRET</span><span class="w">
+</span><span class="w">    </span><span class="nt">redirectURI</span><span class="p">:</span><span class="w"> </span><span class="l">https://login.mysynodomain.dev/dex/callback</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c"># I have disabled email login.</span><span class="w">
+</span><span class="w"></span><span class="nt">enablePasswordDB</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></code></pre></div><p>Finally, run Dex:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">docker run --name dex -d <span class="se">\
+</span><span class="se"></span>  -v <span class="nv">$HOME</span>/dex.yaml:/dex.yaml <span class="se">\
+</span><span class="se"></span>  -v <span class="nv">$HOME</span>/dex.sqlite:/dex.sqlite <span class="se">\
+</span><span class="se"></span>  -e <span class="nv">SYNO_PASSWD</span><span class="o">=</span>redacted <span class="se">\
+</span><span class="se"></span>  -e <span class="nv">SYNO_USER</span><span class="o">=</span>mael.valais <span class="se">\
+</span><span class="se"></span>  -e <span class="nv">SYNO_URL</span><span class="o">=</span>http://127.0.0.1:5000 <span class="se">\
+</span><span class="se"></span>  -e <span class="nv">GOOGLE_CLIENT_ID</span><span class="o">=</span>207842732284-l7nhetlsvimmds80fa2knir8fundp3h4.apps.googleusercontent.com <span class="se">\
+</span><span class="se"></span>  -e <span class="nv">GOOGLE_CLIENT_SECRET</span><span class="o">=</span>redacted <span class="se">\
+</span><span class="se"></span>  -p 5556:5556 <span class="se">\
+</span><span class="se"></span>  ghcr.io/maelvls/dex serve /dex.yaml
+</code></pre></div><h2 id="conclusion">Conclusion</h2>
+<p>With this method, my parents can log into the NAS with their Google account and no longer have to remember their Synology username and password.</p>
+<p>Although it works, I wish I didn&rsquo;t have to fork Dex to customize the claims it puts into the JWT payload. I came across a couple of designs that would aim to make Dex more extendable, but none have been implemented yet.</p>
+
+    </div>
+    <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2024/synology-sso-with-personal-google-account/index.md">📝 Edit this page</a>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <div style="float: right;">
+            <p>Tags:
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/google/"> google </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/nas/"> nas </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/oidc/"> oidc </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/single-sign-on/"> single-sign-on </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="/tags/synology/"> synology </a>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        </div>
+        <div class="clearit"></div>
+        
+        
+        
+        
+        
+    </div>
+
+<script
+  src="https://utteranc.es/client.js"
+  repo="maelvls/maelvls.github.io"
+  issue-term="pathname"
+  label="💬"
+  theme="github-light"
+  crossorigin="anonymous"
+  async
+></script>
+</div>
+
+</main><footer>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-88710120-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</footer>
+</body>
+</html>

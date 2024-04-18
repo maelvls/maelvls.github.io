@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Synology on maelvls dev blog</title>
+    <link>https://maelvls.dev/do-not-share-yet/tags/synology/</link>
+    <description>Recent content in Synology on maelvls.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 17 Apr 2024 19:50:33 +0200</lastBuildDate>
+    
+    <atom:link href="https://maelvls.dev/do-not-share-yet/tags/synology/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Logging into Synology NAS with Personal Google Accounts</title>
+      <link>https://maelvls.dev/do-not-share-yet/synology-sso-with-personal-google-account/</link>
+      <pubDate>Wed, 17 Apr 2024 19:50:33 +0200</pubDate>
+      
+      <guid>https://maelvls.dev/do-not-share-yet/synology-sso-with-personal-google-account/</guid>
+      <description>
+      
+      Learn how to simplify access to your Synology NAS by enabling single sign-on (SSO) with personal Google accounts.
+      
+      </description>
+    </item>
+    
+  </channel>
+</rss>
