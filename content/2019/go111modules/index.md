@@ -28,30 +28,30 @@ In this short post, I will explain why `GO111MODULE` was introduced in Go 1.11, 
 
 **Table of content:**
 
-1. [From `GOPATH` to `GO111MODULE`](#from-gopath-to-go111module)
-2. [The `GO111MODULE` environment variable](#the-go111module-environment-variable)
-   1. [`GO111MODULE` with Go 1.11 and 1.12](#go111module-with-go-111-and-112)
-   2. [`GO111MODULE` with Go 1.13](#go111module-with-go-113)
-   3. [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
-   4. [`GO111MODULE` with Go 1.15](#go111module-with-go-115)
-   5. [`GO111MODULE` with Go 1.16](#go111module-with-go-116)
-   6. [`GO111MODULE` with Go 1.17](#go111module-with-go-117)
-      1. [Faster downloading of dependencies if you are using Git to fetch modules](#faster-downloading-of-dependencies-if-you-are-using-git-to-fetch-modules)
-      2. [Installing binaries with `GO111MODULE=on go get` is deprecated](#installing-binaries-with-go111moduleon-go-get-is-deprecated)
-      3. [`go run` knows about `@version` (finally!)](#go-run-knows-about-version-finally)
-   7. [`GO111MODULE` with Go 1.18](#go111module-with-go-118)
-   8. [`GO111MODULE` with Go 1.19](#go111module-with-go-119)
-   9. [`GO111MODULE` with Go 1.20](#go111module-with-go-120)
-   10. [Why was `GO111MODULE` everywhere? (Go 1.15 and below)](#why-was-go111module-everywhere-go-115-and-below)
-   11. [The pitfall of `go.mod` being silently updated (Go 1.15 and below)](#the-pitfall-of-gomod-being-silently-updated-go-115-and-below)
-   12. [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
-3. [Caveats when using Go Modules](#caveats-when-using-go-modules)
-   1. [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
-   2. [Where are the sources of the dependencies with Go Modules](#where-are-the-sources-of-the-dependencies-with-go-modules)
-   3. [Set `GO111MODULE` on a per-folder basis with `direnv`](#set-go111module-on-a-per-folder-basis-with-direnv)
-   4. [Private Go Modules and Dockerfile](#private-go-modules-and-dockerfile)
-      1. [Solution 1: vendoring](#solution-1-vendoring)
-      2. [Solution 2: no vendoring](#solution-2-no-vendoring)
+- [From `GOPATH` to `GO111MODULE`](#from-gopath-to-go111module)
+- [The `GO111MODULE` environment variable](#the-go111module-environment-variable)
+  - [`GO111MODULE` with Go 1.11 and 1.12](#go111module-with-go-111-and-112)
+  - [`GO111MODULE` with Go 1.13](#go111module-with-go-113)
+  - [`GO111MODULE` with Go 1.14](#go111module-with-go-114)
+  - [`GO111MODULE` with Go 1.15](#go111module-with-go-115)
+  - [`GO111MODULE` with Go 1.16](#go111module-with-go-116)
+  - [`GO111MODULE` with Go 1.17](#go111module-with-go-117)
+    - [Faster downloading of dependencies if you are using Git to fetch modules](#faster-downloading-of-dependencies-if-you-are-using-git-to-fetch-modules)
+    - [Installing binaries with `GO111MODULE=on go get` is deprecated](#installing-binaries-with-go111moduleon-go-get-is-deprecated)
+    - [`go run` knows about `@version` (finally!)](#go-run-knows-about-version-finally)
+  - [`GO111MODULE` with Go 1.18](#go111module-with-go-118)
+  - [`GO111MODULE` with Go 1.19](#go111module-with-go-119)
+  - [`GO111MODULE` with Go 1.20](#go111module-with-go-120)
+  - [Why was `GO111MODULE` everywhere? (Go 1.15 and below)](#why-was-go111module-everywhere-go-115-and-below)
+  - [The pitfall of `go.mod` being silently updated (Go 1.15 and below)](#the-pitfall-of-gomod-being-silently-updated-go-115-and-below)
+  - [The `-u` and `@version` pitfall](#the--u-and-version-pitfall)
+- [Caveats when using Go Modules](#caveats-when-using-go-modules)
+  - [Remember that `go get` also updates your `go.mod`](#remember-that-go-get-also-updates-your-gomod)
+  - [Where are the sources of the dependencies with Go Modules](#where-are-the-sources-of-the-dependencies-with-go-modules)
+  - [Set `GO111MODULE` on a per-folder basis with `direnv`](#set-go111module-on-a-per-folder-basis-with-direnv)
+  - [Private Go Modules and Dockerfile](#private-go-modules-and-dockerfile)
+    - [Solution 1: vendoring](#solution-1-vendoring)
+    - [Solution 2: no vendoring](#solution-2-no-vendoring)
 
 ---
 
@@ -129,7 +129,7 @@ As of Go 1.16, the default behavior is `GO111MODULE=on`, meaning that if you wan
 export GO111MODULE=off
 ```
 
-The best news in Go 1.16 is that we finally get a dedicated command for installing Go tools instead of relying on the does-it-all `go get` that keeps [updating](#the-pitfall-of-gomod-being-silently-updated) your `go.mod`. Instead of:
+The best news in Go 1.16 is that we finally get a dedicated command for installing Go tools instead of relying on the does-it-all `go get` that keeps [updating](#the-pitfall-of-gomod-being-silently-updated-go-115-and-below) your `go.mod`. Instead of:
 
 ```sh
 # Old way
