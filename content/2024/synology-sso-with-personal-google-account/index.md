@@ -15,7 +15,13 @@ devtoPublished: true
 
 My parents and I share a DS923+. We mainly use it for storing photos. To save energy, the NAS is stopped at night and restarted in the morning. Restarting the NAS means that you need to log in to the UI at least once every day.
 
-Over the past two years, my parents forgot their passwords a couple of times. They can't reset the password on their own (that's a limitation with Synology's "local" accounts), and I need to log in and reset the password for them.
+And since my parents don't use the Synology often, they would first struggle remembering what the username thing is about. And then, they would forget about their password, which would lead to me having to reset it because Synology hasn't implemented a way to reset the password over email:
+
+![Synology login screen where you are asked for your username but don't remember it](syno-login-username-1.jpeg)
+
+![Synology login screen where you are asked to enter your password after having entered your username](syno-login-username-2.jpeg)
+
+Over the past two years, my parents forgot their passwords a couple of times. It led me to look for an alternative way to log into the NAS... why not use their Google accounts using the single sign-on mechanism?
 
 ## Challenges with Local Accounts and SSO
 
@@ -176,3 +182,8 @@ docker run --name dex -d \
 With this method, my parents can log into the NAS with their Google account and no longer have to remember their Synology username and password.
 
 Although it works, I wish I didn't have to fork Dex to customize the claims it puts into the JWT payload. I came across a couple of designs that would aim to make Dex more extendable, but none have been implemented yet.
+
+The login flow is much smoother now: click "Login with Google", select the Google account, and you're in! Just two screens:
+
+![Synology login screen that shows a button that says Login with Google](syno-login-sso-google-account-1.jpeg)
+![Google screen allowing you to select a Google account](syno-login-sso-google-account-2.jpeg)

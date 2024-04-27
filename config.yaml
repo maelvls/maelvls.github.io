@@ -42,7 +42,7 @@ params:
     vars: [title, summary, date, publishdate, expirydate, permalink]
     params: [categories, tags]
 
-  mainSections: ["2024", "2021", "2020", "2019"]
+  mainSections: ["2024", "2023", "2022", "2021", "2020", "2019"]
 
   # Custom css is expected to be in static/css/.
   customCSS: maelvls.css
