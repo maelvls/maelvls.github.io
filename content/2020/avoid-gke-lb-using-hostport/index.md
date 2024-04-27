@@ -228,7 +228,7 @@ Here is a diagram that shows the whole picture:
 <!--
 Want to drop a comment? Here is a Twitter thread:
 
-{{< twitter 1219193625478881285 >}}
+{{< twitter user="maelvls" id="1219193625478881285" >}}
 -->
 <!--
 ## Metallb vs. K3s' servicelb vs. akrobateo

@@ -18,14 +18,14 @@ In this post, I will explain what 'status conditions' are in Kubernetes and show
 
 Table of contents:
 
-- [Pod example](#pod-example)
-- [What other projects do](#what-other-projects-do)
-- [Conditions vs. State machine](#conditions-vs-state-machine)
-- [Conditions vs. Events](#conditions-vs-events)
-- [Orthogonality vs. Extensibility](#orthogonality-vs-extensibility)
-- [Are Conditions still used?](#are-conditions-still-used)
-- [Conditions vs. Reasons](#conditions-vs-reasons)
-- [How many conditions?](#how-many-conditions)
+1. [Pod example](#pod-example)
+2. [What other projects do](#what-other-projects-do)
+3. [Conditions vs. State machine](#conditions-vs-state-machine)
+4. [Conditions vs. Events](#conditions-vs-events)
+5. [Orthogonality vs. Extensibility](#orthogonality-vs-extensibility)
+6. [Are Conditions still used?](#are-conditions-still-used)
+7. [Conditions vs. Reasons](#conditions-vs-reasons)
+8. [How many conditions?](#how-many-conditions)
 
 ---
 
@@ -51,7 +51,7 @@ We can see that one single object (Pod) can be read, edited and updated by diffe
 
 As Brian Grant put it,
 
-{{< twitter 1111473660479430656 >}}
+{{< twitter user="bgrant0607" id="1111473660479430656" >}}
 
 ## Pod example
 
@@ -295,7 +295,7 @@ status:
 <!--
 Discussion is happening here:
 
-{{< twitter 1195058503695642627 >}}
+{{< twitter user="maelvls" id="1195058503695642627" >}}
 -->
 
 **Update 20 Dec 2021:** Xiang Yuxuan kindly nudged me about the fact that I was was saying that the 2017 thread was talking about removing conditions, but it was initially to remove the 'phase' field.

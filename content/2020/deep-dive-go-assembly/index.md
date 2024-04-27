@@ -12,7 +12,7 @@ devtoPublished: false
 
 Last month, Sylvain Wallez, author of the excellent "[Go: the Good, the Bad and the Ugly](https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/)", wrote:
 
-{{< twitter 1192945301604184065 >}}
+{{< twitter user="bluxte" id="1192945301604184065" >}}
 
 Once again, my beloved language takes a hit. As time passes, I come to realize Go has its strenghts (ease of adoption, no overly abstract REST framework, readability, fast compilation) but also its weaknesses. I can think of the weirdness of variable scoping ([scopelint](https://github.com/kyoh86/scopelint) really helps) and also variable shadowing, weird syntax around variable assignment, `go help` is unreadable and just not up to the standard (compared to `git help` for example), the ever-changing behaviour of GO111MODULE (that's a temporary issue), `go get` that do too many things and changes `go.mod` when you just want to install some tool, but also `go install` & `go run` that don't support versions (e.g. ). Wait, also the "semantic import versioning" that everybody seems to avoid (including Google itself in [protobuf](https://github.com/golang/protobuf/issues/1049)).
 

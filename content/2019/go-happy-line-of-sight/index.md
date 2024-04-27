@@ -216,5 +216,5 @@ You can also take a look at Matt Ryer's _Idiomatic Go Tricks_ ([blog post](https
 <!--
 Wish to comment? Here is the Twitter thread for that post:
 
-{{< twitter 1198259761722122240 >}}
+{{< twitter user="maelvls" id="1198259761722122240" >}}
 -->
