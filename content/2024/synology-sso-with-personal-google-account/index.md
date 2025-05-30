@@ -222,4 +222,4 @@ Although it works, I wish I didn't have to fork Dex to customize the claims it p
 The login flow is much smoother now: click "Login with Google", select the Google account, and you're in! Just two screens:
 
 ![Synology login screen that shows a button that says Login with Google](syno-login-sso-google-account-1.jpeg)
-![Google screen allowing you to select a Google account](syno-login-sso-google-account-2.jpeg)
+![Google screen allowing you to select a Google account](syno-login-sso-google-account-2.png)
