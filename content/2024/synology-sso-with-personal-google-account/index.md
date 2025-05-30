@@ -94,34 +94,7 @@ Here is the updated configuration in DSM:
 
 ## Using the fork of Dex
 
-First, install `zig` and `ko`. That will allow you to cross-compile Dex to `linux/amd64` on macOS without Buildx (cross-compiling is required because Dex's sqlite library needs CGO)
-
-```bash
-brew install ko zig
-```
-
-Clone the fork:
-
-```bash
-git clone https://github.com/maelvls/dex --branch google-to-synology-sso
-```
-
-Then, build the image:
-
-```bash
-CC="zig cc -target x86_64-linux" CXX="zig c++ -target x86_64-linux" CGO_ENABLED=1 \
-  KO_DOCKER_REPO=ghcr.io/maelvls/dex \
-  KO_DEFAULTBASEIMAGE=alpine \
-  ko build ./cmd/dex --bare --tarball /tmp/out.tar --push=false  
-```
-
-Then, copy the image to your NAS:
-
-```bash
-ssh yournas /usr/local/bin/docker load </tmp/out.tar
-```
-
-Then, create a file `dex.yaml` on your NAS:
+Create a file `dex.yaml` on your NAS:
 
 ```yaml
 issuer: https://login.mysynodomain.dev/dex
@@ -164,6 +137,14 @@ enablePasswordDB: false
 
 Finally, run Dex:
 
+> With this command, you will be using Dex images that I built:
+>
+> ```text
+> ghcr.io/maelvls/dex
+> ```
+>
+> I wouldn't recommend using random Docker images from the internet, especially since this is about authentication. I might be a malicious actor trying to steal your Synology credentials! But if you still want to proceed, here is an image! Note that I am not monitoring the image for security vulnerabilities, and do not guarantee that it is secure. Use at your own risk!
+
 ```bash
 docker run --name dex -d \
   -v $HOME/dex.yaml:/dex.yaml \
@@ -174,7 +155,62 @@ docker run --name dex -d \
   -e GOOGLE_CLIENT_ID=207842732284-l7nhetlsvimmds80fa2knir8fundp3h4.apps.googleusercontent.com \
   -e GOOGLE_CLIENT_SECRET=redacted \
   -p 5556:5556 \
-  ghcr.io/maelvls/dex serve /dex.yaml
+  ghcr.io/maelvls/dex:google-to-synology-sso-v1@sha256:345c8fec6b222c308759f21864c6af3b16c373801fd5e0b7ad4b131a743d3b07 serve /dex.yaml
+```
+
+## Rebuilding the image yourself and pushing it to your Synology NAS
+
+First, install `zig` and `ko`. That will allow you to cross-compile Dex to `linux/amd64` on macOS without Buildx (cross-compiling is required because Dex's sqlite library needs CGO)
+
+```bash
+brew install ko zig
+```
+
+Clone the fork:
+
+```bash
+git clone https://github.com/maelvls/dex --branch google-to-synology-sso
+```
+
+Then, build the image:
+
+```bash
+CC="zig cc -target x86_64-linux" CXX="zig c++ -target x86_64-linux" CGO_ENABLED=1 \
+  KO_DOCKER_REPO=ghcr.io/maelvls/dex \
+  KO_DEFAULTBASEIMAGE=alpine \
+  ko build ./cmd/dex --bare --tarball /tmp/out.tar --push=false
+```
+
+Then, copy the image to your NAS:
+
+```bash
+ssh yournas /usr/local/bin/docker load </tmp/out.tar
+```
+
+## (Just so that I don't forget) Here is how I pushed `ghcr.io/maelvls/dex` to GitHub Container Registry
+
+```bash
+git tag google-to-synology-sso-v1
+git push maelvls google-to-synology-sso-v1
+```
+
+Then, I built and pushed the image with `ko`:
+
+```bash
+CC="zig cc -target x86_64-linux" CXX="zig c++ -target x86_64-linux" CGO_ENABLED=1 \
+  KO_DOCKER_REPO=ghcr.io/maelvls/dex \
+  KO_DEFAULTBASEIMAGE=alpine \
+  ko build ./cmd/dex --bare --push=true --tags google-to-synology-sso-v1 \
+    --image-annotation "org.opencontainers.image.description=Google to Synology SSO" \
+    --image-annotation "org.opencontainers.image.source=https://github.com/maelvls/dex" \
+    --image-annotation "org.opencontainers.image.revision=$(git rev-parse HEAD)" \
+    --image-annotation "org.opencontainers.image.documentation=https://maelvls.dev/synology-sso-with-personal-google-account/"
+```
+
+The image (with hash) is:
+
+```text
+ghcr.io/maelvls/dex:google-to-synology-sso-v1@sha256:345c8fec6b222c308759f21864c6af3b16c373801fd5e0b7ad4b131a743d3b07
 ```
 
 ## Conclusion
