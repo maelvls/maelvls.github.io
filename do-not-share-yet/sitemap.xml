@@ -1,607 +1,367 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/2024/</loc>
-    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/google/</loc>
-    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/synology-sso-with-personal-google-account/</loc>
-    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/</loc>
-    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/nas/</loc>
-    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/oidc/</loc>
-    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/single-sign-on/</loc>
-    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/synology/</loc>
-    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/</loc>
-    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/2023/</loc>
-    <lastmod>2023-06-13T10:16:06+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/quick-kubernetes-controller-in-bash/</loc>
-    <lastmod>2023-06-13T10:16:06+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/2021/</loc>
-    <lastmod>2021-10-30T14:53:37+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/access-private-ips-from-kubernetes-with-tailscale/</loc>
-    <lastmod>2021-10-30T14:53:37+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/debugging/</loc>
-    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/mitmproxy/</loc>
-    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/mitmproxy-tls-renegotiation-debugging-story/</loc>
-    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/tls/</loc>
-    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/wireshark/</loc>
-    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/cert-manager-webhook-debug-guide/</loc>
-    <lastmod>2021-09-14T11:17:19+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/go-flaky-test/</loc>
-    <lastmod>2021-09-02T15:07:38+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/2020/</loc>
-    <lastmod>2021-06-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/go/</loc>
-    <lastmod>2021-06-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/software-engineering/</loc>
-    <lastmod>2021-06-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/writing-useful-comments/</loc>
-    <lastmod>2021-06-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/go-good-practices/</loc>
-    <lastmod>2021-05-10T18:13:09+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/kubernetes-kind-vs-resource-type/</loc>
-    <lastmod>2021-04-09T12:04:10+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/optimistic-locking-is-hard/</loc>
-    <lastmod>2021-03-31T14:51:20+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/missing-gateway-windows/</loc>
-    <lastmod>2021-02-27T14:20:21+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/networking/</loc>
-    <lastmod>2021-02-27T14:20:21+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/windows/</loc>
-    <lastmod>2021-02-27T14:20:21+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/kubernetes-api-deprecation-timeline/</loc>
-    <lastmod>2021-02-26T15:22:05+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/custom-ingresses-and-helm-charts/</loc>
-    <lastmod>2020-12-04T17:31:07+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/yaml-isnt-that-good/</loc>
-    <lastmod>2020-11-02T15:46:44+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/dns/</loc>
-    <lastmod>2020-07-25T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/</loc>
-    <lastmod>2020-07-25T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/expose-service-using-kind-on-macos/</loc>
-    <lastmod>2020-07-21T10:07:11+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/sshuttle/</loc>
-    <lastmod>2020-07-21T10:07:11+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/kind-and-service-loadbalancer/</loc>
-    <lastmod>2020-07-21T10:06:45+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/what-are-proxies/</loc>
-    <lastmod>2020-07-13T14:18:40+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/deepequal-is-slow/</loc>
-    <lastmod>2020-07-09T09:02:48+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/why-kubernetes-compares-with-hash/</loc>
-    <lastmod>2020-07-08T11:55:27+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/digging-into-utf-8/</loc>
-    <lastmod>2020-07-08T10:16:58+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/conditions/</loc>
-    <lastmod>2020-07-07T16:33:55+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</loc>
-    <lastmod>2020-07-07T16:33:55+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/deployment-available-condition/</loc>
-    <lastmod>2020-07-07T16:33:55+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/dns/</loc>
-    <lastmod>2020-07-03T15:13:39+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/docker/</loc>
-    <lastmod>2020-07-03T15:13:39+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/kind/</loc>
-    <lastmod>2020-07-03T15:13:39+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/docker-proxy-registry-kind/</loc>
-    <lastmod>2020-07-03T15:13:39+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/mitmproxy-kubectl/</loc>
-    <lastmod>2020-07-01T19:17:24+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/autotools/</loc>
-    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/c/</loc>
-    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/c&#43;&#43;/</loc>
-    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/static-libraries-and-autoconf-hell/</loc>
-    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/ocaml/</loc>
-    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/weird-api-choices/</loc>
-    <lastmod>2020-05-29T08:35:36+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/gh-actions-with-tf-private-repo/</loc>
-    <lastmod>2020-05-09T16:02:26+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/github-actions/</loc>
-    <lastmod>2020-05-09T16:02:26+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/terraform/</loc>
-    <lastmod>2020-05-09T16:02:26+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/writing-a-good-go-sdk/</loc>
-    <lastmod>2020-05-08T15:00:27+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/chatops-github-actions/</loc>
-    <lastmod>2020-05-08T14:40:31+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/slack-dont-miss-channels/</loc>
-    <lastmod>2020-05-08T10:37:20+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/everything-about-docker/</loc>
-    <lastmod>2020-04-30T08:59:06+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/unicode/</loc>
-    <lastmod>2020-04-27T17:59:01+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/metallb-vs-k3s-servicelb/</loc>
-    <lastmod>2020-04-25T12:25:02+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/setting-up-concourse/</loc>
-    <lastmod>2020-04-22T17:37:12+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/controllers/</loc>
-    <lastmod>2020-04-22T11:58:26+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/learning-kubernetes-controllers/</loc>
-    <lastmod>2020-04-22T11:58:26+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/go-pointers-and-ownership/</loc>
-    <lastmod>2020-04-21T08:17:37+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/proper-prompt/</loc>
-    <lastmod>2020-04-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/kubernetes-level-based-state/</loc>
-    <lastmod>2020-04-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/bgp-101/</loc>
-    <lastmod>2020-04-19T17:51:55+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/</loc>
-    <lastmod>2020-04-18T22:14:07+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/deep-dive-go-assembly/</loc>
-    <lastmod>2020-04-16T15:42:35+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/client-go/</loc>
-    <lastmod>2020-04-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/go-modules/</loc>
-    <lastmod>2020-04-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/client-go-transitive-hell/</loc>
-    <lastmod>2020-04-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/gcp/</loc>
-    <lastmod>2020-04-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/how-do-packets-come-back/</loc>
-    <lastmod>2020-04-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/home-office/</loc>
-    <lastmod>2020-03-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/setup/</loc>
-    <lastmod>2020-03-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/evolution-of-my-home-office/</loc>
-    <lastmod>2020-03-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/from-gke-to-civo-k3s/</loc>
-    <lastmod>2020-03-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/packets-eye-kubernetes-service/</loc>
-    <lastmod>2020-03-14T15:10:10+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/traefik/</loc>
-    <lastmod>2020-03-14T15:10:10+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/debugging-kubernetes-networking/</loc>
-    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/avoid-gke-lb-with-hostport/</loc>
-    <lastmod>2020-01-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/tls/</loc>
-    <lastmod>2020-01-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/proxyman/</loc>
-    <lastmod>2020-01-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/go-ignores-proxy-localhost/</loc>
-    <lastmod>2020-01-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/2019/</loc>
-    <lastmod>2019-11-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/go-happy-line-of-sight/</loc>
-    <lastmod>2019-11-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/go111module-everywhere/</loc>
-    <lastmod>2019-11-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/tags/controller/</loc>
-    <lastmod>2019-11-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/kubernetes-conditions/</loc>
-    <lastmod>2019-11-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/wireshark/</loc>
-    <lastmod>2019-11-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/ssh/</loc>
-    <lastmod>2019-05-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/bootcamp_vm/</loc>
-    <lastmod>2019-04-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/oauth/</loc>
-    <lastmod>2019-02-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/kubectl/</loc>
-    <lastmod>2019-01-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/tmux/</loc>
-    <lastmod>2018-11-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/cpu_gpu/</loc>
-    <lastmod>2018-11-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/dd/</loc>
-    <lastmod>2018-10-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/docker/</loc>
-    <lastmod>2018-09-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/gitlab/</loc>
-    <lastmod>2018-07-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/msmtp_mutt/</loc>
-    <lastmod>2018-06-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/tcp_ports/</loc>
-    <lastmod>2018-02-19T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/git/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/pgp/</loc>
-    <lastmod>2017-11-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/pdf/</loc>
-    <lastmod>2017-09-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/ssh-agent/</loc>
-    <lastmod>2017-06-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/latex_packages/</loc>
-    <lastmod>2017-05-25T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/matlab/</loc>
-    <lastmod>2017-03-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/ruby/</loc>
-    <lastmod>2017-02-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/lighter_pdfs/</loc>
-    <lastmod>2017-01-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/linuxbrew/</loc>
-    <lastmod>2016-12-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/mac_commands/</loc>
-    <lastmod>2016-10-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://maelvls.dev/do-not-share-yet/notes/shell/</loc>
-    <lastmod>2016-07-09T00:00:00+00:00</lastmod>
-  </url>
-  
   <url>
     <loc>https://maelvls.dev/do-not-share-yet/about/</loc>
-  </url>
-  
-  <url>
+    <lastmod>2025-05-27T11:17:16+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/</loc>
+    <lastmod>2025-05-27T11:17:16+00:00</lastmod>
+  </url><url>
     <loc>https://maelvls.dev/do-not-share-yet/print-your-cert/</loc>
-  </url>
-  
-  <url>
+    <lastmod>2025-05-27T11:17:16+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/2024/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/google/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/synology-sso-with-personal-google-account/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/nas/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/oidc/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/single-sign-on/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/synology/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/</loc>
+    <lastmod>2024-04-17T19:50:33+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/2023/</loc>
+    <lastmod>2023-06-13T10:16:06+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/quick-kubernetes-controller-in-bash/</loc>
+    <lastmod>2023-06-13T10:16:06+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/2021/</loc>
+    <lastmod>2021-10-30T14:53:37+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/access-private-ips-from-kubernetes-with-tailscale/</loc>
+    <lastmod>2021-10-30T14:53:37+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/debugging/</loc>
+    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/mitmproxy/</loc>
+    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/mitmproxy-tls-renegotiation-debugging-story/</loc>
+    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/tls/</loc>
+    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/wireshark/</loc>
+    <lastmod>2021-09-25T10:31:19+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/cert-manager-webhook-debug-guide/</loc>
+    <lastmod>2021-09-14T11:17:19+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/go-flaky-test/</loc>
+    <lastmod>2021-09-02T15:07:38+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/2020/</loc>
+    <lastmod>2021-06-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/go/</loc>
+    <lastmod>2021-06-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/software-engineering/</loc>
+    <lastmod>2021-06-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/writing-useful-comments/</loc>
+    <lastmod>2021-06-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/go-good-practices/</loc>
+    <lastmod>2021-05-10T18:13:09+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/kubernetes-kind-vs-resource-type/</loc>
+    <lastmod>2021-04-09T12:04:10+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/optimistic-locking-is-hard/</loc>
+    <lastmod>2021-03-31T14:51:20+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/missing-gateway-windows/</loc>
+    <lastmod>2021-02-27T14:20:21+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/networking/</loc>
+    <lastmod>2021-02-27T14:20:21+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/windows/</loc>
+    <lastmod>2021-02-27T14:20:21+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/kubernetes-api-deprecation-timeline/</loc>
+    <lastmod>2021-02-26T15:22:05+01:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/custom-ingresses-and-helm-charts/</loc>
+    <lastmod>2020-12-04T17:31:07+01:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/yaml-isnt-that-good/</loc>
+    <lastmod>2020-11-02T15:46:44+01:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/dns/</loc>
+    <lastmod>2020-07-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/</loc>
+    <lastmod>2020-07-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/expose-service-using-kind-on-macos/</loc>
+    <lastmod>2020-07-21T10:07:11+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/sshuttle/</loc>
+    <lastmod>2020-07-21T10:07:11+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/kind-and-service-loadbalancer/</loc>
+    <lastmod>2020-07-21T10:06:45+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/what-are-proxies/</loc>
+    <lastmod>2020-07-13T14:18:40+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/deepequal-is-slow/</loc>
+    <lastmod>2020-07-09T09:02:48+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/why-kubernetes-compares-with-hash/</loc>
+    <lastmod>2020-07-08T11:55:27+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/digging-into-utf-8/</loc>
+    <lastmod>2020-07-08T10:16:58+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/conditions/</loc>
+    <lastmod>2020-07-07T16:33:55+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</loc>
+    <lastmod>2020-07-07T16:33:55+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/deployment-available-condition/</loc>
+    <lastmod>2020-07-07T16:33:55+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/dns/</loc>
+    <lastmod>2020-07-03T15:13:39+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/docker/</loc>
+    <lastmod>2020-07-03T15:13:39+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/kind/</loc>
+    <lastmod>2020-07-03T15:13:39+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/docker-proxy-registry-kind/</loc>
+    <lastmod>2020-07-03T15:13:39+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/mitmproxy-kubectl/</loc>
+    <lastmod>2020-07-01T19:17:24+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/autotools/</loc>
+    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/c/</loc>
+    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/c&#43;&#43;/</loc>
+    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/static-libraries-and-autoconf-hell/</loc>
+    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/ocaml/</loc>
+    <lastmod>2020-05-30T20:45:06+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/weird-api-choices/</loc>
+    <lastmod>2020-05-29T08:35:36+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/gh-actions-with-tf-private-repo/</loc>
+    <lastmod>2020-05-09T16:02:26+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/github-actions/</loc>
+    <lastmod>2020-05-09T16:02:26+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/terraform/</loc>
+    <lastmod>2020-05-09T16:02:26+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/writing-a-good-go-sdk/</loc>
+    <lastmod>2020-05-08T15:00:27+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/chatops-github-actions/</loc>
+    <lastmod>2020-05-08T14:40:31+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/slack-dont-miss-channels/</loc>
+    <lastmod>2020-05-08T10:37:20+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/everything-about-docker/</loc>
+    <lastmod>2020-04-30T08:59:06+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/unicode/</loc>
+    <lastmod>2020-04-27T17:59:01+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/metallb-vs-k3s-servicelb/</loc>
+    <lastmod>2020-04-25T12:25:02+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/setting-up-concourse/</loc>
+    <lastmod>2020-04-22T17:37:12+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/controllers/</loc>
+    <lastmod>2020-04-22T11:58:26+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/learning-kubernetes-controllers/</loc>
+    <lastmod>2020-04-22T11:58:26+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/go-pointers-and-ownership/</loc>
+    <lastmod>2020-04-21T08:17:37+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/proper-prompt/</loc>
+    <lastmod>2020-04-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/kubernetes-level-based-state/</loc>
+    <lastmod>2020-04-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/bgp-101/</loc>
+    <lastmod>2020-04-19T17:51:55+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/</loc>
+    <lastmod>2020-04-18T22:14:07+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/deep-dive-go-assembly/</loc>
+    <lastmod>2020-04-16T15:42:35+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/client-go/</loc>
+    <lastmod>2020-04-15T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/go-modules/</loc>
+    <lastmod>2020-04-15T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/client-go-transitive-hell/</loc>
+    <lastmod>2020-04-15T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/gcp/</loc>
+    <lastmod>2020-04-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/how-do-packets-come-back/</loc>
+    <lastmod>2020-04-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/home-office/</loc>
+    <lastmod>2020-03-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/setup/</loc>
+    <lastmod>2020-03-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/evolution-of-my-home-office/</loc>
+    <lastmod>2020-03-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/from-gke-to-civo-k3s/</loc>
+    <lastmod>2020-03-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/packets-eye-kubernetes-service/</loc>
+    <lastmod>2020-03-14T15:10:10+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/traefik/</loc>
+    <lastmod>2020-03-14T15:10:10+02:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/debugging-kubernetes-networking/</loc>
+    <lastmod>2020-01-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/avoid-gke-lb-with-hostport/</loc>
+    <lastmod>2020-01-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/tls/</loc>
+    <lastmod>2020-01-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/proxyman/</loc>
+    <lastmod>2020-01-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/go-ignores-proxy-localhost/</loc>
+    <lastmod>2020-01-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/2019/</loc>
+    <lastmod>2019-11-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/go-happy-line-of-sight/</loc>
+    <lastmod>2019-11-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/go111module-everywhere/</loc>
+    <lastmod>2019-11-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/tags/controller/</loc>
+    <lastmod>2019-11-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/kubernetes-conditions/</loc>
+    <lastmod>2019-11-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/wireshark/</loc>
+    <lastmod>2019-11-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/ssh/</loc>
+    <lastmod>2019-05-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/bootcamp_vm/</loc>
+    <lastmod>2019-04-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/oauth/</loc>
+    <lastmod>2019-02-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/kubectl/</loc>
+    <lastmod>2019-01-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/tmux/</loc>
+    <lastmod>2018-11-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/cpu_gpu/</loc>
+    <lastmod>2018-11-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/dd/</loc>
+    <lastmod>2018-10-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/docker/</loc>
+    <lastmod>2018-09-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/gitlab/</loc>
+    <lastmod>2018-07-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/msmtp_mutt/</loc>
+    <lastmod>2018-06-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/tcp_ports/</loc>
+    <lastmod>2018-02-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/git/</loc>
+    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/pgp/</loc>
+    <lastmod>2017-11-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/pdf/</loc>
+    <lastmod>2017-09-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/ssh-agent/</loc>
+    <lastmod>2017-06-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/latex_packages/</loc>
+    <lastmod>2017-05-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/matlab/</loc>
+    <lastmod>2017-03-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/ruby/</loc>
+    <lastmod>2017-02-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/lighter_pdfs/</loc>
+    <lastmod>2017-01-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/linuxbrew/</loc>
+    <lastmod>2016-12-15T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/mac_commands/</loc>
+    <lastmod>2016-10-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://maelvls.dev/do-not-share-yet/notes/shell/</loc>
+    <lastmod>2016-07-09T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://maelvls.dev/do-not-share-yet/series/</loc>
   </url>
-  
 </urlset>

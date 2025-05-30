@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="keywords" content="go,go-modules"><meta name="description" content="GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with Go 1.13 and Go 1.15 and changed a last time in Go 1.16, and is stable since then."><meta property="og:title" content="Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.20)" />
-<meta property="og:description" content="GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with Go 1.13 and Go 1.15 and changed a last time in Go 1.16, and is stable since then." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/go111module-everywhere/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/go111module-everywhere/cover-go-modules-sad.jpg" />
-<meta property="article:published_time" content="2019-11-13T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-11-13T00:00:00+00:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/go111module-everywhere/cover-go-modules-sad.jpg"/>
+<meta name="author" content="Maël Valais"><meta name="keywords" content="go,go-modules"><meta name="description" content="GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with Go 1.13 and Go 1.15 and changed a last time in Go 1.16, and is stable since then."><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/go111module-everywhere/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.20)">
+  <meta property="og:description" content="GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with Go 1.13 and Go 1.15 and changed a last time in Go 1.16, and is stable since then.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2019">
+    <meta property="article:published_time" content="2019-11-13T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-11-13T00:00:00+00:00">
+    <meta property="article:tag" content="Go">
+    <meta property="article:tag" content="Go-Modules">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/go111module-everywhere/cover-go-modules-sad.jpg">
 
-<meta name="twitter:title" content="Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.20)"/>
-<meta name="twitter:description" content="GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with Go 1.13 and Go 1.15 and changed a last time in Go 1.16, and is stable since then."/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/go111module-everywhere/cover-go-modules-sad.jpg">
+  <meta name="twitter:title" content="Why is GO111MODULE everywhere, and everything about Go Modules (updated with Go 1.20)">
+  <meta name="twitter:description" content="GO111MODULE is all over the place. It appears in README install instructions, in Dockerfiles, in makefiles. On top of that, the behavior of GO111MODULE has changed from Go 1.11 to 1.12, changed again with Go 1.13 and Go 1.15 and changed a last time in Go 1.16, and is stable since then.">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -36,7 +41,7 @@
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -74,10 +79,10 @@
     </div>
     <div class="markdown">
         <p>You might have noticed that <code>GO111MODULE=on</code> is flourishing everywhere. Many readmes have that:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest
-</code></pre></div><p>Note that <code>go get</code> has been deprecated for installing binaries since Go 1.17 and will be become impossible in Go 1.18. If you are using Go 1.16 or above, you should use instead:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">go install golang.org/x/tools/gopls@latest
-</code></pre></div><p>In this short post, I will explain why <code>GO111MODULE</code> was introduced in Go 1.11, its caveats and interesting bits that you need to know when dealing with Go Modules.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest
+</span></span></code></pre></div><p>Note that <code>go get</code> has been deprecated for installing binaries since Go 1.17 and will be become impossible in Go 1.18. If you are using Go 1.16 or above, you should use instead:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">go install golang.org/x/tools/gopls@latest
+</span></span></code></pre></div><p>In this short post, I will explain why <code>GO111MODULE</code> was introduced in Go 1.11, its caveats and interesting bits that you need to know when dealing with Go Modules.</p>
 <hr>
 <p><strong>Table of content:</strong></p>
 <ul>
@@ -131,11 +136,11 @@
 <li>The &ldquo;hidden&rdquo; global configuration only known by <code>go env</code> using <code>go env -w GO111MODULE=on</code> (only available since Go 1.12).</li>
 </ul>
 <p>If Go seems to behave the way you think it should, it is recommended to check whether, in the past, you have set the global configuration using <code>go env -w GO111MODULE=on</code> (or <code>off</code>):</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">go env GO111MODULE
-</code></pre></div><p>Note that the environment variable takes precedence over the value that was stored using <code>go env -w GO111MODULE</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">go env GO111MODULE
+</span></span></code></pre></div><p>Note that the environment variable takes precedence over the value that was stored using <code>go env -w GO111MODULE</code>.</p>
 <p>To unset the global configuration, you can do:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">go env -u GO111MODULE
-</code></pre></div><h3 id="go111module-with-go-111-and-112"><code>GO111MODULE</code> with Go 1.11 and 1.12</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">go env -u GO111MODULE
+</span></span></code></pre></div><h3 id="go111module-with-go-111-and-112"><code>GO111MODULE</code> with Go 1.11 and 1.12</h3>
 <ul>
 <li>
 <p><code>GO111MODULE=on</code> will force using Go modules even if the project is in your GOPATH. Requires <code>go.mod</code> to work.</p>
@@ -152,8 +157,8 @@
 </li>
 </ul>
 <p>Whenever you are in your GOPATH and you want to do an operation that requires Go modules (e.g., <code>go get</code> a specific version of a binary), you need to do:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get github.com/golang/mock/tree/master/mockgen@v1.3.1
-</code></pre></div><h3 id="go111module-with-go-113"><code>GO111MODULE</code> with Go 1.13</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get github.com/golang/mock/tree/master/mockgen@v1.3.1
+</span></span></code></pre></div><h3 id="go111module-with-go-113"><code>GO111MODULE</code> with Go 1.13</h3>
 <p>Using Go 1.13, <code>GO111MODULE</code>&rsquo;s default (<code>auto</code>) changes:</p>
 <ul>
 <li>behaves like <code>GO111MODULE=on</code> anywhere there is a <code>go.mod</code> OR anywhere outside the GOPATH even if there is no <code>go.mod</code>. So you can keep all your repositories in your GOPATH with Go 1.13.</li>
@@ -170,124 +175,123 @@
 <p>Nothing with regards to <code>GO111MODULE</code> has changed with Go 1.15.</p>
 <h3 id="go111module-with-go-116"><code>GO111MODULE</code> with Go 1.16</h3>
 <p>As of Go 1.16, the default behavior is <code>GO111MODULE=on</code>, meaning that if you want to keep using the old <code>GOPATH</code> way, you will have to force Go not to use the Go Modules feature:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nb">export</span> <span class="nv">GO111MODULE</span><span class="o">=</span>off
-</code></pre></div><p>The best news in Go 1.16 is that we finally get a dedicated command for installing Go tools instead of relying on the does-it-all <code>go get</code> that keeps <a href="#the-pitfall-of-gomod-being-silently-updated-go-115-and-below">updating</a> your <code>go.mod</code>. Instead of:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># Old way</span>
-<span class="o">(</span><span class="nb">cd</span> <span class="o">&amp;&amp;</span> go get golang.org/x/tools/gopls@latest<span class="o">)</span>
-</code></pre></div><p>you can now run:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go install golang.org/x/tools/gopls@latest
-</code></pre></div><p>One caveat is that the semantics of <code>go install</code> is slightly different from <code>go get</code>. As detailed on the <a href="https://blog.golang.org/go116-module-changes">Go
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">GO111MODULE</span><span class="o">=</span>off
+</span></span></code></pre></div><p>The best news in Go 1.16 is that we finally get a dedicated command for installing Go tools instead of relying on the does-it-all <code>go get</code> that keeps <a href="#the-pitfall-of-gomod-being-silently-updated-go-115-and-below">updating</a> your <code>go.mod</code>. Instead of:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># Old way</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span><span class="nb">cd</span> <span class="o">&amp;&amp;</span> go get golang.org/x/tools/gopls@latest<span class="o">)</span>
+</span></span></code></pre></div><p>you can now run:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">go install golang.org/x/tools/gopls@latest
+</span></span></code></pre></div><p>One caveat is that the semantics of <code>go install</code> is slightly different from <code>go get</code>. As detailed on the <a href="https://blog.golang.org/go116-module-changes">Go
 blog</a>:</p>
 <blockquote>
-<p>In order to eliminate ambiguity about which versions are used, there are several restrictions on what directives may be present in the program&rsquo;s <code>go.mod</code> file when using this install syntax. In particular, <strong>replace and exclude directives are not allowed</strong>, at least for now. In the long term, once the new <code>go install program@version</code> is working well for enough use cases, we plan to make <code>go get</code> stop installing command binaries. See <a href="https://github.com/golang/go/issues/43684">issue 43684</a> for details.</p>
-</blockquote>
+<p>In order to eliminate ambiguity about which versions are used, there are several restrictions on what directives may be present in the program&rsquo;s <code>go.mod</code> file when using this install syntax. In particular, <strong>replace and exclude directives are not allowed</strong>, at least for now. In the long term, once the new <code>go install program@version</code> is working well for enough use cases, we plan to make <code>go get</code> stop installing command binaries. See <a href="https://github.com/golang/go/issues/43684">issue 43684</a> for details.</p></blockquote>
 <p>As an example, you cannot (as of April 2021) install the master version of <a href="https://github.com/golang/tools/tree/master/gopls">gopls</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% go install golang.org/x/tools/gopls@master
-go: downloading golang.org/x/tools v0.1.1-0.20210316190639-9e9211a98eaa
-go: downloading golang.org/x/tools/gopls v0.0.0-20210316190639-9e9211a98eaa
-go install golang.org/x/tools/gopls@master: golang.org/x/tools/gopls@v0.0.0-20210316190639-9e9211a98eaa
-        The go.mod file <span class="k">for</span> the module providing named packages contains one or
-        more replace directives. It must not contain directives that would cause
-        it to be interpreted differently than <span class="k">if</span> it were the main module.
-</code></pre></div><p>The replace directive in the <a href="https://github.com/golang/tools/blob/master/gopls/go.mod">go.mod</a> file looks like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">replace</span> <span class="nx">golang</span><span class="p">.</span><span class="nx">org</span><span class="o">/</span><span class="nx">x</span><span class="o">/</span><span class="nx">tools</span> <span class="p">=&gt;</span> <span class="p">..</span><span class="o">/</span>
-</code></pre></div><p>Fortunately, the gopls project makes sure to remove the <code>replace</code> directive before each release, which means you can use the <code>latest</code> tag:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go install golang.org/x/tools/gopls@latest
-<span class="c1">#                                   ^^^^^^</span>
-</code></pre></div><h3 id="go111module-with-go-117"><code>GO111MODULE</code> with Go 1.17</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">% go install golang.org/x/tools/gopls@master
+</span></span><span class="line"><span class="cl">go: downloading golang.org/x/tools v0.1.1-0.20210316190639-9e9211a98eaa
+</span></span><span class="line"><span class="cl">go: downloading golang.org/x/tools/gopls v0.0.0-20210316190639-9e9211a98eaa
+</span></span><span class="line"><span class="cl">go install golang.org/x/tools/gopls@master: golang.org/x/tools/gopls@v0.0.0-20210316190639-9e9211a98eaa
+</span></span><span class="line"><span class="cl">        The go.mod file <span class="k">for</span> the module providing named packages contains one or
+</span></span><span class="line"><span class="cl">        more replace directives. It must not contain directives that would cause
+</span></span><span class="line"><span class="cl">        it to be interpreted differently than <span class="k">if</span> it were the main module.
+</span></span></code></pre></div><p>The replace directive in the <a href="https://github.com/golang/tools/blob/master/gopls/go.mod">go.mod</a> file looks like this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">replace</span> <span class="nx">golang</span><span class="p">.</span><span class="nx">org</span><span class="o">/</span><span class="nx">x</span><span class="o">/</span><span class="nx">tools</span> <span class="p">=&gt;</span> <span class="p">..</span><span class="o">/</span>
+</span></span></code></pre></div><p>Fortunately, the gopls project makes sure to remove the <code>replace</code> directive before each release, which means you can use the <code>latest</code> tag:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">go install golang.org/x/tools/gopls@latest
+</span></span><span class="line"><span class="cl"><span class="c1">#                                   ^^^^^^</span>
+</span></span></code></pre></div><h3 id="go111module-with-go-117"><code>GO111MODULE</code> with Go 1.17</h3>
 <p>Go 1.17 was released on August 16, 2021. As for 1.16, <code>GO111MODULE=on</code> is the default behavior, and <code>GO111MODULE=auto</code> is equivalent to <code>GO111MODULE=on</code>. If you still want to use the <code>GOPATH</code> way, you will have to force Go not to use the Go Modules feature using <code>GO111MODULE=off</code> (see <a href="#set-go111module-on-a-per-folder-basis-with-direnv">the section about <code>direnv</code></a>).</p>
 <p>The three important changes that may affect how you use <code>GO111MODULE</code> are the following:</p>
 <h4 id="faster-downloading-of-dependencies-if-you-are-using-git-to-fetch-modules">Faster downloading of dependencies if you are using Git to fetch modules</h4>
 <p>If you decide to update the <code>go</code> line in your <code>go.mod</code> to take advantage of the new <a href="https://golang.org/ref/mod#graph-pruning">module graph pruning</a>, your <code>go.mod</code> will want to get updated. The first time you will want to use <code>go build</code>, you will see the following error:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">go build ./...
-go: updates to go.mod needed; to update it:
-        go mod tidy
-</code></pre></div><p>After running <code>go mod tidy</code>, you will see that your <code>go.mod</code> changed quite a lot with a new <code>require</code> block:</p>
-<div class="highlight"><pre class="chroma"><code class="language-diff" data-lang="diff"><span class="gh">diff --git a/go.mod b/go.mod
-</span><span class="gh">index 3af719e..26ed354 100644
-</span><span class="gh"></span><span class="gd">--- a/go.mod
-</span><span class="gd"></span><span class="gi">+++ b/go.mod
-</span><span class="gi"></span><span class="gu">@@ -1,12 +1,12 @@
-</span><span class="gu"></span>   module github.com/maelvls/users-grpc
-
-<span class="gd">-go 1.12
-</span><span class="gd"></span><span class="gi">+go 1.17
-</span><span class="gi"></span>
-   require (
-   github.com/MakeNowJust/heredoc/v2 v2.0.1
-   github.com/fsnotify/fsnotify v1.4.9 // indirect
-   github.com/golang/mock v1.4.4
-<span class="gd">-	github.com/golang/protobuf v1.4.3
-</span><span class="gd"></span><span class="gi">+	github.com/golang/protobuf v1.5.2
-</span><span class="gi"></span>   github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
-   github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
-   github.com/hashicorp/go-memdb v1.3.0
-<span class="gu">@@ -37,8 +37,25 @@ require (
-</span><span class="gu"></span>   golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-   google.golang.org/genproto v0.0.0-20201116205149-79184cff4dfe // indirect
-   google.golang.org/grpc v1.33.2
-<span class="gd">-	google.golang.org/protobuf v1.25.0
-</span><span class="gd"></span><span class="gi">+	google.golang.org/protobuf v1.27.1
-</span><span class="gi"></span>   gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
-   gopkg.in/ini.v1 v1.62.0 // indirect
-   gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
-   )
-<span class="gi">+
-</span><span class="gi">+require (
-</span><span class="gi">+	github.com/beorn7/perks v1.0.0 // indirect
-</span><span class="gi">+	github.com/davecgh/go-spew v1.1.1 // indirect
-</span><span class="gi">+	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
-</span><span class="gi">+	github.com/hashicorp/golang-lru v0.5.4 // indirect
-</span><span class="gi">+	github.com/hashicorp/hcl v1.0.0 // indirect
-</span><span class="gi">+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-</span><span class="gi">+	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-</span><span class="gi">+	github.com/pmezard/go-difflib v1.0.0 // indirect
-</span><span class="gi">+	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
-</span><span class="gi">+	github.com/prometheus/common v0.4.0 // indirect
-</span><span class="gi">+	github.com/prometheus/procfs v0.0.0-20190507164030-5867b95ac084 // indirect
-</span><span class="gi">+	github.com/spf13/pflag v1.0.5 // indirect
-</span><span class="gi">+	github.com/subosito/gotenv v1.2.0 // indirect
-</span><span class="gi">+	gopkg.in/yaml.v2 v2.3.0 // indirect
-</span><span class="gi">+)
-</span></code></pre></div><p>The new <code>require</code> block adds even more <code>// indirect</code> lines. Thanks to these new lines, Go commands such as <code>go get</code> have less downloading to do (the mechanism is called <a href="https://go.googlesource.com/proposal/+/master/design/36460-lazy-module-loading.md">lazy modules loading</a>). Previously, <code>go get</code> had to download every single project in order to access their <code>go.mod</code> files, even if some of these projects were not actually used by your code. That was a big problem for git-based projects, and less of a problem for people using <code>GOPROXY</code> (i.e., everyone else) since the <code>go.mod</code> can be fetched without fetching the whole repository when using the <code>GOPROXY</code> mechanism.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go build ./...
+</span></span><span class="line"><span class="cl">go: updates to go.mod needed; to update it:
+</span></span><span class="line"><span class="cl">        go mod tidy
+</span></span></code></pre></div><p>After running <code>go mod tidy</code>, you will see that your <code>go.mod</code> changed quite a lot with a new <code>require</code> block:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-diff" data-lang="diff"><span class="line"><span class="cl"><span class="gh">diff --git a/go.mod b/go.mod
+</span></span></span><span class="line"><span class="cl"><span class="gh">index 3af719e..26ed354 100644
+</span></span></span><span class="line"><span class="cl"><span class="gh"></span><span class="gd">--- a/go.mod
+</span></span></span><span class="line"><span class="cl"><span class="gd"></span><span class="gi">+++ b/go.mod
+</span></span></span><span class="line"><span class="cl"><span class="gi"></span><span class="gu">@@ -1,12 +1,12 @@
+</span></span></span><span class="line"><span class="cl"><span class="gu"></span>   module github.com/maelvls/users-grpc
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="gd">-go 1.12
+</span></span></span><span class="line"><span class="cl"><span class="gd"></span><span class="gi">+go 1.17
+</span></span></span><span class="line"><span class="cl"><span class="gi"></span>
+</span></span><span class="line"><span class="cl">   require (
+</span></span><span class="line"><span class="cl">   github.com/MakeNowJust/heredoc/v2 v2.0.1
+</span></span><span class="line"><span class="cl">   github.com/fsnotify/fsnotify v1.4.9 // indirect
+</span></span><span class="line"><span class="cl">   github.com/golang/mock v1.4.4
+</span></span><span class="line"><span class="cl"><span class="gd">-	github.com/golang/protobuf v1.4.3
+</span></span></span><span class="line"><span class="cl"><span class="gd"></span><span class="gi">+	github.com/golang/protobuf v1.5.2
+</span></span></span><span class="line"><span class="cl"><span class="gi"></span>   github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
+</span></span><span class="line"><span class="cl">   github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
+</span></span><span class="line"><span class="cl">   github.com/hashicorp/go-memdb v1.3.0
+</span></span><span class="line"><span class="cl"><span class="gu">@@ -37,8 +37,25 @@ require (
+</span></span></span><span class="line"><span class="cl"><span class="gu"></span>   golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+</span></span><span class="line"><span class="cl">   google.golang.org/genproto v0.0.0-20201116205149-79184cff4dfe // indirect
+</span></span><span class="line"><span class="cl">   google.golang.org/grpc v1.33.2
+</span></span><span class="line"><span class="cl"><span class="gd">-	google.golang.org/protobuf v1.25.0
+</span></span></span><span class="line"><span class="cl"><span class="gd"></span><span class="gi">+	google.golang.org/protobuf v1.27.1
+</span></span></span><span class="line"><span class="cl"><span class="gi"></span>   gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
+</span></span><span class="line"><span class="cl">   gopkg.in/ini.v1 v1.62.0 // indirect
+</span></span><span class="line"><span class="cl">   gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
+</span></span><span class="line"><span class="cl">   )
+</span></span><span class="line"><span class="cl"><span class="gi">+
+</span></span></span><span class="line"><span class="cl"><span class="gi">+require (
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/beorn7/perks v1.0.0 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/davecgh/go-spew v1.1.1 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/hashicorp/golang-lru v0.5.4 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/hashicorp/hcl v1.0.0 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/pmezard/go-difflib v1.0.0 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/prometheus/common v0.4.0 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/prometheus/procfs v0.0.0-20190507164030-5867b95ac084 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/spf13/pflag v1.0.5 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	github.com/subosito/gotenv v1.2.0 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+	gopkg.in/yaml.v2 v2.3.0 // indirect
+</span></span></span><span class="line"><span class="cl"><span class="gi">+)
+</span></span></span></code></pre></div><p>The new <code>require</code> block adds even more <code>// indirect</code> lines. Thanks to these new lines, Go commands such as <code>go get</code> have less downloading to do (the mechanism is called <a href="https://go.googlesource.com/proposal/+/master/design/36460-lazy-module-loading.md">lazy modules loading</a>). Previously, <code>go get</code> had to download every single project in order to access their <code>go.mod</code> files, even if some of these projects were not actually used by your code. That was a big problem for git-based projects, and less of a problem for people using <code>GOPROXY</code> (i.e., everyone else) since the <code>go.mod</code> can be fetched without fetching the whole repository when using the <code>GOPROXY</code> mechanism.</p>
 <p>For example, using the <code>GOPROXY</code> mechanism, the number of HTTP GET calls is reduced from 252 to 169 (49% less HTTP requests) with the cert-manager project for the tag v1.4.0. The number of HTTP calls was calculated using mitmproxy using <code>GOCACHE=off</code>. Although the number of HTTP calls has been reduced, I did not notice any significant time reduction.</p>
 <p>The biggest difference will happen for people who are relying on Git for downloading repositories. Each time Go needs to read a <code>go.mod</code>, it needs to download the whole Git repository. We can force Go to clone the Git repositories by using <code>GOPRIVATE=*</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># With Go 1.16:</span>
-$ <span class="nb">time</span> <span class="nv">GOPATH</span><span class="o">=</span><span class="k">$(</span>mktemp -d<span class="k">)</span> <span class="nv">GOPRIVATE</span><span class="o">=</span><span class="s1">&#39;*&#39;</span> go get ./...
-161.65s user 34.07s system 38% cpu 8:23.58 total
-
-
-<span class="c1"># With Go 1.17:</span>
-$ <span class="nb">time</span> <span class="nv">GOPATH</span><span class="o">=</span><span class="k">$(</span>mktemp -d<span class="k">)</span> <span class="nv">GOPRIVATE</span><span class="o">=</span><span class="s1">&#39;*&#39;</span> go get ./...
-158.09s user 33.39s system 39% cpu 7:59.63 total
-</code></pre></div><p>That&rsquo;s 5% faster (24 seconds less with a 30 Mbit/s DSL connection). I would have expected a better result, but that number will depend on the <code>go.mod</code> you have!</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># With Go 1.16:</span>
+</span></span><span class="line"><span class="cl">$ <span class="nb">time</span> <span class="nv">GOPATH</span><span class="o">=</span><span class="k">$(</span>mktemp -d<span class="k">)</span> <span class="nv">GOPRIVATE</span><span class="o">=</span><span class="s1">&#39;*&#39;</span> go get ./...
+</span></span><span class="line"><span class="cl">161.65s user 34.07s system 38% cpu 8:23.58 total
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># With Go 1.17:</span>
+</span></span><span class="line"><span class="cl">$ <span class="nb">time</span> <span class="nv">GOPATH</span><span class="o">=</span><span class="k">$(</span>mktemp -d<span class="k">)</span> <span class="nv">GOPRIVATE</span><span class="o">=</span><span class="s1">&#39;*&#39;</span> go get ./...
+</span></span><span class="line"><span class="cl">158.09s user 33.39s system 39% cpu 7:59.63 total
+</span></span></code></pre></div><p>That&rsquo;s 5% faster (24 seconds less with a 30 Mbit/s DSL connection). I would have expected a better result, but that number will depend on the <code>go.mod</code> you have!</p>
 <h4 id="installing-binaries-with-go111moduleon-go-get-is-deprecated">Installing binaries with <code>GO111MODULE=on go get</code> is deprecated</h4>
 <p>In Go 1.17, the use of <code>go get</code> to install binaries is now showing the following warning:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">$ <span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest
-go get: installing executables with <span class="s1">&#39;go get&#39;</span> in module mode is deprecated.
-     Use <span class="s1">&#39;go install pkg@version&#39;</span> instead.
-     For more information, see https://golang.org/doc/go-get-install-deprecation
-     or run <span class="s1">&#39;go help get&#39;</span> or <span class="s1">&#39;go help install&#39;</span>.
-</code></pre></div><p>To work around this warning, you can use <code>go install</code> that was taught how to deal with <code>@version</code> in Go 1.16:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go install golang.org/x/tools/gopls@latest
-</code></pre></div><p>Notice that <code>@version</code> implies the Go module mode, meaning that you don&rsquo;t have to add <code>GO111MODULE=on</code> at the beginning of the command when you are not in a Go project that has a <code>go.mod</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">$ <span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest
+</span></span><span class="line"><span class="cl">go get: installing executables with <span class="s1">&#39;go get&#39;</span> in module mode is deprecated.
+</span></span><span class="line"><span class="cl">     Use <span class="s1">&#39;go install pkg@version&#39;</span> instead.
+</span></span><span class="line"><span class="cl">     For more information, see https://golang.org/doc/go-get-install-deprecation
+</span></span><span class="line"><span class="cl">     or run <span class="s1">&#39;go help get&#39;</span> or <span class="s1">&#39;go help install&#39;</span>.
+</span></span></code></pre></div><p>To work around this warning, you can use <code>go install</code> that was taught how to deal with <code>@version</code> in Go 1.16:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">go install golang.org/x/tools/gopls@latest
+</span></span></code></pre></div><p>Notice that <code>@version</code> implies the Go module mode, meaning that you don&rsquo;t have to add <code>GO111MODULE=on</code> at the beginning of the command when you are not in a Go project that has a <code>go.mod</code>.</p>
 <h4 id="go-run-knows-about-version-finally"><code>go run</code> knows about <code>@version</code> (finally!)</h4>
 <p>The <code>go run</code> command was taught how to deal with <code>@version</code>! Like <code>go install</code>, it implies <code>GO111MODULE=on</code>. Up to now, if you wanted to run a binary once, you had two ways:</p>
 <ul>
 <li>If you were running the binary from a <code>go.mod</code> enabled project, you could specify the version of the binary you want to run in your <code>go.mod</code> and then run <code>go run -mod=mod</code>.</li>
 </ul>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># Before Go 1.17:
-go get github.com/golang/mock/mockgen@v1.3.1
-go run -mod=mod github.com/golang/mock/mockgen
-
-# With Go 1.17:
-go run github.com/golang/mock/mockgen@v1.3.1
-</code></pre></div><p>This is great if you use <code>//go:generate</code> to generate mocks. For example, in the project [users-grpc](<a href="https://github.com/maelvls/users-grpc/blob/">https://github.com/maelvls/users-grpc/blob/</a> master/schema/placeholder.go), I was able to replace my <code>//go:generate</code> directive:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Old way, before 1.17:
-</span><span class="c1">//go:generate go run -mod=mod github.com/golang/mock/mockgen -build_flags=-mod=mod -package mocks -destination ./mock_service.go -source=../  user.go
-</span><span class="c1">// New way, Go 1.17:
-</span><span class="c1">//go:generate go run github.com/golang/mock/mockgen@v1.4.4 -package mocks -destination ./mock_service.go -source=../user.go
-</span></code></pre></div><h3 id="go111module-with-go-118"><code>GO111MODULE</code> with Go 1.18</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># Before Go 1.17:
+</span></span><span class="line"><span class="cl">go get github.com/golang/mock/mockgen@v1.3.1
+</span></span><span class="line"><span class="cl">go run -mod=mod github.com/golang/mock/mockgen
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># With Go 1.17:
+</span></span><span class="line"><span class="cl">go run github.com/golang/mock/mockgen@v1.3.1
+</span></span></code></pre></div><p>This is great if you use <code>//go:generate</code> to generate mocks. For example, in the project [users-grpc](<a href="https://github.com/maelvls/users-grpc/blob/">https://github.com/maelvls/users-grpc/blob/</a> master/schema/placeholder.go), I was able to replace my <code>//go:generate</code> directive:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// Old way, before 1.17:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//go:generate go run -mod=mod github.com/golang/mock/mockgen -build_flags=-mod=mod -package mocks -destination ./mock_service.go -source=../  user.go</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// New way, Go 1.17:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//go:generate go run github.com/golang/mock/mockgen@v1.4.4 -package mocks -destination ./mock_service.go -source=../user.go</span>
+</span></span></code></pre></div><h3 id="go111module-with-go-118"><code>GO111MODULE</code> with Go 1.18</h3>
 <p>If you still need to use <code>go get</code> to install a binary, you will need to set <code>GO111MODULE=off</code>. The recommended way is to switch to using <code>go install</code> instead. Without <code>GO111MODULE=off</code>, <code>go get</code> will only update your <code>go.mod</code>. Otherwise, it won&rsquo;t do anything. All the READMEs on the Internet have to be updated; if they don&rsquo;t, people will get confused by not seeing the binary being installed.</p>
 <h3 id="go111module-with-go-119"><code>GO111MODULE</code> with Go 1.19</h3>
 <p>Nothing with regards to <code>GO111MODULE</code> has changed with Go 1.19.</p>
@@ -296,35 +300,33 @@ go run github.com/golang/mock/mockgen@v1.3.1
 <h3 id="why-was-go111module-everywhere-go-115-and-below">Why was <code>GO111MODULE</code> everywhere? (Go 1.15 and below)</h3>
 <p>Now that we know that <code>GO111MODULE</code> was very useful with Go 1.15 and below for enabling the Go Modules behavior, here is the answer: that&rsquo;s because <code>GO111MODULE=on</code> allows you to select a version. Without Go Modules, <code>go get</code> fetches the latest commit from master. With Go Modules, you can select a specific version based on git tags.</p>
 <p>Before Go 1.16 got released, I used to use <code>GO111MODULE=on</code> very often when I wanted to switch between the latest version and the HEAD version of <code>gopls</code> (the Go Language Server):</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># With Go 1.15.</span>
-<span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest
-<span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@master
-<span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@v0.1
-<span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@v0.1.8
-<span class="nv">GO111MODULE</span><span class="o">=</span><span class="s2">&#34;on&#34;</span> go get sigs.k8s.io/kind@v0.7.0
-</code></pre></div><p>This became much easier with Go 1.16 though. I could do the same thing with:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># With Go 1.16.</span>
-go install golang.org/x/tools/gopls@latest
-</code></pre></div><h3 id="the-pitfall-of-gomod-being-silently-updated-go-115-and-below">The pitfall of <code>go.mod</code> being silently updated (Go 1.15 and below)</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># With Go 1.15.</span>
+</span></span><span class="line"><span class="cl"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest
+</span></span><span class="line"><span class="cl"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@master
+</span></span><span class="line"><span class="cl"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@v0.1
+</span></span><span class="line"><span class="cl"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@v0.1.8
+</span></span><span class="line"><span class="cl"><span class="nv">GO111MODULE</span><span class="o">=</span><span class="s2">&#34;on&#34;</span> go get sigs.k8s.io/kind@v0.7.0
+</span></span></code></pre></div><p>This became much easier with Go 1.16 though. I could do the same thing with:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># With Go 1.16.</span>
+</span></span><span class="line"><span class="cl">go install golang.org/x/tools/gopls@latest
+</span></span></code></pre></div><h3 id="the-pitfall-of-gomod-being-silently-updated-go-115-and-below">The pitfall of <code>go.mod</code> being silently updated (Go 1.15 and below)</h3>
 <p>With Go 1.15 and below, our only option to install binaries was to use <code>go get</code>. You may have encountered this weird one-liner in READMEs:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="o">(</span><span class="nb">cd</span> <span class="o">&amp;&amp;</span> <span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest<span class="o">)</span>
-</code></pre></div><blockquote>
-<p><strong>Note:</strong> the <code>@latest</code> suffix will use the latest git tag of gopls. Note that <code>-u</code> (which means &lsquo;update&rsquo;) is not needed for <code>@v0.1.8</code> since this is a &lsquo;fixed&rsquo; version, and updating a fixed version does not really make sense. It is also interesting to note that with <code>@v0.1</code>, <code>go get</code> will fetch the latest patch version for that tag.</p>
-</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="o">(</span><span class="nb">cd</span> <span class="o">&amp;&amp;</span> <span class="nv">GO111MODULE</span><span class="o">=</span>on go get golang.org/x/tools/gopls@latest<span class="o">)</span>
+</span></span></code></pre></div><blockquote>
+<p><strong>Note:</strong> the <code>@latest</code> suffix will use the latest git tag of gopls. Note that <code>-u</code> (which means &lsquo;update&rsquo;) is not needed for <code>@v0.1.8</code> since this is a &lsquo;fixed&rsquo; version, and updating a fixed version does not really make sense. It is also interesting to note that with <code>@v0.1</code>, <code>go get</code> will fetch the latest patch version for that tag.</p></blockquote>
 <p>So, why did we need to use this contrived command that calls a subshell and moves to your HOME? That&rsquo;s yet another Go ideocracy that was fixed with Go 1.16: in Go 1.15 and below, by default (and you can&rsquo;t turn that off), if you are in a folder that has a <code>go.mod</code>, <code>go get</code> will update that <code>go.mod</code> with what you just installed. And in the case of development binaries like <a href="https://github.com/golang/tools/tree/master/gopls">gopls</a> or <a href="https://github.com/kubernetes-sigs/kind">kind</a>, you definitely don&rsquo;t want to have these appearing in the <code>go.mod</code> file!</p>
 <p>So the workaround for anyone using Go 1.15 and below was to give a one-liner that makes sure that you won&rsquo;t be in a <code>go.mod</code>-enabled folder: <code>(cd &amp;&amp; go get)</code> does exactly that.</p>
 <p>Fortunately, with Go 1.16, there is now a clear separation of concerns between <code>go get</code> that is adding a dependency to your <code>go.mod</code> (like npm install) and <code>go install</code> that is meant to install a binary without messing up your <code>go.mod</code>. With Go 1.16, the above <code>go get</code> becomes:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go install golang.org/x/tools/gopls@latest
-</code></pre></div><h3 id="the--u-and-version-pitfall">The <code>-u</code> and <code>@version</code> pitfall</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">go install golang.org/x/tools/gopls@latest
+</span></span></code></pre></div><h3 id="the--u-and-version-pitfall">The <code>-u</code> and <code>@version</code> pitfall</h3>
 <p>I have been bitten multiple times by this: when using <code>go get @latest</code> (for a binary, at least), you should avoid using <code>-u</code> so that it uses the dependencies as defined in <code>go.sum</code>. Otherwise, it will update all the dependencies to their latest minor revision&hellip; And since a ton of projects choose to have breaking changes between minor versions (e.g. v0.2.0 to v0.3.0), using <code>-u</code> has a large chance of breaking things.</p>
 <p>So if you see this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># Both -u and @latest!</span>
-<span class="nv">GO111MODULE</span><span class="o">=</span>on go get -u golang.org/x/tools/gopls@latest
-</code></pre></div><p>then you will immediately realize that (1) it uses the old preGo .1.16 way of installing a Go binary, and (2) you want to be using the recorded versions given in <code>go.sum</code> when go-getting a binary!</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># Both -u and @latest!</span>
+</span></span><span class="line"><span class="cl"><span class="nv">GO111MODULE</span><span class="o">=</span>on go get -u golang.org/x/tools/gopls@latest
+</span></span></code></pre></div><p>then you will immediately realize that (1) it uses the old preGo .1.16 way of installing a Go binary, and (2) you want to be using the recorded versions given in <code>go.sum</code> when go-getting a binary!</p>
 <p>Rebecca Stambler <a href="https://github.com/golang/go/issues/35868#issuecomment-564151454">reminds us</a> that we should not use <code>-u</code> in conjunction with a version:</p>
 <blockquote>
-<p><code>-u</code> should not be used in conjunction with the <code>@latest</code> tag, as it will give you incorrect versions of the dependencies.</p>
-</blockquote>
+<p><code>-u</code> should not be used in conjunction with the <code>@latest</code> tag, as it will give you incorrect versions of the dependencies.</p></blockquote>
 <p>But it&rsquo;s kind of hidden in this issue&hellip; I guess it is written somewhere in the Go help (btw, what a hideous help compared to <code>git help</code>) but that kind of caveat should be more visible: maybe print a warning when installing a binary with both <code>@version</code> and <code>-u</code>?</p>
 <h2 id="caveats-when-using-go-modules">Caveats when using Go Modules</h2>
 <p>Now, let&rsquo;s go through some caveats I encountered when working with Go Modules.</p>
@@ -332,26 +334,25 @@ go install golang.org/x/tools/gopls@latest
 <p>Before Go 1.16 came out, that was one of the weird things with <code>go get</code>: sometimes, it served the purpose of installing binaries or downloading packages. And with Go modules, if you were in a repo with a <code>go.mod</code>, it would silently add the binary that you were <code>go get</code>-ing to your <code>go.mod</code>!</p>
 <p>Fortunately, with Go 1.16, <code>go install</code> has <a href="https://blog.golang.org/go116-module-changes">learnt</a> about the <code>@version</code> suffix. With <code>go install foo@version</code>, your local <code>go.mod</code> won&rsquo;t be affected! And in Go 1.18, <code>go get</code> won&rsquo;t install binaries anymore, and will only ever be used for adding dependencies to your <code>go.mod</code>.</p>
 <p>And if you would like to run <code>go test</code> or <code>go build</code> without having <code>go.mod</code> updated, you can use the flag <code>-mod=readonly</code>. For example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">go <span class="nb">test</span> -mod<span class="o">=</span><span class="nb">readonly</span> ./...
-go build -mod<span class="o">=</span><span class="nb">readonly</span> ./...
-</code></pre></div><h3 id="where-are-the-sources-of-the-dependencies-with-go-modules">Where are the sources of the dependencies with Go Modules</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">go <span class="nb">test</span> -mod<span class="o">=</span><span class="nb">readonly</span> ./...
+</span></span><span class="line"><span class="cl">go build -mod<span class="o">=</span><span class="nb">readonly</span> ./...
+</span></span></code></pre></div><h3 id="where-are-the-sources-of-the-dependencies-with-go-modules">Where are the sources of the dependencies with Go Modules</h3>
 <p>When using Go Modules, the packages that are used during <code>go build</code> are stored in <code>$GOPATH/pkg/mod</code>. When trying to inspect an &lsquo;import&rsquo; in vim or VSCode, you might end up in the GOPATH version of the package instead of the pkg/mod one used during compilation.</p>
 <p>A second issue that arises is when you want to hack one of your dependencies, for example for testing purposes.</p>
 <p><strong>Solution 1</strong>: use <code>go mod vendor</code> + <code>go build -mod=vendor</code>. That will force <code>go</code> to use the vendor/ files instead of using the <code>$GOPATH/pkg/mod</code> ones. This option also solves the problem of vim and VSCode not opening the right version of a package’s file.</p>
 <p><strong>Solution 2</strong>: add a &lsquo;replace&rsquo; line at the end of your <code>go.mod</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">replace github.com/maelvls/beers =&gt; ../beers
-</code></pre></div><p>where <code>../beers</code> is a local copy I made of the dependency I want to inspect and hack.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">replace github.com/maelvls/beers =&gt; ../beers
+</span></span></code></pre></div><p>where <code>../beers</code> is a local copy I made of the dependency I want to inspect and hack.</p>
 <h3 id="set-go111module-on-a-per-folder-basis-with-direnv">Set <code>GO111MODULE</code> on a per-folder basis with <code>direnv</code></h3>
 <p>On older versions of Go (1.15 and below), while migrating from GOPATH-based projects (mainly using Dep) to Go Modules, I found myself struggling with two different places: inside and outside GOPATH. All Go Modules had to be kept outside of GOPATH, which meant my projects were in different folders. To remediate that, I used <code>GO111MODULE</code> extensively. I would keep all my projects in the GOPATH, and for the Go Modules-enabled projects, I would set <code>export GO111MODULE=on</code>.</p>
 <blockquote>
-<p><strong>Note:</strong> since the default behavior in Go 1.16 is now <code>GO111MODULE=on</code>, this trick isn&rsquo;t necessary anymore.</p>
-</blockquote>
+<p><strong>Note:</strong> since the default behavior in Go 1.16 is now <code>GO111MODULE=on</code>, this trick isn&rsquo;t necessary anymore.</p></blockquote>
 <p>This is where <a href="https://direnv.net/"><code>direnv</code></a> came in handy. Direnv is a lightweight command written in Go that will load a file, <code>.envrc</code>, whenever you enter a directory and <code>.envrc</code> is present. For every Go Module-enabled project, I would have this <code>.envrc</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># .envrc</span>
-<span class="nb">export</span> <span class="nv">GO111MODULE</span><span class="o">=</span>on
-<span class="nb">export</span> <span class="nv">GOPRIVATE</span><span class="o">=</span>github.com/mycompany/<span class="se">\*</span>
-<span class="nb">export</span> <span class="nv">GOFLAGS</span><span class="o">=</span>-mod<span class="o">=</span>vendor
-</code></pre></div><p>The <code>GOPRIVATE</code> environment variable disables the Go Proxy (introduced in Go 1.13) for certain import paths. I also found useful to set <code>-mod=vendor</code> so that every command uses the <code>vendor</code> folder (<code>go mod vendor</code>).</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># .envrc</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">GO111MODULE</span><span class="o">=</span>on
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">GOPRIVATE</span><span class="o">=</span>github.com/mycompany/<span class="se">\*</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">GOFLAGS</span><span class="o">=</span>-mod<span class="o">=</span>vendor
+</span></span></code></pre></div><p>The <code>GOPRIVATE</code> environment variable disables the Go Proxy (introduced in Go 1.13) for certain import paths. I also found useful to set <code>-mod=vendor</code> so that every command uses the <code>vendor</code> folder (<code>go mod vendor</code>).</p>
 <h3 id="private-go-modules-and-dockerfile">Private Go Modules and Dockerfile</h3>
 <p>Many companies choose to use private repositories as import paths. As explained above, we can use <code>GOPRIVATE</code> in order to tell Go (as of Go 1.13) to skip the package proxy and fetch our private packages directly from Github.</p>
 <p>But what about building Docker images? How can <code>go get</code> fetch our private repositories from a docker build?</p>
@@ -363,9 +364,9 @@ go build -mod<span class="o">=</span><span class="nb">readonly</span> ./...
 </ul>
 <h4 id="solution-2-no-vendoring">Solution 2: no vendoring</h4>
 <p>If <code>vendor/</code> is just too big (e.g., for Kubernetes controllers, <code>vendor/</code> is about 30MB), we can very well do it without vendoring. That would require to pass some form of GITHUB_TOKEN as argument of <code>docker build</code>, and in the Dockerfile, set something like:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">git config --global url.<span class="s2">&#34;https://foo:</span><span class="si">${</span><span class="nv">GITHUB_TOKEN</span><span class="si">}</span><span class="s2">@github.com/company&#34;</span>.insteadOf <span class="s2">&#34;https://github.com/company&#34;</span>
-<span class="nb">export</span> <span class="nv">GOPRIVATE</span><span class="o">=</span>github.com/company/<span class="se">\*</span>
-</code></pre></div><p><em>Illustration by Bailey Beougher, from The Illustrated Children&rsquo;s Guide to Kubernetes.</em></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">git config --global url.<span class="s2">&#34;https://foo:</span><span class="si">${</span><span class="nv">GITHUB_TOKEN</span><span class="si">}</span><span class="s2">@github.com/company&#34;</span>.insteadOf <span class="s2">&#34;https://github.com/company&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">GOPRIVATE</span><span class="o">=</span>github.com/company/<span class="se">\*</span>
+</span></span></code></pre></div><p><em>Illustration by Bailey Beougher, from The Illustrated Children&rsquo;s Guide to Kubernetes.</em></p>
 <ul>
 <li><strong>Update 22 June 2020:</strong> it said <code>use replace</code> instead of just <code>replace</code>.</li>
 <li><strong>Update 8 April 2021:</strong> update with Go 1.16.</li>
@@ -588,34 +589,9 @@ go build -mod<span class="o">=</span><span class="nb">readonly</span> ./...
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

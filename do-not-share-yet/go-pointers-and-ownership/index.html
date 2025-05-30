@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Go, pointers and data ownership" />
-<meta property="og:description" content="After reading the venerable &ldquo;Using Pointers In Go (2014)&rdquo;. In this post, William Kennedy mentions the &ldquo;tribal knowledge&rdquo; around the use of pointers:
- My use of pointers is based on discoveries I have made looking at code from the standard library. There are always exceptions to these rules, but what I will show you is common practice. It starts with classifying the type of value that needs to be shared." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/go-pointers-and-ownership/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/go-pointers-and-ownership/cover-go-pointers-and-ownership.png" />
-<meta property="article:published_time" content="2020-04-21T08:17:37+02:00" />
-<meta property="article:modified_time" content="2020-04-21T08:17:37+02:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/go-pointers-and-ownership/cover-go-pointers-and-ownership.png"/>
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/go-pointers-and-ownership/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Go, pointers and data ownership">
+  <meta property="og:description" content="After reading the venerable “Using Pointers In Go (2014)”. In this post, William Kennedy mentions the “tribal knowledge” around the use of pointers:
+My use of pointers is based on discoveries I have made looking at code from the standard library. There are always exceptions to these rules, but what I will show you is common practice. It starts with classifying the type of value that needs to be shared. These type classifications are built-in, struct and reference types. Let’s look at each one individually. — William Kennedy">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2020">
+    <meta property="article:published_time" content="2020-04-21T08:17:37+02:00">
+    <meta property="article:modified_time" content="2020-04-21T08:17:37+02:00">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/go-pointers-and-ownership/cover-go-pointers-and-ownership.png">
 
-<meta name="twitter:title" content="Go, pointers and data ownership"/>
-<meta name="twitter:description" content="After reading the venerable &ldquo;Using Pointers In Go (2014)&rdquo;. In this post, William Kennedy mentions the &ldquo;tribal knowledge&rdquo; around the use of pointers:
- My use of pointers is based on discoveries I have made looking at code from the standard library. There are always exceptions to these rules, but what I will show you is common practice. It starts with classifying the type of value that needs to be shared."/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/go-pointers-and-ownership/cover-go-pointers-and-ownership.png">
+  <meta name="twitter:title" content="Go, pointers and data ownership">
+  <meta name="twitter:description" content="After reading the venerable “Using Pointers In Go (2014)”. In this post, William Kennedy mentions the “tribal knowledge” around the use of pointers:
+My use of pointers is based on discoveries I have made looking at code from the standard library. There are always exceptions to these rules, but what I will show you is common practice. It starts with classifying the type of value that needs to be shared. These type classifications are built-in, struct and reference types. Let’s look at each one individually. — William Kennedy">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -38,7 +41,7 @@
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -71,8 +74,7 @@
     <div class="markdown">
         <p>After reading the venerable &ldquo;<a href="https://www.ardanlabs.com/blog/2014/12/using-pointers-in-go.html">Using Pointers In Go (2014)</a>&rdquo;. In this post, William Kennedy mentions the &ldquo;tribal knowledge&rdquo; around the use of pointers:</p>
 <blockquote>
-<p>My use of pointers is based on discoveries I have made looking at code from the standard library. There are always exceptions to these rules, but what I will show you is common practice. It starts with classifying the type of value that needs to be shared. These type classifications are built-in, struct and reference types. Let’s look at each one individually. — William Kennedy</p>
-</blockquote>
+<p>My use of pointers is based on discoveries I have made looking at code from the standard library. There are always exceptions to these rules, but what I will show you is common practice. It starts with classifying the type of value that needs to be shared. These type classifications are built-in, struct and reference types. Let’s look at each one individually. — William Kennedy</p></blockquote>
 <p>As far as I remember, Go was created with a minimal set of features. Why did pointers make it into Go when we all know how confusing they are? I really wich the Go team had gone with a pointer-less language but with &ldquo;move&rdquo; semantics&hellip; That would have avoided the need for <code>nil</code> entirely!</p>
 <p>At least, Go doesn&rsquo;t have arithmetic on pointers! With this, we avoid a whole class of bugs that can be typically found in C and C++ and is the source of endless security patches.</p>
 <p>Anyway; now that we are stuck with pointers, I want to talk about how I deal with them and how to &ldquo;model&rdquo; some of the decisions (using pointer vs passing by value) based on the &ldquo;ownership&rdquo; of the data they point to.</p>
@@ -82,43 +84,43 @@
 https://github.com/ori-edge/edge-platform-controllers/pull/24
 -->
 <p>Imagine you have:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Condition</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">Type</span> <span class="kt">string</span>
-<span class="p">}</span>
-
-<span class="c1">// Update mutates the given slice.
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">Update</span> <span class="p">(</span><span class="nx">current</span> <span class="p">[]</span><span class="nx">Condition</span><span class="p">,</span> <span class="nx">new</span> <span class="nx">Condition</span><span class="p">)</span> <span class="p">[]</span><span class="nx">Condition</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">c</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">current</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Type</span> <span class="o">==</span> <span class="nx">new</span><span class="p">.</span><span class="nx">Type</span> <span class="p">{</span>
-            <span class="nx">current</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">new</span>
-            <span class="k">return</span> <span class="nx">current</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="c1">// Condition type doesn&#39;t currently exist, add it.
-</span><span class="c1"></span>    <span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">current</span><span class="p">,</span> <span class="nx">new</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></div><p>We are mutating <code>current</code> but we still return it, which is confusing: is the function mutating <code>current</code>?</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Condition</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Type</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Update mutates the given slice.</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Update</span> <span class="p">(</span><span class="nx">current</span> <span class="p">[]</span><span class="nx">Condition</span><span class="p">,</span> <span class="nx">new</span> <span class="nx">Condition</span><span class="p">)</span> <span class="p">[]</span><span class="nx">Condition</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">c</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">current</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Type</span> <span class="o">==</span> <span class="nx">new</span><span class="p">.</span><span class="nx">Type</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">current</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">new</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="nx">current</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Condition type doesn&#39;t currently exist, add it.</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">current</span><span class="p">,</span> <span class="nx">new</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>We are mutating <code>current</code> but we still return it, which is confusing: is the function mutating <code>current</code>?</p>
 <p>One better way would be to write:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Update</span> <span class="p">(</span><span class="nx">current</span> <span class="p">[]</span><span class="nx">Condition</span><span class="p">,</span> <span class="nx">new</span> <span class="nx">Condition</span><span class="p">)</span> <span class="p">[]</span><span class="nx">Condition</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">c</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">current</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Type</span> <span class="o">==</span> <span class="nx">new</span><span class="p">.</span><span class="nx">Type</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">current</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">...</span><span class="p">,</span> <span class="nx">new</span><span class="p">,</span> <span class="nx">current</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mf">1.</span><span class="p">..])</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="c1">// Condition type doesn&#39;t currently exist, add it.
-</span><span class="c1"></span>    <span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">current</span><span class="p">,</span> <span class="nx">new</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></div><p>That&rsquo;s much better.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Update</span> <span class="p">(</span><span class="nx">current</span> <span class="p">[]</span><span class="nx">Condition</span><span class="p">,</span> <span class="nx">new</span> <span class="nx">Condition</span><span class="p">)</span> <span class="p">[]</span><span class="nx">Condition</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">c</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">current</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Type</span> <span class="o">==</span> <span class="nx">new</span><span class="p">.</span><span class="nx">Type</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">current</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">...</span><span class="p">,</span> <span class="nx">new</span><span class="p">,</span> <span class="nx">current</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mf">1.</span><span class="p">..])</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Condition type doesn&#39;t currently exist, add it.</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">append</span><span class="p">(</span><span class="nx">current</span><span class="p">,</span> <span class="nx">new</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>That&rsquo;s much better.</p>
 <h2 id="pointer-or-not-pointer">Pointer or not pointer?</h2>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Dictionary</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">words</span> <span class="p">[]</span><span class="kt">string</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">AddWord</span><span class="p">(</span><span class="nx">d</span> <span class="nx">Dictionary</span><span class="p">,</span> <span class="nx">entry</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Dictionary</span>
-</code></pre></div><p>With that signature, I immediately see the data flow: a new Dictionary is returned. But what about <code>words</code>? If we don&rsquo;t copy the whole slice, both <code>words</code> will point to the same slice.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Dictionary</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">words</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">AddWord</span><span class="p">(</span><span class="nx">d</span> <span class="nx">Dictionary</span><span class="p">,</span> <span class="nx">entry</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Dictionary</span>
+</span></span></code></pre></div><p>With that signature, I immediately see the data flow: a new Dictionary is returned. But what about <code>words</code>? If we don&rsquo;t copy the whole slice, both <code>words</code> will point to the same slice.</p>
 <p>The <code>words</code> slice is a shared resource.</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">AddWord</span><span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">Dictionary</span><span class="p">,</span> <span class="nx">entry</span> <span class="kt">string</span><span class="p">)</span>
-</code></pre></div><p>We kind of avoid that kind of signature in go &ndash; at least when it&rsquo;s possible to avoid it. We can&rsquo;t see the flow of data. Even worse: imagine that this function works with an interface, which means the <code>*</code> won&rsquo;t even help us guess that this data is shared.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">AddWord</span><span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">Dictionary</span><span class="p">,</span> <span class="nx">entry</span> <span class="kt">string</span><span class="p">)</span>
+</span></span></code></pre></div><p>We kind of avoid that kind of signature in go &ndash; at least when it&rsquo;s possible to avoid it. We can&rsquo;t see the flow of data. Even worse: imagine that this function works with an interface, which means the <code>*</code> won&rsquo;t even help us guess that this data is shared.</p>
 <h2 id="the-for-loop-gotcha">The for loop gotcha</h2>
 <p><a href="https://stackoverflow.com/questions/52980172/cannot-understand-5-6-1-caveat-capturing-iteration-variables">https://stackoverflow.com/questions/52980172/cannot-understand-5-6-1-caveat-capturing-iteration-variables</a></p>
 
@@ -134,34 +136,9 @@ https://github.com/ori-edge/edge-platform-controllers/pull/24
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

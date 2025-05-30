@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Nice diagram about TLS, certificates and keys" />
-<meta property="og:description" content="ROLE OF THE CERTIFICATE AUTHORITY &#43;------------------------------&#43; &#43;-----------------&#43; CERTIFICATE AUTHORITY (NOT A CERT) | CA KEY | |&#43;----------------------------&#43;| |&#43;---------------&#43;| || O=GlobalSign,CN=GlobalSign || || private key || |&#43;----------------------------&#43;| |&#43;-------|-------&#43;| |&#43;----------------------------&#43;| &#43;--------|--------&#43; || public key (= VERIFY) || | |&#43;----------------------------&#43;| | &#43;------------------------------&#43; | | CA cert&#39;s pub key = signature | ----------------------------------------------------------- Signed cert&#39;s pub key = encryption | | &#43;------------------------------&#43; | | CERTIFICATE | | |1----------------------------&#43;| | ||O=Google LLC,CN=*.google.com|| | |&#43;----------------------------&#43;| |signs using |2----------------------------&#43;| |private key || public key (= DECRYPT) || | |&#43;----------------------------&#43;| | |&#43;----------------------------&#43;| | || signature of 1&#43;2 ||&lt;----------&#43; |&#43;----------------------------&#43;| &#43;------------------------------&#43; ROLE OF THE END-USER &#43;------------------------------&#43; | CA CERTIFICATE (trusted) | Can I trust foo." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/tls/" />
-<meta property="og:image" content="https://maelvls.dev/img/mael.jpg"/>
-<meta property="article:published_time" content="2020-01-20T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-01-20T00:00:00+00:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/img/mael.jpg"/>
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/tls/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Nice diagram about TLS, certificates and keys">
+  <meta property="og:description" content="ROLE OF THE CERTIFICATE AUTHORITY &#43;------------------------------&#43; &#43;-----------------&#43; CERTIFICATE AUTHORITY (NOT A CERT) | CA KEY | |&#43;----------------------------&#43;| |&#43;---------------&#43;| || O=GlobalSign,CN=GlobalSign || || private key || |&#43;----------------------------&#43;| |&#43;-------|-------&#43;| |&#43;----------------------------&#43;| &#43;--------|--------&#43; || public key (= VERIFY) || | |&#43;----------------------------&#43;| | &#43;------------------------------&#43; | | CA cert&#39;s pub key = signature | ----------------------------------------------------------- Signed cert&#39;s pub key = encryption | | &#43;------------------------------&#43; | | CERTIFICATE | | |1----------------------------&#43;| | ||O=Google LLC,CN=*.google.com|| | |&#43;----------------------------&#43;| |signs using |2----------------------------&#43;| |private key || public key (= DECRYPT) || | |&#43;----------------------------&#43;| | |&#43;----------------------------&#43;| | || signature of 1&#43;2 ||&lt;----------&#43; |&#43;----------------------------&#43;| &#43;------------------------------&#43; ROLE OF THE END-USER &#43;------------------------------&#43; | CA CERTIFICATE (trusted) | Can I trust foo.google.com? |&#43;----------------------------&#43;| | || O=GlobalSign,CN=GlobalSign || | |&#43;----------------------------&#43;| | |&#43;----------------------------&#43;| | &#43;-----------------&gt;|| public key (= VERIFY) || | | |&#43;----------------------------&#43;| | | &#43;------------------------------&#43; | |check signature (this cert is secure on my disk) | |using public key | | (1) | |(2) &#43;------------------------------&#43; | | | CERTIFICATE (untrusted) | verify | | |1----------------------------&#43;| signature | | ||O=Google LLC,CN=*.google.com|| | | |&#43;----------------------------&#43;| | | |2----------------------------&#43;| | | || public key (= ENCRYPT) || | &#43;------------------|&#43;----------------------------&#43;| | |&#43;----------------------------&#43;| &#43;--------------------&gt;|| signature of 1&#43;2 || |&#43;----------------------------&#43;| &#43;------------------------------&#43; (this cert is sent to me by the foo.google.com server) What’s a “certificate” in the openssl jargon For example, mitmproxy relies on a specific dir structure and filenames:">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="notes">
+    <meta property="article:published_time" content="2020-01-20T00:00:00+00:00">
+    <meta property="article:modified_time" content="2020-01-20T00:00:00+00:00">
+    <meta property="og:image" content="https://maelvls.dev/img/mael.jpg">
 
-<meta name="twitter:title" content="Nice diagram about TLS, certificates and keys"/>
-<meta name="twitter:description" content="ROLE OF THE CERTIFICATE AUTHORITY &#43;------------------------------&#43; &#43;-----------------&#43; CERTIFICATE AUTHORITY (NOT A CERT) | CA KEY | |&#43;----------------------------&#43;| |&#43;---------------&#43;| || O=GlobalSign,CN=GlobalSign || || private key || |&#43;----------------------------&#43;| |&#43;-------|-------&#43;| |&#43;----------------------------&#43;| &#43;--------|--------&#43; || public key (= VERIFY) || | |&#43;----------------------------&#43;| | &#43;------------------------------&#43; | | CA cert&#39;s pub key = signature | ----------------------------------------------------------- Signed cert&#39;s pub key = encryption | | &#43;------------------------------&#43; | | CERTIFICATE | | |1----------------------------&#43;| | ||O=Google LLC,CN=*.google.com|| | |&#43;----------------------------&#43;| |signs using |2----------------------------&#43;| |private key || public key (= DECRYPT) || | |&#43;----------------------------&#43;| | |&#43;----------------------------&#43;| | || signature of 1&#43;2 ||&lt;----------&#43; |&#43;----------------------------&#43;| &#43;------------------------------&#43; ROLE OF THE END-USER &#43;------------------------------&#43; | CA CERTIFICATE (trusted) | Can I trust foo."/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/img/mael.jpg">
+  <meta name="twitter:title" content="Nice diagram about TLS, certificates and keys">
+  <meta name="twitter:description" content="ROLE OF THE CERTIFICATE AUTHORITY &#43;------------------------------&#43; &#43;-----------------&#43; CERTIFICATE AUTHORITY (NOT A CERT) | CA KEY | |&#43;----------------------------&#43;| |&#43;---------------&#43;| || O=GlobalSign,CN=GlobalSign || || private key || |&#43;----------------------------&#43;| |&#43;-------|-------&#43;| |&#43;----------------------------&#43;| &#43;--------|--------&#43; || public key (= VERIFY) || | |&#43;----------------------------&#43;| | &#43;------------------------------&#43; | | CA cert&#39;s pub key = signature | ----------------------------------------------------------- Signed cert&#39;s pub key = encryption | | &#43;------------------------------&#43; | | CERTIFICATE | | |1----------------------------&#43;| | ||O=Google LLC,CN=*.google.com|| | |&#43;----------------------------&#43;| |signs using |2----------------------------&#43;| |private key || public key (= DECRYPT) || | |&#43;----------------------------&#43;| | |&#43;----------------------------&#43;| | || signature of 1&#43;2 ||&lt;----------&#43; |&#43;----------------------------&#43;| &#43;------------------------------&#43; ROLE OF THE END-USER &#43;------------------------------&#43; | CA CERTIFICATE (trusted) | Can I trust foo.google.com? |&#43;----------------------------&#43;| | || O=GlobalSign,CN=GlobalSign || | |&#43;----------------------------&#43;| | |&#43;----------------------------&#43;| | &#43;-----------------&gt;|| public key (= VERIFY) || | | |&#43;----------------------------&#43;| | | &#43;------------------------------&#43; | |check signature (this cert is secure on my disk) | |using public key | | (1) | |(2) &#43;------------------------------&#43; | | | CERTIFICATE (untrusted) | verify | | |1----------------------------&#43;| signature | | ||O=Google LLC,CN=*.google.com|| | | |&#43;----------------------------&#43;| | | |2----------------------------&#43;| | | || public key (= ENCRYPT) || | &#43;------------------|&#43;----------------------------&#43;| | |&#43;----------------------------&#43;| &#43;--------------------&gt;|| signature of 1&#43;2 || |&#43;----------------------------&#43;| &#43;------------------------------&#43; (this cert is sent to me by the foo.google.com server) What’s a “certificate” in the openssl jargon For example, mitmproxy relies on a specific dir structure and filenames:">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -36,7 +39,7 @@
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -68,189 +71,189 @@
     </div>
     <div class="markdown">
         <div class="nohighlight">
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">  ROLE OF THE CERTIFICATE AUTHORITY
-
-      +------------------------------+  +-----------------+
-     CERTIFICATE AUTHORITY (NOT A CERT) |     CA KEY      |
-      |+----------------------------+|  |+---------------+|
-      || O=GlobalSign,CN=GlobalSign ||  || private key   ||
-      |+----------------------------+|  |+-------|-------+|
-      |+----------------------------+|  +--------|--------+
-      ||   public key (= VERIFY)    ||           |
-      |+----------------------------+|           |
-      +------------------------------+           |
-                                                 |
- CA cert&#39;s pub key = signature                   |
- -----------------------------------------------------------
- Signed cert&#39;s pub key = encryption              |
-                                                 |
-      +------------------------------+           |
-      |         CERTIFICATE          |           |
-      |1----------------------------+|           |
-      ||O=Google LLC,CN=*.google.com||           |
-      |+----------------------------+|           |signs using
-      |2----------------------------+|           |private key
-      ||   public key (= DECRYPT)   ||           |
-      |+----------------------------+|           |
-      |+----------------------------+|           |
-      ||      signature of 1+2      ||&lt;----------+
-      |+----------------------------+|
-      +------------------------------+
-
-
-
-   ROLE OF THE END-USER               +------------------------------+
-                                      |   CA CERTIFICATE (trusted)   |
-    Can I trust foo.google.com?       |+----------------------------+|
-                |                     || O=GlobalSign,CN=GlobalSign ||
-                |                     |+----------------------------+|
-                |                     |+----------------------------+|
-                |  +-----------------&gt;||    public key (= VERIFY)   ||
-                |  |                  |+----------------------------+|
-                |  |                  +------------------------------+
-                |  |check signature   (this cert is secure on my disk)
-                |  |using public key
-                |  |
-            (1) |  |(2)               +------------------------------+
-                |  |                  |    CERTIFICATE (untrusted)   |
-         verify |  |                  |1----------------------------+|
-      signature |  |                  ||O=Google LLC,CN=*.google.com||
-                |  |                  |+----------------------------+|
-                |  |                  |2----------------------------+|
-                |  |                  ||   public key (= ENCRYPT)   ||
-                |  +------------------|+----------------------------+|
-                |                     |+----------------------------+|
-                +--------------------&gt;||      signature of 1+2      ||
-                                      |+----------------------------+|
-                                      +------------------------------+
-                                      (this cert is sent to me by the
-                                                foo.google.com server)
-</code></pre></div></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">  ROLE OF THE CERTIFICATE AUTHORITY
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      +------------------------------+  +-----------------+
+</span></span><span class="line"><span class="cl">     CERTIFICATE AUTHORITY (NOT A CERT) |     CA KEY      |
+</span></span><span class="line"><span class="cl">      |+----------------------------+|  |+---------------+|
+</span></span><span class="line"><span class="cl">      || O=GlobalSign,CN=GlobalSign ||  || private key   ||
+</span></span><span class="line"><span class="cl">      |+----------------------------+|  |+-------|-------+|
+</span></span><span class="line"><span class="cl">      |+----------------------------+|  +--------|--------+
+</span></span><span class="line"><span class="cl">      ||   public key (= VERIFY)    ||           |
+</span></span><span class="line"><span class="cl">      |+----------------------------+|           |
+</span></span><span class="line"><span class="cl">      +------------------------------+           |
+</span></span><span class="line"><span class="cl">                                                 |
+</span></span><span class="line"><span class="cl"> CA cert&#39;s pub key = signature                   |
+</span></span><span class="line"><span class="cl"> -----------------------------------------------------------
+</span></span><span class="line"><span class="cl"> Signed cert&#39;s pub key = encryption              |
+</span></span><span class="line"><span class="cl">                                                 |
+</span></span><span class="line"><span class="cl">      +------------------------------+           |
+</span></span><span class="line"><span class="cl">      |         CERTIFICATE          |           |
+</span></span><span class="line"><span class="cl">      |1----------------------------+|           |
+</span></span><span class="line"><span class="cl">      ||O=Google LLC,CN=*.google.com||           |
+</span></span><span class="line"><span class="cl">      |+----------------------------+|           |signs using
+</span></span><span class="line"><span class="cl">      |2----------------------------+|           |private key
+</span></span><span class="line"><span class="cl">      ||   public key (= DECRYPT)   ||           |
+</span></span><span class="line"><span class="cl">      |+----------------------------+|           |
+</span></span><span class="line"><span class="cl">      |+----------------------------+|           |
+</span></span><span class="line"><span class="cl">      ||      signature of 1+2      ||&lt;----------+
+</span></span><span class="line"><span class="cl">      |+----------------------------+|
+</span></span><span class="line"><span class="cl">      +------------------------------+
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">   ROLE OF THE END-USER               +------------------------------+
+</span></span><span class="line"><span class="cl">                                      |   CA CERTIFICATE (trusted)   |
+</span></span><span class="line"><span class="cl">    Can I trust foo.google.com?       |+----------------------------+|
+</span></span><span class="line"><span class="cl">                |                     || O=GlobalSign,CN=GlobalSign ||
+</span></span><span class="line"><span class="cl">                |                     |+----------------------------+|
+</span></span><span class="line"><span class="cl">                |                     |+----------------------------+|
+</span></span><span class="line"><span class="cl">                |  +-----------------&gt;||    public key (= VERIFY)   ||
+</span></span><span class="line"><span class="cl">                |  |                  |+----------------------------+|
+</span></span><span class="line"><span class="cl">                |  |                  +------------------------------+
+</span></span><span class="line"><span class="cl">                |  |check signature   (this cert is secure on my disk)
+</span></span><span class="line"><span class="cl">                |  |using public key
+</span></span><span class="line"><span class="cl">                |  |
+</span></span><span class="line"><span class="cl">            (1) |  |(2)               +------------------------------+
+</span></span><span class="line"><span class="cl">                |  |                  |    CERTIFICATE (untrusted)   |
+</span></span><span class="line"><span class="cl">         verify |  |                  |1----------------------------+|
+</span></span><span class="line"><span class="cl">      signature |  |                  ||O=Google LLC,CN=*.google.com||
+</span></span><span class="line"><span class="cl">                |  |                  |+----------------------------+|
+</span></span><span class="line"><span class="cl">                |  |                  |2----------------------------+|
+</span></span><span class="line"><span class="cl">                |  |                  ||   public key (= ENCRYPT)   ||
+</span></span><span class="line"><span class="cl">                |  +------------------|+----------------------------+|
+</span></span><span class="line"><span class="cl">                |                     |+----------------------------+|
+</span></span><span class="line"><span class="cl">                +--------------------&gt;||      signature of 1+2      ||
+</span></span><span class="line"><span class="cl">                                      |+----------------------------+|
+</span></span><span class="line"><span class="cl">                                      +------------------------------+
+</span></span><span class="line"><span class="cl">                                      (this cert is sent to me by the
+</span></span><span class="line"><span class="cl">                                                foo.google.com server)
+</span></span></code></pre></div></div>
 <!--
 https://textik.com/#d85b4624473ca862
 -->
 <h2 id="whats-a-certificate-in-the-openssl-jargon">What&rsquo;s a &ldquo;certificate&rdquo; in the openssl jargon</h2>
 <p>For example, mitmproxy relies on a specific dir structure and filenames:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">/Users/mvalais/.mitmproxy
-├── mitmproxy-ca-cert.pem            <span class="c1"># ca-cert = cert</span>
-└── mitmproxy-ca.pem                 <span class="c1"># ca      = cert + key</span>
-</code></pre></div><p>That&rsquo;s the kind of directory structure that <code>--set client_dir=...</code> would expect (in mitmproxy).</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/Users/mvalais/.mitmproxy
+</span></span><span class="line"><span class="cl">├── mitmproxy-ca-cert.pem            <span class="c1"># ca-cert = cert</span>
+</span></span><span class="line"><span class="cl">└── mitmproxy-ca.pem                 <span class="c1"># ca      = cert + key</span>
+</span></span></code></pre></div><p>That&rsquo;s the kind of directory structure that <code>--set client_dir=...</code> would expect (in mitmproxy).</p>
 <h2 id="using-openssl-to-dig-certificates">Using <code>openssl</code> to dig certificates</h2>
 <p>This <a href="https://www.sslshopper.com/article-most-common-openssl-commands.html">cheat sheet</a> is nice. Here is a one-liner for fetching the certificate chain sitting on a server; for example for <code>api.github.com:443</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% openssl x509 -in &lt;<span class="o">(</span>openssl s_client -connect api.github.com:443 -prexit <span class="o">&lt;&lt;&lt;</span> <span class="s2">&#34;&#34;</span><span class="o">)</span> -noout -text
-
-<span class="nv">openssldepth</span><span class="o">=</span><span class="m">2</span> <span class="nv">C</span> <span class="o">=</span> US, <span class="nv">O</span> <span class="o">=</span> DigiCert Inc, <span class="nv">OU</span> <span class="o">=</span> www.digicert.com, <span class="nv">CN</span> <span class="o">=</span> DigiCert High Assurance EV Root CA
-verify <span class="k">return</span>:1
-<span class="nv">depth</span><span class="o">=</span><span class="m">1</span> <span class="nv">C</span> <span class="o">=</span> US, <span class="nv">O</span> <span class="o">=</span> DigiCert Inc, <span class="nv">OU</span> <span class="o">=</span> www.digicert.com, <span class="nv">CN</span> <span class="o">=</span> DigiCert SHA2 High Assurance Server CA
-verify <span class="k">return</span>:1
-<span class="nv">depth</span><span class="o">=</span><span class="m">0</span> <span class="nv">C</span> <span class="o">=</span> US, <span class="nv">ST</span> <span class="o">=</span> California, <span class="nv">L</span> <span class="o">=</span> San Francisco, <span class="nv">O</span> <span class="o">=</span> <span class="s2">&#34;GitHub, Inc.&#34;</span>, <span class="nv">CN</span> <span class="o">=</span> *.github.com
-verify <span class="k">return</span>:1
-DONE
-Certificate:
-    Data:
-        Version: <span class="m">3</span> <span class="o">(</span>0x2<span class="o">)</span>
-        Serial Number:
-            0c:07:3b:67:6f:67:45:78:f9:99:81:48:52:84:46:51
-    Signature Algorithm: sha256WithRSAEncryption
-        Issuer: <span class="nv">C</span><span class="o">=</span>US, <span class="nv">O</span><span class="o">=</span>DigiCert Inc, <span class="nv">OU</span><span class="o">=</span>www.digicert.com, <span class="nv">CN</span><span class="o">=</span>DigiCert SHA2 High Assurance Server CA
-        Validity
-            Not Before: Jun <span class="m">22</span> 00:00:00 <span class="m">2020</span> GMT
-            Not After : Aug <span class="m">17</span> 12:00:00 <span class="m">2022</span> GMT
-        Subject: <span class="nv">C</span><span class="o">=</span>US, <span class="nv">ST</span><span class="o">=</span>California, <span class="nv">L</span><span class="o">=</span>San Francisco, <span class="nv">O</span><span class="o">=</span>GitHub, Inc., <span class="nv">CN</span><span class="o">=</span>*.github.com
-        Subject Public Key Info:
-            Public Key Algorithm: rsaEncryption
-                Public-Key: <span class="o">(</span><span class="m">2048</span> bit<span class="o">)</span>
-                Modulus:
-                    00:a0:e6:d3:87:ac:6f:4e:3b:29:75:60:4c:4a:1e:
-                    fa:dd:af:81:0a:37:c4:89:ad:b5:8e:9d:1d:0c:55:
-                    da:a4:b1:cb:ab:d3:14:bc:d2:6d:b8:d1:7c:36:1f:
-                    45:a1:06:25:32:63:7f:94:4c:f4:d6:97:06:3f:24:
-                    f2:85:f5:83:8c:27:8a:7f:6a:c8:46:e8:04:6f:4c:
-                    5f:4c:48:9a:a6:80:c1:08:db:9c:6e:81:8b:54:59:
-                    f0:c6:6d:58:2a:3d:42:ea:da:5d:aa:6b:90:7b:af:
-                    12:34:30:1b:22:5c:af:cd:ee:f2:3c:08:90:99:91:
-                    be:41:16:c6:e0:95:59:a9:d6:52:39:de:e9:a3:02:
-                    e2:68:e3:f9:b5:56:ce:ae:62:27:5e:ff:a3:94:1f:
-                    89:82:0f:5d:ea:82:4d:af:de:0f:3b:aa:04:4a:6f:
-                    a4:85:43:80:11:35:f1:3b:d6:66:80:68:97:6e:0a:
-                    e9:79:57:63:44:91:c1:e2:45:db:dd:2c:b9:2d:3d:
-                    16:76:af:0b:a4:04:80:c0:10:35:26:f2:9f:38:43:
-                    a8:1d:a5:19:79:f0:b0:60:98:40:f8:4c:54:53:5f:
-                    32:0e:de:86:65:e7:4f:5c:21:7a:c7:35:7f:de:a3:
-                    e0:8e:b2:d3:02:42:64:40:14:21:20:96:14:09:54:
-                    1f:53
-                Exponent: <span class="m">65537</span> <span class="o">(</span>0x10001<span class="o">)</span>
-        X509v3 extensions:
-            X509v3 Authority Key Identifier:
-                keyid:51:68:FF:90:AF:02:07:75:3C:CC:D9:65:64:62:A2:12:B8:59:72:3B
-
-            X509v3 Subject Key Identifier:
-                79:53:13:17:53:DA:1E:A9:73:A9:9E:88:8D:C2:53:D9:36:E2:E5:2A
-            X509v3 Subject Alternative Name:
-                DNS:*.github.com, DNS:github.com
-            X509v3 Key Usage: critical
-                Digital Signature, Key Encipherment
-            X509v3 Extended Key Usage:
-                TLS Web Server Authentication, TLS Web Client Authentication
-            X509v3 CRL Distribution Points:
-
-                Full Name:
-                  URI:http://crl3.digicert.com/sha2-ha-server-g6.crl
-
-                Full Name:
-                  URI:http://crl4.digicert.com/sha2-ha-server-g6.crl
-
-            X509v3 Certificate Policies:
-                Policy: 2.16.840.1.114412.1.1
-                  CPS: https://www.digicert.com/CPS
-                Policy: 2.23.140.1.2.2
-
-            Authority Information Access:
-                OCSP - URI:http://ocsp.digicert.com
-                CA Issuers - URI:http://cacerts.digicert.com/DigiCertSHA2HighAssuranceServerCA.crt
-
-            X509v3 Basic Constraints: critical
-                CA:FALSE
-            1.3.6.1.4.1.11129.2.4.2:
-                ...g.e.u.<span class="o">)</span>y...99!.Vs.c.w..W<span class="o">}</span>.<span class="sb">`</span>
-..M<span class="o">]</span><span class="p">&amp;</span><span class="se">\%</span><span class="o">]</span>.....r..*......F0D. f........
-,cj...<span class="s2">&#34;~........M,..... U+.zza....WN9.V...A;U..?k.e%._.`.u.A....&#34;</span>FJ...:.B.^N1.....K.h..b......r..*......F0D. w.jXF...7K..v. %.A...<span class="p">;</span>,.E.o<span class="o">}</span>JN... 39..W..Z..Ff<span class="p">;</span>.0.....u SZ
-..<span class="p">&amp;</span>. ...u.F.U.u.. 0...i..<span class="o">}</span>.,At..I.....p.mG...r..+6.....F0D. <span class="err">&#39;</span>....................O....Dmcpu@. A?W...o.d..o.!..e*....C<span class="o">(</span>%......c
-    Signature Algorithm: sha256WithRSAEncryption
-         4e:0c:e9:56:59:75:8a:8c:af:75:d9:0e:57:58:fc:c0:8d:d9:
-         35:67:84:61:a9:2c:0b:aa:ff:a6:62:31:31:53:6c:d6:50:44:
-         1d:7e:0a:11:ec:40:00:d9:f4:d2:e0:f7:a3:f7:32:91:1b:ac:
-         d0:4c:01:1e:03:f8:19:8b:1e:79:33:dd:38:c6:a7:f4:4b:3b:
-         e9:31:11:b9:c6:a7:63:40:d6:02:2b:43:59:bb:98:4f:08:24:
-         78:a0:67:1d:0e:35:bb:40:82:85:e0:d5:7e:76:7e:e4:94:d3:
-         4e:a6:d1:31:c0:41:d2:b0:9a:b7:77:c9:36:b9:31:69:95:87:
-         b0:50:d9:ef:e5:37:80:a9:f2:dc:0d:a0:82:c8:56:2e:af:85:
-         1b:ef:0d:c2:eb:1c:33:d5:76:ae:cb:9d:f1:6e:b4:00:85:75:
-         e2:b9:4c:3b:7f:16:41:47:a9:53:b0:c4:b1:7a:44:da:f6:5b:
-         84:45:29:13:37:c3:aa:30:98:d2:67:8f:fb:1a:be:94:06:0e:
-         b9:cf:e6:fc:5f:fc:e2:f1:1b:32:6a:8e:c2:16:a7:cd:45:c1:
-         fe:75:8b:02:b2:f0:d9:3b:5d:7c:1b:a8:45:b8:b1:4d:d8:3c:
-         66:2b:2b:33:1e:9f:dc:b8:5e:3b:fe:0a:e4:b2:5b:eb:41:48:
-         59:10:6b:63
-</code></pre></div><h2 id="fun-things-about-x509">Fun things about X.509</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">% openssl x509 -in &lt;<span class="o">(</span>openssl s_client -connect api.github.com:443 -prexit <span class="o">&lt;&lt;&lt;</span> <span class="s2">&#34;&#34;</span><span class="o">)</span> -noout -text
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">openssldepth</span><span class="o">=</span><span class="m">2</span> <span class="nv">C</span> <span class="o">=</span> US, <span class="nv">O</span> <span class="o">=</span> DigiCert Inc, <span class="nv">OU</span> <span class="o">=</span> www.digicert.com, <span class="nv">CN</span> <span class="o">=</span> DigiCert High Assurance EV Root CA
+</span></span><span class="line"><span class="cl">verify <span class="k">return</span>:1
+</span></span><span class="line"><span class="cl"><span class="nv">depth</span><span class="o">=</span><span class="m">1</span> <span class="nv">C</span> <span class="o">=</span> US, <span class="nv">O</span> <span class="o">=</span> DigiCert Inc, <span class="nv">OU</span> <span class="o">=</span> www.digicert.com, <span class="nv">CN</span> <span class="o">=</span> DigiCert SHA2 High Assurance Server CA
+</span></span><span class="line"><span class="cl">verify <span class="k">return</span>:1
+</span></span><span class="line"><span class="cl"><span class="nv">depth</span><span class="o">=</span><span class="m">0</span> <span class="nv">C</span> <span class="o">=</span> US, <span class="nv">ST</span> <span class="o">=</span> California, <span class="nv">L</span> <span class="o">=</span> San Francisco, <span class="nv">O</span> <span class="o">=</span> <span class="s2">&#34;GitHub, Inc.&#34;</span>, <span class="nv">CN</span> <span class="o">=</span> *.github.com
+</span></span><span class="line"><span class="cl">verify <span class="k">return</span>:1
+</span></span><span class="line"><span class="cl">DONE
+</span></span><span class="line"><span class="cl">Certificate:
+</span></span><span class="line"><span class="cl">    Data:
+</span></span><span class="line"><span class="cl">        Version: <span class="m">3</span> <span class="o">(</span>0x2<span class="o">)</span>
+</span></span><span class="line"><span class="cl">        Serial Number:
+</span></span><span class="line"><span class="cl">            0c:07:3b:67:6f:67:45:78:f9:99:81:48:52:84:46:51
+</span></span><span class="line"><span class="cl">    Signature Algorithm: sha256WithRSAEncryption
+</span></span><span class="line"><span class="cl">        Issuer: <span class="nv">C</span><span class="o">=</span>US, <span class="nv">O</span><span class="o">=</span>DigiCert Inc, <span class="nv">OU</span><span class="o">=</span>www.digicert.com, <span class="nv">CN</span><span class="o">=</span>DigiCert SHA2 High Assurance Server CA
+</span></span><span class="line"><span class="cl">        Validity
+</span></span><span class="line"><span class="cl">            Not Before: Jun <span class="m">22</span> 00:00:00 <span class="m">2020</span> GMT
+</span></span><span class="line"><span class="cl">            Not After : Aug <span class="m">17</span> 12:00:00 <span class="m">2022</span> GMT
+</span></span><span class="line"><span class="cl">        Subject: <span class="nv">C</span><span class="o">=</span>US, <span class="nv">ST</span><span class="o">=</span>California, <span class="nv">L</span><span class="o">=</span>San Francisco, <span class="nv">O</span><span class="o">=</span>GitHub, Inc., <span class="nv">CN</span><span class="o">=</span>*.github.com
+</span></span><span class="line"><span class="cl">        Subject Public Key Info:
+</span></span><span class="line"><span class="cl">            Public Key Algorithm: rsaEncryption
+</span></span><span class="line"><span class="cl">                Public-Key: <span class="o">(</span><span class="m">2048</span> bit<span class="o">)</span>
+</span></span><span class="line"><span class="cl">                Modulus:
+</span></span><span class="line"><span class="cl">                    00:a0:e6:d3:87:ac:6f:4e:3b:29:75:60:4c:4a:1e:
+</span></span><span class="line"><span class="cl">                    fa:dd:af:81:0a:37:c4:89:ad:b5:8e:9d:1d:0c:55:
+</span></span><span class="line"><span class="cl">                    da:a4:b1:cb:ab:d3:14:bc:d2:6d:b8:d1:7c:36:1f:
+</span></span><span class="line"><span class="cl">                    45:a1:06:25:32:63:7f:94:4c:f4:d6:97:06:3f:24:
+</span></span><span class="line"><span class="cl">                    f2:85:f5:83:8c:27:8a:7f:6a:c8:46:e8:04:6f:4c:
+</span></span><span class="line"><span class="cl">                    5f:4c:48:9a:a6:80:c1:08:db:9c:6e:81:8b:54:59:
+</span></span><span class="line"><span class="cl">                    f0:c6:6d:58:2a:3d:42:ea:da:5d:aa:6b:90:7b:af:
+</span></span><span class="line"><span class="cl">                    12:34:30:1b:22:5c:af:cd:ee:f2:3c:08:90:99:91:
+</span></span><span class="line"><span class="cl">                    be:41:16:c6:e0:95:59:a9:d6:52:39:de:e9:a3:02:
+</span></span><span class="line"><span class="cl">                    e2:68:e3:f9:b5:56:ce:ae:62:27:5e:ff:a3:94:1f:
+</span></span><span class="line"><span class="cl">                    89:82:0f:5d:ea:82:4d:af:de:0f:3b:aa:04:4a:6f:
+</span></span><span class="line"><span class="cl">                    a4:85:43:80:11:35:f1:3b:d6:66:80:68:97:6e:0a:
+</span></span><span class="line"><span class="cl">                    e9:79:57:63:44:91:c1:e2:45:db:dd:2c:b9:2d:3d:
+</span></span><span class="line"><span class="cl">                    16:76:af:0b:a4:04:80:c0:10:35:26:f2:9f:38:43:
+</span></span><span class="line"><span class="cl">                    a8:1d:a5:19:79:f0:b0:60:98:40:f8:4c:54:53:5f:
+</span></span><span class="line"><span class="cl">                    32:0e:de:86:65:e7:4f:5c:21:7a:c7:35:7f:de:a3:
+</span></span><span class="line"><span class="cl">                    e0:8e:b2:d3:02:42:64:40:14:21:20:96:14:09:54:
+</span></span><span class="line"><span class="cl">                    1f:53
+</span></span><span class="line"><span class="cl">                Exponent: <span class="m">65537</span> <span class="o">(</span>0x10001<span class="o">)</span>
+</span></span><span class="line"><span class="cl">        X509v3 extensions:
+</span></span><span class="line"><span class="cl">            X509v3 Authority Key Identifier:
+</span></span><span class="line"><span class="cl">                keyid:51:68:FF:90:AF:02:07:75:3C:CC:D9:65:64:62:A2:12:B8:59:72:3B
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            X509v3 Subject Key Identifier:
+</span></span><span class="line"><span class="cl">                79:53:13:17:53:DA:1E:A9:73:A9:9E:88:8D:C2:53:D9:36:E2:E5:2A
+</span></span><span class="line"><span class="cl">            X509v3 Subject Alternative Name:
+</span></span><span class="line"><span class="cl">                DNS:*.github.com, DNS:github.com
+</span></span><span class="line"><span class="cl">            X509v3 Key Usage: critical
+</span></span><span class="line"><span class="cl">                Digital Signature, Key Encipherment
+</span></span><span class="line"><span class="cl">            X509v3 Extended Key Usage:
+</span></span><span class="line"><span class="cl">                TLS Web Server Authentication, TLS Web Client Authentication
+</span></span><span class="line"><span class="cl">            X509v3 CRL Distribution Points:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                Full Name:
+</span></span><span class="line"><span class="cl">                  URI:http://crl3.digicert.com/sha2-ha-server-g6.crl
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                Full Name:
+</span></span><span class="line"><span class="cl">                  URI:http://crl4.digicert.com/sha2-ha-server-g6.crl
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            X509v3 Certificate Policies:
+</span></span><span class="line"><span class="cl">                Policy: 2.16.840.1.114412.1.1
+</span></span><span class="line"><span class="cl">                  CPS: https://www.digicert.com/CPS
+</span></span><span class="line"><span class="cl">                Policy: 2.23.140.1.2.2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            Authority Information Access:
+</span></span><span class="line"><span class="cl">                OCSP - URI:http://ocsp.digicert.com
+</span></span><span class="line"><span class="cl">                CA Issuers - URI:http://cacerts.digicert.com/DigiCertSHA2HighAssuranceServerCA.crt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            X509v3 Basic Constraints: critical
+</span></span><span class="line"><span class="cl">                CA:FALSE
+</span></span><span class="line"><span class="cl">            1.3.6.1.4.1.11129.2.4.2:
+</span></span><span class="line"><span class="cl">                ...g.e.u.<span class="o">)</span>y...99!.Vs.c.w..W<span class="o">}</span>.<span class="sb">`</span>
+</span></span><span class="line"><span class="cl">..M<span class="o">]</span><span class="p">&amp;</span><span class="se">\%</span><span class="o">]</span>.....r..*......F0D. f........
+</span></span><span class="line"><span class="cl">,cj...<span class="s2">&#34;~........M,..... U+.zza....WN9.V...A;U..?k.e%._.`.u.A....&#34;</span>FJ...:.B.^N1.....K.h..b......r..*......F0D. w.jXF...7K..v. %.A...<span class="p">;</span>,.E.o<span class="o">}</span>JN... 39..W..Z..Ff<span class="p">;</span>.0.....u SZ
+</span></span><span class="line"><span class="cl">..<span class="p">&amp;</span>. ...u.F.U.u.. 0...i..<span class="o">}</span>.,At..I.....p.mG...r..+6.....F0D. <span class="err">&#39;</span>....................O....Dmcpu@. A?W...o.d..o.!..e*....C<span class="o">(</span>%......c
+</span></span><span class="line"><span class="cl">    Signature Algorithm: sha256WithRSAEncryption
+</span></span><span class="line"><span class="cl">         4e:0c:e9:56:59:75:8a:8c:af:75:d9:0e:57:58:fc:c0:8d:d9:
+</span></span><span class="line"><span class="cl">         35:67:84:61:a9:2c:0b:aa:ff:a6:62:31:31:53:6c:d6:50:44:
+</span></span><span class="line"><span class="cl">         1d:7e:0a:11:ec:40:00:d9:f4:d2:e0:f7:a3:f7:32:91:1b:ac:
+</span></span><span class="line"><span class="cl">         d0:4c:01:1e:03:f8:19:8b:1e:79:33:dd:38:c6:a7:f4:4b:3b:
+</span></span><span class="line"><span class="cl">         e9:31:11:b9:c6:a7:63:40:d6:02:2b:43:59:bb:98:4f:08:24:
+</span></span><span class="line"><span class="cl">         78:a0:67:1d:0e:35:bb:40:82:85:e0:d5:7e:76:7e:e4:94:d3:
+</span></span><span class="line"><span class="cl">         4e:a6:d1:31:c0:41:d2:b0:9a:b7:77:c9:36:b9:31:69:95:87:
+</span></span><span class="line"><span class="cl">         b0:50:d9:ef:e5:37:80:a9:f2:dc:0d:a0:82:c8:56:2e:af:85:
+</span></span><span class="line"><span class="cl">         1b:ef:0d:c2:eb:1c:33:d5:76:ae:cb:9d:f1:6e:b4:00:85:75:
+</span></span><span class="line"><span class="cl">         e2:b9:4c:3b:7f:16:41:47:a9:53:b0:c4:b1:7a:44:da:f6:5b:
+</span></span><span class="line"><span class="cl">         84:45:29:13:37:c3:aa:30:98:d2:67:8f:fb:1a:be:94:06:0e:
+</span></span><span class="line"><span class="cl">         b9:cf:e6:fc:5f:fc:e2:f1:1b:32:6a:8e:c2:16:a7:cd:45:c1:
+</span></span><span class="line"><span class="cl">         fe:75:8b:02:b2:f0:d9:3b:5d:7c:1b:a8:45:b8:b1:4d:d8:3c:
+</span></span><span class="line"><span class="cl">         66:2b:2b:33:1e:9f:dc:b8:5e:3b:fe:0a:e4:b2:5b:eb:41:48:
+</span></span><span class="line"><span class="cl">         59:10:6b:63
+</span></span></code></pre></div><h2 id="fun-things-about-x509">Fun things about X.509</h2>
 <p>In <a href="https://github.com/golang/go/blob/e6ac2df2/src/crypto/x509/verify.go#L700-L715">crypto/x509/verify.go</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// KeyUsage status flags are ignored. From Engineering Security, Peter
-</span><span class="c1">// Gutmann: A European government CA marked its signing certificates as
-</span><span class="c1">// being valid for encryption only, but no-one noticed. Another
-</span><span class="c1">// European CA marked its signature keys as not being valid for
-</span><span class="c1">// signatures. A different CA marked its own trusted root certificate
-</span><span class="c1">// as being invalid for certificate signing. Another national CA
-</span><span class="c1">// distributed a certificate to be used to encrypt data for the
-</span><span class="c1">// country’s tax authority that was marked as only being usable for
-</span><span class="c1">// digital signatures but not for encryption. Yet another CA reversed
-</span><span class="c1">// the order of the bit flags in the keyUsage due to confusion over
-</span><span class="c1">// encoding endianness, essentially setting a random keyUsage in
-</span><span class="c1">// certificates that it issued. Another CA created a self-invalidating
-</span><span class="c1">// certificate by adding a certificate policy statement stipulating
-</span><span class="c1">// that the certificate had to be used strictly as specified in the
-</span><span class="c1">// keyUsage, and a keyUsage containing a flag indicating that the RSA
-</span><span class="c1">// encryption key could only be used for Diffie-Hellman key agreement.
-</span></code></pre></div><h2 id="encoding-vs-format">Encoding vs. format</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// KeyUsage status flags are ignored. From Engineering Security, Peter</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Gutmann: A European government CA marked its signing certificates as</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// being valid for encryption only, but no-one noticed. Another</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// European CA marked its signature keys as not being valid for</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// signatures. A different CA marked its own trusted root certificate</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// as being invalid for certificate signing. Another national CA</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// distributed a certificate to be used to encrypt data for the</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// country’s tax authority that was marked as only being usable for</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// digital signatures but not for encryption. Yet another CA reversed</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// the order of the bit flags in the keyUsage due to confusion over</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// encoding endianness, essentially setting a random keyUsage in</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// certificates that it issued. Another CA created a self-invalidating</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// certificate by adding a certificate policy statement stipulating</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// that the certificate had to be used strictly as specified in the</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// keyUsage, and a keyUsage containing a flag indicating that the RSA</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// encryption key could only be used for Diffie-Hellman key agreement.</span>
+</span></span></code></pre></div><h2 id="encoding-vs-format">Encoding vs. format</h2>
 <p>Source: <a href="https://github.com/jetstack/cert-manager/issues/843#issuecomment-566054175">James Roper, 2019</a></p>
 <p>There are multiple axes of encodings standards, there&rsquo;s PEM and DER, and there&rsquo;s
 PKCS*. So you can have PEM encoded PKCS1, DER encoded PKCS8, PEM encoded PKCS8
@@ -273,34 +276,9 @@ PEM = ASN.1 base64-encoded.</p>
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

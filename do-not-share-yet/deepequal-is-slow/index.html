@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Deepequal Is Slow" />
-<meta property="og:description" content="package main_test import ( &#34;reflect&#34; &#34;testing&#34; ) type Status struct { Available bool Addresses []string } var ( s1 = Status{ Available: true, Addresses: []string{&#34;87.35.9.18&#34;, &#34;87.34.9.11&#34;, &#34;some.tld.org&#34;}, } s2 = Status{ Available: true, Addresses: []string{&#34;87.35.9.18&#34;, &#34;87.34.9.11&#34;, &#34;some1.tld.org&#34;}, } ) func BenchmarkDeepEqual(b *testing.B) { for i := 0; i &lt; b.N; i&#43;&#43; { _ = reflect.DeepEqual(s1, s2) } } func BenchmarkFastEqual(b *testing.B) { for i := 0; i &lt; b.N; i&#43;&#43; { _ = FastEqual(s1, s2) } } func FastEqual(s1 Status, s2 Status) bool { if len(s1." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/deepequal-is-slow/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/deepequal-is-slow/cover-deepequal-is-slow.png" />
-<meta property="article:published_time" content="2020-07-09T09:02:48+02:00" />
-<meta property="article:modified_time" content="2020-07-09T09:02:48+02:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/deepequal-is-slow/cover-deepequal-is-slow.png"/>
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/deepequal-is-slow/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Deepequal Is Slow">
+  <meta property="og:description" content="package main_test import ( &#34;reflect&#34; &#34;testing&#34; ) type Status struct { Available bool Addresses []string } var ( s1 = Status{ Available: true, Addresses: []string{&#34;87.35.9.18&#34;, &#34;87.34.9.11&#34;, &#34;some.tld.org&#34;}, } s2 = Status{ Available: true, Addresses: []string{&#34;87.35.9.18&#34;, &#34;87.34.9.11&#34;, &#34;some1.tld.org&#34;}, } ) func BenchmarkDeepEqual(b *testing.B) { for i := 0; i &lt; b.N; i&#43;&#43; { _ = reflect.DeepEqual(s1, s2) } } func BenchmarkFastEqual(b *testing.B) { for i := 0; i &lt; b.N; i&#43;&#43; { _ = FastEqual(s1, s2) } } func FastEqual(s1 Status, s2 Status) bool { if len(s1.Addresses) != len(s2.Addresses) || s1.Available != s2.Available { return false } for i, s1addr := range s1.Addresses { if s1addr != s2.Addresses[i] { return false } } return true } % go test -bench . BenchmarkDeepEqual-8 12256587 96.6 ns/op BenchmarkFastEqual-8 135698862 8.75 ns/op">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2020">
+    <meta property="article:published_time" content="2020-07-09T09:02:48+02:00">
+    <meta property="article:modified_time" content="2020-07-09T09:02:48+02:00">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/deepequal-is-slow/cover-deepequal-is-slow.png">
 
-<meta name="twitter:title" content="Deepequal Is Slow"/>
-<meta name="twitter:description" content="package main_test import ( &#34;reflect&#34; &#34;testing&#34; ) type Status struct { Available bool Addresses []string } var ( s1 = Status{ Available: true, Addresses: []string{&#34;87.35.9.18&#34;, &#34;87.34.9.11&#34;, &#34;some.tld.org&#34;}, } s2 = Status{ Available: true, Addresses: []string{&#34;87.35.9.18&#34;, &#34;87.34.9.11&#34;, &#34;some1.tld.org&#34;}, } ) func BenchmarkDeepEqual(b *testing.B) { for i := 0; i &lt; b.N; i&#43;&#43; { _ = reflect.DeepEqual(s1, s2) } } func BenchmarkFastEqual(b *testing.B) { for i := 0; i &lt; b.N; i&#43;&#43; { _ = FastEqual(s1, s2) } } func FastEqual(s1 Status, s2 Status) bool { if len(s1."/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/deepequal-is-slow/cover-deepequal-is-slow.png">
+  <meta name="twitter:title" content="Deepequal Is Slow">
+  <meta name="twitter:description" content="package main_test import ( &#34;reflect&#34; &#34;testing&#34; ) type Status struct { Available bool Addresses []string } var ( s1 = Status{ Available: true, Addresses: []string{&#34;87.35.9.18&#34;, &#34;87.34.9.11&#34;, &#34;some.tld.org&#34;}, } s2 = Status{ Available: true, Addresses: []string{&#34;87.35.9.18&#34;, &#34;87.34.9.11&#34;, &#34;some1.tld.org&#34;}, } ) func BenchmarkDeepEqual(b *testing.B) { for i := 0; i &lt; b.N; i&#43;&#43; { _ = reflect.DeepEqual(s1, s2) } } func BenchmarkFastEqual(b *testing.B) { for i := 0; i &lt; b.N; i&#43;&#43; { _ = FastEqual(s1, s2) } } func FastEqual(s1 Status, s2 Status) bool { if len(s1.Addresses) != len(s2.Addresses) || s1.Available != s2.Available { return false } for i, s1addr := range s1.Addresses { if s1addr != s2.Addresses[i] { return false } } return true } % go test -bench . BenchmarkDeepEqual-8 12256587 96.6 ns/op BenchmarkFastEqual-8 135698862 8.75 ns/op">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -36,7 +39,7 @@
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -70,58 +73,58 @@
         <!--
 From https://github.com/ori-edge/deploy-controllers/pull/14#discussion_r432398876
 -->
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main_test</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-    <span class="s">&#34;reflect&#34;</span>
-    <span class="s">&#34;testing&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">Status</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">Available</span> <span class="kt">bool</span>
-    <span class="nx">Addresses</span> <span class="p">[]</span><span class="kt">string</span>
-<span class="p">}</span>
-
-<span class="kd">var</span> <span class="p">(</span>
-    <span class="nx">s1</span> <span class="p">=</span> <span class="nx">Status</span><span class="p">{</span>
-        <span class="nx">Available</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">Addresses</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;87.35.9.18&#34;</span><span class="p">,</span> <span class="s">&#34;87.34.9.11&#34;</span><span class="p">,</span> <span class="s">&#34;some.tld.org&#34;</span><span class="p">},</span>
-    <span class="p">}</span>
-    <span class="nx">s2</span> <span class="p">=</span> <span class="nx">Status</span><span class="p">{</span>
-        <span class="nx">Available</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">Addresses</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;87.35.9.18&#34;</span><span class="p">,</span> <span class="s">&#34;87.34.9.11&#34;</span><span class="p">,</span> <span class="s">&#34;some1.tld.org&#34;</span><span class="p">},</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">BenchmarkDeepEqual</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-        <span class="nx">_</span> <span class="p">=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">DeepEqual</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">BenchmarkFastEqual</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-        <span class="nx">_</span> <span class="p">=</span> <span class="nf">FastEqual</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">FastEqual</span><span class="p">(</span><span class="nx">s1</span> <span class="nx">Status</span><span class="p">,</span> <span class="nx">s2</span> <span class="nx">Status</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s1</span><span class="p">.</span><span class="nx">Addresses</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s2</span><span class="p">.</span><span class="nx">Addresses</span><span class="p">)</span> <span class="o">||</span> <span class="nx">s1</span><span class="p">.</span><span class="nx">Available</span> <span class="o">!=</span> <span class="nx">s2</span><span class="p">.</span><span class="nx">Available</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kc">false</span>
-    <span class="p">}</span>
-
-    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">s1addr</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s1</span><span class="p">.</span><span class="nx">Addresses</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">s1addr</span> <span class="o">!=</span> <span class="nx">s2</span><span class="p">.</span><span class="nx">Addresses</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">false</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="kc">true</span>
-<span class="p">}</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% go <span class="nb">test</span> -bench .
-BenchmarkDeepEqual-8   <span class="m">12256587</span>        96.6 ns/op
-BenchmarkFastEqual-8    <span class="m">135698862</span>      8.75 ns/op
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main_test</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;reflect&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;testing&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Status</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Available</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Addresses</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">s1</span> <span class="p">=</span> <span class="nx">Status</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Available</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Addresses</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;87.35.9.18&#34;</span><span class="p">,</span> <span class="s">&#34;87.34.9.11&#34;</span><span class="p">,</span> <span class="s">&#34;some.tld.org&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">s2</span> <span class="p">=</span> <span class="nx">Status</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Available</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Addresses</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;87.35.9.18&#34;</span><span class="p">,</span> <span class="s">&#34;87.34.9.11&#34;</span><span class="p">,</span> <span class="s">&#34;some1.tld.org&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">BenchmarkDeepEqual</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">_</span> <span class="p">=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">DeepEqual</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">BenchmarkFastEqual</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">_</span> <span class="p">=</span> <span class="nf">FastEqual</span><span class="p">(</span><span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">FastEqual</span><span class="p">(</span><span class="nx">s1</span> <span class="nx">Status</span><span class="p">,</span> <span class="nx">s2</span> <span class="nx">Status</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s1</span><span class="p">.</span><span class="nx">Addresses</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s2</span><span class="p">.</span><span class="nx">Addresses</span><span class="p">)</span> <span class="o">||</span> <span class="nx">s1</span><span class="p">.</span><span class="nx">Available</span> <span class="o">!=</span> <span class="nx">s2</span><span class="p">.</span><span class="nx">Available</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">s1addr</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s1</span><span class="p">.</span><span class="nx">Addresses</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">s1addr</span> <span class="o">!=</span> <span class="nx">s2</span><span class="p">.</span><span class="nx">Addresses</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">% go <span class="nb">test</span> -bench .
+</span></span><span class="line"><span class="cl">BenchmarkDeepEqual-8   <span class="m">12256587</span>        96.6 ns/op
+</span></span><span class="line"><span class="cl">BenchmarkFastEqual-8    <span class="m">135698862</span>      8.75 ns/op
+</span></span></code></pre></div>
     </div>
     <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/deepequal-is-slow/index.md">📝 Edit this page</a>
     <div class="tags">
@@ -134,34 +137,9 @@ BenchmarkFastEqual-8    <span class="m">135698862</span>      8.75 ns/op
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

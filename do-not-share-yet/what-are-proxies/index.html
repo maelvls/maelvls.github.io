@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="What Are Proxies" />
-<meta property="og:description" content="A proxy is something (most of the time software, but sometimes also hardware like a dedicated FPGA) that forwards traffic from a place to another.
-Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an HTTP proxy that would allow this person to access the internet behind a corporate firewall.
-   Layer Proxies     L7 plain HTTP, HTTP CONNECT, SOCKS, SOCKS5, HTTPS/SNI proxies   L4 TCP proxies   L3 VPNs    Terms:" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/what-are-proxies/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/what-are-proxies/cover-what-are-proxies.png" />
-<meta property="article:published_time" content="2020-07-13T14:18:40+02:00" />
-<meta property="article:modified_time" content="2020-07-13T14:18:40+02:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/what-are-proxies/cover-what-are-proxies.png"/>
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/what-are-proxies/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="What Are Proxies">
+  <meta property="og:description" content="A proxy is something (most of the time software, but sometimes also hardware like a dedicated FPGA) that forwards traffic from a place to another.
+Most of the time, when someone talks about a “proxy”, they mean an HTTP proxy that would allow this person to access the internet behind a corporate firewall.
+Layer Proxies L7 plain HTTP, HTTP CONNECT, SOCKS, SOCKS5, HTTPS/SNI proxies L4 TCP proxies L3 VPNs Terms:">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2020">
+    <meta property="article:published_time" content="2020-07-13T14:18:40+02:00">
+    <meta property="article:modified_time" content="2020-07-13T14:18:40+02:00">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/what-are-proxies/cover-what-are-proxies.png">
 
-<meta name="twitter:title" content="What Are Proxies"/>
-<meta name="twitter:description" content="A proxy is something (most of the time software, but sometimes also hardware like a dedicated FPGA) that forwards traffic from a place to another.
-Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an HTTP proxy that would allow this person to access the internet behind a corporate firewall.
-   Layer Proxies     L7 plain HTTP, HTTP CONNECT, SOCKS, SOCKS5, HTTPS/SNI proxies   L4 TCP proxies   L3 VPNs    Terms:"/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/what-are-proxies/cover-what-are-proxies.png">
+  <meta name="twitter:title" content="What Are Proxies">
+  <meta name="twitter:description" content="A proxy is something (most of the time software, but sometimes also hardware like a dedicated FPGA) that forwards traffic from a place to another.
+Most of the time, when someone talks about a “proxy”, they mean an HTTP proxy that would allow this person to access the internet behind a corporate firewall.
+Layer Proxies L7 plain HTTP, HTTP CONNECT, SOCKS, SOCKS5, HTTPS/SNI proxies L4 TCP proxies L3 VPNs Terms:">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -40,7 +43,7 @@ Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an H
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -74,26 +77,26 @@ Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an H
         <p>A proxy is something (most of the time software, but sometimes also hardware like a dedicated FPGA) that forwards traffic from a place to another.</p>
 <p>Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an HTTP proxy that would allow this person to access the internet behind a corporate firewall.</p>
 <table>
-<thead>
-<tr>
-<th>Layer</th>
-<th>Proxies</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>L7</td>
-<td>plain HTTP, HTTP <code>CONNECT</code>, SOCKS, SOCKS5, HTTPS/SNI proxies</td>
-</tr>
-<tr>
-<td>L4</td>
-<td>TCP proxies</td>
-</tr>
-<tr>
-<td>L3</td>
-<td>VPNs</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Layer</th>
+          <th>Proxies</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>L7</td>
+          <td>plain HTTP, HTTP <code>CONNECT</code>, SOCKS, SOCKS5, HTTPS/SNI proxies</td>
+      </tr>
+      <tr>
+          <td>L4</td>
+          <td>TCP proxies</td>
+      </tr>
+      <tr>
+          <td>L3</td>
+          <td>VPNs</td>
+      </tr>
+  </tbody>
 </table>
 <p>Terms:</p>
 <ul>
@@ -104,34 +107,34 @@ Most of the time, when someone talks about a &ldquo;proxy&rdquo;, they mean an H
 <li>reverse proxy</li>
 </ul>
 <h2 id="layer-7-http-connect-tcp-tunnel">Layer 7: HTTP CONNECT (TCP tunnel)</h2>
-<div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="nf">CONNECT</span> <span class="nn">streamline.t-mobile.com:22</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="n">Proxy-Authorization</span><span class="o">:</span> <span class="l">Basic encoded-credentials</span>
-</code></pre></div><h2 id="layer-3-the-vpn">Layer 3: the VPN</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="nf">CONNECT</span> <span class="nn">streamline.t-mobile.com:22</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Proxy-Authorization</span><span class="o">:</span> <span class="l">Basic encoded-credentials</span>
+</span></span></code></pre></div><h2 id="layer-3-the-vpn">Layer 3: the VPN</h2>
 <p>A VPN often acts at L3. For example, Telepresence sets a packet filter on BSD (or iptable rule on Linux) which redirects all packets to a given TCP proxy which then forwards traffic to into the pod.</p>
 <p>Some VPNs have to use a higher protocol in order to work around network limitations (e.g., corporate firewall or country-wide censorship), such as OpenVPN which opens a TLS connection (L7) and then use the ciphered TCP connection to forward all TCP traffic; that&rsquo;s L3-into-L7 tunneling (watch out for the MTU!)</p>
 <h2 id="layer-4-the-tcp-proxy">Layer 4: the TCP proxy</h2>
 <p>I am particularly interested in two different kinds of TCP proxies.</p>
 <h2 id="layer-7-the-standard-http-proxy">Layer 7: the standard HTTP proxy</h2>
 <p>There are many available HTTP proxies like Squid, tinyproxy, cntlm and mitmproxy. Let&rsquo;s try mitmproxy and handcraft an HTTP request:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># Open that in one shell session:</span>
-mitmproxy -p <span class="m">9000</span>
-
-<span class="c1"># And this in another shell session:</span>
-nc 127.0.0.1 <span class="m">9000</span> <span class="o">&lt;&lt;&lt;</span> <span class="s1">$&#39;\
-</span><span class="s1">GET http://httpbin.org/ HTTP/1.1\r
-</span><span class="s1">Host: httpbin.org\r
-</span><span class="s1">\r
-</span><span class="s1">&#39;</span>
-</code></pre></div><details>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># Open that in one shell session:</span>
+</span></span><span class="line"><span class="cl">mitmproxy -p <span class="m">9000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># And this in another shell session:</span>
+</span></span><span class="line"><span class="cl">nc 127.0.0.1 <span class="m">9000</span> <span class="o">&lt;&lt;&lt;</span> <span class="s1">$&#39;\
+</span></span></span><span class="line"><span class="cl"><span class="s1">GET http://httpbin.org/ HTTP/1.1\r
+</span></span></span><span class="line"><span class="cl"><span class="s1">Host: httpbin.org\r
+</span></span></span><span class="line"><span class="cl"><span class="s1">\r
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span>
+</span></span></code></pre></div><details>
 <summary>Note on escaping <code>\r\n</code> in your shell</summary>
 <blockquote>
 <p>The tricky part when crafting an HTTP request for <code>nc</code> in the shell is the backslash-escaped charaters expansion. Using a here-document does not work since backslash-escaped characters like <code>\r</code> and <code>\n</code> are not replaced with their actual value as per the ANSI C standard ([ISO/IEC &gt; 9899:201x][] § 5.2.2 Character display semantics, p. 23)</p>
 <p>I use <code>$'text'</code> which is a feature of bash that replaces <code>\</code> sequences with their byte representation. Another possibility is to use <code>printf</code> or <code>echo -e</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nb">printf</span> <span class="s1">&#39;GET http://httpbin.org/ HTTP/1.1\r
-</span><span class="s1">Host: httpbin.org\r
-</span><span class="s1">\r
-</span><span class="s1">&#39;</span> <span class="p">|</span> nc 127.0.0.1 <span class="m">9000</span>
-</code></pre></div></blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">printf</span> <span class="s1">&#39;GET http://httpbin.org/ HTTP/1.1\r
+</span></span></span><span class="line"><span class="cl"><span class="s1">Host: httpbin.org\r
+</span></span></span><span class="line"><span class="cl"><span class="s1">\r
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> <span class="p">|</span> nc 127.0.0.1 <span class="m">9000</span>
+</span></span></code></pre></div></blockquote>
 </details>
 <p>The HTTP proxy uses the exact same protocol as HTTP; you can pass some special headers like <code>Proxy-Authorization: Basic ...</code> which are not going to be forwarded.</p>
 <h2 id="layer-7-the-https--sni-proxy">Layer 7: the HTTPS + SNI proxy</h2>
@@ -140,74 +143,74 @@ nc 127.0.0.1 <span class="m">9000</span> <span class="o">&lt;&lt;&lt;</span> <sp
 <h2 id="examples-of-proxies">Examples of proxies</h2>
 <p>By remote dialer, I mean something that exposes a port on a local machine, and everything that goes through this port is forwarded to a distant host; the distant host &ldquo;dials&rdquo; the destination host (we could say &ldquo;proxies&rdquo; the TCP connection, but I like the &ldquo;dial&rdquo; word 😅)</p>
 <!-- https://textik.com/#216b639e0aaa6953 -->
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">                   local host                    remote host
-                      |                               |
- PHASE 1:             |                               |
- tunnel setup         |   create tcp connection       |
-                      |   (e.g. ssh port forwarding,  |
-                      |   websockets...)              |
-                      |------------------------------&gt;|
-                      |                               |
-                      |   tcp connection established  |
-                      |&lt;-----------------------------&gt;|
-                      |                               |
-                      |                               |
-                      |    configure 80 -&gt; 8000       |
-                      |-----------------------------&gt; |
-                      |                        +-------------+
-                      |                        |listen on 80 |
-                      |                        +-------------+
-                      |                               |
-                      |                               |
-                      |                               |
- PHASE 2:             |                               |
- remote port          |                               |  remote:80
- forwarding           |                               |&lt;---------
-                      |      forwards tcp packets     |
-                      |&lt;------------------------------|
- dials localhost:8000 |                               |
-       &lt;--------------|                               |
-                      |                               |
-                      |                               |
-</code></pre></div><p>And by reverse remote dialer,</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">                   local host                    remote host
+</span></span><span class="line"><span class="cl">                      |                               |
+</span></span><span class="line"><span class="cl"> PHASE 1:             |                               |
+</span></span><span class="line"><span class="cl"> tunnel setup         |   create tcp connection       |
+</span></span><span class="line"><span class="cl">                      |   (e.g. ssh port forwarding,  |
+</span></span><span class="line"><span class="cl">                      |   websockets...)              |
+</span></span><span class="line"><span class="cl">                      |------------------------------&gt;|
+</span></span><span class="line"><span class="cl">                      |                               |
+</span></span><span class="line"><span class="cl">                      |   tcp connection established  |
+</span></span><span class="line"><span class="cl">                      |&lt;-----------------------------&gt;|
+</span></span><span class="line"><span class="cl">                      |                               |
+</span></span><span class="line"><span class="cl">                      |                               |
+</span></span><span class="line"><span class="cl">                      |    configure 80 -&gt; 8000       |
+</span></span><span class="line"><span class="cl">                      |-----------------------------&gt; |
+</span></span><span class="line"><span class="cl">                      |                        +-------------+
+</span></span><span class="line"><span class="cl">                      |                        |listen on 80 |
+</span></span><span class="line"><span class="cl">                      |                        +-------------+
+</span></span><span class="line"><span class="cl">                      |                               |
+</span></span><span class="line"><span class="cl">                      |                               |
+</span></span><span class="line"><span class="cl">                      |                               |
+</span></span><span class="line"><span class="cl"> PHASE 2:             |                               |
+</span></span><span class="line"><span class="cl"> remote port          |                               |  remote:80
+</span></span><span class="line"><span class="cl"> forwarding           |                               |&lt;---------
+</span></span><span class="line"><span class="cl">                      |      forwards tcp packets     |
+</span></span><span class="line"><span class="cl">                      |&lt;------------------------------|
+</span></span><span class="line"><span class="cl"> dials localhost:8000 |                               |
+</span></span><span class="line"><span class="cl">       &lt;--------------|                               |
+</span></span><span class="line"><span class="cl">                      |                               |
+</span></span><span class="line"><span class="cl">                      |                               |
+</span></span></code></pre></div><p>And by reverse remote dialer,</p>
 <p>By tunnel we mean one local port that a process binds to and every TCP opened to that port gets forwarded to a remote dialer.</p>
 <p>TCP tunnel vs. TCP proxy vs. reverse proxy = they are all the same in the end? Except for how things are captured on the local host (simple port binding) and to where the thing is forwarded to.</p>
 <p><a href="https://github.com/klsecservices/rpivot">Rpivot</a> is a python tool used for penetration testing. It acts as a &ldquo;remote dialer&rdquo;:</p>
 <h2 id="what-is-socat">What is socat</h2>
 <p><a href="https://book.hacktricks.xyz/tunneling-and-port-forwarding#socat">socat</a></p>
 <p>From <a href="https://github.com/rancher/k3s/blob/fe7337937155af41f1aebeb87d1acd07091b71de/scripts/provision/generic/alpine310/vagrant#L25">rancher/k3s</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 127.0.0.1:2375:2375 alpine/socat TCP-LISTEN:2375,fork UNIX-CONNECT:/var/run/docker.sock
-</code></pre></div><p>Probably a massive workaround for exposing <code>docker.sock</code> on <code>localhost:2375</code> when the only thing you have in hand is docker &amp; you can’t run <code>socat</code> locally (or don’t want to bother installing it lol).</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 127.0.0.1:2375:2375 alpine/socat TCP-LISTEN:2375,fork UNIX-CONNECT:/var/run/docker.sock
+</span></span></code></pre></div><p>Probably a massive workaround for exposing <code>docker.sock</code> on <code>localhost:2375</code> when the only thing you have in hand is docker &amp; you can’t run <code>socat</code> locally (or don’t want to bother installing it lol).</p>
 <h2 id="reverseremote-tcp-connection-remote-dialer">Reverse/remote TCP connection (remote dialer)</h2>
 <p>Let&rsquo;s expose port 80 on the remote and that will forward traffic to localhost:8080 on my local machine:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># From local</span>
-ssh -R 42345:22 remote -p <span class="m">22</span>
-ssh -R 80:8080 localhost -p <span class="m">42345</span>      <span class="c1"># the reverse port-forwarding</span>
-</code></pre></div><p>Diagram of that:</p>
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">      REMOTE TCP TUNNEL
-      Forwards TCP connections from the remote to the
-      local host, but the initial TCP connection is
-      made from local to remote.
-
-           local host             remote host
-                |                       |
-                |                       |
-                |    ssh port-forward   |
-                |----------------------&gt;|
-                |                       |
-                |    ssh port-forward   |
-                |&lt;------(80:8080)-------|
-                |                       |
-                |                 +-----|------+
-                |                 |listen on 80|
-                |                 +-----|------+
-                |                       |
-                |                       |    host:80
-                |   dial backend:8080   |&lt;----------
-          dials |&lt;----------------------|
- fixedhost:8080 |                       |
- &lt;--------------|                       |
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># From local</span>
+</span></span><span class="line"><span class="cl">ssh -R 42345:22 remote -p <span class="m">22</span>
+</span></span><span class="line"><span class="cl">ssh -R 80:8080 localhost -p <span class="m">42345</span>      <span class="c1"># the reverse port-forwarding</span>
+</span></span></code></pre></div><p>Diagram of that:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">      REMOTE TCP TUNNEL
+</span></span><span class="line"><span class="cl">      Forwards TCP connections from the remote to the
+</span></span><span class="line"><span class="cl">      local host, but the initial TCP connection is
+</span></span><span class="line"><span class="cl">      made from local to remote.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">           local host             remote host
+</span></span><span class="line"><span class="cl">                |                       |
+</span></span><span class="line"><span class="cl">                |                       |
+</span></span><span class="line"><span class="cl">                |    ssh port-forward   |
+</span></span><span class="line"><span class="cl">                |----------------------&gt;|
+</span></span><span class="line"><span class="cl">                |                       |
+</span></span><span class="line"><span class="cl">                |    ssh port-forward   |
+</span></span><span class="line"><span class="cl">                |&lt;------(80:8080)-------|
+</span></span><span class="line"><span class="cl">                |                       |
+</span></span><span class="line"><span class="cl">                |                 +-----|------+
+</span></span><span class="line"><span class="cl">                |                 |listen on 80|
+</span></span><span class="line"><span class="cl">                |                 +-----|------+
+</span></span><span class="line"><span class="cl">                |                       |
+</span></span><span class="line"><span class="cl">                |                       |    host:80
+</span></span><span class="line"><span class="cl">                |   dial backend:8080   |&lt;----------
+</span></span><span class="line"><span class="cl">          dials |&lt;----------------------|
+</span></span><span class="line"><span class="cl"> fixedhost:8080 |                       |
+</span></span><span class="line"><span class="cl"> &lt;--------------|                       |
+</span></span></code></pre></div>
     </div>
     <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/what-are-proxies/index.md">📝 Edit this page</a>
     <div class="tags">
@@ -220,34 +223,9 @@ ssh -R 80:8080 localhost -p <span class="m">42345</span>      <span class="c1">#
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

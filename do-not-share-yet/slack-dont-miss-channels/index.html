@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Slack: don&#39;t miss any channels!" />
-<meta property="og:description" content="Given $U$ the set of users and a pair of users $(u, v) \in U^2$, we denote by $f$ the function that tells us when two users belong to the same channel $c \in C$ where $C$ is the set of channels. It is defined as
-$$ f(u,v,c) = \begin{cases}1 &amp; \text{ if } u \text{ and } v \text{ both in channel } c \ 0 &amp;\text{ otherwise. }\end{cases} $$" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/slack-dont-miss-channels/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/slack-dont-miss-channels/cover-slack-dont-miss-channels.png" />
-<meta property="article:published_time" content="2020-05-08T10:37:20+02:00" />
-<meta property="article:modified_time" content="2020-05-08T10:37:20+02:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/slack-dont-miss-channels/cover-slack-dont-miss-channels.png"/>
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/slack-dont-miss-channels/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Slack: don&#39;t miss any channels!">
+  <meta property="og:description" content="Given $U$ the set of users and a pair of users $(u, v) \in U^2$, we denote by $f$ the function that tells us when two users belong to the same channel $c \in C$ where $C$ is the set of channels. It is defined as
+$$ f(u,v,c) = \begin{cases}1 &amp; \text{ if } u \text{ and } v \text{ both in channel } c \ 0 &amp;\text{ otherwise. }\end{cases} $$">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2020">
+    <meta property="article:published_time" content="2020-05-08T10:37:20+02:00">
+    <meta property="article:modified_time" content="2020-05-08T10:37:20+02:00">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/slack-dont-miss-channels/cover-slack-dont-miss-channels.png">
 
-<meta name="twitter:title" content="Slack: don&#39;t miss any channels!"/>
-<meta name="twitter:description" content="Given $U$ the set of users and a pair of users $(u, v) \in U^2$, we denote by $f$ the function that tells us when two users belong to the same channel $c \in C$ where $C$ is the set of channels. It is defined as
-$$ f(u,v,c) = \begin{cases}1 &amp; \text{ if } u \text{ and } v \text{ both in channel } c \ 0 &amp;\text{ otherwise. }\end{cases} $$"/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/slack-dont-miss-channels/cover-slack-dont-miss-channels.png">
+  <meta name="twitter:title" content="Slack: don&#39;t miss any channels!">
+  <meta name="twitter:description" content="Given $U$ the set of users and a pair of users $(u, v) \in U^2$, we denote by $f$ the function that tells us when two users belong to the same channel $c \in C$ where $C$ is the set of channels. It is defined as
+$$ f(u,v,c) = \begin{cases}1 &amp; \text{ if } u \text{ and } v \text{ both in channel } c \ 0 &amp;\text{ otherwise. }\end{cases} $$">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -38,7 +41,7 @@ $$ f(u,v,c) = \begin{cases}1 &amp; \text{ if } u \text{ and } v \text{ both in c
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -79,8 +82,7 @@ dist(u, v) = \sum_{c \in C} f(u,v,c)\text{.}
 $$</p>
 <p>The optimization problem can be formulated as:</p>
 <blockquote>
-<p>Given a user $u$, we want to find the channel $c$ in which he does not already belong and which maximizes the chances of subscribing to an interesting channel. This assumes that the user has already subscribed to some channels and that some of these channels are</p>
-</blockquote>
+<p>Given a user $u$, we want to find the channel $c$ in which he does not already belong and which maximizes the chances of subscribing to an interesting channel. This assumes that the user has already subscribed to some channels and that some of these channels are</p></blockquote>
 <p>For a given user $v$:</p>
 <p>$$\max_{c \in C} \sum_{u \in U, u \ne v} dist(v, u)$$</p>
 
@@ -96,34 +98,9 @@ $$</p>
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

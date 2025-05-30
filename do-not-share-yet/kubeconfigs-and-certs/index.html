@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Kubeconfigs and Certs" />
-<meta property="og:description" content="Let&rsquo;s go through the client-certificate in my kube config. This kube config contains one user, &ldquo;kind-kind&rdquo;. Instead of inspecting the certificate PEM with openssl, I use certigo (much nicer experience!)
-kubectl config view -ojson --flatten \  | jq &#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39; -r \  | base64 -d \  | certigo dump That gives us:
-** CERTIFICATE 1 ** Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC Subject: O=system:masters, CN=kubernetes-admin Issuer: CN=kubernetes Warnings: Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set The common name (CN=) is &ldquo;kubernetes-admin&rdquo;, that&rsquo;s the name of the user." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/cover-kubeconfigs-and-certs.png" />
-<meta property="article:published_time" content="2020-04-18T22:14:07+02:00" />
-<meta property="article:modified_time" content="2020-04-18T22:14:07+02:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/cover-kubeconfigs-and-certs.png"/>
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Kubeconfigs and Certs">
+  <meta property="og:description" content="Let’s go through the client-certificate in my kube config. This kube config contains one user, “kind-kind”. Instead of inspecting the certificate PEM with openssl, I use certigo (much nicer experience!)
+kubectl config view -ojson --flatten \ | jq &#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39; -r \ | base64 -d \ | certigo dump That gives us:
+** CERTIFICATE 1 ** Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC Subject: O=system:masters, CN=kubernetes-admin Issuer: CN=kubernetes Warnings: Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set The common name (CN=) is “kubernetes-admin”, that’s the name of the user. The organization (O=) is “system:master”.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2020">
+    <meta property="article:published_time" content="2020-04-18T22:14:07+02:00">
+    <meta property="article:modified_time" content="2020-04-18T22:14:07+02:00">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/cover-kubeconfigs-and-certs.png">
 
-<meta name="twitter:title" content="Kubeconfigs and Certs"/>
-<meta name="twitter:description" content="Let&rsquo;s go through the client-certificate in my kube config. This kube config contains one user, &ldquo;kind-kind&rdquo;. Instead of inspecting the certificate PEM with openssl, I use certigo (much nicer experience!)
-kubectl config view -ojson --flatten \  | jq &#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39; -r \  | base64 -d \  | certigo dump That gives us:
-** CERTIFICATE 1 ** Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC Subject: O=system:masters, CN=kubernetes-admin Issuer: CN=kubernetes Warnings: Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set The common name (CN=) is &ldquo;kubernetes-admin&rdquo;, that&rsquo;s the name of the user."/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/cover-kubeconfigs-and-certs.png">
+  <meta name="twitter:title" content="Kubeconfigs and Certs">
+  <meta name="twitter:description" content="Let’s go through the client-certificate in my kube config. This kube config contains one user, “kind-kind”. Instead of inspecting the certificate PEM with openssl, I use certigo (much nicer experience!)
+kubectl config view -ojson --flatten \ | jq &#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39; -r \ | base64 -d \ | certigo dump That gives us:
+** CERTIFICATE 1 ** Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC Subject: O=system:masters, CN=kubernetes-admin Issuer: CN=kubernetes Warnings: Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set The common name (CN=) is “kubernetes-admin”, that’s the name of the user. The organization (O=) is “system:master”.">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -40,7 +43,7 @@ kubectl config view -ojson --flatten \  | jq &#39;.users[] | .user.&#34;client-c
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -72,26 +75,26 @@ kubectl config view -ojson --flatten \  | jq &#39;.users[] | .user.&#34;client-c
     </div>
     <div class="markdown">
         <p>Let&rsquo;s go through the client-certificate in my kube config. This kube config contains one user, &ldquo;kind-kind&rdquo;. Instead of inspecting the certificate PEM with openssl, I use <a href="https://github.com/square/certigo">certigo</a> (much nicer experience!)</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">kubectl config view -ojson --flatten <span class="se">\
-</span><span class="se"></span>  <span class="p">|</span> jq <span class="s1">&#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39;</span> -r <span class="se">\
-</span><span class="se"></span>  <span class="p">|</span> base64 -d <span class="se">\
-</span><span class="se"></span>  <span class="p">|</span> certigo dump
-</code></pre></div><p>That gives us:</p>
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">** CERTIFICATE 1 **
-Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC
-Subject:
-    O=system:masters, CN=kubernetes-admin
-Issuer:
-    CN=kubernetes
-Warnings:
-    Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set
-</code></pre></div><p>The common name (<code>CN=</code>) is &ldquo;kubernetes-admin&rdquo;, that&rsquo;s the name of the user. The organization (<code>O=</code>) is &ldquo;system:master&rdquo;.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kubectl config view -ojson --flatten <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="p">|</span> jq <span class="s1">&#39;.users[] | .user.&#34;client-certificate-data&#34; | select(.!=null)&#39;</span> -r <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="p">|</span> base64 -d <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="p">|</span> certigo dump
+</span></span></code></pre></div><p>That gives us:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">** CERTIFICATE 1 **
+</span></span><span class="line"><span class="cl">Valid: 2020-03-03 12:31 UTC to 2021-03-03 12:31 UTC
+</span></span><span class="line"><span class="cl">Subject:
+</span></span><span class="line"><span class="cl">    O=system:masters, CN=kubernetes-admin
+</span></span><span class="line"><span class="cl">Issuer:
+</span></span><span class="line"><span class="cl">    CN=kubernetes
+</span></span><span class="line"><span class="cl">Warnings:
+</span></span><span class="line"><span class="cl">    Certificate doesn&#39;t have any valid DNS/URI names or IP addresses set
+</span></span></code></pre></div><p>The common name (<code>CN=</code>) is &ldquo;kubernetes-admin&rdquo;, that&rsquo;s the name of the user. The organization (<code>O=</code>) is &ldquo;system:master&rdquo;.</p>
 <blockquote>
 <p>Quick recap of what a certificate is. For us, &ldquo;certificate&rdquo; means a <a href="https://tools.ietf.org/html/rfc5280#section-4.1">X.509-v3</a>-formated binary chunk. This binary chunk is, most of the time, presented in the PEM format (the binary chunk is encoded in base 64 and wrapped with some decorations:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">-----BEGIN RSA PRIVATE KEY-----
-&lt;the base64-encoded X.509 binary chunk&gt;
------END RSA PRIVATE KEY-----
-</code></pre></div><p>This chunk of binary data contains three important parts:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-----BEGIN RSA PRIVATE KEY-----
+</span></span><span class="line"><span class="cl">&lt;the base64-encoded X.509 binary chunk&gt;
+</span></span><span class="line"><span class="cl">-----END RSA PRIVATE KEY-----
+</span></span></code></pre></div><p>This chunk of binary data contains three important parts:</p>
 <ol>
 <li>the public key of the certificate,</li>
 <li>a list of attributes, e.g. <code>O=Google LLC,CN=*.google.com</code>,</li>
@@ -99,109 +102,106 @@ Warnings:
 </ol>
 <p>The CA certificate uses its private key to sign the concatenation of the attributes with the public key:</p>
 <div class="nohighlight">
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"> +------------------------------+  +-------------------------+
- |        CA CERTIFICATE        |  |         CA KEY          |
- |+----------------------------+|  |+-----------------------+|
- || O=GlobalSign,CN=GlobalSign ||  ||      private key      ||
- |+----------------------------+|  |+-----------------------+|
- |+----------------------------+|  +-------------------------+
- ||         public key         ||               |
- |+----------------------------+|               |
- +------------------------------+               |
-                                                |
-                                                |
-                                                |
- +------------------------------+               |signs using
- |         CERTIFICATE          |               |private key
- |1----------------------------+|               |
- ||O=Google LLC,CN=*.google.com||               |
- |+----------------------------+|               |
- |2----------------------------+|               |
- ||         public key         ||               |
- |+----------------------------+|               |
- |+----------------------------+|               |
- ||      signature of 1+2      ||&lt;--------------+
- |+----------------------------+|
- +------------------------------+
-</code></pre></div></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl"> +------------------------------+  +-------------------------+
+</span></span><span class="line"><span class="cl"> |        CA CERTIFICATE        |  |         CA KEY          |
+</span></span><span class="line"><span class="cl"> |+----------------------------+|  |+-----------------------+|
+</span></span><span class="line"><span class="cl"> || O=GlobalSign,CN=GlobalSign ||  ||      private key      ||
+</span></span><span class="line"><span class="cl"> |+----------------------------+|  |+-----------------------+|
+</span></span><span class="line"><span class="cl"> |+----------------------------+|  +-------------------------+
+</span></span><span class="line"><span class="cl"> ||         public key         ||               |
+</span></span><span class="line"><span class="cl"> |+----------------------------+|               |
+</span></span><span class="line"><span class="cl"> +------------------------------+               |
+</span></span><span class="line"><span class="cl">                                                |
+</span></span><span class="line"><span class="cl">                                                |
+</span></span><span class="line"><span class="cl">                                                |
+</span></span><span class="line"><span class="cl"> +------------------------------+               |signs using
+</span></span><span class="line"><span class="cl"> |         CERTIFICATE          |               |private key
+</span></span><span class="line"><span class="cl"> |1----------------------------+|               |
+</span></span><span class="line"><span class="cl"> ||O=Google LLC,CN=*.google.com||               |
+</span></span><span class="line"><span class="cl"> |+----------------------------+|               |
+</span></span><span class="line"><span class="cl"> |2----------------------------+|               |
+</span></span><span class="line"><span class="cl"> ||         public key         ||               |
+</span></span><span class="line"><span class="cl"> |+----------------------------+|               |
+</span></span><span class="line"><span class="cl"> |+----------------------------+|               |
+</span></span><span class="line"><span class="cl"> ||      signature of 1+2      ||&lt;--------------+
+</span></span><span class="line"><span class="cl"> |+----------------------------+|
+</span></span><span class="line"><span class="cl"> +------------------------------+
+</span></span></code></pre></div></div>
 <p>When someone connects to foo.google.com and wants to make sure this server can be trusted, they would use the CA certificates that are securely stored on their disk in order to verify the signature of the untrusted certificate that foo.google.com just sent them.</p>
 <div class="nohighlight">
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">                                  +------------------------------+
-                                  |   CA CERTIFICATE (trusted)   |
-Can I trust foo.google.com?       |+----------------------------+|
-            |                     || O=GlobalSign,CN=GlobalSign ||
-            |                     |+----------------------------+|
-            |                     |+----------------------------+|
-            |  +-----------------&gt;||         public key         ||
-            |  |                  |+----------------------------+|
-            |  |                  +------------------------------+
-            |  |check signature   (this cert is secure on my disk)
-            |  |using public key
-            |  |
-        (1) |  |(2)               +------------------------------+
-            |  |                  |    CERTIFICATE (untrusted)   |
-     verify |  |                  |1----------------------------+|
-  signature |  |                  ||O=Google LLC,CN=*.google.com||
-            |  |                  |+----------------------------+|
-            |  |                  |2----------------------------+|
-            |  |                  ||         public key         ||
-            |  +------------------|+----------------------------+|
-            |                     |+----------------------------+|
-            +--------------------&gt;||      signature of 1+2      ||
-                                  |+----------------------------+|
-                                  +------------------------------+
-                                  (this cert is sent to me by the
-                                            foo.google.com server)
-</code></pre></div></div>
-</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">                                  +------------------------------+
+</span></span><span class="line"><span class="cl">                                  |   CA CERTIFICATE (trusted)   |
+</span></span><span class="line"><span class="cl">Can I trust foo.google.com?       |+----------------------------+|
+</span></span><span class="line"><span class="cl">            |                     || O=GlobalSign,CN=GlobalSign ||
+</span></span><span class="line"><span class="cl">            |                     |+----------------------------+|
+</span></span><span class="line"><span class="cl">            |                     |+----------------------------+|
+</span></span><span class="line"><span class="cl">            |  +-----------------&gt;||         public key         ||
+</span></span><span class="line"><span class="cl">            |  |                  |+----------------------------+|
+</span></span><span class="line"><span class="cl">            |  |                  +------------------------------+
+</span></span><span class="line"><span class="cl">            |  |check signature   (this cert is secure on my disk)
+</span></span><span class="line"><span class="cl">            |  |using public key
+</span></span><span class="line"><span class="cl">            |  |
+</span></span><span class="line"><span class="cl">        (1) |  |(2)               +------------------------------+
+</span></span><span class="line"><span class="cl">            |  |                  |    CERTIFICATE (untrusted)   |
+</span></span><span class="line"><span class="cl">     verify |  |                  |1----------------------------+|
+</span></span><span class="line"><span class="cl">  signature |  |                  ||O=Google LLC,CN=*.google.com||
+</span></span><span class="line"><span class="cl">            |  |                  |+----------------------------+|
+</span></span><span class="line"><span class="cl">            |  |                  |2----------------------------+|
+</span></span><span class="line"><span class="cl">            |  |                  ||         public key         ||
+</span></span><span class="line"><span class="cl">            |  +------------------|+----------------------------+|
+</span></span><span class="line"><span class="cl">            |                     |+----------------------------+|
+</span></span><span class="line"><span class="cl">            +--------------------&gt;||      signature of 1+2      ||
+</span></span><span class="line"><span class="cl">                                  |+----------------------------+|
+</span></span><span class="line"><span class="cl">                                  +------------------------------+
+</span></span><span class="line"><span class="cl">                                  (this cert is sent to me by the
+</span></span><span class="line"><span class="cl">                                            foo.google.com server)
+</span></span></code></pre></div></div></blockquote>
 <!--
 https://textik.com/#d85b4624473ca862
 -->
-
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="https://www.youtube.com/embed/gXz4cq3PKdg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
-</div>
+      <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/gXz4cq3PKdg?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"></iframe>
+    </div>
 
 <hr>
 <h2 id="see-the-acme-http-01-protocol-using-pebble-lego-cli-and-mitmproxy">See the ACME HTTP-01 protocol using Pebble, Lego CLI and mitmproxy</h2>
 <p>First, let us create a CA key pair using <a href="https://github.com/jsha/minica">minica</a>.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go get -u github.com/jsha/minica
-minica --domains me -ip-addresses 127.0.0.1,0.0.0.0
-sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain minica.pem
-</code></pre></div><p>We are going to use the domain <code>me</code> instead of <code>locahost</code> since Go programs <a href="https://maelvls.dev/go-ignores-proxy-localhost/">are ignoring the proxy settings</a> when the host of the request is <code>localhost</code>. Thus, we need to make sure we can resolve the <code>me</code> name by adding a line in <code>/etc/hosts</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># /etc/hosts</span>
-127.0.0.1   me
-</code></pre></div><p>Now, let us run <a href="https://mitmproxy.org/">mitmproxy</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">mitmproxy -p <span class="m">9090</span> --set <span class="nv">ssl_verify_upstream_trusted_ca</span><span class="o">=</span>minica.pem
-</code></pre></div><blockquote>
-<p>The <code>minica.pem</code> has to be given to mitmproxy since it does not know about the system keychain (on macOS). Even if we added this root CA to the keychain and set it as trusted, mitmproxy uses its own certificate bundle (handled by <a href="https://github.com/certifi/python-certifi">certifi</a>). So we have to give mitmproxy the root CA of the upstream server that mitmproxy will talk to (i.e., pebble).</p>
-</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">go get -u github.com/jsha/minica
+</span></span><span class="line"><span class="cl">minica --domains me -ip-addresses 127.0.0.1,0.0.0.0
+</span></span><span class="line"><span class="cl">sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain minica.pem
+</span></span></code></pre></div><p>We are going to use the domain <code>me</code> instead of <code>locahost</code> since Go programs <a href="https://maelvls.dev/go-ignores-proxy-localhost/">are ignoring the proxy settings</a> when the host of the request is <code>localhost</code>. Thus, we need to make sure we can resolve the <code>me</code> name by adding a line in <code>/etc/hosts</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># /etc/hosts</span>
+</span></span><span class="line"><span class="cl">127.0.0.1   me
+</span></span></code></pre></div><p>Now, let us run <a href="https://mitmproxy.org/">mitmproxy</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">mitmproxy -p <span class="m">9090</span> --set <span class="nv">ssl_verify_upstream_trusted_ca</span><span class="o">=</span>minica.pem
+</span></span></code></pre></div><blockquote>
+<p>The <code>minica.pem</code> has to be given to mitmproxy since it does not know about the system keychain (on macOS). Even if we added this root CA to the keychain and set it as trusted, mitmproxy uses its own certificate bundle (handled by <a href="https://github.com/certifi/python-certifi">certifi</a>). So we have to give mitmproxy the root CA of the upstream server that mitmproxy will talk to (i.e., pebble).</p></blockquote>
 <p>At this point, let&rsquo;s make sure <code>lego</code> will trust mitmproxy&rsquo;s man-in-the-middle CA:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain ~/.mitmproxy/mitmproxy-ca-cert.pem
-</code></pre></div><p>Then, let us run <a href="https://github.com/letsencrypt/pebble">pebble</a>, the simple ACME server meant for testing:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go get -u github.com/letsencrypt/pebble/cmd/pebble
-<span class="nv">HTTP_PROXY</span><span class="o">=</span>localhost:9090 pebble -config /dev/stdin <span class="s">&lt;&lt;EOF
-</span><span class="s">{
-</span><span class="s">  &#34;pebble&#34;: {
-</span><span class="s">    &#34;listenAddress&#34;: &#34;0.0.0.0:14000&#34;,
-</span><span class="s">    &#34;managementListenAddress&#34;: &#34;0.0.0.0:15000&#34;,
-</span><span class="s">    &#34;certificate&#34;: &#34;me/cert.pem&#34;,
-</span><span class="s">    &#34;privateKey&#34;: &#34;me/key.pem&#34;,
-</span><span class="s">    &#34;httpPort&#34;: 5002,
-</span><span class="s">    &#34;tlsPort&#34;: 5001,
-</span><span class="s">    &#34;externalAccountBindingRequired&#34;: false
-</span><span class="s">  }
-</span><span class="s">}
-</span><span class="s">EOF</span>
-</code></pre></div><p>Finally, let us run the ACME client <a href="https://github.com/go-acme/lego">lego</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">go get -u github.com/go-acme/lego/v4/cmd/lego
-lego -server<span class="o">=</span>https://me:14000/dir -domains me -email foo@bar.org -http.port :5002 -http run
-</code></pre></div><p>And there we go!</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain ~/.mitmproxy/mitmproxy-ca-cert.pem
+</span></span></code></pre></div><p>Then, let us run <a href="https://github.com/letsencrypt/pebble">pebble</a>, the simple ACME server meant for testing:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">go get -u github.com/letsencrypt/pebble/cmd/pebble
+</span></span><span class="line"><span class="cl"><span class="nv">HTTP_PROXY</span><span class="o">=</span>localhost:9090 pebble -config /dev/stdin <span class="s">&lt;&lt;EOF
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">  &#34;pebble&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;listenAddress&#34;: &#34;0.0.0.0:14000&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;managementListenAddress&#34;: &#34;0.0.0.0:15000&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;certificate&#34;: &#34;me/cert.pem&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;privateKey&#34;: &#34;me/key.pem&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;httpPort&#34;: 5002,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;tlsPort&#34;: 5001,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;externalAccountBindingRequired&#34;: false
+</span></span></span><span class="line"><span class="cl"><span class="s">  }
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></div><p>Finally, let us run the ACME client <a href="https://github.com/go-acme/lego">lego</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">go get -u github.com/go-acme/lego/v4/cmd/lego
+</span></span><span class="line"><span class="cl">lego -server<span class="o">=</span>https://me:14000/dir -domains me -email foo@bar.org -http.port :5002 -http run
+</span></span></code></pre></div><p>And there we go!</p>
 <p><img src="mitmproxy-with-lego-and-pebble.png" alt="Screeshot of mitmproxy running interactively in the terminal and capturing the input and output from Pebble and Lego"></p>
 <p>If you would like to dig into these traces, you can do so by downloading the mitmproxy flow here:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">curl -O https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/pebble-and-lego.mitmproxy
-mitmproxy -r pebble-and-lego.mitmproxy
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">curl -O https://maelvls.dev/do-not-share-yet/kubeconfigs-and-certs/pebble-and-lego.mitmproxy
+</span></span><span class="line"><span class="cl">mitmproxy -r pebble-and-lego.mitmproxy
+</span></span></code></pre></div>
     </div>
     <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/kubeconfigs-and-certs/index.md">📝 Edit this page</a>
     <div class="tags">
@@ -214,34 +214,9 @@ mitmproxy -r pebble-and-lego.mitmproxy
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

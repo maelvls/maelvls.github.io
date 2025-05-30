@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ocaml on maelvls dev blog</title>
+    <title>Ocaml on maelvls dev blog</title>
     <link>https://maelvls.dev/do-not-share-yet/tags/ocaml/</link>
-    <description>Recent content in ocaml on maelvls.dev</description>
+    <description>Recent content in Ocaml on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 30 May 2020 20:45:06 +0200</lastBuildDate>

@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="BGP 101" />
-<meta property="og:description" content="whois $(curl ifconfig.me/ip) % Information related to &#39;90.76.0.0/16AS3215&#39; route: 90.76.0.0/16 descr: France Telecom IP2000-ADSL-BAS origin: AS3215 # ✳ mnt-by: FT-BRX created: 2018-08-16T14:22:19Z last-modified: 2018-08-16T14:22:19Z source: RIPE  AS3215 is my ISP&rsquo;s autonomous system.
- % sudo mtr google.fr My traceroute [v0.93] macbook-pro-de-mael-2.home (2a01:cb19:86a2:8c00:20db:756d:83b3:8891) 2020-04-19T17:55:26&#43;0200 Keys: Help Display mode Restart statistics Order of fields quit Packets Pings Host Loss% Snt Last Avg Best Wrst StDev 1. livebox.home 0.0% 69 5.6 41.7 3." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/bgp-101/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/bgp-101/cover-bgp-101.png" />
-<meta property="article:published_time" content="2020-04-19T17:51:55+02:00" />
-<meta property="article:modified_time" content="2020-04-19T17:51:55+02:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/bgp-101/cover-bgp-101.png"/>
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/bgp-101/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="BGP 101">
+  <meta property="og:description" content="whois $(curl ifconfig.me/ip) % Information related to &#39;90.76.0.0/16AS3215&#39; route: 90.76.0.0/16 descr: France Telecom IP2000-ADSL-BAS origin: AS3215 # ✳ mnt-by: FT-BRX created: 2018-08-16T14:22:19Z last-modified: 2018-08-16T14:22:19Z source: RIPE AS3215 is my ISP’s autonomous system.
+% sudo mtr google.fr My traceroute [v0.93] macbook-pro-de-mael-2.home (2a01:cb19:86a2:8c00:20db:756d:83b3:8891) 2020-04-19T17:55:26&#43;0200 Keys: Help Display mode Restart statistics Order of fields quit Packets Pings Host Loss% Snt Last Avg Best Wrst StDev 1. livebox.home 0.0% 69 5.6 41.7 3.2 700.4 128.3 2. 2a01cb08a00402190193025300740181.ipv6.abo.wanadoo.fr 0.0% 69 18.5 61.2 9.8 1012. 158.1 3. 2a01:cfc4:0:d00::a 0.0% 69 42.9 55.9 16.5 957.9 137.9 4. bundle-ether103.pastr4.-.opentransit.net 76.5% 69 31.8 33.3 23.3 60.9 11.5 5. et-15-0-2-0.pastr3.-.opentransit.net 0.0% 69 59.6 70.8 23.4 1050. 153.0 6. 2001:4860:1:1::336 0.0% 69 41.0 67.6 23.6 943.7 133.7 7. 2001:4860:0:1017::1 49.3% 69 29.9 77.2 25.3 1046. 185.7 8. 2001:4860:0:1::1e3b 0.0% 68 34.5 80.7 23.0 952.3 179.7 9. par10s29-in-x03.1e100.net 0.0% 68 29.1 72.1 23.7 836.8 154.7 % subnetcalc 80.10.236.253/26 Address = 80.10.236.253 01010000 . 00001010 . 11101100 . 11111101 Network = 80.10.236.192 / 26 Netmask = 255.255.255.192 Broadcast = 80.10.236.255 Wildcard Mask = 0.0.0.63 Hosts Bits = 6 Max. Hosts = 62 (2^6 - 2) Host Range = { 80.10.236.193 - 80.10.236.254 } Properties = - 80.10.236.253 is a HOST address in 80.10.236.192/26 - Class A DNS Hostname = (nodename nor servname provided, or not known) % nc route-server.opentransit.net 23 &amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp; route-server.opentransit.net -- &amp; Opentransit IPv4/IPv6 views This router keeps peering sessions with all the Opentransit Backbone Routers, throughout the Opentransit IP Backbone as follows: [IPv4/IPv6 view] IPv4: 193.251.245.1 IPv6: 2001:688:0:1::158 Dallas IPv4: 193.251.245.3 IPv6: 2001:688:0:1::1c Los Angeles IPv4: 193.251.245.7 IPv6: 2001:688:0:1::55 London IPV4: 193.251.245.9 IPv6: 2001:688:0:1::41 Palo Alto IPv4: 193.251.245.10 IPv6: 2001:688:0:1::4e Paris IPv4: 193.251.245.16 IPv6: 2001:688:0:1::168 New York IPv4: 193.251.245.19 IPv6: 2001:688:0:1::4b Barcelona IPv4: 193.251.245.28 IPv6: 2001:688:0:1::8 Frankfurt IPv4: 193.251.245.37 IPv6: 2001:688:0:1:: Frankfurt IPv4: 193.251.245.49 IPv6: 2001:688:0:1::19 London IPv4: 193.251.245.53 IPv6: 2001:688:0:1::1e Chicago IPv4: 193.251.245.57 IPv6: 2001:688:0:1::45 Miami IPv4: 193.251.245.66 IPv6: 2001:688:0:1::44 Geneva IPV4: 193.251.245.69 IPV6: 2001:688:0:1::56 Singapore IPv4: 193.251.245.76 IPv6: 2001:688:0:1::d New York IPv4: 193.251.245.78 IPv6: 2001:688:0:1::22 Madrid IPv4: 193.251.245.81 IPv6: 2001:688:0:1::4 Barcelona IPv4: 193.251.245.88 IPv6: 2001:688:0:1::f London IPv4: 193.251.254.92 IPv6: 2001:688:0:1::24 Paris IPv4: 193.251.245.96 IPv6: 2001:688:0:1::3E Brussels IPv4: 193.251.245.134 IPv6: 2001:688:0:1::4a Zurich IPv4: 193.251.245.147 IPv6: 2001:688:0:1::2A HongKong IPv4: 193.251.245.163 IPv6: 2001:688:0:1::18 New York IPv4: 193.251.245.170 IPv6: 2001:688:0:1::2f Madrid IPv4: 193.251.245.181 IPv6: 2001:688:0:1::3C Singapore IPv4: 193.251.245.196 IPv6: 2001:688:0:1::57 Frankfurt IPv4: 193.251.245.216 IPv6: 2001:688:0:1::16 Miami IPv4: 193.251.245.251 IPv6: 2001:688:0:1::30 Amsterdam IPv4: 193.251.245.252 IPv6: 2001:688:0:1::12 Ashburn For questions about this route-server, send email to: opentransit.iptac@orange.com *** Log in with username &#39;rviews&#39;, password &#39;Rviews&#39; *** User Access Verification Username: rviews rviews Password: Rviews OAKRS1#show ? show ? banner Display banner information bgp BGP information bootflash: display information about bootflash: file system flash: display information about flash: file system ip IP information ipv6 IPv6 information webui: display information about webui: file system &lt;cr&gt; &lt;cr&gt; OAKRS1#show % Type &#34;show ?&#34; for a list of subcommands OAKRS1#show bgp show bgp % Command accepted but obsolete, unreleased or unsupported; see documentation. BGP table version is 183946817, local router ID is 204.59.3.38 Status codes: s suppressed, d damped, h history, * valid, &gt; best, i - internal, r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter, x best-external, a additional-path, c RIB-compressed, t secondary path, L long-lived-stale, Origin codes: i - IGP, e - EGP, ? - incomplete RPKI validation codes: V valid, I invalid, N Not found Network Next Hop Metric LocPrf Weight Path r&gt;i 0.0.0.0 193.251.245.7 100 0 i r i 193.251.245.252 100 0 i * i 1.0.0.0/24 4.68.70.169 100 85 0 3356 13335 i * i 195.219.87.114 100 85 0 6453 13335 i * i 4.68.63.97 100 85 0 3356 13335 i * i 4.68.73.97 100 85 0 3356 13335 i * i 193.251.249.46 100 85 0 2914 13335 i * i 4.68.127.233 100 85 0 3356 13335 i * i 129.250.66.141 100 85 0 2914 13335 i * i 193.251.247.156 100 85 0 2914 13335 i * i 4.68.70.173 100 85 0 3356 13335 i * i 66.198.127.81 100 85 0 6453 13335 i * i 4.68.73.153 100 85 0 3356 13335 i">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2020">
+    <meta property="article:published_time" content="2020-04-19T17:51:55+02:00">
+    <meta property="article:modified_time" content="2020-04-19T17:51:55+02:00">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/bgp-101/cover-bgp-101.png">
 
-<meta name="twitter:title" content="BGP 101"/>
-<meta name="twitter:description" content="whois $(curl ifconfig.me/ip) % Information related to &#39;90.76.0.0/16AS3215&#39; route: 90.76.0.0/16 descr: France Telecom IP2000-ADSL-BAS origin: AS3215 # ✳ mnt-by: FT-BRX created: 2018-08-16T14:22:19Z last-modified: 2018-08-16T14:22:19Z source: RIPE  AS3215 is my ISP&rsquo;s autonomous system.
- % sudo mtr google.fr My traceroute [v0.93] macbook-pro-de-mael-2.home (2a01:cb19:86a2:8c00:20db:756d:83b3:8891) 2020-04-19T17:55:26&#43;0200 Keys: Help Display mode Restart statistics Order of fields quit Packets Pings Host Loss% Snt Last Avg Best Wrst StDev 1. livebox.home 0.0% 69 5.6 41.7 3."/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/bgp-101/cover-bgp-101.png">
+  <meta name="twitter:title" content="BGP 101">
+  <meta name="twitter:description" content="whois $(curl ifconfig.me/ip) % Information related to &#39;90.76.0.0/16AS3215&#39; route: 90.76.0.0/16 descr: France Telecom IP2000-ADSL-BAS origin: AS3215 # ✳ mnt-by: FT-BRX created: 2018-08-16T14:22:19Z last-modified: 2018-08-16T14:22:19Z source: RIPE AS3215 is my ISP’s autonomous system.
+% sudo mtr google.fr My traceroute [v0.93] macbook-pro-de-mael-2.home (2a01:cb19:86a2:8c00:20db:756d:83b3:8891) 2020-04-19T17:55:26&#43;0200 Keys: Help Display mode Restart statistics Order of fields quit Packets Pings Host Loss% Snt Last Avg Best Wrst StDev 1. livebox.home 0.0% 69 5.6 41.7 3.2 700.4 128.3 2. 2a01cb08a00402190193025300740181.ipv6.abo.wanadoo.fr 0.0% 69 18.5 61.2 9.8 1012. 158.1 3. 2a01:cfc4:0:d00::a 0.0% 69 42.9 55.9 16.5 957.9 137.9 4. bundle-ether103.pastr4.-.opentransit.net 76.5% 69 31.8 33.3 23.3 60.9 11.5 5. et-15-0-2-0.pastr3.-.opentransit.net 0.0% 69 59.6 70.8 23.4 1050. 153.0 6. 2001:4860:1:1::336 0.0% 69 41.0 67.6 23.6 943.7 133.7 7. 2001:4860:0:1017::1 49.3% 69 29.9 77.2 25.3 1046. 185.7 8. 2001:4860:0:1::1e3b 0.0% 68 34.5 80.7 23.0 952.3 179.7 9. par10s29-in-x03.1e100.net 0.0% 68 29.1 72.1 23.7 836.8 154.7 % subnetcalc 80.10.236.253/26 Address = 80.10.236.253 01010000 . 00001010 . 11101100 . 11111101 Network = 80.10.236.192 / 26 Netmask = 255.255.255.192 Broadcast = 80.10.236.255 Wildcard Mask = 0.0.0.63 Hosts Bits = 6 Max. Hosts = 62 (2^6 - 2) Host Range = { 80.10.236.193 - 80.10.236.254 } Properties = - 80.10.236.253 is a HOST address in 80.10.236.192/26 - Class A DNS Hostname = (nodename nor servname provided, or not known) % nc route-server.opentransit.net 23 &amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp; route-server.opentransit.net -- &amp; Opentransit IPv4/IPv6 views This router keeps peering sessions with all the Opentransit Backbone Routers, throughout the Opentransit IP Backbone as follows: [IPv4/IPv6 view] IPv4: 193.251.245.1 IPv6: 2001:688:0:1::158 Dallas IPv4: 193.251.245.3 IPv6: 2001:688:0:1::1c Los Angeles IPv4: 193.251.245.7 IPv6: 2001:688:0:1::55 London IPV4: 193.251.245.9 IPv6: 2001:688:0:1::41 Palo Alto IPv4: 193.251.245.10 IPv6: 2001:688:0:1::4e Paris IPv4: 193.251.245.16 IPv6: 2001:688:0:1::168 New York IPv4: 193.251.245.19 IPv6: 2001:688:0:1::4b Barcelona IPv4: 193.251.245.28 IPv6: 2001:688:0:1::8 Frankfurt IPv4: 193.251.245.37 IPv6: 2001:688:0:1:: Frankfurt IPv4: 193.251.245.49 IPv6: 2001:688:0:1::19 London IPv4: 193.251.245.53 IPv6: 2001:688:0:1::1e Chicago IPv4: 193.251.245.57 IPv6: 2001:688:0:1::45 Miami IPv4: 193.251.245.66 IPv6: 2001:688:0:1::44 Geneva IPV4: 193.251.245.69 IPV6: 2001:688:0:1::56 Singapore IPv4: 193.251.245.76 IPv6: 2001:688:0:1::d New York IPv4: 193.251.245.78 IPv6: 2001:688:0:1::22 Madrid IPv4: 193.251.245.81 IPv6: 2001:688:0:1::4 Barcelona IPv4: 193.251.245.88 IPv6: 2001:688:0:1::f London IPv4: 193.251.254.92 IPv6: 2001:688:0:1::24 Paris IPv4: 193.251.245.96 IPv6: 2001:688:0:1::3E Brussels IPv4: 193.251.245.134 IPv6: 2001:688:0:1::4a Zurich IPv4: 193.251.245.147 IPv6: 2001:688:0:1::2A HongKong IPv4: 193.251.245.163 IPv6: 2001:688:0:1::18 New York IPv4: 193.251.245.170 IPv6: 2001:688:0:1::2f Madrid IPv4: 193.251.245.181 IPv6: 2001:688:0:1::3C Singapore IPv4: 193.251.245.196 IPv6: 2001:688:0:1::57 Frankfurt IPv4: 193.251.245.216 IPv6: 2001:688:0:1::16 Miami IPv4: 193.251.245.251 IPv6: 2001:688:0:1::30 Amsterdam IPv4: 193.251.245.252 IPv6: 2001:688:0:1::12 Ashburn For questions about this route-server, send email to: opentransit.iptac@orange.com *** Log in with username &#39;rviews&#39;, password &#39;Rviews&#39; *** User Access Verification Username: rviews rviews Password: Rviews OAKRS1#show ? show ? banner Display banner information bgp BGP information bootflash: display information about bootflash: file system flash: display information about flash: file system ip IP information ipv6 IPv6 information webui: display information about webui: file system &lt;cr&gt; &lt;cr&gt; OAKRS1#show % Type &#34;show ?&#34; for a list of subcommands OAKRS1#show bgp show bgp % Command accepted but obsolete, unreleased or unsupported; see documentation. BGP table version is 183946817, local router ID is 204.59.3.38 Status codes: s suppressed, d damped, h history, * valid, &gt; best, i - internal, r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter, x best-external, a additional-path, c RIB-compressed, t secondary path, L long-lived-stale, Origin codes: i - IGP, e - EGP, ? - incomplete RPKI validation codes: V valid, I invalid, N Not found Network Next Hop Metric LocPrf Weight Path r&gt;i 0.0.0.0 193.251.245.7 100 0 i r i 193.251.245.252 100 0 i * i 1.0.0.0/24 4.68.70.169 100 85 0 3356 13335 i * i 195.219.87.114 100 85 0 6453 13335 i * i 4.68.63.97 100 85 0 3356 13335 i * i 4.68.73.97 100 85 0 3356 13335 i * i 193.251.249.46 100 85 0 2914 13335 i * i 4.68.127.233 100 85 0 3356 13335 i * i 129.250.66.141 100 85 0 2914 13335 i * i 193.251.247.156 100 85 0 2914 13335 i * i 4.68.70.173 100 85 0 3356 13335 i * i 66.198.127.81 100 85 0 6453 13335 i * i 4.68.73.153 100 85 0 3356 13335 i">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -38,7 +41,7 @@
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -69,145 +72,144 @@
         
     </div>
     <div class="markdown">
-        <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">whois <span class="k">$(</span>curl ifconfig.me/ip<span class="k">)</span>
-% Information related to <span class="s1">&#39;90.76.0.0/16AS3215&#39;</span>
-route:          90.76.0.0/16
-descr:          France Telecom IP2000-ADSL-BAS
-origin:         AS3215                           <span class="c1"># ✳</span>
-mnt-by:         FT-BRX
-created:        2018-08-16T14:22:19Z
-last-modified:  2018-08-16T14:22:19Z
-source:         RIPE
-</code></pre></div><blockquote>
-<p><a href="https://bgp.he.net/AS5511">AS3215</a> is my ISP&rsquo;s autonomous system.</p>
-</blockquote>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% sudo mtr google.fr
-                                        My traceroute  <span class="o">[</span>v0.93<span class="o">]</span>
-macbook-pro-de-mael-2.home <span class="o">(</span>2a01:cb19:86a2:8c00:20db:756d:83b3:8891<span class="o">)</span>         2020-04-19T17:55:26+0200
-Keys:  Help   Display mode   Restart statistics   Order of fields   quit
-                                                             Packets               Pings
- Host                                                      Loss%   Snt   Last   Avg  Best  Wrst StDev
- 1. livebox.home                                            0.0%    <span class="m">69</span>    5.6  41.7   3.2 700.4 128.3
- 2. 2a01cb08a00402190193025300740181.ipv6.abo.wanadoo.fr    0.0%    <span class="m">69</span>   18.5  61.2   9.8 1012. 158.1
- 3. 2a01:cfc4:0:d00::a                                      0.0%    <span class="m">69</span>   42.9  55.9  16.5 957.9 137.9
- 4. bundle-ether103.pastr4.-.opentransit.net               76.5%    <span class="m">69</span>   31.8  33.3  23.3  60.9  11.5
- 5. et-15-0-2-0.pastr3.-.opentransit.net                    0.0%    <span class="m">69</span>   59.6  70.8  23.4 1050. 153.0
- 6. 2001:4860:1:1::336                                      0.0%    <span class="m">69</span>   41.0  67.6  23.6 943.7 133.7
- 7. 2001:4860:0:1017::1                                    49.3%    <span class="m">69</span>   29.9  77.2  25.3 1046. 185.7
- 8. 2001:4860:0:1::1e3b                                     0.0%    <span class="m">68</span>   34.5  80.7  23.0 952.3 179.7
- 9. par10s29-in-x03.1e100.net                               0.0%    <span class="m">68</span>   29.1  72.1  23.7 836.8 154.7
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% subnetcalc 80.10.236.253/26
-<span class="nv">Address</span>       <span class="o">=</span> 80.10.236.253
-                   <span class="m">01010000</span> . <span class="m">00001010</span> . <span class="m">11101100</span> . <span class="m">11111101</span>
-<span class="nv">Network</span>       <span class="o">=</span> 80.10.236.192 / <span class="m">26</span>
-<span class="nv">Netmask</span>       <span class="o">=</span> 255.255.255.192
-<span class="nv">Broadcast</span>     <span class="o">=</span> 80.10.236.255
-Wildcard <span class="nv">Mask</span> <span class="o">=</span> 0.0.0.63
-Hosts <span class="nv">Bits</span>    <span class="o">=</span> <span class="m">6</span>
-Max. <span class="nv">Hosts</span>    <span class="o">=</span> <span class="m">62</span>   <span class="o">(</span>2^6 - 2<span class="o">)</span>
-Host <span class="nv">Range</span>    <span class="o">=</span> <span class="o">{</span> 80.10.236.193 - 80.10.236.254 <span class="o">}</span>
-<span class="nv">Properties</span>    <span class="o">=</span>
-   - 80.10.236.253 is a HOST address in 80.10.236.192/26
-   - Class A
-DNS <span class="nv">Hostname</span>  <span class="o">=</span> <span class="o">(</span>nodename nor servname provided, or not known<span class="o">)</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% nc route-server.opentransit.net <span class="m">23</span>
-
-<span class="o">&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</span><span class="p">&amp;</span>
-         route-server.opentransit.net -- <span class="p">&amp;</span> Opentransit
-                        IPv4/IPv6 views
-
-
-This router keeps peering sessions with all the Opentransit Backbone Routers,
-throughout the Opentransit IP Backbone as follows:
-
-
-
-<span class="o">[</span>IPv4/IPv6 view<span class="o">]</span>
-
-
-IPv4: 193.251.245.1             IPv6: 2001:688:0:1::158 Dallas
-IPv4: 193.251.245.3             IPv6: 2001:688:0:1::1c  Los Angeles
-IPv4: 193.251.245.7             IPv6: 2001:688:0:1::55  London
-IPV4: 193.251.245.9             IPv6: 2001:688:0:1::41  Palo Alto
-IPv4: 193.251.245.10            IPv6: 2001:688:0:1::4e  Paris
-IPv4: 193.251.245.16            IPv6: 2001:688:0:1::168 New York
-IPv4: 193.251.245.19            IPv6: 2001:688:0:1::4b  Barcelona
-IPv4: 193.251.245.28            IPv6: 2001:688:0:1::8   Frankfurt
-IPv4: 193.251.245.37            IPv6: 2001:688:0:1::    Frankfurt
-IPv4: 193.251.245.49            IPv6: 2001:688:0:1::19  London
-IPv4: 193.251.245.53            IPv6: 2001:688:0:1::1e  Chicago
-IPv4: 193.251.245.57            IPv6: 2001:688:0:1::45  Miami
-IPv4: 193.251.245.66            IPv6: 2001:688:0:1::44  Geneva
-IPV4: 193.251.245.69            IPV6: 2001:688:0:1::56  Singapore
-IPv4: 193.251.245.76            IPv6: 2001:688:0:1::d   New York
-IPv4: 193.251.245.78            IPv6: 2001:688:0:1::22  Madrid
-IPv4: 193.251.245.81            IPv6: 2001:688:0:1::4   Barcelona
-IPv4: 193.251.245.88            IPv6: 2001:688:0:1::f   London
-IPv4: 193.251.254.92            IPv6: 2001:688:0:1::24  Paris
-IPv4: 193.251.245.96            IPv6: 2001:688:0:1::3E  Brussels
-IPv4: 193.251.245.134           IPv6: 2001:688:0:1::4a  Zurich
-IPv4: 193.251.245.147           IPv6: 2001:688:0:1::2A  HongKong
-IPv4: 193.251.245.163           IPv6: 2001:688:0:1::18  New York
-IPv4: 193.251.245.170           IPv6: 2001:688:0:1::2f  Madrid
-IPv4: 193.251.245.181           IPv6: 2001:688:0:1::3C  Singapore
-IPv4: 193.251.245.196           IPv6: 2001:688:0:1::57  Frankfurt
-IPv4: 193.251.245.216           IPv6: 2001:688:0:1::16  Miami
-IPv4: 193.251.245.251           IPv6: 2001:688:0:1::30  Amsterdam
-IPv4: 193.251.245.252           IPv6: 2001:688:0:1::12  Ashburn
-
-
-For questions about this route-server, send email to: opentransit.iptac@orange.com
-
-
-*** Log in with username <span class="s1">&#39;rviews&#39;</span>, password <span class="s1">&#39;Rviews&#39;</span> ***
-
-
-User Access Verification
-
-Username: rviews
-rviews
-Password: Rviews
-
-OAKRS1#show ?
-show ?
-  banner      Display banner information
-  bgp         BGP information
-  bootflash:  display information about bootflash: file system
-  flash:      display information about flash: file system
-  ip          IP information
-  ipv6        IPv6 information
-  webui:      display information about webui: file system
-  &lt;cr&gt;        &lt;cr&gt;
-
-OAKRS1#show
-% Type <span class="s2">&#34;show ?&#34;</span> <span class="k">for</span> a list of subcommands
-OAKRS1#show bgp
-show bgp
-% Command accepted but obsolete, unreleased or unsupported<span class="p">;</span> see documentation.
-
-BGP table version is 183946817, <span class="nb">local</span> router ID is 204.59.3.38
-Status codes: s suppressed, d damped, h history, * valid, &gt; best, i - internal,
-              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
-              x best-external, a additional-path, c RIB-compressed,
-              t secondary path, L long-lived-stale,
-Origin codes: i - IGP, e - EGP, ? - incomplete
-RPKI validation codes: V valid, I invalid, N Not found
-
-     Network          Next Hop            Metric LocPrf Weight Path
- r&gt;i  0.0.0.0          193.251.245.7                 <span class="m">100</span>      <span class="m">0</span> i
- r i                   193.251.245.252               <span class="m">100</span>      <span class="m">0</span> i
- * i  1.0.0.0/24       4.68.70.169            <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
- * i                   195.219.87.114         <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">6453</span> <span class="m">13335</span> i
- * i                   4.68.63.97             <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
- * i                   4.68.73.97             <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
- * i                   193.251.249.46         <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">2914</span> <span class="m">13335</span> i
- * i                   4.68.127.233           <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
- * i                   129.250.66.141         <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">2914</span> <span class="m">13335</span> i
- * i                   193.251.247.156        <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">2914</span> <span class="m">13335</span> i
- * i                   4.68.70.173            <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
- * i                   66.198.127.81          <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">6453</span> <span class="m">13335</span> i
- * i                   4.68.73.153            <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
-</code></pre></div>
+        <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">whois <span class="k">$(</span>curl ifconfig.me/ip<span class="k">)</span>
+</span></span><span class="line"><span class="cl">% Information related to <span class="s1">&#39;90.76.0.0/16AS3215&#39;</span>
+</span></span><span class="line"><span class="cl">route:          90.76.0.0/16
+</span></span><span class="line"><span class="cl">descr:          France Telecom IP2000-ADSL-BAS
+</span></span><span class="line"><span class="cl">origin:         AS3215                           <span class="c1"># ✳</span>
+</span></span><span class="line"><span class="cl">mnt-by:         FT-BRX
+</span></span><span class="line"><span class="cl">created:        2018-08-16T14:22:19Z
+</span></span><span class="line"><span class="cl">last-modified:  2018-08-16T14:22:19Z
+</span></span><span class="line"><span class="cl">source:         RIPE
+</span></span></code></pre></div><blockquote>
+<p><a href="https://bgp.he.net/AS5511">AS3215</a> is my ISP&rsquo;s autonomous system.</p></blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">% sudo mtr google.fr
+</span></span><span class="line"><span class="cl">                                        My traceroute  <span class="o">[</span>v0.93<span class="o">]</span>
+</span></span><span class="line"><span class="cl">macbook-pro-de-mael-2.home <span class="o">(</span>2a01:cb19:86a2:8c00:20db:756d:83b3:8891<span class="o">)</span>         2020-04-19T17:55:26+0200
+</span></span><span class="line"><span class="cl">Keys:  Help   Display mode   Restart statistics   Order of fields   quit
+</span></span><span class="line"><span class="cl">                                                             Packets               Pings
+</span></span><span class="line"><span class="cl"> Host                                                      Loss%   Snt   Last   Avg  Best  Wrst StDev
+</span></span><span class="line"><span class="cl"> 1. livebox.home                                            0.0%    <span class="m">69</span>    5.6  41.7   3.2 700.4 128.3
+</span></span><span class="line"><span class="cl"> 2. 2a01cb08a00402190193025300740181.ipv6.abo.wanadoo.fr    0.0%    <span class="m">69</span>   18.5  61.2   9.8 1012. 158.1
+</span></span><span class="line"><span class="cl"> 3. 2a01:cfc4:0:d00::a                                      0.0%    <span class="m">69</span>   42.9  55.9  16.5 957.9 137.9
+</span></span><span class="line"><span class="cl"> 4. bundle-ether103.pastr4.-.opentransit.net               76.5%    <span class="m">69</span>   31.8  33.3  23.3  60.9  11.5
+</span></span><span class="line"><span class="cl"> 5. et-15-0-2-0.pastr3.-.opentransit.net                    0.0%    <span class="m">69</span>   59.6  70.8  23.4 1050. 153.0
+</span></span><span class="line"><span class="cl"> 6. 2001:4860:1:1::336                                      0.0%    <span class="m">69</span>   41.0  67.6  23.6 943.7 133.7
+</span></span><span class="line"><span class="cl"> 7. 2001:4860:0:1017::1                                    49.3%    <span class="m">69</span>   29.9  77.2  25.3 1046. 185.7
+</span></span><span class="line"><span class="cl"> 8. 2001:4860:0:1::1e3b                                     0.0%    <span class="m">68</span>   34.5  80.7  23.0 952.3 179.7
+</span></span><span class="line"><span class="cl"> 9. par10s29-in-x03.1e100.net                               0.0%    <span class="m">68</span>   29.1  72.1  23.7 836.8 154.7
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">% subnetcalc 80.10.236.253/26
+</span></span><span class="line"><span class="cl"><span class="nv">Address</span>       <span class="o">=</span> 80.10.236.253
+</span></span><span class="line"><span class="cl">                   <span class="m">01010000</span> . <span class="m">00001010</span> . <span class="m">11101100</span> . <span class="m">11111101</span>
+</span></span><span class="line"><span class="cl"><span class="nv">Network</span>       <span class="o">=</span> 80.10.236.192 / <span class="m">26</span>
+</span></span><span class="line"><span class="cl"><span class="nv">Netmask</span>       <span class="o">=</span> 255.255.255.192
+</span></span><span class="line"><span class="cl"><span class="nv">Broadcast</span>     <span class="o">=</span> 80.10.236.255
+</span></span><span class="line"><span class="cl">Wildcard <span class="nv">Mask</span> <span class="o">=</span> 0.0.0.63
+</span></span><span class="line"><span class="cl">Hosts <span class="nv">Bits</span>    <span class="o">=</span> <span class="m">6</span>
+</span></span><span class="line"><span class="cl">Max. <span class="nv">Hosts</span>    <span class="o">=</span> <span class="m">62</span>   <span class="o">(</span>2^6 - 2<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Host <span class="nv">Range</span>    <span class="o">=</span> <span class="o">{</span> 80.10.236.193 - 80.10.236.254 <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="nv">Properties</span>    <span class="o">=</span>
+</span></span><span class="line"><span class="cl">   - 80.10.236.253 is a HOST address in 80.10.236.192/26
+</span></span><span class="line"><span class="cl">   - Class A
+</span></span><span class="line"><span class="cl">DNS <span class="nv">Hostname</span>  <span class="o">=</span> <span class="o">(</span>nodename nor servname provided, or not known<span class="o">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">% nc route-server.opentransit.net <span class="m">23</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</span><span class="p">&amp;</span>
+</span></span><span class="line"><span class="cl">         route-server.opentransit.net -- <span class="p">&amp;</span> Opentransit
+</span></span><span class="line"><span class="cl">                        IPv4/IPv6 views
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">This router keeps peering sessions with all the Opentransit Backbone Routers,
+</span></span><span class="line"><span class="cl">throughout the Opentransit IP Backbone as follows:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>IPv4/IPv6 view<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.1             IPv6: 2001:688:0:1::158 Dallas
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.3             IPv6: 2001:688:0:1::1c  Los Angeles
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.7             IPv6: 2001:688:0:1::55  London
+</span></span><span class="line"><span class="cl">IPV4: 193.251.245.9             IPv6: 2001:688:0:1::41  Palo Alto
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.10            IPv6: 2001:688:0:1::4e  Paris
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.16            IPv6: 2001:688:0:1::168 New York
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.19            IPv6: 2001:688:0:1::4b  Barcelona
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.28            IPv6: 2001:688:0:1::8   Frankfurt
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.37            IPv6: 2001:688:0:1::    Frankfurt
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.49            IPv6: 2001:688:0:1::19  London
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.53            IPv6: 2001:688:0:1::1e  Chicago
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.57            IPv6: 2001:688:0:1::45  Miami
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.66            IPv6: 2001:688:0:1::44  Geneva
+</span></span><span class="line"><span class="cl">IPV4: 193.251.245.69            IPV6: 2001:688:0:1::56  Singapore
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.76            IPv6: 2001:688:0:1::d   New York
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.78            IPv6: 2001:688:0:1::22  Madrid
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.81            IPv6: 2001:688:0:1::4   Barcelona
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.88            IPv6: 2001:688:0:1::f   London
+</span></span><span class="line"><span class="cl">IPv4: 193.251.254.92            IPv6: 2001:688:0:1::24  Paris
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.96            IPv6: 2001:688:0:1::3E  Brussels
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.134           IPv6: 2001:688:0:1::4a  Zurich
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.147           IPv6: 2001:688:0:1::2A  HongKong
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.163           IPv6: 2001:688:0:1::18  New York
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.170           IPv6: 2001:688:0:1::2f  Madrid
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.181           IPv6: 2001:688:0:1::3C  Singapore
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.196           IPv6: 2001:688:0:1::57  Frankfurt
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.216           IPv6: 2001:688:0:1::16  Miami
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.251           IPv6: 2001:688:0:1::30  Amsterdam
+</span></span><span class="line"><span class="cl">IPv4: 193.251.245.252           IPv6: 2001:688:0:1::12  Ashburn
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">For questions about this route-server, send email to: opentransit.iptac@orange.com
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*** Log in with username <span class="s1">&#39;rviews&#39;</span>, password <span class="s1">&#39;Rviews&#39;</span> ***
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">User Access Verification
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Username: rviews
+</span></span><span class="line"><span class="cl">rviews
+</span></span><span class="line"><span class="cl">Password: Rviews
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">OAKRS1#show ?
+</span></span><span class="line"><span class="cl">show ?
+</span></span><span class="line"><span class="cl">  banner      Display banner information
+</span></span><span class="line"><span class="cl">  bgp         BGP information
+</span></span><span class="line"><span class="cl">  bootflash:  display information about bootflash: file system
+</span></span><span class="line"><span class="cl">  flash:      display information about flash: file system
+</span></span><span class="line"><span class="cl">  ip          IP information
+</span></span><span class="line"><span class="cl">  ipv6        IPv6 information
+</span></span><span class="line"><span class="cl">  webui:      display information about webui: file system
+</span></span><span class="line"><span class="cl">  &lt;cr&gt;        &lt;cr&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">OAKRS1#show
+</span></span><span class="line"><span class="cl">% Type <span class="s2">&#34;show ?&#34;</span> <span class="k">for</span> a list of subcommands
+</span></span><span class="line"><span class="cl">OAKRS1#show bgp
+</span></span><span class="line"><span class="cl">show bgp
+</span></span><span class="line"><span class="cl">% Command accepted but obsolete, unreleased or unsupported<span class="p">;</span> see documentation.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">BGP table version is 183946817, <span class="nb">local</span> router ID is 204.59.3.38
+</span></span><span class="line"><span class="cl">Status codes: s suppressed, d damped, h history, * valid, &gt; best, i - internal,
+</span></span><span class="line"><span class="cl">              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
+</span></span><span class="line"><span class="cl">              x best-external, a additional-path, c RIB-compressed,
+</span></span><span class="line"><span class="cl">              t secondary path, L long-lived-stale,
+</span></span><span class="line"><span class="cl">Origin codes: i - IGP, e - EGP, ? - incomplete
+</span></span><span class="line"><span class="cl">RPKI validation codes: V valid, I invalid, N Not found
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">     Network          Next Hop            Metric LocPrf Weight Path
+</span></span><span class="line"><span class="cl"> r&gt;i  0.0.0.0          193.251.245.7                 <span class="m">100</span>      <span class="m">0</span> i
+</span></span><span class="line"><span class="cl"> r i                   193.251.245.252               <span class="m">100</span>      <span class="m">0</span> i
+</span></span><span class="line"><span class="cl"> * i  1.0.0.0/24       4.68.70.169            <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
+</span></span><span class="line"><span class="cl"> * i                   195.219.87.114         <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">6453</span> <span class="m">13335</span> i
+</span></span><span class="line"><span class="cl"> * i                   4.68.63.97             <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
+</span></span><span class="line"><span class="cl"> * i                   4.68.73.97             <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
+</span></span><span class="line"><span class="cl"> * i                   193.251.249.46         <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">2914</span> <span class="m">13335</span> i
+</span></span><span class="line"><span class="cl"> * i                   4.68.127.233           <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
+</span></span><span class="line"><span class="cl"> * i                   129.250.66.141         <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">2914</span> <span class="m">13335</span> i
+</span></span><span class="line"><span class="cl"> * i                   193.251.247.156        <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">2914</span> <span class="m">13335</span> i
+</span></span><span class="line"><span class="cl"> * i                   4.68.70.173            <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
+</span></span><span class="line"><span class="cl"> * i                   66.198.127.81          <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">6453</span> <span class="m">13335</span> i
+</span></span><span class="line"><span class="cl"> * i                   4.68.73.153            <span class="m">100</span>     <span class="m">85</span>      <span class="m">0</span> <span class="m">3356</span> <span class="m">13335</span> i
+</span></span></code></pre></div>
     </div>
     <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/bgp-101/index.md">📝 Edit this page</a>
     <div class="tags">
@@ -220,34 +222,9 @@ RPKI validation codes: V valid, I invalid, N Not found
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

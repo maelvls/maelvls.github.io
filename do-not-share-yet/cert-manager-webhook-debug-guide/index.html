@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Cert Manager Webhook Debug Guide" />
-<meta property="og:description" content="failed calling webhook &#34;webhook.cert-manager.io&#34;: Post &#34;https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s&#34;: dial tcp 10.43.183.232:443: connect: connection refused This happens when the SYN packet is answered with RST:
-192.168.1.43 -&gt; 34.142.22.43 TCP 59466 → 442 [SYN] 34.142.22.43 -&gt; 34.142.22.43 TCP 442 → 59466 [RST, ACK] This error message is quite rare. In most cases, the SYN packet is dropped by some firewall; this error message indicates that the SYN packet was able to reach the webhook pod." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/cert-manager-webhook-debug-guide/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/cert-manager-webhook-debug-guide/cover-cert-manager-webhook-debug-guide.png" />
-<meta property="article:published_time" content="2021-09-14T11:17:19+02:00" />
-<meta property="article:modified_time" content="2021-09-14T11:17:19+02:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/cert-manager-webhook-debug-guide/cover-cert-manager-webhook-debug-guide.png"/>
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/cert-manager-webhook-debug-guide/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Cert Manager Webhook Debug Guide">
+  <meta property="og:description" content="failed calling webhook &#34;webhook.cert-manager.io&#34;: Post &#34;https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s&#34;: dial tcp 10.43.183.232:443: connect: connection refused This happens when the SYN packet is answered with RST:
+192.168.1.43 -&gt; 34.142.22.43 TCP 59466 → 442 [SYN] 34.142.22.43 -&gt; 34.142.22.43 TCP 442 → 59466 [RST, ACK] This error message is quite rare. In most cases, the SYN packet is dropped by some firewall; this error message indicates that the SYN packet was able to reach the webhook pod. The webhook deployment is likely misconfigured (e.g., listening on the wrong port).">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2021">
+    <meta property="article:published_time" content="2021-09-14T11:17:19+02:00">
+    <meta property="article:modified_time" content="2021-09-14T11:17:19+02:00">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/cert-manager-webhook-debug-guide/cover-cert-manager-webhook-debug-guide.png">
 
-<meta name="twitter:title" content="Cert Manager Webhook Debug Guide"/>
-<meta name="twitter:description" content="failed calling webhook &#34;webhook.cert-manager.io&#34;: Post &#34;https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s&#34;: dial tcp 10.43.183.232:443: connect: connection refused This happens when the SYN packet is answered with RST:
-192.168.1.43 -&gt; 34.142.22.43 TCP 59466 → 442 [SYN] 34.142.22.43 -&gt; 34.142.22.43 TCP 442 → 59466 [RST, ACK] This error message is quite rare. In most cases, the SYN packet is dropped by some firewall; this error message indicates that the SYN packet was able to reach the webhook pod."/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/cert-manager-webhook-debug-guide/cover-cert-manager-webhook-debug-guide.png">
+  <meta name="twitter:title" content="Cert Manager Webhook Debug Guide">
+  <meta name="twitter:description" content="failed calling webhook &#34;webhook.cert-manager.io&#34;: Post &#34;https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s&#34;: dial tcp 10.43.183.232:443: connect: connection refused This happens when the SYN packet is answered with RST:
+192.168.1.43 -&gt; 34.142.22.43 TCP 59466 → 442 [SYN] 34.142.22.43 -&gt; 34.142.22.43 TCP 442 → 59466 [RST, ACK] This error message is quite rare. In most cases, the SYN packet is dropped by some firewall; this error message indicates that the SYN packet was able to reach the webhook pod. The webhook deployment is likely misconfigured (e.g., listening on the wrong port).">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -38,7 +41,7 @@
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -69,11 +72,11 @@
         
     </div>
     <div class="markdown">
-        <div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">failed calling webhook &#34;webhook.cert-manager.io&#34;: Post &#34;https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s&#34;: dial tcp 10.43.183.232:443: connect: connection refused
-</code></pre></div><p>This happens when the <code>SYN</code> packet is answered with <code>RST</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">192.168.1.43  -&gt;  34.142.22.43   TCP   59466 → 442 [SYN]
-34.142.22.43  -&gt;  34.142.22.43   TCP   442 → 59466 [RST, ACK]
-</code></pre></div><p>This error message is quite rare. In most cases, the <code>SYN</code> packet is dropped by
+        <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">failed calling webhook &#34;webhook.cert-manager.io&#34;: Post &#34;https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s&#34;: dial tcp 10.43.183.232:443: connect: connection refused
+</span></span></code></pre></div><p>This happens when the <code>SYN</code> packet is answered with <code>RST</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">192.168.1.43  -&gt;  34.142.22.43   TCP   59466 → 442 [SYN]
+</span></span><span class="line"><span class="cl">34.142.22.43  -&gt;  34.142.22.43   TCP   442 → 59466 [RST, ACK]
+</span></span></code></pre></div><p>This error message is quite rare. In most cases, the <code>SYN</code> packet is dropped by
 some firewall; this error message indicates that the <code>SYN</code> packet was able to
 reach the webhook pod. The webhook deployment is likely misconfigured (e.g.,
 listening on the wrong port).</p>
@@ -86,22 +89,21 @@ listening on the wrong port).</p>
 <li><a href="https://github.com/jetstack/cert-manager/issues/2736">https://github.com/jetstack/cert-manager/issues/2736</a></li>
 </ul>
 <blockquote>
-<p>My answer to <a href="https://github.com/jetstack/cert-manager/issues/3133:">https://github.com/jetstack/cert-manager/issues/3133:</a></p>
+<p>My answer to <a href="https://github.com/jetstack/cert-manager/issues/3133">https://github.com/jetstack/cert-manager/issues/3133</a>:</p>
 <p>Hi!</p>
 <p>The error message <code>connect: connection refused</code> suggests that the apiserver is able to hit the webhook pod&rsquo;s TCP stack since the <code>SYN</code> packet was answered with <code>RST, ACK</code>, which means that nothing is listening on port 443 (if it was a firewall issue, the <code>SYN</code> would have been dropped).</p>
 <p>The Helm chart creates a Service that redirects traffic from <code>cluster-ip:443</code> to <code>pod-ip:10250</code>, and we can confirm by reading the logs that the webhook is listening on port 10250:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">I0925 14:18:30.749655       1 server.go:159] cert-manager/webhook &#34;msg&#34;=&#34;listening for secure connections&#34;  &#34;address&#34;=&#34;:10250&#34;
-</code></pre></div><p>At this point, the only thing that I could think of is that there is no pod IP associated with this service IP, as described by @r0bnet in <a href="https://github.com/jetstack/cert-manager/issues/3445#issue-738472291">https://github.com/jetstack/cert-manager/issues/3445#issue-738472291</a>.</p>
-</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">I0925 14:18:30.749655       1 server.go:159] cert-manager/webhook &#34;msg&#34;=&#34;listening for secure connections&#34;  &#34;address&#34;=&#34;:10250&#34;
+</span></span></code></pre></div><p>At this point, the only thing that I could think of is that there is no pod IP associated with this service IP, as described by @r0bnet in <a href="https://github.com/jetstack/cert-manager/issues/3445#issue-738472291">https://github.com/jetstack/cert-manager/issues/3445#issue-738472291</a>.</p></blockquote>
 <hr>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">failed calling webhook &#34;webhook.cert-manager.io&#34;: Post &#34;https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s&#34;: dial tcp 10.43.183.232:443: i/o timeout
-</code></pre></div><p>This time, the <code>SYN</code> packet is never answered, and the connection times out:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">192.168.1.43  -&gt;  34.142.22.43   TCP   44772 → 442 [SYN]
-192.168.1.43  -&gt;  34.142.22.43   TCP   [TCP Retransmission] 44772 → 442 [SYN]
-192.168.1.43  -&gt;  34.142.22.43   TCP   [TCP Retransmission] 44772 → 442 [SYN]
-192.168.1.43  -&gt;  34.142.22.43   TCP   [TCP Retransmission] 44772 → 442 [SYN]
-...
-</code></pre></div><p>This issue is caused by the <code>SYN</code> packet being dropped by the firewall. The
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">failed calling webhook &#34;webhook.cert-manager.io&#34;: Post &#34;https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s&#34;: dial tcp 10.43.183.232:443: i/o timeout
+</span></span></code></pre></div><p>This time, the <code>SYN</code> packet is never answered, and the connection times out:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">192.168.1.43  -&gt;  34.142.22.43   TCP   44772 → 442 [SYN]
+</span></span><span class="line"><span class="cl">192.168.1.43  -&gt;  34.142.22.43   TCP   [TCP Retransmission] 44772 → 442 [SYN]
+</span></span><span class="line"><span class="cl">192.168.1.43  -&gt;  34.142.22.43   TCP   [TCP Retransmission] 44772 → 442 [SYN]
+</span></span><span class="line"><span class="cl">192.168.1.43  -&gt;  34.142.22.43   TCP   [TCP Retransmission] 44772 → 442 [SYN]
+</span></span><span class="line"><span class="cl">...
+</span></span></code></pre></div><p>This issue is caused by the <code>SYN</code> packet being dropped by the firewall. The
 packet drop may have happened in many possible ways. One reason may be that the
 cluster is configured with a network policy controller such as Calico, but there
 is no policy allowing traffic from the apiserver to the webhook.</p>
@@ -118,34 +120,9 @@ is no policy allowing traffic from the apiserver to the webhook.</p>
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

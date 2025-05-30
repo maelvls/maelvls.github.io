@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Quick Kubernetes Controller in Bash" />
-<meta property="og:description" content="Step 1: Controlling a built-in resource: Example With Secret kubectl get externalsecret --watch -ojson \  | jq &#39;select(.status.conditions[]?.reason == &#34;SecretSyncedError&#34;)&#39; --unbuffered \  | jq &#39;.spec.data[0].remoteRef | &#34;\(.key) \(.property)&#34;&#39; -r --unbuffered \  | while read key property; do vault kv put $key $property=somerandomvalue done Step 2: Controlling an external resource with a CRD: Example With apiVersion:apiextensions.k8s.io/v1kind:CustomResourceDefinitionmetadata:# name must be in the form: &lt;plural&gt;.&lt;group&gt;name:posts.maelvls.devspec:group:maelvls.devscope:Namespacednames:{kind: Post, singular: post, plural:posts }versions:- name:v1served:truestorage:trueschema:openAPIV3Schema:type:objectproperties:spec:x-kubernetes-preserve-unknown-fields:true" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/quick-kubernetes-controller-in-bash/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/quick-kubernetes-controller-in-bash/cover-quick-kubernetes-controller-in-bash.png" />
-<meta property="article:published_time" content="2023-06-13T10:16:06+02:00" />
-<meta property="article:modified_time" content="2023-06-13T10:16:06+02:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/quick-kubernetes-controller-in-bash/cover-quick-kubernetes-controller-in-bash.png"/>
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/quick-kubernetes-controller-in-bash/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Quick Kubernetes Controller in Bash">
+  <meta property="og:description" content="Step 1: Controlling a built-in resource: Example With Secret kubectl get externalsecret --watch -ojson \ | jq &#39;select(.status.conditions[]?.reason == &#34;SecretSyncedError&#34;)&#39; --unbuffered \ | jq &#39;.spec.data[0].remoteRef | &#34;\(.key) \(.property)&#34;&#39; -r --unbuffered \ | while read key property; do vault kv put $key $property=somerandomvalue done Step 2: Controlling an external resource with a CRD: Example With apiVersion: apiextensions.k8s.io/v1 kind: CustomResourceDefinition metadata: # name must be in the form: &lt;plural&gt;.&lt;group&gt; name: posts.maelvls.dev spec: group: maelvls.dev scope: Namespaced names: { kind: Post, singular: post, plural: posts } versions: - name: v1 served: true storage: true schema: openAPIV3Schema: type: object properties: spec: x-kubernetes-preserve-unknown-fields: true">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2023">
+    <meta property="article:published_time" content="2023-06-13T10:16:06+02:00">
+    <meta property="article:modified_time" content="2023-06-13T10:16:06+02:00">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/quick-kubernetes-controller-in-bash/cover-quick-kubernetes-controller-in-bash.png">
 
-<meta name="twitter:title" content="Quick Kubernetes Controller in Bash"/>
-<meta name="twitter:description" content="Step 1: Controlling a built-in resource: Example With Secret kubectl get externalsecret --watch -ojson \  | jq &#39;select(.status.conditions[]?.reason == &#34;SecretSyncedError&#34;)&#39; --unbuffered \  | jq &#39;.spec.data[0].remoteRef | &#34;\(.key) \(.property)&#34;&#39; -r --unbuffered \  | while read key property; do vault kv put $key $property=somerandomvalue done Step 2: Controlling an external resource with a CRD: Example With apiVersion:apiextensions.k8s.io/v1kind:CustomResourceDefinitionmetadata:# name must be in the form: &lt;plural&gt;.&lt;group&gt;name:posts.maelvls.devspec:group:maelvls.devscope:Namespacednames:{kind: Post, singular: post, plural:posts }versions:- name:v1served:truestorage:trueschema:openAPIV3Schema:type:objectproperties:spec:x-kubernetes-preserve-unknown-fields:true"/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/quick-kubernetes-controller-in-bash/cover-quick-kubernetes-controller-in-bash.png">
+  <meta name="twitter:title" content="Quick Kubernetes Controller in Bash">
+  <meta name="twitter:description" content="Step 1: Controlling a built-in resource: Example With Secret kubectl get externalsecret --watch -ojson \ | jq &#39;select(.status.conditions[]?.reason == &#34;SecretSyncedError&#34;)&#39; --unbuffered \ | jq &#39;.spec.data[0].remoteRef | &#34;\(.key) \(.property)&#34;&#39; -r --unbuffered \ | while read key property; do vault kv put $key $property=somerandomvalue done Step 2: Controlling an external resource with a CRD: Example With apiVersion: apiextensions.k8s.io/v1 kind: CustomResourceDefinition metadata: # name must be in the form: &lt;plural&gt;.&lt;group&gt; name: posts.maelvls.dev spec: group: maelvls.dev scope: Namespaced names: { kind: Post, singular: post, plural: posts } versions: - name: v1 served: true storage: true schema: openAPIV3Schema: type: object properties: spec: x-kubernetes-preserve-unknown-fields: true">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -36,7 +39,7 @@
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -73,33 +76,33 @@ https://github.com/maelvls/hack-your-controller-in-bash
 
 -->
 <h2 id="step-1-controlling-a-built-in-resource-example-with-secret">Step 1: Controlling a built-in resource: Example With Secret</h2>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">kubectl get externalsecret --watch -ojson <span class="se">\
-</span><span class="se"></span>  <span class="p">|</span> jq <span class="s1">&#39;select(.status.conditions[]?.reason == &#34;SecretSyncedError&#34;)&#39;</span> --unbuffered <span class="se">\
-</span><span class="se"></span>  <span class="p">|</span> jq <span class="s1">&#39;.spec.data[0].remoteRef | &#34;\(.key) \(.property)&#34;&#39;</span> -r --unbuffered <span class="se">\
-</span><span class="se"></span>  <span class="p">|</span> <span class="k">while</span> <span class="nb">read</span> key property<span class="p">;</span> <span class="k">do</span>
-    vault kv put <span class="nv">$key</span> <span class="nv">$property</span><span class="o">=</span>somerandomvalue
-  <span class="k">done</span>
-</code></pre></div><h2 id="step-2-controlling-an-external-resource-with-a-crd-example-with">Step 2: Controlling an external resource with a CRD: Example With</h2>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apiextensions.k8s.io/v1</span><span class="w">
-</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">CustomResourceDefinition</span><span class="w">
-</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="c"># name must be in the form: &lt;plural&gt;.&lt;group&gt;</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">posts.maelvls.dev</span><span class="w">
-</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l">maelvls.dev</span><span class="w">
-</span><span class="w">  </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l">Namespaced</span><span class="w">
-</span><span class="w">  </span><span class="nt">names</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="nt">kind: Post, singular: post, plural</span><span class="p">:</span><span class="w"> </span><span class="l">posts }</span><span class="w">
-</span><span class="w">  </span><span class="nt">versions</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
-</span><span class="w">      </span><span class="nt">served</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span><span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span><span class="w">      </span><span class="nt">schema</span><span class="p">:</span><span class="w">
-</span><span class="w">        </span><span class="nt">openAPIV3Schema</span><span class="p">:</span><span class="w">
-</span><span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">object</span><span class="w">
-</span><span class="w">          </span><span class="nt">properties</span><span class="p">:</span><span class="w">
-</span><span class="w">            </span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span><span class="w">              </span><span class="nt">x-kubernetes-preserve-unknown-fields</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get externalsecret --watch -ojson <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="p">|</span> jq <span class="s1">&#39;select(.status.conditions[]?.reason == &#34;SecretSyncedError&#34;)&#39;</span> --unbuffered <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="p">|</span> jq <span class="s1">&#39;.spec.data[0].remoteRef | &#34;\(.key) \(.property)&#34;&#39;</span> -r --unbuffered <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="p">|</span> <span class="k">while</span> <span class="nb">read</span> key property<span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">    vault kv put <span class="nv">$key</span> <span class="nv">$property</span><span class="o">=</span>somerandomvalue
+</span></span><span class="line"><span class="cl">  <span class="k">done</span>
+</span></span></code></pre></div><h2 id="step-2-controlling-an-external-resource-with-a-crd-example-with">Step 2: Controlling an external resource with a CRD: Example With</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apiextensions.k8s.io/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">CustomResourceDefinition</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># name must be in the form: &lt;plural&gt;.&lt;group&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">posts.maelvls.dev</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l">maelvls.dev</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l">Namespaced</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">names</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="nt">kind: Post, singular: post, plural</span><span class="p">:</span><span class="w"> </span><span class="l">posts }</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">versions</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">served</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">schema</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">openAPIV3Schema</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">object</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">properties</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">x-kubernetes-preserve-unknown-fields</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span></code></pre></div>
     </div>
     <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2023/quick-kubernetes-controller-in-bash/index.md">📝 Edit this page</a>
     <div class="tags">
@@ -112,34 +115,9 @@ https://github.com/maelvls/hack-your-controller-in-bash
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

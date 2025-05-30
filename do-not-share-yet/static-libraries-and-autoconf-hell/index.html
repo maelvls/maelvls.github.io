@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="keywords" content="autotools,c&#43;&#43;,c,ocaml"><meta name="description" content="Dynamic libraries and PIC (position-independant code) are great features of modern systems. But trying to get the right library built can become a nightmare as soon as you rely on other libraries that may or may not have these features in the first place... In this post, I detail the hacks I made to the ./configure-based build system of Yices, a C&#43;&#43; library."><meta property="og:title" content="Epic journey with statically and dynamically-linked libraries (.a, .so)" />
-<meta property="og:description" content="Dynamic libraries and PIC (position-independant code) are great features of modern systems. But trying to get the right library built can become a nightmare as soon as you rely on other libraries that may or may not have these features in the first place... In this post, I detail the hacks I made to the ./configure-based build system of Yices, a C&#43;&#43; library." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/static-libraries-and-autoconf-hell/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/static-libraries-and-autoconf-hell/cover-static-libraries-and-autoconf-hell.png" />
-<meta property="article:published_time" content="2020-05-30T20:45:06+02:00" />
-<meta property="article:modified_time" content="2020-05-30T20:45:06+02:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/static-libraries-and-autoconf-hell/cover-static-libraries-and-autoconf-hell.png"/>
+<meta name="author" content="Maël Valais"><meta name="keywords" content="autotools,c&#43;&#43;,c,ocaml"><meta name="description" content="Dynamic libraries and PIC (position-independant code) are great features of modern systems. But trying to get the right library built can become a nightmare as soon as you rely on other libraries that may or may not have these features in the first place... In this post, I detail the hacks I made to the ./configure-based build system of Yices, a C&#43;&#43; library."><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/static-libraries-and-autoconf-hell/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Epic journey with statically and dynamically-linked libraries (.a, .so)">
+  <meta property="og:description" content="Dynamic libraries and PIC (position-independant code) are great features of modern systems. But trying to get the right library built can become a nightmare as soon as you rely on other libraries that may or may not have these features in the first place... In this post, I detail the hacks I made to the ./configure-based build system of Yices, a C&#43;&#43; library.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2020">
+    <meta property="article:published_time" content="2020-05-30T20:45:06+02:00">
+    <meta property="article:modified_time" content="2020-05-30T20:45:06+02:00">
+    <meta property="article:tag" content="Autotools">
+    <meta property="article:tag" content="C&#43;&#43;">
+    <meta property="article:tag" content="C">
+    <meta property="article:tag" content="Ocaml">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/static-libraries-and-autoconf-hell/cover-static-libraries-and-autoconf-hell.png">
 
-<meta name="twitter:title" content="Epic journey with statically and dynamically-linked libraries (.a, .so)"/>
-<meta name="twitter:description" content="Dynamic libraries and PIC (position-independant code) are great features of modern systems. But trying to get the right library built can become a nightmare as soon as you rely on other libraries that may or may not have these features in the first place... In this post, I detail the hacks I made to the ./configure-based build system of Yices, a C&#43;&#43; library."/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/static-libraries-and-autoconf-hell/cover-static-libraries-and-autoconf-hell.png">
+  <meta name="twitter:title" content="Epic journey with statically and dynamically-linked libraries (.a, .so)">
+  <meta name="twitter:description" content="Dynamic libraries and PIC (position-independant code) are great features of modern systems. But trying to get the right library built can become a nightmare as soon as you rely on other libraries that may or may not have these features in the first place... In this post, I detail the hacks I made to the ./configure-based build system of Yices, a C&#43;&#43; library.">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -36,7 +43,7 @@
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -75,47 +82,46 @@
     <div class="markdown">
         <p>Between May and June 2016, I worked with <a href="https://github.com/polazarus/ocamlyices">ocamlyices2</a>, an OCaml package that binds to the <a href="https://github.com/SRI-CSL/yices2">Yices</a> C++ library. Both projects (as well as many Linux projects) are built using the &ldquo;Autotools&rdquo; suite.</p>
 <p>The Autotools suite includes tools like <a href="https://www.gnu.org/software/autoconf/">autoconf</a>, <a href="https://www.gnu.org/software/automake">automake</a> and <a href="https://www.gnu.org/software/libtool/">libtool</a>. These tools generate a bunch of shell scripts and Makefiles using shell scripts and the <a href="https://en.wikipedia.org/wiki/M4_(computer_language)">M4</a> macro language. The user of your projects ends up two simple commands to build your project:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">./configure
-make
-</code></pre></div><blockquote>
-<p>Why did I bother with this? As part of my PhD, I worked on a tool, <a href="https://github.com/touist/touist">touist</a>, which uses SMT solvers like Yices. The <code>touist</code> CLI was written in OCaml (a popular language among academics, including my supervisor), which meant I had to go through hoops to interoperate with C/C++ solvers like Yices.</p>
-</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">./configure
+</span></span><span class="line"><span class="cl">make
+</span></span></code></pre></div><blockquote>
+<p>Why did I bother with this? As part of my PhD, I worked on a tool, <a href="https://github.com/touist/touist">touist</a>, which uses SMT solvers like Yices. The <code>touist</code> CLI was written in OCaml (a popular language among academics, including my supervisor), which meant I had to go through hoops to interoperate with C/C++ solvers like Yices.</p></blockquote>
 <p>My first challenge with ocamlyices2 was the fact that I needed a statically-linked <code>libyices.a</code>. And since Yices depends on <a href="https://gmplib.org/">GMP</a>, I had to dive deep into Yices2&rsquo;s <code>configure.ac</code> and find a way to select the static version of GMP.</p>
-<p>But building a static library <code>libyices.a</code> was not enough. I was to build in PIC mode (position-independant code, enabled with <code>-fPIC</code> in gcc). The position-independant code is required when you want to embed a static library into a dynamically-linked library. That&rsquo;s due to the fact that OCaml requires both the <code>.so</code> and <code>.a</code> versions of the &ldquo;stub&rdquo; library (a stub library is a C library that wraps another C library using OCaml C primitives). And naturally, Yices' build system had not been written to support building a static PIC <code>libyices.a</code>.</p>
+<p>But building a static library <code>libyices.a</code> was not enough. I was to build in PIC mode (position-independant code, enabled with <code>-fPIC</code> in gcc). The position-independant code is required when you want to embed a static library into a dynamically-linked library. That&rsquo;s due to the fact that OCaml requires both the <code>.so</code> and <code>.a</code> versions of the &ldquo;stub&rdquo; library (a stub library is a C library that wraps another C library using OCaml C primitives). And naturally, Yices&rsquo; build system had not been written to support building a static PIC <code>libyices.a</code>.</p>
 <p>I remember these days as an epic struggle against old build systems. This experience taught me everything about <code>autoconf</code>, Makefiles, position-independant code, <code>gcc</code>, <code>ldd</code> and <code>libtool</code>. And in this post, I want to share these discoveries and how I progressed into contributing to the <a href="https://github.com/polazarus/ocamlyices">ocamlyices2</a> project.</p>
 <p>Here is a diagram showing the dependencies between libraries. Ocamlyices2 depends on Yices and Yices depends on GMP.</p>
 <div class="nohighlight">
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">                            build:   dune
-             touist         lang:    ocaml
-                |           output:  touist binary (statically linked)
-                |
-                |
-                |depends on
-                |
-                |
-                |
-                v
-           ocamlyices2      build:   autoconf + make
-                |           lang:    ocaml + C
-                |           output:  libyices2_stubs.a
-                |
-                |depends on
-                |
-                |
-                |
-                v           build:   autoconf + hacky make
-              yices         lang:    C++
-                |           output:  libyices.a (with PIC enabled)
-                |
-                |
-                |depends on
-                |
-                |
-                |
-                v           build:   autoconf + automake + libtool
-               gmp          lang:    C, assembly
-                            output:  libgmp.a (with PIC enabled)
-</code></pre></div></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">                            build:   dune
+</span></span><span class="line"><span class="cl">             touist         lang:    ocaml
+</span></span><span class="line"><span class="cl">                |           output:  touist binary (statically linked)
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |depends on
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                v
+</span></span><span class="line"><span class="cl">           ocamlyices2      build:   autoconf + make
+</span></span><span class="line"><span class="cl">                |           lang:    ocaml + C
+</span></span><span class="line"><span class="cl">                |           output:  libyices2_stubs.a
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |depends on
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                v           build:   autoconf + hacky make
+</span></span><span class="line"><span class="cl">              yices         lang:    C++
+</span></span><span class="line"><span class="cl">                |           output:  libyices.a (with PIC enabled)
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |depends on
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">                v           build:   autoconf + automake + libtool
+</span></span><span class="line"><span class="cl">               gmp          lang:    C, assembly
+</span></span><span class="line"><span class="cl">                            output:  libgmp.a (with PIC enabled)
+</span></span></code></pre></div></div>
 <!-- https://textik.com/#23689eecb0630a77 -->
 <p>The most important thing about this diagram is that since we need a PIC-enabled static library <code>libyices.a</code> in order to build the &ldquo;binding libraries&rdquo;: the shared library <code>yices2.cmxs</code> and the static library <code>libyices2_stubs.a</code>.</p>
 <p>And in order to get this PIC-enabled <code>libyices.a</code>, I needed to make sure that the GMP library picked by the Yices <code>./configure</code> would be static and PIC-enabled.</p>
@@ -129,9 +135,9 @@ make
 <p><strong>Better <code>./configure &amp;&amp; make</code> experience</strong>. Instead of having some parts of the build configuration being passed as Makefile variables, I moved everything to nice flags that you would pass to <code>./configure</code>.</p>
 </li>
 <li>
-<p><strong>Proper PIC support</strong>. Sometimes, Yices' <code>./configure</code> would pick up a <code>libgmp.a</code> that would not be &ldquo;PIC&rdquo;. So I wrote a new <a href="https://en.wikipedia.org/wiki/M4_(computer_language)">M4</a> macro, <code>CSL_CHECK_STATIC_GMP_HAS_PIC</code>, that would do the PIC check using libtool. For example, the developer would be able to ask for a static library with PIC support:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">./configure --with-pic --enable-static --disable-shared --with-pic-gmp<span class="o">=</span><span class="nv">$PWD</span>/with-pic/libgmp.a
-</code></pre></div></li>
+<p><strong>Proper PIC support</strong>. Sometimes, Yices&rsquo; <code>./configure</code> would pick up a <code>libgmp.a</code> that would not be &ldquo;PIC&rdquo;. So I wrote a new <a href="https://en.wikipedia.org/wiki/M4_(computer_language)">M4</a> macro, <code>CSL_CHECK_STATIC_GMP_HAS_PIC</code>, that would do the PIC check using libtool. For example, the developer would be able to ask for a static library with PIC support:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">./configure --with-pic --enable-static --disable-shared --with-pic-gmp<span class="o">=</span><span class="nv">$PWD</span>/with-pic/libgmp.a
+</span></span></code></pre></div></li>
 <li>
 <p><strong>Static <code>libyices.a</code></strong>. The original build system did not</p>
 </li>
@@ -144,468 +150,468 @@ make
 </ol>
 <p>I also fixed weird bugs like a failure on Alpine 3.5 due to a race condition in <code>ltmain.sh</code>. Yes, you heard well! A race condition in a build system!</p>
 <p>Not sure, but <a href="https://github.com/polazarus/ocamlyices2/commit/25f5eb15">25f5eb15</a> might be my biggest commit ever:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
-Date:   Fri May 5 10:31:37 2017 +0200
-Commit: 25f5eb15
-
-    libyices: build system: moved all config from Makefile to ./configure
-
-    What I tried to fix:
-    * Impossible to produces static archive libyices.a for the mingw32 host.
-    * So much configuration done in Makefile instead of ./configure.
-    * The &#39;make build OPTION= MODE=&#39; is kind of unexpected and not really standard.
-    * As an end-user builder, it is hard to guess that my system-installed libgmp.a
-      is not PIC. The build system should help me with that.
-    * CFLAGS and CPPFLAGS cannot be overritten by the end-user builder at &#39;make&#39;
-      time. See &#39;Preset Output Variables&#39; in the autoconf manual.
-    * `smt2_commands.c`, `smt2_parser.c` and `smt2_term_stack.c` are all including
-      `smt2_commands.h`, and in `smt2_commands.h` there is a definition of a type,
-      so there is a clash of symbols at link time. Solution 1: use &#39;extern&#39; in .h
-      and definition in .c. Solution 2: typedef the enum.
-    * The build system should be fully parallel-proof. Note that &#39;make -j&#39; is a
-      thread bomb; prefer using &#39;make -j4&#39; if you have 4 processors.
-    * Why removing libyices.a when using &#39;dist&#39;? (rm -f $(distdir)/lib/libyices.a)
-      libyices.a should be distributed to the end-users along with the shared lib.
-    * Why does libgmp.a contain more than libgmp.so? I guess it is because some
-      function are needed by the tests and the tests are never dynamically linked
-      to the shared libyices.so... For example, the test `test_type_matching` calls
-      a function &#39;delete_pstore&#39; that is not exported. This means we cannot use the
-      created libyices.so! We must instead use the object files directly.
-
-    Features of the new build system:
-    * It is now possible to select what you want to build using --enable-static
-      and --enable-shared. By default, both are built. You can speed up the build
-      by disabling one of the modes, for example --disable-shared.
-    * Running ./configure will tell you if the libgmp.a found/given with
-      --with-static-gmp or --with-pic-gmp is PIC or not.
-    * Libtool now handles all shared library naming with version number and symbolic
-      links. on linux, .so, on mac os .dylib, on windows .a, .dll.a and .dll...
-    * It is now possible to choose if you want PIC-only code in the static
-      library libyices.a using --with-pic.
-    * The ./configure now configures and the Makefile makes; moved all the
-      configuration steps that were done in the Makefile.
-    * It is not required anymore to pass OPTION when using make. OPTION is now
-      handled by passing for example --host=i686-w64-mingw32 when running
-      ./configure, instead of &#39;make OPTION=mingw32&#39;,
-    * It is not required anymore to pass MODE in make. MODE is now handled by
-      the argument --with-mode=release (for example) when running ./configure.
-    * Removed the confusing mess of build/&lt;host&gt;/... and configs/make.&lt;host&gt;.
-      Build objects are simply put in build/.
-    * Merged the many Makefiles that were sharing a lot of code in common.
-    * Standardized the &#39;make&#39; target and experience:
-      - make build for building binaries and library (no need for OPTION or MODE)
-      - make dist (non-standard) for showing the results of the build as it would
-        be distributed
-      - make distclean for removing any files created by ./configure
-      - make lib if you only want the library
-      - make install and uninstall for installing/uninstalling (DESTDIR supported)
-    * On Windows, we can now build a static library libyices.a.
-    * On Windows, shared and static libraries can be built at once. The static
-      version of libyices.a can be renamed using --with-static-name.
-    * DESTDIR works as expected: it will reproduce the hierarchy using the prefix
-      when running &#39;make install DESTDIR=/path&#39;
-    * A nice summary of the configuration is now printed when running ./configure.
-      It allows to check if libgmp.a is PIC or not, and helps to have a clear
-      view of what is going to happen.
-    * Moved version number of Yices in configure.ac
-    * If the user wants to use --with-pic-gmp but his libgmp.a is not PIC, give him
-      an indication of what command to run to build the with-PIC libgmp.a.
-    * Moved the gmaketest into configure; warn the user if &#39;make&#39; is not gnu make.
-    * Parallel build is now fully supported (make -j)
-    * when using --with-static-gmp (and other similar flags), try to find gmp.h
-      in . and ../include automatically, and fall back with the system-wide gmp.h
-    * check for gmp.h even when no --with-static-gmp-include-dir is given
-    * moved all csl_* functions into autoconf/m4/csl_check_libs.m4 so that they
-      can be reused somewhere else
-    * compute dependencies only if not in release mode and at compile time
-      instead of ahead of time. This saves time during compilation, because deps
-      are not necessary if the .c or .h files are not changed (i.e., if the builder
-      is the end-user). If the builder is a developer, then he will set
-      --with-mode={debug,profile...} and this will trigger the deps to be computed.
-    * &#39;make test&#39; compiles and runs all tests in tests/unit
-    * &#39;make test_api12&#39; will compile and run the test tests/unit/test_api12.c
-    * removed version_*.c file as it is rebuilt at make time
-    * gperf is now only necessary when changing the tokens.txt or keywords.txt files,
-      the end-user builder does not have to have gperf installed.
-
-    Side notes:
-    * CPPFLAGS, CFLAGS, LDFLAGS and any other makefile variable can be overwritten
-      using &#39;make LDFLAGS=...&#39; (was already the case with the previous version of the
-      build system)
-
-    Known issues:
-    * on Mac OS X, linking executables agains non-PIC libgmp.a will throw the
-      following warning:
-      ld: warning: PIE disabled. Absolute addressing (perhaps -mdynamic-no-pic)
-      not allowed in code signed PIE, but used in ___gmpn_mul_1 from libgmp.a(mul_1.o).
-      To fix this warning, don&#39;t compile with -mdynamic-no-pic or link with -Wl,-no_pie
-
-    Todo:
-    * produce libyices.def on Windows
-    * make sure the test on libgmp-10.dll is future-proof (remove the &#39;-10&#39;)
-    * fix the &#39;echo summary&#39;
-    * I did not test the checks made configure.ac on mcsat and libpoly; we should
-      do the same tests as done on libgmp.a (for checking that it is PIC) and
-      add a helping message at the end of configure.ac.
-    * For the tests, I read that two kind of tests were compiled:
-      - &#39;tests&#39; where the tests are linked to the non-PIC libgmp.a and static libgmp.a
-      - &#39;tests-static&#39; where the tests are linked to the PIC libgmp.a and shared
-        GMP library.
-      I changed the second one: it links to the shared version of libyices and shared
-      version of GMP. But building the with-PIC libyices.a would be really easy
-      (and it is still possible using the flag --with-pic).
-    * &#39;make dist&#39; is not a staging area (for now) for &#39;make install&#39;. They both
-      install from built objects.
-    * it is not possible to compile the tests against the shared library
-      because many symbols which are used in the tests are not exported (&#39;export&#39;
-      in the C code). They exist if we do &#39;nm&#39; but they are just not usable.
-
-    * pstore issue:
-
-    The visibility is T (visible) in static mode and t (hidden) in shared mode. This
-    is because &#39;abstract_values.c&#39; has not been &#39;exported&#39; (=added in `yices_api.c`).
-    Here is an example of the difference (functions from )
-    ```
-    # nm build/lib/libyices.a | grep pstore
-    0000000000000090 T _delete_pstore
-    0000000000000000 T _init_pstore
-    # nm build/lib/.libs/libyices.2.dylib | grep pstore
-    0000000000037e10 t _delete_pstore
-    0000000000037d80 t _init_pstore
-    ```
-
-    I tweaked the ltmain.sh to be able to pass different CPPFLAGS for the compilation
-    of static and shared objects by the `%.o: %.c` rule. CPPFLAGS must be different
-    because of Windows dlls: `-DNOYICES_DLL -D__GMP_LIBGMP_DLL=0` for example.
-
-    I added two variables LT_STATIC_CFLAGS and LT_SHARED_CFLAGS. They allow me
-    to pass CFLAGS to libtool for .c -&gt; .o targets. It allows me to pass things
-    like -DYICES_STATIC, -DNOYICES_DLL and -D_LIBGMP_DLL.
-
-    ``` diff
-    diff --git a/ext/yices/autoconf/ltmain.sh b/ext/yices/autoconf/ltmain.sh
-    index bf5d83b..7b7dd3a 100644
-    --- a/ext/yices/autoconf/ltmain.sh
-    +++ b/ext/yices/autoconf/ltmain.sh
-    @@ -3500,10 +3500,10 @@ compiler.&#34;
-           fbsd_hideous_sh_bug=$base_compile
-
-           if test no != &#34;$pic_mode&#34;; then
-    -       command=&#34;$base_compile $qsrcfile $pic_flag&#34;
-    +       command=&#34;$base_compile $LT_SHARED_CFLAGS $qsrcfile $pic_flag&#34;
-           else
-            # Don&#39;t build PIC code
-    -       command=&#34;$base_compile $qsrcfile&#34;
-    +       command=&#34;$base_compile $LT_SHARED_CFLAGS $qsrcfile&#34;
-           fi
-
-           func_mkdir_p &#34;$xdir$objdir&#34;
-    @@ -3552,9 +3552,9 @@ compiler.&#34;
-         if test yes = &#34;$build_old_libs&#34;; then
-           if test yes != &#34;$pic_mode&#34;; then
-            # Don&#39;t build PIC code
-    -       command=&#34;$base_compile $qsrcfile$pie_flag&#34;
-    +       command=&#34;$base_compile $LT_STATIC_CFLAGS $qsrcfile$pie_flag&#34;
-           else
-    -       command=&#34;$base_compile $qsrcfile $pic_flag&#34;
-    +       command=&#34;$base_compile $LT_STATIC_CFLAGS $qsrcfile $pic_flag&#34;
-           fi
-           if test yes = &#34;$compiler_c_o&#34;; then
-            func_append command &#34; -o $obj&#34;
-    ```
-</code></pre></div><p>What a massive commit message, right?!</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">Author</span><span class="p">:</span><span class="w"> </span><span class="n">Maël</span><span class="w"> </span><span class="n">Valais</span><span class="w"> </span><span class="o">&lt;</span><span class="n">mael</span><span class="p">.</span><span class="n">valais</span><span class="o">@</span><span class="n">gmail</span><span class="p">.</span><span class="n">com</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kt">Date</span><span class="p">:</span><span class="w">   </span><span class="n">Fri</span><span class="w"> </span><span class="n">May</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="mi">10</span><span class="p">:</span><span class="mi">31</span><span class="p">:</span><span class="mi">37</span><span class="w"> </span><span class="mi">2017</span><span class="w"> </span><span class="o">+</span><span class="mi">0200</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Commit</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="n">f5eb15</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">libyices</span><span class="p">:</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="n">system</span><span class="p">:</span><span class="w"> </span><span class="n">moved</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">Makefile</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="n">configure</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">What</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">tried</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">fix</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Impossible</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">produces</span><span class="w"> </span><span class="n">static</span><span class="w"> </span><span class="n">archive</span><span class="w"> </span><span class="n">libyices</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">mingw32</span><span class="w"> </span><span class="n">host</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">So</span><span class="w"> </span><span class="n">much</span><span class="w"> </span><span class="n">configuration</span><span class="w"> </span><span class="n">done</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Makefile</span><span class="w"> </span><span class="n">instead</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="n">configure</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="s1">&#39;make build OPTION= MODE=&#39;</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">kind</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">unexpected</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">really</span><span class="w"> </span><span class="n">standard</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="k">As</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="n">end</span><span class="o">-</span><span class="k">user</span><span class="w"> </span><span class="n">builder</span><span class="p">,</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">hard</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">guess</span><span class="w"> </span><span class="n">that</span><span class="w"> </span><span class="n">my</span><span class="w"> </span><span class="n">system</span><span class="o">-</span><span class="n">installed</span><span class="w"> </span><span class="n">libgmp</span><span class="p">.</span><span class="n">a</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">PIC</span><span class="p">.</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="n">system</span><span class="w"> </span><span class="n">should</span><span class="w"> </span><span class="n">help</span><span class="w"> </span><span class="n">me</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="n">that</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">CFLAGS</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">CPPFLAGS</span><span class="w"> </span><span class="n">cannot</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">overritten</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">end</span><span class="o">-</span><span class="k">user</span><span class="w"> </span><span class="n">builder</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="s1">&#39;make&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kt">time</span><span class="p">.</span><span class="w"> </span><span class="n">See</span><span class="w"> </span><span class="s1">&#39;Preset Output Variables&#39;</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">autoconf</span><span class="w"> </span><span class="n">manual</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="o">`</span><span class="n">smt2_commands</span><span class="p">.</span><span class="n">c</span><span class="o">`</span><span class="p">,</span><span class="w"> </span><span class="o">`</span><span class="n">smt2_parser</span><span class="p">.</span><span class="n">c</span><span class="o">`</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="o">`</span><span class="n">smt2_term_stack</span><span class="p">.</span><span class="n">c</span><span class="o">`</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="n">including</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">`</span><span class="n">smt2_commands</span><span class="p">.</span><span class="n">h</span><span class="o">`</span><span class="p">,</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">`</span><span class="n">smt2_commands</span><span class="p">.</span><span class="n">h</span><span class="o">`</span><span class="w"> </span><span class="n">there</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">definition</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">so</span><span class="w"> </span><span class="n">there</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">clash</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">symbols</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">link</span><span class="w"> </span><span class="kt">time</span><span class="p">.</span><span class="w"> </span><span class="n">Solution</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="w"> </span><span class="k">use</span><span class="w"> </span><span class="s1">&#39;extern&#39;</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">.</span><span class="n">h</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">and</span><span class="w"> </span><span class="n">definition</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">.</span><span class="n">c</span><span class="p">.</span><span class="w"> </span><span class="n">Solution</span><span class="w"> </span><span class="mi">2</span><span class="p">:</span><span class="w"> </span><span class="n">typedef</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="kt">enum</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="n">system</span><span class="w"> </span><span class="n">should</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">fully</span><span class="w"> </span><span class="n">parallel</span><span class="o">-</span><span class="n">proof</span><span class="p">.</span><span class="w"> </span><span class="n">Note</span><span class="w"> </span><span class="n">that</span><span class="w"> </span><span class="s1">&#39;make -j&#39;</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">a</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">thread</span><span class="w"> </span><span class="n">bomb</span><span class="p">;</span><span class="w"> </span><span class="n">prefer</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="s1">&#39;make -j4&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">processors</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Why</span><span class="w"> </span><span class="n">removing</span><span class="w"> </span><span class="n">libyices</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="k">when</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="s1">&#39;dist&#39;</span><span class="o">?</span><span class="w"> </span><span class="p">(</span><span class="n">rm</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="err">$</span><span class="p">(</span><span class="n">distdir</span><span class="p">)</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">libyices</span><span class="p">.</span><span class="n">a</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">libyices</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="n">should</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">distributed</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">end</span><span class="o">-</span><span class="n">users</span><span class="w"> </span><span class="n">along</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="n">lib</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Why</span><span class="w"> </span><span class="n">does</span><span class="w"> </span><span class="n">libgmp</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="n">contain</span><span class="w"> </span><span class="n">more</span><span class="w"> </span><span class="n">than</span><span class="w"> </span><span class="n">libgmp</span><span class="p">.</span><span class="n">so</span><span class="o">?</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">guess</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">because</span><span class="w"> </span><span class="n">some</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">function</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">needed</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">tests</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">tests</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">never</span><span class="w"> </span><span class="n">dynamically</span><span class="w"> </span><span class="n">linked</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">to</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="n">libyices</span><span class="p">.</span><span class="n">so</span><span class="p">...</span><span class="w"> </span><span class="k">For</span><span class="w"> </span><span class="n">example</span><span class="p">,</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="o">`</span><span class="n">test_type_matching</span><span class="o">`</span><span class="w"> </span><span class="n">calls</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">a</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="s1">&#39;delete_pstore&#39;</span><span class="w"> </span><span class="n">that</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">exported</span><span class="p">.</span><span class="w"> </span><span class="n">This</span><span class="w"> </span><span class="n">means</span><span class="w"> </span><span class="n">we</span><span class="w"> </span><span class="n">cannot</span><span class="w"> </span><span class="k">use</span><span class="w"> </span><span class="n">the</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">created</span><span class="w"> </span><span class="n">libyices</span><span class="p">.</span><span class="n">so</span><span class="o">!</span><span class="w"> </span><span class="n">We</span><span class="w"> </span><span class="n">must</span><span class="w"> </span><span class="n">instead</span><span class="w"> </span><span class="k">use</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">object</span><span class="w"> </span><span class="n">files</span><span class="w"> </span><span class="n">directly</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Features</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="n">system</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">It</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">possible</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="n">what</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">want</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">static</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">and</span><span class="w"> </span><span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">shared</span><span class="p">.</span><span class="w"> </span><span class="k">By</span><span class="w"> </span><span class="k">default</span><span class="p">,</span><span class="w"> </span><span class="k">both</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">built</span><span class="p">.</span><span class="w"> </span><span class="n">You</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">speed</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">build</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">by</span><span class="w"> </span><span class="n">disabling</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">modes</span><span class="p">,</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">example</span><span class="w"> </span><span class="o">--</span><span class="n">disable</span><span class="o">-</span><span class="n">shared</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Running</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="n">configure</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">tell</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">libgmp</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="n">found</span><span class="o">/</span><span class="n">given</span><span class="w"> </span><span class="k">with</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">static</span><span class="o">-</span><span class="n">gmp</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">pic</span><span class="o">-</span><span class="n">gmp</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">PIC</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">not</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Libtool</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">handles</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="n">library</span><span class="w"> </span><span class="n">naming</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">symbolic</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">links</span><span class="p">.</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">linux</span><span class="p">,</span><span class="w"> </span><span class="p">.</span><span class="n">so</span><span class="p">,</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">mac</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="p">.</span><span class="n">dylib</span><span class="p">,</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">windows</span><span class="w"> </span><span class="p">.</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="p">.</span><span class="n">dll</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="p">.</span><span class="n">dll</span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">It</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">possible</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">choose</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">want</span><span class="w"> </span><span class="n">PIC</span><span class="o">-</span><span class="n">only</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">static</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">library</span><span class="w"> </span><span class="n">libyices</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">pic</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="n">configure</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">configures</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">Makefile</span><span class="w"> </span><span class="n">makes</span><span class="p">;</span><span class="w"> </span><span class="n">moved</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="n">the</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">configuration</span><span class="w"> </span><span class="n">steps</span><span class="w"> </span><span class="n">that</span><span class="w"> </span><span class="n">were</span><span class="w"> </span><span class="n">done</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">Makefile</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">It</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">required</span><span class="w"> </span><span class="n">anymore</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">pass</span><span class="w"> </span><span class="k">OPTION</span><span class="w"> </span><span class="k">when</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">make</span><span class="p">.</span><span class="w"> </span><span class="k">OPTION</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">now</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">handled</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">passing</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">example</span><span class="w"> </span><span class="o">--</span><span class="n">host</span><span class="o">=</span><span class="n">i686</span><span class="o">-</span><span class="n">w64</span><span class="o">-</span><span class="n">mingw32</span><span class="w"> </span><span class="k">when</span><span class="w"> </span><span class="n">running</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="p">.</span><span class="o">/</span><span class="n">configure</span><span class="p">,</span><span class="w"> </span><span class="n">instead</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="s1">&#39;make OPTION=mingw32&#39;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">It</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">required</span><span class="w"> </span><span class="n">anymore</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">pass</span><span class="w"> </span><span class="n">MODE</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">make</span><span class="p">.</span><span class="w"> </span><span class="n">MODE</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">handled</span><span class="w"> </span><span class="k">by</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">the</span><span class="w"> </span><span class="n">argument</span><span class="w"> </span><span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">mode</span><span class="o">=</span><span class="k">release</span><span class="w"> </span><span class="p">(</span><span class="k">for</span><span class="w"> </span><span class="n">example</span><span class="p">)</span><span class="w"> </span><span class="k">when</span><span class="w"> </span><span class="n">running</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="n">configure</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Removed</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">confusing</span><span class="w"> </span><span class="n">mess</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">build</span><span class="o">/&lt;</span><span class="n">host</span><span class="o">&gt;/</span><span class="p">...</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">configs</span><span class="o">/</span><span class="n">make</span><span class="p">.</span><span class="o">&lt;</span><span class="n">host</span><span class="o">&gt;</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">Build</span><span class="w"> </span><span class="n">objects</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">simply</span><span class="w"> </span><span class="n">put</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">build</span><span class="o">/</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Merged</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">many</span><span class="w"> </span><span class="n">Makefiles</span><span class="w"> </span><span class="n">that</span><span class="w"> </span><span class="n">were</span><span class="w"> </span><span class="n">sharing</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">lot</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">common</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Standardized</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="s1">&#39;make&#39;</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">experience</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">make</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">building</span><span class="w"> </span><span class="n">binaries</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nf">library</span><span class="w"> </span><span class="p">(</span><span class="n">no</span><span class="w"> </span><span class="n">need</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">OPTION</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="n">MODE</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">make</span><span class="w"> </span><span class="nf">dist</span><span class="w"> </span><span class="p">(</span><span class="n">non</span><span class="o">-</span><span class="n">standard</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">showing</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">results</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">would</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">be</span><span class="w"> </span><span class="n">distributed</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">make</span><span class="w"> </span><span class="n">distclean</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">removing</span><span class="w"> </span><span class="n">any</span><span class="w"> </span><span class="n">files</span><span class="w"> </span><span class="n">created</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="n">configure</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">make</span><span class="w"> </span><span class="n">lib</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">only</span><span class="w"> </span><span class="n">want</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">library</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">-</span><span class="w"> </span><span class="n">make</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">uninstall</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">installing</span><span class="o">/</span><span class="nf">uninstalling</span><span class="w"> </span><span class="p">(</span><span class="n">DESTDIR</span><span class="w"> </span><span class="n">supported</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="k">On</span><span class="w"> </span><span class="n">Windows</span><span class="p">,</span><span class="w"> </span><span class="n">we</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">static</span><span class="w"> </span><span class="n">library</span><span class="w"> </span><span class="n">libyices</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="k">On</span><span class="w"> </span><span class="n">Windows</span><span class="p">,</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">static</span><span class="w"> </span><span class="n">libraries</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">built</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">once</span><span class="p">.</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="n">static</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">version</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">libyices</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">renamed</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">static</span><span class="o">-</span><span class="n">name</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">DESTDIR</span><span class="w"> </span><span class="n">works</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">expected</span><span class="p">:</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">reproduce</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">hierarchy</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">prefix</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">when</span><span class="w"> </span><span class="n">running</span><span class="w"> </span><span class="s1">&#39;make install DESTDIR=/path&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="n">nice</span><span class="w"> </span><span class="n">summary</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">configuration</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">printed</span><span class="w"> </span><span class="k">when</span><span class="w"> </span><span class="n">running</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="n">configure</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">It</span><span class="w"> </span><span class="n">allows</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">check</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">libgmp</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">PIC</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">not</span><span class="p">,</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">helps</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">clear</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">view</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">what</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">going</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">happen</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Moved</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">Yices</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">configure</span><span class="p">.</span><span class="n">ac</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="k">If</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="n">wants</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">use</span><span class="w"> </span><span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">pic</span><span class="o">-</span><span class="n">gmp</span><span class="w"> </span><span class="n">but</span><span class="w"> </span><span class="n">his</span><span class="w"> </span><span class="n">libgmp</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">PIC</span><span class="p">,</span><span class="w"> </span><span class="n">give</span><span class="w"> </span><span class="n">him</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">an</span><span class="w"> </span><span class="n">indication</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">what</span><span class="w"> </span><span class="n">command</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="k">with</span><span class="o">-</span><span class="n">PIC</span><span class="w"> </span><span class="n">libgmp</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Moved</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">gmaketest</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">configure</span><span class="p">;</span><span class="w"> </span><span class="n">warn</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="s1">&#39;make&#39;</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">gnu</span><span class="w"> </span><span class="n">make</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">Parallel</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">fully</span><span class="w"> </span><span class="nf">supported</span><span class="w"> </span><span class="p">(</span><span class="n">make</span><span class="w"> </span><span class="o">-</span><span class="n">j</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="k">when</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">static</span><span class="o">-</span><span class="nf">gmp</span><span class="w"> </span><span class="p">(</span><span class="k">and</span><span class="w"> </span><span class="n">other</span><span class="w"> </span><span class="n">similar</span><span class="w"> </span><span class="n">flags</span><span class="p">),</span><span class="w"> </span><span class="n">try</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">find</span><span class="w"> </span><span class="n">gmp</span><span class="p">.</span><span class="n">h</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">in</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="p">..</span><span class="o">/</span><span class="n">include</span><span class="w"> </span><span class="n">automatically</span><span class="p">,</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">fall</span><span class="w"> </span><span class="n">back</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">system</span><span class="o">-</span><span class="n">wide</span><span class="w"> </span><span class="n">gmp</span><span class="p">.</span><span class="n">h</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="k">check</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">gmp</span><span class="p">.</span><span class="n">h</span><span class="w"> </span><span class="n">even</span><span class="w"> </span><span class="k">when</span><span class="w"> </span><span class="n">no</span><span class="w"> </span><span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">static</span><span class="o">-</span><span class="n">gmp</span><span class="o">-</span><span class="n">include</span><span class="o">-</span><span class="n">dir</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">given</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">moved</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="n">csl_</span><span class="o">*</span><span class="w"> </span><span class="n">functions</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">autoconf</span><span class="o">/</span><span class="n">m4</span><span class="o">/</span><span class="n">csl_check_libs</span><span class="p">.</span><span class="n">m4</span><span class="w"> </span><span class="n">so</span><span class="w"> </span><span class="n">that</span><span class="w"> </span><span class="n">they</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">can</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">reused</span><span class="w"> </span><span class="n">somewhere</span><span class="w"> </span><span class="k">else</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">compute</span><span class="w"> </span><span class="n">dependencies</span><span class="w"> </span><span class="n">only</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">release</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">compile</span><span class="w"> </span><span class="kt">time</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">instead</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">ahead</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="kt">time</span><span class="p">.</span><span class="w"> </span><span class="n">This</span><span class="w"> </span><span class="n">saves</span><span class="w"> </span><span class="kt">time</span><span class="w"> </span><span class="n">during</span><span class="w"> </span><span class="n">compilation</span><span class="p">,</span><span class="w"> </span><span class="n">because</span><span class="w"> </span><span class="n">deps</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">are</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">necessary</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="p">.</span><span class="n">c</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="p">.</span><span class="n">h</span><span class="w"> </span><span class="n">files</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="nf">changed</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">e</span><span class="p">.,</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">builder</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">is</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">end</span><span class="o">-</span><span class="k">user</span><span class="p">).</span><span class="w"> </span><span class="k">If</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">builder</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">developer</span><span class="p">,</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="n">he</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="kt">set</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">mode</span><span class="o">=</span><span class="err">{</span><span class="n">debug</span><span class="p">,</span><span class="n">profile</span><span class="p">...</span><span class="err">}</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="k">trigger</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">deps</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">computed</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="s1">&#39;make test&#39;</span><span class="w"> </span><span class="n">compiles</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">runs</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="n">tests</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">tests</span><span class="o">/</span><span class="n">unit</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="s1">&#39;make test_api12&#39;</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">compile</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">tests</span><span class="o">/</span><span class="n">unit</span><span class="o">/</span><span class="n">test_api12</span><span class="p">.</span><span class="n">c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">removed</span><span class="w"> </span><span class="n">version_</span><span class="o">*</span><span class="p">.</span><span class="n">c</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">rebuilt</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">make</span><span class="w"> </span><span class="kt">time</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">gperf</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">only</span><span class="w"> </span><span class="n">necessary</span><span class="w"> </span><span class="k">when</span><span class="w"> </span><span class="n">changing</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">tokens</span><span class="p">.</span><span class="n">txt</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="n">keywords</span><span class="p">.</span><span class="n">txt</span><span class="w"> </span><span class="n">files</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">the</span><span class="w"> </span><span class="n">end</span><span class="o">-</span><span class="k">user</span><span class="w"> </span><span class="n">builder</span><span class="w"> </span><span class="n">does</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">gperf</span><span class="w"> </span><span class="n">installed</span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Side</span><span class="w"> </span><span class="n">notes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="n">CPPFLAGS</span><span class="p">,</span><span class="w"> </span><span class="n">CFLAGS</span><span class="p">,</span><span class="w"> </span><span class="n">LDFLAGS</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">any</span><span class="w"> </span><span class="n">other</span><span class="w"> </span><span class="n">makefile</span><span class="w"> </span><span class="n">variable</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">overwritten</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">using</span><span class="w"> </span><span class="s1">&#39;make LDFLAGS=...&#39;</span><span class="w"> </span><span class="p">(</span><span class="n">was</span><span class="w"> </span><span class="n">already</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="k">case</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">previous</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">build</span><span class="w"> </span><span class="n">system</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Known</span><span class="w"> </span><span class="n">issues</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">*</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">Mac</span><span class="w"> </span><span class="n">OS</span><span class="w"> </span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">linking</span><span class="w"> </span><span class="n">executables</span><span class="w"> </span><span class="n">agains</span><span class="w"> </span><span class="n">non</span><span class="o">-</span><span class="n">PIC</span><span class="w"> </span><span class="n">libgmp</span><span class="p">.</span><span class="n">a</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">throw</span><span class="w"> </span><span class="n">the</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">following</span><span class="w"> </span><span class="n">warning</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">ld</span><span class="p">:</span><span class="w"> </span><span class="n">warning</span><span class="p">:</span><span class="w"> </span><span class="n">PIE</span><span class="w"> </span><span class="n">disabled</span><span class="p">.</span><span class="w"> </span><span class="n">Absolute</span><span class="w"> </span><span class="nf">addressing</span><span class="w"> </span><span class="p">(</span><span class="n">perhaps</span><span class="w"> </span><span class="o">-</span><span class="n">mdynamic</span><span class="o">-</span><span class="n">no</span><span class="o">-</span><span class="n">pic</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">not</span><span class="w"> </span><span class="n">allowed</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">signed</span><span class="w"> </span><span class="n">PIE</span><span class="p">,</span><span class="w"> </span><span class="n">but</span><span class="w"> </span><span class="n">used</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">___gmpn_mul_1</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">libgmp</span><span class="p">.</span><span class="nf">a</span><span class="p">(</span><span class="n">mul_1</span><span class="p">.</span><span class="n">o</span><span class="p">).</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">To</span><span class="w"> </span><span class="n">fix</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">warning</span><span class="p">,</span><span class="w"> </span><span class="n">don</span><span class="s1">&#39;t compile with -mdynamic-no-pic or link with -Wl,-no_pie
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">    Todo:
+</span></span></span><span class="line"><span class="cl"><span class="s1">    * produce libyices.def on Windows
+</span></span></span><span class="line"><span class="cl"><span class="s1">    * make sure the test on libgmp-10.dll is future-proof (remove the &#39;</span><span class="o">-</span><span class="mi">10</span><span class="s1">&#39;)
+</span></span></span><span class="line"><span class="cl"><span class="s1">    * fix the &#39;</span><span class="n">echo</span><span class="w"> </span><span class="n">summary</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">    * I did not test the checks made configure.ac on mcsat and libpoly; we should
+</span></span></span><span class="line"><span class="cl"><span class="s1">      do the same tests as done on libgmp.a (for checking that it is PIC) and
+</span></span></span><span class="line"><span class="cl"><span class="s1">      add a helping message at the end of configure.ac.
+</span></span></span><span class="line"><span class="cl"><span class="s1">    * For the tests, I read that two kind of tests were compiled:
+</span></span></span><span class="line"><span class="cl"><span class="s1">      - &#39;</span><span class="n">tests</span><span class="s1">&#39; where the tests are linked to the non-PIC libgmp.a and static libgmp.a
+</span></span></span><span class="line"><span class="cl"><span class="s1">      - &#39;</span><span class="n">tests</span><span class="o">-</span><span class="n">static</span><span class="s1">&#39; where the tests are linked to the PIC libgmp.a and shared
+</span></span></span><span class="line"><span class="cl"><span class="s1">        GMP library.
+</span></span></span><span class="line"><span class="cl"><span class="s1">      I changed the second one: it links to the shared version of libyices and shared
+</span></span></span><span class="line"><span class="cl"><span class="s1">      version of GMP. But building the with-PIC libyices.a would be really easy
+</span></span></span><span class="line"><span class="cl"><span class="s1">      (and it is still possible using the flag --with-pic).
+</span></span></span><span class="line"><span class="cl"><span class="s1">    * &#39;</span><span class="n">make</span><span class="w"> </span><span class="n">dist</span><span class="s1">&#39; is not a staging area (for now) for &#39;</span><span class="n">make</span><span class="w"> </span><span class="n">install</span><span class="s1">&#39;. They both
+</span></span></span><span class="line"><span class="cl"><span class="s1">      install from built objects.
+</span></span></span><span class="line"><span class="cl"><span class="s1">    * it is not possible to compile the tests against the shared library
+</span></span></span><span class="line"><span class="cl"><span class="s1">      because many symbols which are used in the tests are not exported (&#39;</span><span class="n">export</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">      in the C code). They exist if we do &#39;</span><span class="n">nm</span><span class="s1">&#39; but they are just not usable.
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">    * pstore issue:
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">    The visibility is T (visible) in static mode and t (hidden) in shared mode. This
+</span></span></span><span class="line"><span class="cl"><span class="s1">    is because &#39;</span><span class="n">abstract_values</span><span class="p">.</span><span class="n">c</span><span class="s1">&#39; has not been &#39;</span><span class="n">exported</span><span class="s1">&#39; (=added in `yices_api.c`).
+</span></span></span><span class="line"><span class="cl"><span class="s1">    Here is an example of the difference (functions from )
+</span></span></span><span class="line"><span class="cl"><span class="s1">    ```
+</span></span></span><span class="line"><span class="cl"><span class="s1">    # nm build/lib/libyices.a | grep pstore
+</span></span></span><span class="line"><span class="cl"><span class="s1">    0000000000000090 T _delete_pstore
+</span></span></span><span class="line"><span class="cl"><span class="s1">    0000000000000000 T _init_pstore
+</span></span></span><span class="line"><span class="cl"><span class="s1">    # nm build/lib/.libs/libyices.2.dylib | grep pstore
+</span></span></span><span class="line"><span class="cl"><span class="s1">    0000000000037e10 t _delete_pstore
+</span></span></span><span class="line"><span class="cl"><span class="s1">    0000000000037d80 t _init_pstore
+</span></span></span><span class="line"><span class="cl"><span class="s1">    ```
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">    I tweaked the ltmain.sh to be able to pass different CPPFLAGS for the compilation
+</span></span></span><span class="line"><span class="cl"><span class="s1">    of static and shared objects by the `%.o: %.c` rule. CPPFLAGS must be different
+</span></span></span><span class="line"><span class="cl"><span class="s1">    because of Windows dlls: `-DNOYICES_DLL -D__GMP_LIBGMP_DLL=0` for example.
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">    I added two variables LT_STATIC_CFLAGS and LT_SHARED_CFLAGS. They allow me
+</span></span></span><span class="line"><span class="cl"><span class="s1">    to pass CFLAGS to libtool for .c -&gt; .o targets. It allows me to pass things
+</span></span></span><span class="line"><span class="cl"><span class="s1">    like -DYICES_STATIC, -DNOYICES_DLL and -D_LIBGMP_DLL.
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">    ``` diff
+</span></span></span><span class="line"><span class="cl"><span class="s1">    diff --git a/ext/yices/autoconf/ltmain.sh b/ext/yices/autoconf/ltmain.sh
+</span></span></span><span class="line"><span class="cl"><span class="s1">    index bf5d83b..7b7dd3a 100644
+</span></span></span><span class="line"><span class="cl"><span class="s1">    --- a/ext/yices/autoconf/ltmain.sh
+</span></span></span><span class="line"><span class="cl"><span class="s1">    +++ b/ext/yices/autoconf/ltmain.sh
+</span></span></span><span class="line"><span class="cl"><span class="s1">    @@ -3500,10 +3500,10 @@ compiler.&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s1">           fbsd_hideous_sh_bug=$base_compile
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">           if test no != &#34;$pic_mode&#34;; then
+</span></span></span><span class="line"><span class="cl"><span class="s1">    -       command=&#34;$base_compile $qsrcfile $pic_flag&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s1">    +       command=&#34;$base_compile $LT_SHARED_CFLAGS $qsrcfile $pic_flag&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s1">           else
+</span></span></span><span class="line"><span class="cl"><span class="s1">            # Don&#39;</span><span class="n">t</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="n">PIC</span><span class="w"> </span><span class="n">code</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">-</span><span class="w">       </span><span class="n">command</span><span class="o">=</span><span class="s2">&#34;$base_compile $qsrcfile&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">+</span><span class="w">       </span><span class="n">command</span><span class="o">=</span><span class="s2">&#34;$base_compile $LT_SHARED_CFLAGS $qsrcfile&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">           </span><span class="n">fi</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">           </span><span class="n">func_mkdir_p</span><span class="w"> </span><span class="s2">&#34;$xdir$objdir&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">@@</span><span class="w"> </span><span class="o">-</span><span class="mi">3552</span><span class="p">,</span><span class="mi">9</span><span class="w"> </span><span class="o">+</span><span class="mi">3552</span><span class="p">,</span><span class="mi">9</span><span class="w"> </span><span class="o">@@</span><span class="w"> </span><span class="n">compiler</span><span class="p">.</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">         if test yes = &#34;</span><span class="err">$</span><span class="n">build_old_libs</span><span class="s2">&#34;; then
+</span></span></span><span class="line"><span class="cl"><span class="s2">           if test yes != &#34;</span><span class="err">$</span><span class="n">pic_mode</span><span class="s2">&#34;; then
+</span></span></span><span class="line"><span class="cl"><span class="s2">            # Don&#39;t build PIC code
+</span></span></span><span class="line"><span class="cl"><span class="s2">    -       command=&#34;</span><span class="err">$</span><span class="n">base_compile</span><span class="w"> </span><span class="err">$</span><span class="n">qsrcfile</span><span class="err">$</span><span class="n">pie_flag</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    +       command=&#34;</span><span class="err">$</span><span class="n">base_compile</span><span class="w"> </span><span class="err">$</span><span class="n">LT_STATIC_CFLAGS</span><span class="w"> </span><span class="err">$</span><span class="n">qsrcfile</span><span class="err">$</span><span class="n">pie_flag</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">           else
+</span></span></span><span class="line"><span class="cl"><span class="s2">    -       command=&#34;</span><span class="err">$</span><span class="n">base_compile</span><span class="w"> </span><span class="err">$</span><span class="n">qsrcfile</span><span class="w"> </span><span class="err">$</span><span class="n">pic_flag</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    +       command=&#34;</span><span class="err">$</span><span class="n">base_compile</span><span class="w"> </span><span class="err">$</span><span class="n">LT_STATIC_CFLAGS</span><span class="w"> </span><span class="err">$</span><span class="n">qsrcfile</span><span class="w"> </span><span class="err">$</span><span class="n">pic_flag</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">           fi
+</span></span></span><span class="line"><span class="cl"><span class="s2">           if test yes = &#34;</span><span class="err">$</span><span class="n">compiler_c_o</span><span class="s2">&#34;; then
+</span></span></span><span class="line"><span class="cl"><span class="s2">            func_append command &#34;</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="err">$</span><span class="n">obj</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    ```
+</span></span></span></code></pre></div><p>What a massive commit message, right?!</p>
 <p>Oviously, I still needed to use all the new features that I had just addeed to the Yices <code>./configure</code>. So I proposed a second patch (<a href="https://github.com/polazarus/ocamlyices2/commit/ccb5a563">ccb5a563</a>) with changes to the ocamlyices2&rsquo;s own <code>./configure</code>; that took the form of new flags so that I would be able to build a static <code>libyices.a</code> by specifying the static version of the GMP library <code>libgmp.a</code>.</p>
 <p>I also used the new cross-compilation capability of the Yices <code>./configure</code> so that it would be possible to build ocamlyices2 on Windows. The compilation would rely on the POSIX-compliant <a href="https://www.cygwin.com/">Cygwin</a> suite and cross-compile to a native Win32 executable using <a href="http://www.mingw.org/">MinGW32</a> (which a port of GCC).</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">Author</span><span class="p">:</span> <span class="nx">Maël</span> <span class="nx">Valais</span> <span class="p">&lt;</span><span class="nx">mael</span><span class="p">.</span><span class="nx">valais</span><span class="err">@</span><span class="nx">gmail</span><span class="p">.</span><span class="nx">com</span><span class="p">&gt;</span>
-<span class="nx">Date</span><span class="p">:</span>   <span class="nx">Fri</span> <span class="nx">May</span> <span class="mi">5</span> <span class="mi">16</span><span class="p">:</span><span class="mi">18</span><span class="p">:</span><span class="mi">46</span> <span class="mi">2017</span> <span class="o">+</span><span class="mo">0200</span>
-<span class="nx">Commit</span><span class="p">:</span> <span class="nx">ccb5a563</span>
-
-    <span class="nx">ocamlyices2</span><span class="p">:</span> <span class="nx">only</span> <span class="nx">build</span> <span class="nx">the</span> <span class="nx">static</span> <span class="nx">stub</span> <span class="nx">using</span> <span class="nx">static</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span>
-
-    <span class="nx">The</span> <span class="nx">library</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span> <span class="nx">will</span> <span class="nx">be</span> <span class="nx">searched</span> <span class="nx">in</span> <span class="nx">system</span> <span class="nx">dirs</span> <span class="nx">or</span> <span class="nx">you</span> <span class="nx">can</span> <span class="nx">use</span> <span class="nx">the</span> <span class="nx">flag</span>
-    <span class="o">--</span><span class="nx">with</span><span class="o">-</span><span class="nx">static</span><span class="o">-</span><span class="nx">gmp</span><span class="p">=</span> <span class="nx">when</span> <span class="nx">running</span> <span class="p">.</span><span class="o">/</span><span class="nx">configure</span> <span class="k">for</span> <span class="nx">setting</span> <span class="nx">your</span> <span class="nx">own</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span> <span class="nx">If</span>
-    <span class="nx">no</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span> <span class="nx">is</span> <span class="nx">found</span><span class="p">,</span> <span class="nx">the</span> <span class="nx">shared</span> <span class="nx">library</span> <span class="nx">is</span> <span class="nx">used</span><span class="p">.</span> <span class="nx">You</span> <span class="nx">can</span> <span class="nx">force</span> <span class="nx">the</span> <span class="nx">use</span> <span class="nx">of</span>
-    <span class="nx">shared</span> <span class="nx">gmp</span> <span class="nx">library</span> <span class="nx">with</span> <span class="o">--</span><span class="nx">with</span><span class="o">-</span><span class="nx">shared</span><span class="o">-</span><span class="nx">gmp</span><span class="p">.</span>
-
-    <span class="nx">If</span> <span class="o">--</span><span class="nx">with</span><span class="o">-</span><span class="nx">shared</span><span class="o">-</span><span class="nx">gmp</span> <span class="nx">is</span> <span class="nx">not</span> <span class="nx">given</span><span class="p">,</span> <span class="nx">the</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span> <span class="nx">that</span> <span class="nx">has</span> <span class="nx">been</span> <span class="nx">found</span>
-    <span class="nx">will</span> <span class="nx">be</span> <span class="nx">included</span> <span class="nx">in</span> <span class="nx">the</span> <span class="nx">list</span> <span class="nx">of</span> <span class="nx">installed</span> <span class="nx">files</span><span class="p">.</span> <span class="nx">The</span> <span class="nx">reason</span> <span class="nx">is</span> <span class="nx">because</span>
-    <span class="k">if</span> <span class="nx">we</span> <span class="nx">want</span> <span class="nx">to</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">shared</span><span class="o">-</span><span class="nx">gmp</span><span class="o">-</span><span class="nx">free</span> <span class="nx">binary</span><span class="p">,</span> <span class="nx">zarith</span> <span class="nx">will</span> <span class="nx">sometimes</span> <span class="nx">pick</span> <span class="nx">the</span>
-    <span class="nx">shared</span> <span class="nf">library</span> <span class="p">(</span><span class="nx">with</span> <span class="o">-</span><span class="nx">lgmp</span><span class="p">)</span> <span class="nx">over</span> <span class="nx">the</span> <span class="nx">static</span> <span class="nx">lbirary</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span>
-
-    <span class="nx">Including</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span> <span class="nx">in</span> <span class="nx">the</span> <span class="nx">distribution</span> <span class="nx">of</span> <span class="nx">ocamlyices2</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">convenience</span> <span class="k">for</span>
-    <span class="nx">creating</span> <span class="nx">gmp</span><span class="o">-</span><span class="nx">shared</span><span class="o">-</span><span class="nx">free</span> <span class="nx">binaries</span><span class="p">.</span>
-
-    <span class="nx">Why</span> <span class="nx">do</span> <span class="nx">we</span> <span class="nx">prefer</span> <span class="nx">using</span> <span class="nx">a</span> <span class="nx">static</span> <span class="nx">version</span> <span class="nx">of</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span><span class="err">?</span>
-    <span class="o">==================================================</span><span class="p">=</span>
-
-    <span class="nx">This</span> <span class="nx">is</span> <span class="nx">because</span> <span class="nx">we</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">non</span><span class="o">-</span><span class="nx">PIC</span> <span class="nx">static</span> <span class="nx">version</span> <span class="nx">of</span> <span class="nx">libyices</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span> <span class="nx">If</span>
-    <span class="nx">we</span> <span class="nx">wanted</span> <span class="nx">to</span> <span class="nx">build</span> <span class="nx">both</span> <span class="nx">static</span> <span class="nx">and</span> <span class="nx">shared</span> <span class="nx">stubs</span><span class="p">,</span> <span class="nx">we</span> <span class="nx">should</span> <span class="nx">either</span>
-    <span class="o">-</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">PIC</span> <span class="nx">libyices</span><span class="p">.</span><span class="nx">a</span> <span class="nx">but</span> <span class="nx">it</span> <span class="nx">would</span> <span class="nx">conflict</span> <span class="nx">with</span> <span class="nx">the</span> <span class="nx">non</span><span class="o">-</span><span class="nx">PIC</span> <span class="nx">one</span>
-    <span class="o">-</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">shared</span> <span class="nx">library</span> <span class="nx">libyices</span><span class="p">.</span><span class="nx">so</span><span class="p">.</span>
-
-    <span class="nx">For</span> <span class="nx">now</span><span class="p">,</span> <span class="nx">I</span> <span class="nx">chose</span> <span class="nx">to</span> <span class="nx">just</span> <span class="nx">skip</span> <span class="nx">the</span> <span class="nx">shared</span> <span class="nf">stubs</span> <span class="p">(</span><span class="nx">dllyices2_stubs</span><span class="p">.</span><span class="nx">so</span><span class="p">).</span>
-
-    <span class="nx">Also</span><span class="p">:</span>
-
-    <span class="o">*</span> <span class="nx">turn</span> <span class="nx">on</span> <span class="o">-</span><span class="nf">fPIC</span> <span class="p">(</span><span class="nx">in</span> <span class="nx">configure</span><span class="p">.</span><span class="nx">ac</span><span class="p">)</span> <span class="nx">only</span> <span class="k">if</span> <span class="nx">non</span><span class="o">-</span><span class="nx">static</span> <span class="nx">gmp</span>
-    <span class="o">*</span> <span class="nx">added</span> <span class="nx">a</span> <span class="nx">way</span> <span class="nx">to</span> <span class="nx">link</span> <span class="nx">statically</span> <span class="nx">to</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nf">a</span> <span class="p">(</span><span class="o">--</span><span class="nx">with</span><span class="o">-</span><span class="nx">static</span><span class="o">-</span><span class="nx">gmp</span><span class="p">)</span>
-    <span class="o">*</span> <span class="nx">use</span> <span class="o">-</span><span class="kn">package</span> <span class="nx">instead</span> <span class="nx">of</span> <span class="o">-</span><span class="nx">I</span><span class="o">/</span><span class="nx">lib</span> <span class="k">for</span> <span class="nx">compiling</span> <span class="o">*</span><span class="p">.</span><span class="nx">c</span> <span class="nx">in</span> <span class="nx">ocamlc</span>
-
-    <span class="nx">This</span> <span class="nx">option</span> <span class="nx">uses</span> <span class="nx">the</span> <span class="nx">change</span> <span class="nx">I</span> <span class="nx">made</span> <span class="nx">to</span> <span class="nx">the</span> <span class="nx">build</span> <span class="nx">system</span> <span class="nx">of</span> <span class="nx">libyices</span><span class="p">.</span>
-    <span class="nx">Why</span><span class="err">?</span> <span class="nx">Because</span> <span class="nx">I</span> <span class="nx">want</span> <span class="nx">the</span> <span class="nx">possibility</span> <span class="nx">of</span> <span class="nx">producing</span> <span class="nx">binaries</span> <span class="nx">that</span> <span class="nx">do</span>
-    <span class="nx">not</span> <span class="nx">need</span> <span class="nx">any</span> <span class="nx">dll</span> <span class="nx">alongside</span><span class="p">.</span>
-
-    <span class="nx">Guess</span> <span class="nx">the</span> <span class="nx">host</span> <span class="nx">system</span> <span class="nx">and</span> <span class="nx">pass</span> <span class="nx">it</span> <span class="nx">to</span> <span class="nx">libyices</span> <span class="p">.</span><span class="o">/</span><span class="nx">configure</span>
-    <span class="o">========================================================</span><span class="p">=</span>
-    <span class="nx">It</span> <span class="nx">is</span> <span class="nx">now</span> <span class="nx">possible</span> <span class="nx">to</span> <span class="nx">use</span> <span class="p">.</span><span class="o">/</span><span class="nx">configure</span> <span class="k">for</span> <span class="nx">mingw32</span> <span class="nx">cross</span><span class="o">-</span><span class="nx">compilation</span><span class="p">.</span>
-</code></pre></div><p>A month past and I soon realized that GMP was not embedded at all in <code>libyices.a</code>. I could see the symbols as undefined (<code>U</code>) when running <code>nm libyices.a</code>. It took me a while to figure this out&hellip; back to tweaking the fragile Yices <code>./configure</code>!</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">Author</span><span class="p">:</span> <span class="nx">Maël</span> <span class="nx">Valais</span> <span class="p">&lt;</span><span class="nx">mael</span><span class="p">.</span><span class="nx">valais</span><span class="err">@</span><span class="nx">gmail</span><span class="p">.</span><span class="nx">com</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Date</span><span class="p">:</span>   <span class="nx">Fri</span> <span class="nx">May</span> <span class="mi">5</span> <span class="mi">16</span><span class="p">:</span><span class="mi">18</span><span class="p">:</span><span class="mi">46</span> <span class="mi">2017</span> <span class="o">+</span><span class="mo">0200</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Commit</span><span class="p">:</span> <span class="nx">ccb5a563</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">ocamlyices2</span><span class="p">:</span> <span class="nx">only</span> <span class="nx">build</span> <span class="nx">the</span> <span class="nx">static</span> <span class="nx">stub</span> <span class="nx">using</span> <span class="nx">static</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">The</span> <span class="nx">library</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span> <span class="nx">will</span> <span class="nx">be</span> <span class="nx">searched</span> <span class="nx">in</span> <span class="nx">system</span> <span class="nx">dirs</span> <span class="nx">or</span> <span class="nx">you</span> <span class="nx">can</span> <span class="nx">use</span> <span class="nx">the</span> <span class="nx">flag</span>
+</span></span><span class="line"><span class="cl">    <span class="o">--</span><span class="nx">with</span><span class="o">-</span><span class="nx">static</span><span class="o">-</span><span class="nx">gmp</span><span class="p">=</span> <span class="nx">when</span> <span class="nx">running</span> <span class="p">.</span><span class="o">/</span><span class="nx">configure</span> <span class="k">for</span> <span class="nx">setting</span> <span class="nx">your</span> <span class="nx">own</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span> <span class="nx">If</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">no</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span> <span class="nx">is</span> <span class="nx">found</span><span class="p">,</span> <span class="nx">the</span> <span class="nx">shared</span> <span class="nx">library</span> <span class="nx">is</span> <span class="nx">used</span><span class="p">.</span> <span class="nx">You</span> <span class="nx">can</span> <span class="nx">force</span> <span class="nx">the</span> <span class="nx">use</span> <span class="nx">of</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">shared</span> <span class="nx">gmp</span> <span class="nx">library</span> <span class="nx">with</span> <span class="o">--</span><span class="nx">with</span><span class="o">-</span><span class="nx">shared</span><span class="o">-</span><span class="nx">gmp</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">If</span> <span class="o">--</span><span class="nx">with</span><span class="o">-</span><span class="nx">shared</span><span class="o">-</span><span class="nx">gmp</span> <span class="nx">is</span> <span class="nx">not</span> <span class="nx">given</span><span class="p">,</span> <span class="nx">the</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span> <span class="nx">that</span> <span class="nx">has</span> <span class="nx">been</span> <span class="nx">found</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">will</span> <span class="nx">be</span> <span class="nx">included</span> <span class="nx">in</span> <span class="nx">the</span> <span class="nx">list</span> <span class="nx">of</span> <span class="nx">installed</span> <span class="nx">files</span><span class="p">.</span> <span class="nx">The</span> <span class="nx">reason</span> <span class="nx">is</span> <span class="nx">because</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">we</span> <span class="nx">want</span> <span class="nx">to</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">shared</span><span class="o">-</span><span class="nx">gmp</span><span class="o">-</span><span class="nx">free</span> <span class="nx">binary</span><span class="p">,</span> <span class="nx">zarith</span> <span class="nx">will</span> <span class="nx">sometimes</span> <span class="nx">pick</span> <span class="nx">the</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">shared</span> <span class="nf">library</span> <span class="p">(</span><span class="nx">with</span> <span class="o">-</span><span class="nx">lgmp</span><span class="p">)</span> <span class="nx">over</span> <span class="nx">the</span> <span class="nx">static</span> <span class="nx">lbirary</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">Including</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span> <span class="nx">in</span> <span class="nx">the</span> <span class="nx">distribution</span> <span class="nx">of</span> <span class="nx">ocamlyices2</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">convenience</span> <span class="k">for</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">creating</span> <span class="nx">gmp</span><span class="o">-</span><span class="nx">shared</span><span class="o">-</span><span class="nx">free</span> <span class="nx">binaries</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">Why</span> <span class="nx">do</span> <span class="nx">we</span> <span class="nx">prefer</span> <span class="nx">using</span> <span class="nx">a</span> <span class="nx">static</span> <span class="nx">version</span> <span class="nx">of</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nx">a</span><span class="err">?</span>
+</span></span><span class="line"><span class="cl">    <span class="o">==================================================</span><span class="p">=</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">This</span> <span class="nx">is</span> <span class="nx">because</span> <span class="nx">we</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">non</span><span class="o">-</span><span class="nx">PIC</span> <span class="nx">static</span> <span class="nx">version</span> <span class="nx">of</span> <span class="nx">libyices</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span> <span class="nx">If</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">we</span> <span class="nx">wanted</span> <span class="nx">to</span> <span class="nx">build</span> <span class="nx">both</span> <span class="nx">static</span> <span class="nx">and</span> <span class="nx">shared</span> <span class="nx">stubs</span><span class="p">,</span> <span class="nx">we</span> <span class="nx">should</span> <span class="nx">either</span>
+</span></span><span class="line"><span class="cl">    <span class="o">-</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">PIC</span> <span class="nx">libyices</span><span class="p">.</span><span class="nx">a</span> <span class="nx">but</span> <span class="nx">it</span> <span class="nx">would</span> <span class="nx">conflict</span> <span class="nx">with</span> <span class="nx">the</span> <span class="nx">non</span><span class="o">-</span><span class="nx">PIC</span> <span class="nx">one</span>
+</span></span><span class="line"><span class="cl">    <span class="o">-</span> <span class="nx">build</span> <span class="nx">a</span> <span class="nx">shared</span> <span class="nx">library</span> <span class="nx">libyices</span><span class="p">.</span><span class="nx">so</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">For</span> <span class="nx">now</span><span class="p">,</span> <span class="nx">I</span> <span class="nx">chose</span> <span class="nx">to</span> <span class="nx">just</span> <span class="nx">skip</span> <span class="nx">the</span> <span class="nx">shared</span> <span class="nf">stubs</span> <span class="p">(</span><span class="nx">dllyices2_stubs</span><span class="p">.</span><span class="nx">so</span><span class="p">).</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">Also</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">*</span> <span class="nx">turn</span> <span class="nx">on</span> <span class="o">-</span><span class="nf">fPIC</span> <span class="p">(</span><span class="nx">in</span> <span class="nx">configure</span><span class="p">.</span><span class="nx">ac</span><span class="p">)</span> <span class="nx">only</span> <span class="k">if</span> <span class="nx">non</span><span class="o">-</span><span class="nx">static</span> <span class="nx">gmp</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span> <span class="nx">added</span> <span class="nx">a</span> <span class="nx">way</span> <span class="nx">to</span> <span class="nx">link</span> <span class="nx">statically</span> <span class="nx">to</span> <span class="nx">libgmp</span><span class="p">.</span><span class="nf">a</span> <span class="p">(</span><span class="o">--</span><span class="nx">with</span><span class="o">-</span><span class="nx">static</span><span class="o">-</span><span class="nx">gmp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span> <span class="nx">use</span> <span class="o">-</span><span class="kn">package</span> <span class="nx">instead</span> <span class="nx">of</span> <span class="o">-</span><span class="nx">I</span><span class="o">/</span><span class="nx">lib</span> <span class="k">for</span> <span class="nx">compiling</span> <span class="o">*</span><span class="p">.</span><span class="nx">c</span> <span class="nx">in</span> <span class="nx">ocamlc</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">This</span> <span class="nx">option</span> <span class="nx">uses</span> <span class="nx">the</span> <span class="nx">change</span> <span class="nx">I</span> <span class="nx">made</span> <span class="nx">to</span> <span class="nx">the</span> <span class="nx">build</span> <span class="nx">system</span> <span class="nx">of</span> <span class="nx">libyices</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Why</span><span class="err">?</span> <span class="nx">Because</span> <span class="nx">I</span> <span class="nx">want</span> <span class="nx">the</span> <span class="nx">possibility</span> <span class="nx">of</span> <span class="nx">producing</span> <span class="nx">binaries</span> <span class="nx">that</span> <span class="nx">do</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">not</span> <span class="nx">need</span> <span class="kt">any</span> <span class="nx">dll</span> <span class="nx">alongside</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">Guess</span> <span class="nx">the</span> <span class="nx">host</span> <span class="nx">system</span> <span class="nx">and</span> <span class="nx">pass</span> <span class="nx">it</span> <span class="nx">to</span> <span class="nx">libyices</span> <span class="p">.</span><span class="o">/</span><span class="nx">configure</span>
+</span></span><span class="line"><span class="cl">    <span class="o">========================================================</span><span class="p">=</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">It</span> <span class="nx">is</span> <span class="nx">now</span> <span class="nx">possible</span> <span class="nx">to</span> <span class="nx">use</span> <span class="p">.</span><span class="o">/</span><span class="nx">configure</span> <span class="k">for</span> <span class="nx">mingw32</span> <span class="nx">cross</span><span class="o">-</span><span class="nx">compilation</span><span class="p">.</span>
+</span></span></code></pre></div><p>A month past and I soon realized that GMP was not embedded at all in <code>libyices.a</code>. I could see the symbols as undefined (<code>U</code>) when running <code>nm libyices.a</code>. It took me a while to figure this out&hellip; back to tweaking the fragile Yices <code>./configure</code>!</p>
 <p>Along the way, I also realized how different Linux distributions are. Arch Linux is notably lacking support for partial linking (<code>ld -r</code>). Which meant I had to add a flag for this specific purpose in commit <a href="https://github.com/polazarus/ocamlyices2/commit/38200b0a">38200b0a</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
-Date:   Fri Jun 16 21:18:37 2017 +0200
-Commit: 38200b0a
-
-    libyices: added option --without-gmp-embedded
-
-    This option will disable the partial linking that allows to embed
-    GMP into libyices.a (only with --enable-static).
-
-    For example, on Arch linux, the partial linking command
-
-        ld -r -lgmp *.o -o libyices.o
-
-    would fail even if libgmp.so is correclty installed. It seems that &#39;ld -r&#39;
-    would only work with a static libgmp.a (but the arch linux repo only installs
-    the shared gmp library).
-
-    Why this `ld -r`? This command is the only way I found to compile a
-    static libyices.a from either a shared or a static libgmp and produce
-    a gmp-depend-free libyices.a.
-
-    Two solutions:
-
-    1. Drop the necessity for building a libyices.a free of gmp dependency.
-       In this case, I could remove the `ld -r`.
-       It would then create a libyices.a that depends on libgmp.a/so.
-    2. Separate the gmp-dependency-free libyices.a from the normal
-       gmp-dependent libyices.a. For example, I could use the option
-       `--without-gmp-embedded`
-
-    So I went with solution (2).
-
-    This option disables the embedding of GMP inside libyices.a. This
-    &#39;embedding&#39; is made using partial linking (ld -r) which seems to
-    be failing on Arch Linux when using the shared GMP library.
-</code></pre></div><p>Although I had already added a check (<code>CSL_CHECK_STATIC_GMP_HAS_PIC</code> in <a href="https://github.com/polazarus/ocamlyices2/commit/25f5eb15">25f5eb15</a>) to make sure that the user-provided libgmp was PIC when using <code>--with-pic</code>, I realized that it was trickier that what I thought in <a href="https://github.com/polazarus/ocamlyices2/commit/55c8e92a">55c8e92a</a>&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
-Date:   Sat Jun 17 14:09:12 2017 +0200
-Commit: 55c8e92a
-
-    libyices: with --enable-static and --with-pic, enforce PIC libgmp.a
-
-    One problem I came across was that most of the time, when I was doing
-
-        ./configure --enable-static --with-pic
-
-    the produced libyices.a would still contain non-PIC libgmp.a, although
-    being itself PIC. In this commit, I enforce that if --with-pic is given,
-    then:
-
-    1) either --with-pic-gmp has been given, in this case we use that for
-       creating the PIC libyices.a;
-    2) or --with-pic-gmp has not been given and thus we try to simply use the
-       shared gmp through -lgmp.
-
-    Reminder: we also check that the system libgmp.a or the libgmp.a given with
-    --with-static-gmp is PIC. If it is the case, the PIC libgmp.a will be used
-    for --with-pic.
-</code></pre></div><p>Now, I also had to fix ocamlyices2&rsquo;s <code>./configure</code> since <code>ld -r</code> (partial linking) was not supported on Arch Linux (see [PR&rsquo;s CI failure](pull request](<a href="https://github.com/ocaml/opam-repository/pull/9086)">https://github.com/ocaml/opam-repository/pull/9086)</a>. I remember waiting for hours for the CI to run on all imaginable systems: Debian, Ubuntu, Suse, Arch Linux, Alpine, CentOS, Fedora, macOS and Windows&hellip;</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
+</span></span><span class="line"><span class="cl">Date:   Fri Jun 16 21:18:37 2017 +0200
+</span></span><span class="line"><span class="cl">Commit: 38200b0a
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    libyices: added option --without-gmp-embedded
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    This option will disable the partial linking that allows to embed
+</span></span><span class="line"><span class="cl">    GMP into libyices.a (only with --enable-static).
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    For example, on Arch linux, the partial linking command
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        ld -r -lgmp *.o -o libyices.o
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    would fail even if libgmp.so is correclty installed. It seems that &#39;ld -r&#39;
+</span></span><span class="line"><span class="cl">    would only work with a static libgmp.a (but the arch linux repo only installs
+</span></span><span class="line"><span class="cl">    the shared gmp library).
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Why this `ld -r`? This command is the only way I found to compile a
+</span></span><span class="line"><span class="cl">    static libyices.a from either a shared or a static libgmp and produce
+</span></span><span class="line"><span class="cl">    a gmp-depend-free libyices.a.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Two solutions:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    1. Drop the necessity for building a libyices.a free of gmp dependency.
+</span></span><span class="line"><span class="cl">       In this case, I could remove the `ld -r`.
+</span></span><span class="line"><span class="cl">       It would then create a libyices.a that depends on libgmp.a/so.
+</span></span><span class="line"><span class="cl">    2. Separate the gmp-dependency-free libyices.a from the normal
+</span></span><span class="line"><span class="cl">       gmp-dependent libyices.a. For example, I could use the option
+</span></span><span class="line"><span class="cl">       `--without-gmp-embedded`
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    So I went with solution (2).
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    This option disables the embedding of GMP inside libyices.a. This
+</span></span><span class="line"><span class="cl">    &#39;embedding&#39; is made using partial linking (ld -r) which seems to
+</span></span><span class="line"><span class="cl">    be failing on Arch Linux when using the shared GMP library.
+</span></span></code></pre></div><p>Although I had already added a check (<code>CSL_CHECK_STATIC_GMP_HAS_PIC</code> in <a href="https://github.com/polazarus/ocamlyices2/commit/25f5eb15">25f5eb15</a>) to make sure that the user-provided libgmp was PIC when using <code>--with-pic</code>, I realized that it was trickier that what I thought in <a href="https://github.com/polazarus/ocamlyices2/commit/55c8e92a">55c8e92a</a>&hellip;</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
+</span></span><span class="line"><span class="cl">Date:   Sat Jun 17 14:09:12 2017 +0200
+</span></span><span class="line"><span class="cl">Commit: 55c8e92a
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    libyices: with --enable-static and --with-pic, enforce PIC libgmp.a
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    One problem I came across was that most of the time, when I was doing
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        ./configure --enable-static --with-pic
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    the produced libyices.a would still contain non-PIC libgmp.a, although
+</span></span><span class="line"><span class="cl">    being itself PIC. In this commit, I enforce that if --with-pic is given,
+</span></span><span class="line"><span class="cl">    then:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    1) either --with-pic-gmp has been given, in this case we use that for
+</span></span><span class="line"><span class="cl">       creating the PIC libyices.a;
+</span></span><span class="line"><span class="cl">    2) or --with-pic-gmp has not been given and thus we try to simply use the
+</span></span><span class="line"><span class="cl">       shared gmp through -lgmp.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Reminder: we also check that the system libgmp.a or the libgmp.a given with
+</span></span><span class="line"><span class="cl">    --with-static-gmp is PIC. If it is the case, the PIC libgmp.a will be used
+</span></span><span class="line"><span class="cl">    for --with-pic.
+</span></span></code></pre></div><p>Now, I also had to fix ocamlyices2&rsquo;s <code>./configure</code> since <code>ld -r</code> (partial linking) was not supported on Arch Linux (see [PR&rsquo;s CI failure](pull request](<a href="https://github.com/ocaml/opam-repository/pull/9086)">https://github.com/ocaml/opam-repository/pull/9086)</a>. I remember waiting for hours for the CI to run on all imaginable systems: Debian, Ubuntu, Suse, Arch Linux, Alpine, CentOS, Fedora, macOS and Windows&hellip;</p>
 <p>Commits <a href="https://github.com/polazarus/ocamlyices2/commit/df7c89a1">df7c89a1</a> and <a href="https://github.com/polazarus/ocamlyices2/commit/70dc5de5">70dc5de5</a>) fix the partial linking issue on Arch Linux:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
-Date:   Sat Jun 17 16:52:59 2017 +0200
-Commit: df7c89a1
-
-    ocamlyices2: added --with-libyices and --with-libyices-include-dir
-
-    These options allow to give your own libyices.a and the include directory
-    where the libyices headers are.
-
-Author: Maël Valais &lt;mael.valais@gmail.com&gt;
-Date:   Sat Jun 17 17:01:58 2017 +0200
-Commit: 70dc5de5
-
-    ocamlyices2: use --without-gmp-embedded by default
-
-    After giving it some thoughts, the need for having a self-contained libyices.a
-    (which would only need -lyices, no -lgmp needed) in ocamlyices2 is pointless
-    as &#39;zarith&#39; will still need &#39;-lgmp&#39; anyway.
-
-    The Makefile will still put libgmp.a and libyices.a inside src/ so that
-    the static version of gmp is used (with -L.) instead of the shared version.
-
-    Rationale: disabling the partial linking fixes the build on Arch Linux, which
-    (I re-tested on a docker image) cannot accept partial linking with -lgmp when
-    only libgmp.so is available. Here is the failing command:
-
-        ld -r *.o -lgmp -o libyices.o
-</code></pre></div><h2 id="final-result-of-the-yices2-build-system">Final result of the Yices2 build system</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
+</span></span><span class="line"><span class="cl">Date:   Sat Jun 17 16:52:59 2017 +0200
+</span></span><span class="line"><span class="cl">Commit: df7c89a1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    ocamlyices2: added --with-libyices and --with-libyices-include-dir
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    These options allow to give your own libyices.a and the include directory
+</span></span><span class="line"><span class="cl">    where the libyices headers are.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Author: Maël Valais &lt;mael.valais@gmail.com&gt;
+</span></span><span class="line"><span class="cl">Date:   Sat Jun 17 17:01:58 2017 +0200
+</span></span><span class="line"><span class="cl">Commit: 70dc5de5
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    ocamlyices2: use --without-gmp-embedded by default
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    After giving it some thoughts, the need for having a self-contained libyices.a
+</span></span><span class="line"><span class="cl">    (which would only need -lyices, no -lgmp needed) in ocamlyices2 is pointless
+</span></span><span class="line"><span class="cl">    as &#39;zarith&#39; will still need &#39;-lgmp&#39; anyway.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    The Makefile will still put libgmp.a and libyices.a inside src/ so that
+</span></span><span class="line"><span class="cl">    the static version of gmp is used (with -L.) instead of the shared version.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Rationale: disabling the partial linking fixes the build on Arch Linux, which
+</span></span><span class="line"><span class="cl">    (I re-tested on a docker image) cannot accept partial linking with -lgmp when
+</span></span><span class="line"><span class="cl">    only libgmp.so is available. Here is the failing command:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        ld -r *.o -lgmp -o libyices.o
+</span></span></code></pre></div><h2 id="final-result-of-the-yices2-build-system">Final result of the Yices2 build system</h2>
 <p>The experience with the re-written <code>./configure</code> (<a href="https://github.com/polazarus/ocamlyices2/tree/master/ext/yices">here</a>) is very different from the original one. When the user wants to compile the library with PIC, they get a warning if one of the dependencies is not PIC. There is a much finer control over what the user wants: dynamic vs. static, PIC vs. non-PIC. But also more control over dependencies like GMP, since the user must be able to pass a static or dynamic version of libgmp.</p>
 <p>The <code>./configure</code> that you can see <a href="https://github.com/polazarus/ocamlyices2/tree/master/ext/yices">here</a> gained many features like <code>--with-shared-gmp</code> or <code>--with-pic</code>.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% ./configure --help
-<span class="sb">`</span>configure<span class="err">&#39;</span> configures Yices 2.5.2 to adapt to many kinds of systems.
-
-Usage: ./configure <span class="o">[</span>OPTION<span class="o">]</span>... <span class="o">[</span><span class="nv">VAR</span><span class="o">=</span>VALUE<span class="o">]</span>...
-
-System types:
-  --build<span class="o">=</span>BUILD     configure <span class="k">for</span> building on BUILD <span class="o">[</span>guessed<span class="o">]</span>
-  --host<span class="o">=</span>HOST       cross-compile to build programs to run on HOST <span class="o">[</span>BUILD<span class="o">]</span>
-
-Optional Features:
-  --enable-shared<span class="o">[=</span>PKGS<span class="o">]</span>  build shared libraries <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>
-  --enable-static<span class="o">[=</span>PKGS<span class="o">]</span>  build static libraries <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>
-  --disable-libtool-lock  avoid locking <span class="o">(</span>might <span class="nb">break</span> parallel builds<span class="o">)</span>
-  --enable-mcsat          Enable support <span class="k">for</span> MCSAT. This requires the libpoly
-                          library.
-
-Optional Packages:
-  --with-pic<span class="o">[=</span>PKGS<span class="o">]</span>       try to use only PIC/non-PIC objects <span class="o">[</span><span class="nv">default</span><span class="o">=</span>use
-                          both<span class="o">]</span>
-  --with-static-gmp<span class="o">=</span>&lt;path&gt;
-                          Full path to a static GMP library <span class="o">(</span>e.g., libgmp.a<span class="o">)</span>
-  --with-static-gmp-include-dir<span class="o">=</span>&lt;directory&gt;
-                          Directory of include file <span class="s2">&#34;gmp.h&#34;</span> compatible with
-                          static GMP library
-  --with-pic-gmp<span class="o">=</span>&lt;path&gt;   Full path to a relocatable GMP library <span class="o">(</span>e.g.,
-                          libgmp.a<span class="o">)</span>
-  --with-pic-gmp-include-dir<span class="o">=</span>&lt;directory&gt;
-                          Directory of include file <span class="s2">&#34;gmp.h&#34;</span> compatible with
-                          relocatable GMP library
-  --with-static-libpoly<span class="o">=</span>&lt;path&gt;
-                          Full path to libpoly.a
-  --with-static-libpoly-include-dir<span class="o">=</span>&lt;directory&gt;
-                          Path to include files compatible with libpoly.a
-                          <span class="o">(</span>e.g., /usr/local/include<span class="o">)</span>
-  --with-pic-libpoly<span class="o">=</span>&lt;path&gt;
-                          Full path to a relocatable libpoly.a
-  --with-pic-libpoly-include-dir<span class="o">=</span>&lt;directory&gt;
-                          Path to include files compatible with the
-                          relocatable libpoly.a
-  --with-shared-gmp       By default, a static version of the GMP library will
-                          be searched. This option forces the use of the
-                          shared version. This applies <span class="k">for</span> both shared and
-                          static libraries.
-  --without-gmp-embedded  <span class="o">(</span>Only when --enable-static<span class="o">)</span> By default, the static
-                          library libyices.a created will be partially linked
-                          <span class="o">(</span>ld -r<span class="o">)</span> so that the GMP library is not needed
-                          afterwards <span class="o">(</span>i.e., only -lyices is needed<span class="o">)</span>. If you
-                          want to disable the partial linking <span class="o">(</span>and thus -lgmp
-                          and -lyices will be needed<span class="o">)</span>, you can use this flag.
-  --with-mode<span class="o">=</span>MODE        The mode used during compilation/distribution. It
-                          can be one of release, debug, devel, profile, gcov,
-                          valgrind, purify, quantify or gperftools. <span class="o">(</span>default:
-                          release<span class="o">)</span>
-  --with-static-name<span class="o">=</span>name <span class="o">(</span>Windows only<span class="o">)</span> when building simultanously shared
-                          and static libraries, allows you to give a different
-                          name <span class="k">for</span> the static version of libyices.a.
-</code></pre></div><p>I also added a ton of diagnostic information that appears at the end of <code>./configure</code>. That&rsquo;s very useful when you want to make sure that <code>./configure</code> has picked up the right version of <code>libgmp</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">configure: Summary of the configuration:
-EXEEXT:
-SED:                        /usr/bin/sed
-LN_S:                       ln -s
-MKDIR_P:                    /usr/local/opt/coreutils/libexec/gnubin/mkdir -p
-CC:                         gcc
-LD:                         /Library/Developer/CommandLineTools/usr/bin/ld
-AR:                         ar
-RANLIB:                     ranlib
-STRIP:                      strip
-GPERF:                      gperf
-NO_STACK_PROTECTOR:         -fno-stack-protector
-STATIC_GMP:                 /usr/local/lib/libgmp.a
-STATIC_GMP_INCLUDE_DIR:
-PIC_GMP:                    /usr/local/lib/libgmp.a
-PIC_GMP_INCLUDE_DIR:
-ENABLE_MCSAT:               no
-STATIC_LIBPOLY:
-STATIC_LIBPOLY_INCLUDE_DIR:
-PIC_LIBPOLY:
-PIC_LIBPOLY_INCLUDE_DIR:
-
-Version:                    Yices 2.5.2
-Host type:                  x86_64-apple-darwin19.4.0
-Install prefix:             /Users/mvalais/code/ocamlyices2/ext/yices
-Build mode:                 release
-
-For both static and shared library:
-  CPPFLAGS:                  -DMACOSX -DNDEBUG
-  CFLAGS:                    -fvisibility=hidden -Wall -Wredundant-decls -O3 -fomit-frame-pointer -fno-stack-protector
-  LDFLAGS:
-
-For static library          libyices.a:
-  Enable:                   yes
-  STATIC_CPPFLAGS:           -DYICES_STATIC
-  STATIC_LIBS:
-  Libgmp.a found:           yes
-  Libgmp.a path:            /usr/local/lib/libgmp.a
-  Libgmp.a is pic:          yes     (non-PIC is faster for the static library)
-  PIC mode for libyices.a:  default
-  Use shared gmp instead of libgmp.a:  no
-  Embed gmp in libyices.a:  yes
-
-For shared library:
-  Enable:                   yes
-  SHARED_CPPFLAGS:
-  SHARED_LIBS:
-  Libgmp.a with PIC found:  yes
-  Libgmp.a path:            /usr/local/lib/libgmp.a
-  Use shared gmp instead of libgmp.a: no
-</code></pre></div><p>A final word about the <code>Makefile</code>: since all the build configuration is handled by <code>./configure</code>, you don&rsquo;t have to pass any variables at <code>make</code> time anymore, which really helps when you need to <code>make</code> multiple times in a row and don&rsquo;t want to type the variables every single time.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">% ./configure --help
+</span></span><span class="line"><span class="cl"><span class="sb">`</span>configure<span class="err">&#39;</span> configures Yices 2.5.2 to adapt to many kinds of systems.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Usage: ./configure <span class="o">[</span>OPTION<span class="o">]</span>... <span class="o">[</span><span class="nv">VAR</span><span class="o">=</span>VALUE<span class="o">]</span>...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">System types:
+</span></span><span class="line"><span class="cl">  --build<span class="o">=</span>BUILD     configure <span class="k">for</span> building on BUILD <span class="o">[</span>guessed<span class="o">]</span>
+</span></span><span class="line"><span class="cl">  --host<span class="o">=</span>HOST       cross-compile to build programs to run on HOST <span class="o">[</span>BUILD<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Optional Features:
+</span></span><span class="line"><span class="cl">  --enable-shared<span class="o">[=</span>PKGS<span class="o">]</span>  build shared libraries <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>
+</span></span><span class="line"><span class="cl">  --enable-static<span class="o">[=</span>PKGS<span class="o">]</span>  build static libraries <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>
+</span></span><span class="line"><span class="cl">  --disable-libtool-lock  avoid locking <span class="o">(</span>might <span class="nb">break</span> parallel builds<span class="o">)</span>
+</span></span><span class="line"><span class="cl">  --enable-mcsat          Enable support <span class="k">for</span> MCSAT. This requires the libpoly
+</span></span><span class="line"><span class="cl">                          library.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Optional Packages:
+</span></span><span class="line"><span class="cl">  --with-pic<span class="o">[=</span>PKGS<span class="o">]</span>       try to use only PIC/non-PIC objects <span class="o">[</span><span class="nv">default</span><span class="o">=</span>use
+</span></span><span class="line"><span class="cl">                          both<span class="o">]</span>
+</span></span><span class="line"><span class="cl">  --with-static-gmp<span class="o">=</span>&lt;path&gt;
+</span></span><span class="line"><span class="cl">                          Full path to a static GMP library <span class="o">(</span>e.g., libgmp.a<span class="o">)</span>
+</span></span><span class="line"><span class="cl">  --with-static-gmp-include-dir<span class="o">=</span>&lt;directory&gt;
+</span></span><span class="line"><span class="cl">                          Directory of include file <span class="s2">&#34;gmp.h&#34;</span> compatible with
+</span></span><span class="line"><span class="cl">                          static GMP library
+</span></span><span class="line"><span class="cl">  --with-pic-gmp<span class="o">=</span>&lt;path&gt;   Full path to a relocatable GMP library <span class="o">(</span>e.g.,
+</span></span><span class="line"><span class="cl">                          libgmp.a<span class="o">)</span>
+</span></span><span class="line"><span class="cl">  --with-pic-gmp-include-dir<span class="o">=</span>&lt;directory&gt;
+</span></span><span class="line"><span class="cl">                          Directory of include file <span class="s2">&#34;gmp.h&#34;</span> compatible with
+</span></span><span class="line"><span class="cl">                          relocatable GMP library
+</span></span><span class="line"><span class="cl">  --with-static-libpoly<span class="o">=</span>&lt;path&gt;
+</span></span><span class="line"><span class="cl">                          Full path to libpoly.a
+</span></span><span class="line"><span class="cl">  --with-static-libpoly-include-dir<span class="o">=</span>&lt;directory&gt;
+</span></span><span class="line"><span class="cl">                          Path to include files compatible with libpoly.a
+</span></span><span class="line"><span class="cl">                          <span class="o">(</span>e.g., /usr/local/include<span class="o">)</span>
+</span></span><span class="line"><span class="cl">  --with-pic-libpoly<span class="o">=</span>&lt;path&gt;
+</span></span><span class="line"><span class="cl">                          Full path to a relocatable libpoly.a
+</span></span><span class="line"><span class="cl">  --with-pic-libpoly-include-dir<span class="o">=</span>&lt;directory&gt;
+</span></span><span class="line"><span class="cl">                          Path to include files compatible with the
+</span></span><span class="line"><span class="cl">                          relocatable libpoly.a
+</span></span><span class="line"><span class="cl">  --with-shared-gmp       By default, a static version of the GMP library will
+</span></span><span class="line"><span class="cl">                          be searched. This option forces the use of the
+</span></span><span class="line"><span class="cl">                          shared version. This applies <span class="k">for</span> both shared and
+</span></span><span class="line"><span class="cl">                          static libraries.
+</span></span><span class="line"><span class="cl">  --without-gmp-embedded  <span class="o">(</span>Only when --enable-static<span class="o">)</span> By default, the static
+</span></span><span class="line"><span class="cl">                          library libyices.a created will be partially linked
+</span></span><span class="line"><span class="cl">                          <span class="o">(</span>ld -r<span class="o">)</span> so that the GMP library is not needed
+</span></span><span class="line"><span class="cl">                          afterwards <span class="o">(</span>i.e., only -lyices is needed<span class="o">)</span>. If you
+</span></span><span class="line"><span class="cl">                          want to disable the partial linking <span class="o">(</span>and thus -lgmp
+</span></span><span class="line"><span class="cl">                          and -lyices will be needed<span class="o">)</span>, you can use this flag.
+</span></span><span class="line"><span class="cl">  --with-mode<span class="o">=</span>MODE        The mode used during compilation/distribution. It
+</span></span><span class="line"><span class="cl">                          can be one of release, debug, devel, profile, gcov,
+</span></span><span class="line"><span class="cl">                          valgrind, purify, quantify or gperftools. <span class="o">(</span>default:
+</span></span><span class="line"><span class="cl">                          release<span class="o">)</span>
+</span></span><span class="line"><span class="cl">  --with-static-name<span class="o">=</span>name <span class="o">(</span>Windows only<span class="o">)</span> when building simultanously shared
+</span></span><span class="line"><span class="cl">                          and static libraries, allows you to give a different
+</span></span><span class="line"><span class="cl">                          name <span class="k">for</span> the static version of libyices.a.
+</span></span></code></pre></div><p>I also added a ton of diagnostic information that appears at the end of <code>./configure</code>. That&rsquo;s very useful when you want to make sure that <code>./configure</code> has picked up the right version of <code>libgmp</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">configure: Summary of the configuration:
+</span></span><span class="line"><span class="cl">EXEEXT:
+</span></span><span class="line"><span class="cl">SED:                        /usr/bin/sed
+</span></span><span class="line"><span class="cl">LN_S:                       ln -s
+</span></span><span class="line"><span class="cl">MKDIR_P:                    /usr/local/opt/coreutils/libexec/gnubin/mkdir -p
+</span></span><span class="line"><span class="cl">CC:                         gcc
+</span></span><span class="line"><span class="cl">LD:                         /Library/Developer/CommandLineTools/usr/bin/ld
+</span></span><span class="line"><span class="cl">AR:                         ar
+</span></span><span class="line"><span class="cl">RANLIB:                     ranlib
+</span></span><span class="line"><span class="cl">STRIP:                      strip
+</span></span><span class="line"><span class="cl">GPERF:                      gperf
+</span></span><span class="line"><span class="cl">NO_STACK_PROTECTOR:         -fno-stack-protector
+</span></span><span class="line"><span class="cl">STATIC_GMP:                 /usr/local/lib/libgmp.a
+</span></span><span class="line"><span class="cl">STATIC_GMP_INCLUDE_DIR:
+</span></span><span class="line"><span class="cl">PIC_GMP:                    /usr/local/lib/libgmp.a
+</span></span><span class="line"><span class="cl">PIC_GMP_INCLUDE_DIR:
+</span></span><span class="line"><span class="cl">ENABLE_MCSAT:               no
+</span></span><span class="line"><span class="cl">STATIC_LIBPOLY:
+</span></span><span class="line"><span class="cl">STATIC_LIBPOLY_INCLUDE_DIR:
+</span></span><span class="line"><span class="cl">PIC_LIBPOLY:
+</span></span><span class="line"><span class="cl">PIC_LIBPOLY_INCLUDE_DIR:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Version:                    Yices 2.5.2
+</span></span><span class="line"><span class="cl">Host type:                  x86_64-apple-darwin19.4.0
+</span></span><span class="line"><span class="cl">Install prefix:             /Users/mvalais/code/ocamlyices2/ext/yices
+</span></span><span class="line"><span class="cl">Build mode:                 release
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">For both static and shared library:
+</span></span><span class="line"><span class="cl">  CPPFLAGS:                  -DMACOSX -DNDEBUG
+</span></span><span class="line"><span class="cl">  CFLAGS:                    -fvisibility=hidden -Wall -Wredundant-decls -O3 -fomit-frame-pointer -fno-stack-protector
+</span></span><span class="line"><span class="cl">  LDFLAGS:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">For static library          libyices.a:
+</span></span><span class="line"><span class="cl">  Enable:                   yes
+</span></span><span class="line"><span class="cl">  STATIC_CPPFLAGS:           -DYICES_STATIC
+</span></span><span class="line"><span class="cl">  STATIC_LIBS:
+</span></span><span class="line"><span class="cl">  Libgmp.a found:           yes
+</span></span><span class="line"><span class="cl">  Libgmp.a path:            /usr/local/lib/libgmp.a
+</span></span><span class="line"><span class="cl">  Libgmp.a is pic:          yes     (non-PIC is faster for the static library)
+</span></span><span class="line"><span class="cl">  PIC mode for libyices.a:  default
+</span></span><span class="line"><span class="cl">  Use shared gmp instead of libgmp.a:  no
+</span></span><span class="line"><span class="cl">  Embed gmp in libyices.a:  yes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">For shared library:
+</span></span><span class="line"><span class="cl">  Enable:                   yes
+</span></span><span class="line"><span class="cl">  SHARED_CPPFLAGS:
+</span></span><span class="line"><span class="cl">  SHARED_LIBS:
+</span></span><span class="line"><span class="cl">  Libgmp.a with PIC found:  yes
+</span></span><span class="line"><span class="cl">  Libgmp.a path:            /usr/local/lib/libgmp.a
+</span></span><span class="line"><span class="cl">  Use shared gmp instead of libgmp.a: no
+</span></span></code></pre></div><p>A final word about the <code>Makefile</code>: since all the build configuration is handled by <code>./configure</code>, you don&rsquo;t have to pass any variables at <code>make</code> time anymore, which really helps when you need to <code>make</code> multiple times in a row and don&rsquo;t want to type the variables every single time.</p>
 <h2 id="inpecting-static-and-dynamic-libraries">Inpecting static and dynamic libraries</h2>
 <p>Here are two tips that I learned along the way. First, I very often need to know what libraries an executable is depending on:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># macOS</span>
-% otool -L /bin/ls
-/bin/ls:
-    /usr/lib/libutil.dylib <span class="o">(</span>compatibility version 1.0.0, current version 1.0.0<span class="o">)</span>
-    /usr/lib/libncurses.5.4.dylib <span class="o">(</span>compatibility version 5.4.0, current version 5.4.0<span class="o">)</span>
-    /usr/lib/libSystem.B.dylib <span class="o">(</span>compatibility version 1.0.0, current version 1281.100.1<span class="o">)</span>
-
-<span class="c1"># Linux (Alpine Linux 3.9)</span>
-ldd /bin/ls
-    /lib/ld-musl-x86_64.so.1 <span class="o">(</span>0x7fc9b2c84000<span class="o">)</span>
-    libc.musl-x86_64.so.1 <span class="o">=</span>&gt; /lib/ld-musl-x86_64.so.1 <span class="o">(</span>0x7fc9b2c84000<span class="o">)</span>
-</code></pre></div><p>I also had to dig into the symbols of libraries in order to make sure that static libraries contained all the needed symbols:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">% nm ext/libyices_pic_no_gmp/lib/libyices.a
-ext/libyices_pic_no_gmp/lib/libyices.a<span class="o">(</span>libyices.o<span class="o">)</span>:
-00000000000ef6c0 t _convert_rba_tree
-0000000000049a20 t _convert_simple_value
-00000000000c2f70 t _convert_term_to_bit
-00000000000d97e0 t _convert_term_to_conditional
-<span class="m">0000000000049700</span> t _convert_term_to_val
-0000000000049b30 t _convert_val
-00000000000028b0 T _yices_or
-0000000000002fa0 T _yices_or2
-0000000000002ca0 T _yices_or3
-<span class="m">0000000000003480</span> T _yices_pair
-000000000002ad30 t _yices_parse
-<span class="m">0000000000006420</span> T _yices_parse_bvbin
-00000000000064b0 T _yices_parse_bvhex
-<span class="m">0000000000004200</span> T _yices_parse_float
-<span class="m">0000000000004180</span> T _yices_parse_rational
-000000000000b150 T _yices_parse_term
-000000000000b090 T _yices_parse_type
-                 U _memcpy
-                 U _memset
-                 U _memset_pattern16
-                 U ___error
-<span class="m">0000000000145280</span> S ___gmp_0
-000000000017dcf0 D ___gmp_allocate_func
-00000000001099e0 T ___gmp_assert_fail
-<span class="m">0000000000109980</span> T ___gmp_assert_header
-<span class="m">0000000000145460</span> S ___gmp_binvert_limb_table
-000000000014527c S ___gmp_bits_per_limb
-0000000000109a60 T ___gmp_default_allocate
-0000000000109ae0 T ___gmp_default_free
-0000000000109a90 T ___gmp_default_reallocate
-<span class="m">0000000000145290</span> S ___gmp_digit_value_tab
-</code></pre></div><p>The letter before the symbol is the &ldquo;symbol type&rdquo; (from <code>man nm</code>):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># macOS</span>
+</span></span><span class="line"><span class="cl">% otool -L /bin/ls
+</span></span><span class="line"><span class="cl">/bin/ls:
+</span></span><span class="line"><span class="cl">    /usr/lib/libutil.dylib <span class="o">(</span>compatibility version 1.0.0, current version 1.0.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    /usr/lib/libncurses.5.4.dylib <span class="o">(</span>compatibility version 5.4.0, current version 5.4.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    /usr/lib/libSystem.B.dylib <span class="o">(</span>compatibility version 1.0.0, current version 1281.100.1<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Linux (Alpine Linux 3.9)</span>
+</span></span><span class="line"><span class="cl">ldd /bin/ls
+</span></span><span class="line"><span class="cl">    /lib/ld-musl-x86_64.so.1 <span class="o">(</span>0x7fc9b2c84000<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    libc.musl-x86_64.so.1 <span class="o">=</span>&gt; /lib/ld-musl-x86_64.so.1 <span class="o">(</span>0x7fc9b2c84000<span class="o">)</span>
+</span></span></code></pre></div><p>I also had to dig into the symbols of libraries in order to make sure that static libraries contained all the needed symbols:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">% nm ext/libyices_pic_no_gmp/lib/libyices.a
+</span></span><span class="line"><span class="cl">ext/libyices_pic_no_gmp/lib/libyices.a<span class="o">(</span>libyices.o<span class="o">)</span>:
+</span></span><span class="line"><span class="cl">00000000000ef6c0 t _convert_rba_tree
+</span></span><span class="line"><span class="cl">0000000000049a20 t _convert_simple_value
+</span></span><span class="line"><span class="cl">00000000000c2f70 t _convert_term_to_bit
+</span></span><span class="line"><span class="cl">00000000000d97e0 t _convert_term_to_conditional
+</span></span><span class="line"><span class="cl"><span class="m">0000000000049700</span> t _convert_term_to_val
+</span></span><span class="line"><span class="cl">0000000000049b30 t _convert_val
+</span></span><span class="line"><span class="cl">00000000000028b0 T _yices_or
+</span></span><span class="line"><span class="cl">0000000000002fa0 T _yices_or2
+</span></span><span class="line"><span class="cl">0000000000002ca0 T _yices_or3
+</span></span><span class="line"><span class="cl"><span class="m">0000000000003480</span> T _yices_pair
+</span></span><span class="line"><span class="cl">000000000002ad30 t _yices_parse
+</span></span><span class="line"><span class="cl"><span class="m">0000000000006420</span> T _yices_parse_bvbin
+</span></span><span class="line"><span class="cl">00000000000064b0 T _yices_parse_bvhex
+</span></span><span class="line"><span class="cl"><span class="m">0000000000004200</span> T _yices_parse_float
+</span></span><span class="line"><span class="cl"><span class="m">0000000000004180</span> T _yices_parse_rational
+</span></span><span class="line"><span class="cl">000000000000b150 T _yices_parse_term
+</span></span><span class="line"><span class="cl">000000000000b090 T _yices_parse_type
+</span></span><span class="line"><span class="cl">                 U _memcpy
+</span></span><span class="line"><span class="cl">                 U _memset
+</span></span><span class="line"><span class="cl">                 U _memset_pattern16
+</span></span><span class="line"><span class="cl">                 U ___error
+</span></span><span class="line"><span class="cl"><span class="m">0000000000145280</span> S ___gmp_0
+</span></span><span class="line"><span class="cl">000000000017dcf0 D ___gmp_allocate_func
+</span></span><span class="line"><span class="cl">00000000001099e0 T ___gmp_assert_fail
+</span></span><span class="line"><span class="cl"><span class="m">0000000000109980</span> T ___gmp_assert_header
+</span></span><span class="line"><span class="cl"><span class="m">0000000000145460</span> S ___gmp_binvert_limb_table
+</span></span><span class="line"><span class="cl">000000000014527c S ___gmp_bits_per_limb
+</span></span><span class="line"><span class="cl">0000000000109a60 T ___gmp_default_allocate
+</span></span><span class="line"><span class="cl">0000000000109ae0 T ___gmp_default_free
+</span></span><span class="line"><span class="cl">0000000000109a90 T ___gmp_default_reallocate
+</span></span><span class="line"><span class="cl"><span class="m">0000000000145290</span> S ___gmp_digit_value_tab
+</span></span></code></pre></div><p>The letter before the symbol is the &ldquo;symbol type&rdquo; (from <code>man nm</code>):</p>
 <blockquote>
 <p>Each symbol name is preceded by its value (blanks if undefined). This value is followed by one of the following characters, representing the symbol type:</p>
 <ul>
@@ -614,8 +620,7 @@ ext/libyices_pic_no_gmp/lib/libyices.a<span class="o">(</span>libyices.o<span cl
 <li>D (data section symbol),</li>
 <li>S (symbol in a section other than those above).</li>
 </ul>
-<p>If the symbol is local (non-external), the symbol&rsquo;s type is instead represented by the corresponding lowercase letter. A lower case u in a dynamic shared library indicates a undefined reference to a private external in another module in the same library.</p>
-</blockquote>
+<p>If the symbol is local (non-external), the symbol&rsquo;s type is instead represented by the corresponding lowercase letter. A lower case u in a dynamic shared library indicates a undefined reference to a private external in another module in the same library.</p></blockquote>
 <p>For example, the symbol <code>_yices_parse_float</code> is an external symbol, meaning that this symbol isn&rsquo;t static to <code>libyices.a</code>. On the other side, <code>_convert_simple_value</code> is statically defined (<code>t</code>).</p>
 <h2 id="contributing-the-new-yices-build-system-to-upstream">Contributing the new Yices build system to upstream</h2>
 <p>On 16 June 2016, I sent an email to Bruno Dutertre, one of the developers at SRI (the company behind the Yices SMT solver). I proposed all these changes with links to the various patches on GitHub. Unfortunately, it didn&rsquo;t work out, and the reason might be that the whole patch was enormous and very hard to review.</p>
@@ -625,8 +630,7 @@ ext/libyices_pic_no_gmp/lib/libyices.a<span class="o">(</span>libyices.o<span cl
 <p>We know that the Yices build system is unconventional because most of the work is done in the Makefiles rather that in the configure script. There are historical reason for this (and it should be able to build PIC libraries without problems).</p>
 <p>By the way, Yices is now open-source (GPL) on github: <a href="https://github.com/SRI-CSL/yices2">https://github.com/SRI-CSL/yices2</a>. Take a look when you have time,</p>
 <p>Thanks again,</p>
-<p>Bruno</p>
-</blockquote>
+<p>Bruno</p></blockquote>
 <p>I wish we had a unit-test framework for <code>autoconf</code>. The <code>autoconf</code> ecosystem generates very fragile scripts and the only way to test them is to run them with all possible flag combinations, which is pretty much impossible.</p>
 <ul>
 <li><strong>Update 31 May 2020</strong>: added the ascii &ldquo;dependency&rdquo; diagram to give a better sense of what the challenge was.</li>
@@ -851,34 +855,9 @@ ext/libyices_pic_no_gmp/lib/libyices.a<span class="o">(</span>libyices.o<span cl
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

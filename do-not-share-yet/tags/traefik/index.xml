@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>traefik on maelvls dev blog</title>
+    <title>Traefik on maelvls dev blog</title>
     <link>https://maelvls.dev/do-not-share-yet/tags/traefik/</link>
-    <description>Recent content in traefik on maelvls.dev</description>
+    <description>Recent content in Traefik on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 14 Mar 2020 15:10:10 +0200</lastBuildDate>

@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="keywords" content="go"><meta name="description" content="Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic."><meta property="og:title" content="Go Happy Path: the Unindented Line of Sight" />
-<meta property="og:description" content="Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/go-happy-line-of-sight/" />
-<meta property="og:image" content="https://maelvls.dev/do-not-share-yet/go-happy-line-of-sight/cover-happy-line-of-sight.png" />
-<meta property="article:published_time" content="2019-11-23T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-11-23T00:00:00+00:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/go-happy-line-of-sight/cover-happy-line-of-sight.png"/>
+<meta name="author" content="Maël Valais"><meta name="keywords" content="go"><meta name="description" content="Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic."><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/go-happy-line-of-sight/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Go Happy Path: the Unindented Line of Sight">
+  <meta property="og:description" content="Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2019">
+    <meta property="article:published_time" content="2019-11-23T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-11-23T00:00:00+00:00">
+    <meta property="article:tag" content="Go">
+    <meta property="og:image" content="https://maelvls.dev/do-not-share-yet/go-happy-line-of-sight/cover-happy-line-of-sight.png">
 
-<meta name="twitter:title" content="Go Happy Path: the Unindented Line of Sight"/>
-<meta name="twitter:description" content="Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic."/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/do-not-share-yet/go-happy-line-of-sight/cover-happy-line-of-sight.png">
+  <meta name="twitter:title" content="Go Happy Path: the Unindented Line of Sight">
+  <meta name="twitter:description" content="Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic.">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -36,7 +40,7 @@
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -75,36 +79,35 @@
     <div class="markdown">
         <p>Readability is a property we all love about Go. In other languages, it might be fine to have a lot of nested if statements; in Go, it is a good practice to keep away from overly-nested logic. One of the <a href="https://www.reddit.com/r/ProgrammerTIL/comments/acweob/go_til_a_new_go_proverb_the_happy_path_is/">Go proverbs</a> says:</p>
 <blockquote>
-<p>The happy path is left-aligned.</p>
-</blockquote>
+<p>The happy path is left-aligned.</p></blockquote>
 <p>In this post, I attempt to show through two examples what we mean by &ldquo;left-aligned happy path&rdquo; and what are the benefits in terms of readibility and maintainability.</p>
 <h2 id="simple-example">Simple example</h2>
 <p>Let&rsquo;s see a quick example of what we mean by &ldquo;happy path is left-aligned&rdquo;. The following snippet has two nested ifs. That would be the standard idiom for any language like Java:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="nx">authorizationHeader</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
-    <span class="c1">// nested happy path
-</span><span class="c1"></span>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">bearerToken</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="p">{</span>
-        <span class="c1">// even more nested happy path
-</span><span class="c1"></span>    <span class="p">}</span>
-    <span class="c1">// error handling here
-</span><span class="c1"></span><span class="p">}</span>
-<span class="c1">// error handling here
-</span></code></pre></div><p>We see two things happening here:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">authorizationHeader</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// nested happy path</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">bearerToken</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// even more nested happy path</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// error handling here</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// error handling here</span>
+</span></span></code></pre></div><p>We see two things happening here:</p>
 <ul>
 <li>nesting <code>if</code>s increases the cognitive weight; we have to think in order to understand what the logic does.</li>
 <li>nesting ifs often encourages the use of &ldquo;fallthroughs&rdquo; (reusing the same code path for two different cases). It tends to obfuscate how and where the function fails and returns.</li>
 </ul>
 <p>If we move the first <code>if</code> to its own &ldquo;guard statement&rdquo;, then we end up with less nesting which translates to code easier to parse (parse as a human):</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="nx">authorizationHeader</span> <span class="o">==</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
-    <span class="c1">// unhappy path, error handling here
-</span><span class="c1"></span>    <span class="k">return</span>
-<span class="p">}</span>
-
-<span class="c1">// happy path always stays (or almost always) unnested
-</span><span class="c1"></span><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">bearerToken</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="p">{</span>
-    <span class="c1">// unhappy path, error handling here
-</span><span class="c1"></span>    <span class="k">return</span>
-<span class="p">}</span>
-</code></pre></div><p>Notice how each code path is obvious. Parsing the code is fast and you have less chance of misunderstanding the logic.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">authorizationHeader</span> <span class="o">==</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// unhappy path, error handling here</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// happy path always stays (or almost always) unnested</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">bearerToken</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// unhappy path, error handling here</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Notice how each code path is obvious. Parsing the code is fast and you have less chance of misunderstanding the logic.</p>
 <!--
 
 ## Business logic guards vs. data verification guards
@@ -136,111 +139,110 @@ not prescribe a specific way of writing things like the input verification.
 <h2 id="real-example">Real example</h2>
 <p>While perusing how other Kubernetes developers are implementing their own reconciliation loop, I came across <a href="https://github.com/kubeflow/katib/blob/40f55b41c/pkg/controller.v1alpha3/trial/trial_controller.go#L259-L291">an interesting piece of code</a>.</p>
 <p>The author decided to use the <code>if-else</code> control flow at its maximum potential: the logic goes as deep as three tabs to the right. We cannot immediately guess which parts are important and which aren&rsquo;t.</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">ReconcileTrial</span><span class="p">)</span> <span class="nf">reconcileJob</span><span class="p">(</span><span class="nx">instance</span> <span class="o">*</span><span class="nx">trialsv1alpha3</span><span class="p">.</span><span class="nx">Trial</span><span class="p">,</span> <span class="nx">desiredJob</span> <span class="o">*</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
-    <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">WithValues</span><span class="p">(</span><span class="s">&#34;Trial&#34;</span><span class="p">,</span> <span class="nx">types</span><span class="p">.</span><span class="nx">NamespacedName</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span> <span class="nx">Namespace</span><span class="p">:</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">GetNamespace</span><span class="p">()})</span>
-    <span class="nx">apiVersion</span> <span class="o">:=</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetAPIVersion</span><span class="p">()</span>
-    <span class="nx">kind</span> <span class="o">:=</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetKind</span><span class="p">()</span>
-    <span class="nx">gvk</span> <span class="o">:=</span> <span class="nx">schema</span><span class="p">.</span><span class="nf">FromAPIVersionAndKind</span><span class="p">(</span><span class="nx">apiVersion</span><span class="p">,</span> <span class="nx">kind</span><span class="p">)</span>
-
-    <span class="nx">deployedJob</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">{}</span>
-    <span class="nx">deployedJob</span><span class="p">.</span><span class="nf">SetGroupVersionKind</span><span class="p">(</span><span class="nx">gvk</span><span class="p">)</span>
-    <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">types</span><span class="p">.</span><span class="nx">NamespacedName</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span> <span class="nx">Namespace</span><span class="p">:</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetNamespace</span><span class="p">()},</span> <span class="nx">deployedJob</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">IsNotFound</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">IsCompleted</span><span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
-            <span class="p">}</span>
-            <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Creating Job&#34;</span><span class="p">,</span> <span class="s">&#34;kind&#34;</span><span class="p">,</span> <span class="nx">kind</span><span class="p">,</span>
-                <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
-            <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">desiredJob</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-                <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Create job error&#34;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
-            <span class="p">}</span>
-            <span class="nx">eventMsg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Job %s has been created&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
-            <span class="nx">r</span><span class="p">.</span><span class="nx">recorder</span><span class="p">.</span><span class="nf">Eventf</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">EventTypeNormal</span><span class="p">,</span> <span class="nx">JobCreatedReason</span><span class="p">,</span> <span class="nx">eventMsg</span><span class="p">)</span>
-            <span class="nx">msg</span> <span class="o">:=</span> <span class="s">&#34;Trial is running&#34;</span>
-            <span class="nx">instance</span><span class="p">.</span><span class="nf">MarkTrialStatusRunning</span><span class="p">(</span><span class="nx">TrialRunningReason</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Trial Get error&#34;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
-        <span class="p">}</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">IsCompleted</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">instance</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">RetainRun</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Delete</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">desiredJob</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nf">PropagationPolicy</span><span class="p">(</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">DeletePropagationForeground</span><span class="p">));</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-                <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Delete job error&#34;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">eventMsg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Job %s has been deleted&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
-                <span class="nx">r</span><span class="p">.</span><span class="nx">recorder</span><span class="p">.</span><span class="nf">Eventf</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">EventTypeNormal</span><span class="p">,</span> <span class="nx">JobDeletedReason</span><span class="p">,</span> <span class="nx">eventMsg</span><span class="p">)</span>
-                <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="nx">deployedJob</span><span class="p">,</span> <span class="kc">nil</span>
-<span class="p">}</span>
-</code></pre></div><p>The outline of this function doesn&rsquo;t tell us anything about what the flow is and where the important logic is. Having deeply nested <code>if-else</code> statements hurt Go&rsquo;s glanceability: where is the &ldquo;happy path&rdquo;? Where are the &ldquo;error paths&rdquo;?</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">ReconcileTrial</span><span class="p">)</span> <span class="nf">reconcileJob</span><span class="p">(</span><span class="nx">instance</span> <span class="o">*</span><span class="nx">trialsv1alpha3</span><span class="p">.</span><span class="nx">Trial</span><span class="p">,</span> <span class="nx">desiredJob</span> <span class="o">*</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">WithValues</span><span class="p">(</span><span class="s">&#34;Trial&#34;</span><span class="p">,</span> <span class="nx">types</span><span class="p">.</span><span class="nx">NamespacedName</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span> <span class="nx">Namespace</span><span class="p">:</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">GetNamespace</span><span class="p">()})</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">apiVersion</span> <span class="o">:=</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetAPIVersion</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">kind</span> <span class="o">:=</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetKind</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">gvk</span> <span class="o">:=</span> <span class="nx">schema</span><span class="p">.</span><span class="nf">FromAPIVersionAndKind</span><span class="p">(</span><span class="nx">apiVersion</span><span class="p">,</span> <span class="nx">kind</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">deployedJob</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">deployedJob</span><span class="p">.</span><span class="nf">SetGroupVersionKind</span><span class="p">(</span><span class="nx">gvk</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">types</span><span class="p">.</span><span class="nx">NamespacedName</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span> <span class="nx">Namespace</span><span class="p">:</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetNamespace</span><span class="p">()},</span> <span class="nx">deployedJob</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">IsNotFound</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">IsCompleted</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Creating Job&#34;</span><span class="p">,</span> <span class="s">&#34;kind&#34;</span><span class="p">,</span> <span class="nx">kind</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">desiredJob</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Create job error&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">eventMsg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Job %s has been created&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">r</span><span class="p">.</span><span class="nx">recorder</span><span class="p">.</span><span class="nf">Eventf</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">EventTypeNormal</span><span class="p">,</span> <span class="nx">JobCreatedReason</span><span class="p">,</span> <span class="nx">eventMsg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">msg</span> <span class="o">:=</span> <span class="s">&#34;Trial is running&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">instance</span><span class="p">.</span><span class="nf">MarkTrialStatusRunning</span><span class="p">(</span><span class="nx">TrialRunningReason</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Trial Get error&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">IsCompleted</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">instance</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">RetainRun</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Delete</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">desiredJob</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nf">PropagationPolicy</span><span class="p">(</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">DeletePropagationForeground</span><span class="p">));</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Delete job error&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">eventMsg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Job %s has been deleted&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">r</span><span class="p">.</span><span class="nx">recorder</span><span class="p">.</span><span class="nf">Eventf</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">EventTypeNormal</span><span class="p">,</span> <span class="nx">JobDeletedReason</span><span class="p">,</span> <span class="nx">eventMsg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">deployedJob</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>The outline of this function doesn&rsquo;t tell us anything about what the flow is and where the important logic is. Having deeply nested <code>if-else</code> statements hurt Go&rsquo;s glanceability: where is the &ldquo;happy path&rdquo;? Where are the &ldquo;error paths&rdquo;?</p>
 <img src="before.png" width="500"/>
 <p>By refactoring and removing <code>else</code> statements, we obtain a more coherent aligned-to-the-left path:</p>
 <img src="after.png" width="500"/>
 <p>The green line represents the &ldquo;core logic&rdquo; and is at the minimum indentation level. The red line represents anything out of the ordinary: error handling and guards.</p>
 <p>And since our eyes are very good at following lines, the <em>line of sight</em> (the green line) guides us and greatly improves the experience of glancing at a piece of code.</p>
 <p>Here is the actual code I rewrote:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">ReconcileTrial</span><span class="p">)</span> <span class="nf">reconcileJob</span><span class="p">(</span><span class="nx">instance</span> <span class="o">*</span><span class="nx">trialsv1alpha3</span><span class="p">.</span><span class="nx">Trial</span><span class="p">,</span> <span class="nx">desiredJob</span> <span class="o">*</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
-    <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">WithValues</span><span class="p">(</span><span class="s">&#34;Trial&#34;</span><span class="p">,</span> <span class="nx">types</span><span class="p">.</span><span class="nx">NamespacedName</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span> <span class="nx">Namespace</span><span class="p">:</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">GetNamespace</span><span class="p">()})</span>
-    <span class="nx">apiVersion</span> <span class="o">:=</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetAPIVersion</span><span class="p">()</span>
-    <span class="nx">kind</span> <span class="o">:=</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetKind</span><span class="p">()</span>
-    <span class="nx">gvk</span> <span class="o">:=</span> <span class="nx">schema</span><span class="p">.</span><span class="nf">FromAPIVersionAndKind</span><span class="p">(</span><span class="nx">apiVersion</span><span class="p">,</span> <span class="nx">kind</span><span class="p">)</span>
-
-    <span class="nx">deployedJob</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">{}</span>
-    <span class="nx">deployedJob</span><span class="p">.</span><span class="nf">SetGroupVersionKind</span><span class="p">(</span><span class="nx">gvk</span><span class="p">)</span>
-
-    <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">types</span><span class="p">.</span><span class="nx">NamespacedName</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span> <span class="nx">Namespace</span><span class="p">:</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetNamespace</span><span class="p">()},</span> <span class="nx">deployedJob</span><span class="p">)</span>
-    <span class="k">switch</span> <span class="p">{</span>
-    <span class="k">case</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">IsNotFound</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">IsCompleted</span><span class="p">():</span>
-        <span class="c1">// Job deleted and trial completed, nothing left to do.
-</span><span class="c1"></span>        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
-    <span class="k">case</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">IsNotFound</span><span class="p">(</span><span class="nx">err</span><span class="p">):</span>
-        <span class="c1">// Job deleted, we must create a job.
-</span><span class="c1"></span>        <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Creating Job&#34;</span><span class="p">,</span> <span class="s">&#34;kind&#34;</span><span class="p">,</span> <span class="nx">kind</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
-        <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">desiredJob</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-            <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Create job error&#34;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
-        <span class="p">}</span>
-        <span class="nx">eventMsg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Job %s has been created&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
-        <span class="nx">r</span><span class="p">.</span><span class="nx">recorder</span><span class="p">.</span><span class="nf">Eventf</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">EventTypeNormal</span><span class="p">,</span> <span class="nx">JobCreatedReason</span><span class="p">,</span> <span class="nx">eventMsg</span><span class="p">)</span>
-        <span class="nx">msg</span> <span class="o">:=</span> <span class="s">&#34;Trial is running&#34;</span>
-        <span class="nx">instance</span><span class="p">.</span><span class="nf">MarkTrialStatusRunning</span><span class="p">(</span><span class="nx">TrialRunningReason</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
-    <span class="k">case</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">:</span>
-        <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Trial Get error&#34;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="p">!</span><span class="nx">instance</span><span class="p">.</span><span class="nf">IsCompleted</span><span class="p">()</span> <span class="o">||</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">RetainRun</span> <span class="p">{</span>
-        <span class="nx">eventMsg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Job %s has been deleted&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
-        <span class="nx">r</span><span class="p">.</span><span class="nx">recorder</span><span class="p">.</span><span class="nf">Eventf</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">EventTypeNormal</span><span class="p">,</span> <span class="nx">JobDeletedReason</span><span class="p">,</span> <span class="nx">eventMsg</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
-    <span class="p">}</span>
-
-    <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Delete</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">desiredJob</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nf">PropagationPolicy</span><span class="p">(</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">DeletePropagationForeground</span><span class="p">))</span>
-    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-        <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Delete job error&#34;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="nx">deployedJob</span><span class="p">,</span> <span class="kc">nil</span>
-<span class="p">}</span>
-</code></pre></div><p>You can also take a look at Matt Ryer&rsquo;s <em>Idiomatic Go Tricks</em> (<a href="https://medium.com/@matryer/line-of-sight-in-code-186dd7cdea88">blog post</a>) where he presents some ways of keeping your code as readable as possible:</p>
-
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">ReconcileTrial</span><span class="p">)</span> <span class="nf">reconcileJob</span><span class="p">(</span><span class="nx">instance</span> <span class="o">*</span><span class="nx">trialsv1alpha3</span><span class="p">.</span><span class="nx">Trial</span><span class="p">,</span> <span class="nx">desiredJob</span> <span class="o">*</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nf">WithValues</span><span class="p">(</span><span class="s">&#34;Trial&#34;</span><span class="p">,</span> <span class="nx">types</span><span class="p">.</span><span class="nx">NamespacedName</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span> <span class="nx">Namespace</span><span class="p">:</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">GetNamespace</span><span class="p">()})</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">apiVersion</span> <span class="o">:=</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetAPIVersion</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">kind</span> <span class="o">:=</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetKind</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">gvk</span> <span class="o">:=</span> <span class="nx">schema</span><span class="p">.</span><span class="nf">FromAPIVersionAndKind</span><span class="p">(</span><span class="nx">apiVersion</span><span class="p">,</span> <span class="nx">kind</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">deployedJob</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">deployedJob</span><span class="p">.</span><span class="nf">SetGroupVersionKind</span><span class="p">(</span><span class="nx">gvk</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">types</span><span class="p">.</span><span class="nx">NamespacedName</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span> <span class="nx">Namespace</span><span class="p">:</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetNamespace</span><span class="p">()},</span> <span class="nx">deployedJob</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">IsNotFound</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">instance</span><span class="p">.</span><span class="nf">IsCompleted</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// Job deleted and trial completed, nothing left to do.</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">IsNotFound</span><span class="p">(</span><span class="nx">err</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// Job deleted, we must create a job.</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;Creating Job&#34;</span><span class="p">,</span> <span class="s">&#34;kind&#34;</span><span class="p">,</span> <span class="nx">kind</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">desiredJob</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Create job error&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">eventMsg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Job %s has been created&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">.</span><span class="nx">recorder</span><span class="p">.</span><span class="nf">Eventf</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">EventTypeNormal</span><span class="p">,</span> <span class="nx">JobCreatedReason</span><span class="p">,</span> <span class="nx">eventMsg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">msg</span> <span class="o">:=</span> <span class="s">&#34;Trial is running&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">instance</span><span class="p">.</span><span class="nf">MarkTrialStatusRunning</span><span class="p">(</span><span class="nx">TrialRunningReason</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Trial Get error&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">!</span><span class="nx">instance</span><span class="p">.</span><span class="nf">IsCompleted</span><span class="p">()</span> <span class="o">||</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">RetainRun</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">eventMsg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Job %s has been deleted&#34;</span><span class="p">,</span> <span class="nx">desiredJob</span><span class="p">.</span><span class="nf">GetName</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">.</span><span class="nx">recorder</span><span class="p">.</span><span class="nf">Eventf</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">EventTypeNormal</span><span class="p">,</span> <span class="nx">JobDeletedReason</span><span class="p">,</span> <span class="nx">eventMsg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Delete</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">(),</span> <span class="nx">desiredJob</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nf">PropagationPolicy</span><span class="p">(</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">DeletePropagationForeground</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;Delete job error&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">deployedJob</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>You can also take a look at Matt Ryer&rsquo;s <em>Idiomatic Go Tricks</em> (<a href="https://medium.com/@matryer/line-of-sight-in-code-186dd7cdea88">blog post</a>) where he presents some ways of keeping your code as readable as possible:</p>
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-  <iframe src="https://www.youtube.com/embed/yeetIgNeIkc" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
-</div>
+      <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/yeetIgNeIkc?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"></iframe>
+    </div>
 
 <p><strong>Update 23 April 2020:</strong> added a proper introduction with a simple example.</p>
 <hr>
@@ -466,34 +468,9 @@ Wish to comment? Here is the Twitter thread for that post:
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

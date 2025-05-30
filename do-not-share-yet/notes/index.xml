@@ -30,7 +30,7 @@
       <guid>https://maelvls.dev/do-not-share-yet/notes/tls/</guid>
       <description>
       
-      ROLE OF THE CERTIFICATE AUTHORITY &#43;------------------------------&#43; &#43;-----------------&#43; CERTIFICATE AUTHORITY (NOT A CERT...
+       ROLE OF THE CERTIFICATE AUTHORITY &#43;------------------------------&#43; &#43;-----------------&#43; CERTIFICATE AUTHORITY (NOT A CER...
       
       </description>
     </item>
@@ -54,7 +54,7 @@
       <guid>https://maelvls.dev/do-not-share-yet/notes/ssh/</guid>
       <description>
       
-       Difference between CA and cert Ssh authentication themes  Case A: unknown host Case B: host already in known_host but i...
+       Difference between CA and cert Ssh authentication themes Case A: unknown host Case B: host already in known_host but ip...
       
       </description>
     </item>
@@ -80,7 +80,7 @@ First, find w...
       <description>
       
       I know two main ways of using OAuth2
- password-based client grant (2-leg oauth flow: on the project I worked on, the OAu...
+password-based client grant (2-leg oauth flow: on the project I worked on, the OAut...
       
       </description>
     </item>
@@ -118,8 +118,8 @@ General short...
       <description>
       
       If there is a Nvidia card:
-nvidia-smi  Otherwise:
- cat /proc/cpuinfo lscpu  
+nvidia-smi Otherwise:
+cat /proc/cpuinfo lscpu 
       
       </description>
     </item>
@@ -169,7 +169,7 @@ sudo wget -O /usr/local/bin/gitlab-runner https://gitlab...
       <description>
       
       On macOS, install msmtp:
-brew install mutt msmtp  I read this thread: https://www.engadget.com/2010/05/04/msmtp-a-free-t...
+brew install mutt msmtp I read this thread: https://www.engadget.com/2010/05/04/msmtp-a-free-to...
       
       </description>
     </item>
@@ -206,7 +206,7 @@ lsof -n -i :8001 # copy PI...
       <guid>https://maelvls.dev/do-not-share-yet/notes/pgp/</guid>
       <description>
       
-       Sign my message Things on securiry Public-key protocol is slow Errors I got  To list the keys I have in my keyring, use...
+       Sign my message Things on securiry Public-key protocol is slow Errors I got To list the keys I have in my keyring, use ...
       
       </description>
     </item>
@@ -257,8 +257,8 @@ To f...
       <description>
       
       Token server at IRIT:
-matlab -nodecktop -nodisplay -c 27000@licence.irit.fr  or
-SERVER licence.irit.fr 0050568A1251 2700...
+matlab -nodecktop -nodisplay -c 27000@licence.irit.fr or
+SERVER licence.irit.fr 0050568A1251 27000...
       
       </description>
     </item>

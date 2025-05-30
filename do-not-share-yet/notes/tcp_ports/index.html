@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Everything I know about TCP" />
-<meta property="og:description" content="How is a TCP connection uniquely identified Kill a process that is using a TCP port you need:
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/tcp_ports/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Everything I know about TCP">
+  <meta property="og:description" content="How is a TCP connection uniquely identified Kill a process that is using a TCP port you need:
 lsof -n -i :8001 # copy PID kill 43903 A TCP connection is identified by four things:
- source port source ip dest port dest ip  This is why there is no confusion between two requests to a web server on 80 port.
-Stateful vs. Stateless Firewall This only applies to appliances in between two computers, for example a router using some kind of firewall." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/notes/tcp_ports/" />
-<meta property="og:image" content="https://maelvls.dev/img/mael.jpg"/>
-<meta property="article:published_time" content="2018-02-19T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-02-19T00:00:00+00:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/img/mael.jpg"/>
+source port source ip dest port dest ip This is why there is no confusion between two requests to a web server on 80 port.
+Stateful vs. Stateless Firewall This only applies to appliances in between two computers, for example a router using some kind of firewall. Is it???? Is it only for NATs or gateways?">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="notes">
+    <meta property="article:published_time" content="2018-02-19T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-02-19T00:00:00+00:00">
+    <meta property="og:image" content="https://maelvls.dev/img/mael.jpg">
 
-<meta name="twitter:title" content="Everything I know about TCP"/>
-<meta name="twitter:description" content="How is a TCP connection uniquely identified Kill a process that is using a TCP port you need:
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/img/mael.jpg">
+  <meta name="twitter:title" content="Everything I know about TCP">
+  <meta name="twitter:description" content="How is a TCP connection uniquely identified Kill a process that is using a TCP port you need:
 lsof -n -i :8001 # copy PID kill 43903 A TCP connection is identified by four things:
- source port source ip dest port dest ip  This is why there is no confusion between two requests to a web server on 80 port.
-Stateful vs. Stateless Firewall This only applies to appliances in between two computers, for example a router using some kind of firewall."/>
+source port source ip dest port dest ip This is why there is no confusion between two requests to a web server on 80 port.
+Stateful vs. Stateless Firewall This only applies to appliances in between two computers, for example a router using some kind of firewall. Is it???? Is it only for NATs or gateways?">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -42,7 +45,7 @@ Stateful vs. Stateless Firewall This only applies to appliances in between two c
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -75,10 +78,10 @@ Stateful vs. Stateless Firewall This only applies to appliances in between two c
     <div class="markdown">
         <h2 id="how-is-a-tcp-connection-uniquely-identified">How is a TCP connection uniquely identified</h2>
 <p>Kill a process that is using a TCP port you need:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">lsof -n -i :8001
-<span class="c1"># copy PID</span>
-<span class="nb">kill</span> <span class="m">43903</span>
-</code></pre></div><p>A TCP connection is identified by four things:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">lsof -n -i :8001
+</span></span><span class="line"><span class="cl"><span class="c1"># copy PID</span>
+</span></span><span class="line"><span class="cl"><span class="nb">kill</span> <span class="m">43903</span>
+</span></span></code></pre></div><p>A TCP connection is identified by four things:</p>
 <ul>
 <li>source port</li>
 <li>source ip</li>
@@ -88,8 +91,8 @@ Stateful vs. Stateless Firewall This only applies to appliances in between two c
 <p>This is why there is no confusion between two requests to a web server on 80 port.</p>
 <h2 id="stateful-vs-stateless-firewall">Stateful vs. Stateless Firewall</h2>
 <p>This only applies to appliances in between two computers, for example a router using some kind of firewall. Is it???? Is it only for NATs or gateways?</p>
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">    A -----&gt; Router -----&gt; B
-</code></pre></div><p>If the router manages connection in a stateful way, here is what is going to happen:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">    A -----&gt; Router -----&gt; B
+</span></span></code></pre></div><p>If the router manages connection in a stateful way, here is what is going to happen:</p>
 <ol>
 <li>A connects to B via a TCP connection identified by IP_A:PORT_A + IP_B:PORT_B</li>
 <li>Router remembers the source port of A so that when B sends things back, it can</li>
@@ -99,8 +102,8 @@ Stateful vs. Stateless Firewall This only applies to appliances in between two c
 <li>Using linux iptables to implement a stateless packet filtering firewall: <a href="https://security.stackexchange.com/questions/74529">https://security.stackexchange.com/questions/74529</a></li>
 </ul>
 <p>Example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">-A INPUT -p tcp -s 192.168.1.0/24 -m tcp --dport 80 -j ACCEPT
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-A INPUT -p tcp -s 192.168.1.0/24 -m tcp --dport 80 -j ACCEPT
+</span></span></code></pre></div><ul>
 <li><code>-A CHAIN RULE</code> tells iptables to append this RULE at the end of this CHAIN. A chain is identified by a name such as INPUT or OUTPUT.</li>
 <li><code>-p TCP</code> means protocol</li>
 <li><code>-s</code> is the source. Here, 192.168.1.0/24 means any IP adress that matches with <code>192.*.*.*</code></li>
@@ -116,66 +119,66 @@ Stateful vs. Stateless Firewall This only applies to appliances in between two c
 <p>TCP connection = 2 sockets = from(ip:port) + to(ip:port) TCP socket = internal representation of the &lsquo;from&rsquo; (ip:port)</p>
 <h2 id="the-stack">The stack</h2>
 <table>
-<thead>
-<tr>
-<th>OSI</th>
-<th>Lv</th>
-<th>TCP/IP</th>
-<th>Keywords</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Applica</td>
-<td>L7</td>
-<td>HTTPS</td>
-<td>LB</td>
-<td>Deserialized</td>
-</tr>
-<tr>
-<td>Present</td>
-<td></td>
-<td>HTTPS</td>
-<td></td>
-<td>Serialized</td>
-</tr>
-<tr>
-<td>Session</td>
-<td></td>
-<td>HTTPS</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Transpo</td>
-<td>L4</td>
-<td>TCP,ICMP</td>
-<td>Firewall</td>
-<td>Segments</td>
-</tr>
-<tr>
-<td>Network</td>
-<td>L3</td>
-<td>IP</td>
-<td>Router</td>
-<td>Packets</td>
-</tr>
-<tr>
-<td>Link</td>
-<td>L2</td>
-<td>MAC, ARP</td>
-<td>VLAN, Switch</td>
-<td>Frames</td>
-</tr>
-<tr>
-<td>Physic</td>
-<td>L1</td>
-<td></td>
-<td></td>
-<td>Bits</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>OSI</th>
+          <th>Lv</th>
+          <th>TCP/IP</th>
+          <th>Keywords</th>
+          <th></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Applica</td>
+          <td>L7</td>
+          <td>HTTPS</td>
+          <td>LB</td>
+          <td>Deserialized</td>
+      </tr>
+      <tr>
+          <td>Present</td>
+          <td></td>
+          <td>HTTPS</td>
+          <td></td>
+          <td>Serialized</td>
+      </tr>
+      <tr>
+          <td>Session</td>
+          <td></td>
+          <td>HTTPS</td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Transpo</td>
+          <td>L4</td>
+          <td>TCP,ICMP</td>
+          <td>Firewall</td>
+          <td>Segments</td>
+      </tr>
+      <tr>
+          <td>Network</td>
+          <td>L3</td>
+          <td>IP</td>
+          <td>Router</td>
+          <td>Packets</td>
+      </tr>
+      <tr>
+          <td>Link</td>
+          <td>L2</td>
+          <td>MAC, ARP</td>
+          <td>VLAN, Switch</td>
+          <td>Frames</td>
+      </tr>
+      <tr>
+          <td>Physic</td>
+          <td>L1</td>
+          <td></td>
+          <td></td>
+          <td>Bits</td>
+      </tr>
+  </tbody>
 </table>
 <p>Warning: HTTP/1.1 and such have intertwined L5, L6 and L7 responsabilities. As an example, HTTP/1.1 carries headers that can be thought of of application data, but the payload (data) also spans over L6 (presentation using json for example). Session is also part of HTTP/1.1.</p>
 <p><strong>L5-L6-L7 (application) protocols</strong> = HTTP/1.1, HTTP/2, WebSockets</p>
@@ -188,30 +191,30 @@ Stateful vs. Stateless Firewall This only applies to appliances in between two c
 <p>10.0.2.3/16 = 16 first bits (10.0) for subnet.</p>
 <p>The idea of subnets: inside of a subnet, we pretty much share the same VLAN. For example, let&rsquo;s say that we have two subnets A and B.</p>
 <table>
-<thead>
-<tr>
-<th></th>
-<th>Subnet A</th>
-<th>Subnet B</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CIDR</td>
-<td>10.0.1.0/24</td>
-<td>10.0.2.0/24</td>
-</tr>
-<tr>
-<td>Count</td>
-<td>254</td>
-<td>254</td>
-</tr>
-<tr>
-<td>VLAN</td>
-<td>VLAN1</td>
-<td>VLAN2</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th></th>
+          <th>Subnet A</th>
+          <th>Subnet B</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>CIDR</td>
+          <td>10.0.1.0/24</td>
+          <td>10.0.2.0/24</td>
+      </tr>
+      <tr>
+          <td>Count</td>
+          <td>254</td>
+          <td>254</td>
+      </tr>
+      <tr>
+          <td>VLAN</td>
+          <td>VLAN1</td>
+          <td>VLAN2</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="link-between-subnet-l3-and-vlan-l2">Link between Subnet (L3) and VLAN (L2)</h3>
 <p>First, let us remember that every machine in a VLAN can communicate with each other at any time. Now, we want to control what goes from/to A and B.</p>
@@ -244,34 +247,9 @@ Stateful vs. Stateless Firewall This only applies to appliances in between two c
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

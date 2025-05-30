@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 
-  <meta name="generator" content="Hugo 0.75.1" />
+  <meta name="generator" content="Hugo 0.147.6">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:title" content="Deep Dive into Go Assembly" />
-<meta property="og:description" content="Last month, Sylvain Wallez, author of the excellent &ldquo;Go: the Good, the Bad and the Ugly&rdquo;, wrote:
+<meta name="author" content="Maël Valais"><meta name="description" content=""><meta property="og:url" content="https://maelvls.dev/do-not-share-yet/deep-dive-go-assembly/">
+  <meta property="og:site_name" content="maelvls dev blog">
+  <meta property="og:title" content="Deep Dive into Go Assembly">
+  <meta property="og:description" content="Last month, Sylvain Wallez, author of the excellent “Go: the Good, the Bad and the Ugly”, wrote:
 Woah! Because interface values in Go are represented by two pointers causing assignment to not be atomic, you can easily write concurrent code that swaps one of the pointers, leading to completely unpredictable behaviour. Demonstrated with an RCE... https://t.co/DsMWzpYuQ4
-&mdash; Sylvain Wallez (@bluxte) November 8, 2019  Once again, my beloved language takes a hit." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://maelvls.dev/do-not-share-yet/deep-dive-go-assembly/" />
-<meta property="og:image" content="https://maelvls.dev/img/mael.jpg"/>
-<meta property="article:published_time" content="2020-04-16T15:42:35+02:00" />
-<meta property="article:modified_time" content="2020-04-16T15:42:35+02:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://maelvls.dev/img/mael.jpg"/>
+— Sylvain Wallez (@bluxte) November 8, 2019 Once again, my beloved language takes a hit. As time passes, I come to realize Go has its strenghts (ease of adoption, no overly abstract REST framework, readability, fast compilation) but also its weaknesses. I can think of the weirdness of variable scoping (scopelint really helps) and also variable shadowing, weird syntax around variable assignment, go help is unreadable and just not up to the standard (compared to git help for example), the ever-changing behaviour of GO111MODULE (that’s a temporary issue), go get that do too many things and changes go.mod when you just want to install some tool, but also go install &amp; go run that don’t support versions (e.g. ). Wait, also the “semantic import versioning” that everybody seems to avoid (including Google itself in protobuf).">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="2020">
+    <meta property="article:published_time" content="2020-04-16T15:42:35+02:00">
+    <meta property="article:modified_time" content="2020-04-16T15:42:35+02:00">
+    <meta property="og:image" content="https://maelvls.dev/img/mael.jpg">
 
-<meta name="twitter:title" content="Deep Dive into Go Assembly"/>
-<meta name="twitter:description" content="Last month, Sylvain Wallez, author of the excellent &ldquo;Go: the Good, the Bad and the Ugly&rdquo;, wrote:
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://maelvls.dev/img/mael.jpg">
+  <meta name="twitter:title" content="Deep Dive into Go Assembly">
+  <meta name="twitter:description" content="Last month, Sylvain Wallez, author of the excellent “Go: the Good, the Bad and the Ugly”, wrote:
 Woah! Because interface values in Go are represented by two pointers causing assignment to not be atomic, you can easily write concurrent code that swaps one of the pointers, leading to completely unpredictable behaviour. Demonstrated with an RCE... https://t.co/DsMWzpYuQ4
-&mdash; Sylvain Wallez (@bluxte) November 8, 2019  Once again, my beloved language takes a hit."/>
+— Sylvain Wallez (@bluxte) November 8, 2019 Once again, my beloved language takes a hit. As time passes, I come to realize Go has its strenghts (ease of adoption, no overly abstract REST framework, readability, fast compilation) but also its weaknesses. I can think of the weirdness of variable scoping (scopelint really helps) and also variable shadowing, weird syntax around variable assignment, go help is unreadable and just not up to the standard (compared to git help for example), the ever-changing behaviour of GO111MODULE (that’s a temporary issue), go get that do too many things and changes go.mod when you just want to install some tool, but also go install &amp; go run that don’t support versions (e.g. ). Wait, also the “semantic import versioning” that everybody seems to avoid (including Google itself in protobuf).">
 <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="stylesheet" type="text/css" media="screen" href="https://maelvls.dev/do-not-share-yet/css/normalize.css" />
@@ -40,7 +43,7 @@ Woah! Because interface values in Go are represented by two pointers causing ass
   <div id="titletext"><h2 id="title"><a href="https://maelvls.dev/do-not-share-yet/">maelvls dev blog</a></h2></div>
   <div id="title-description"><p id="subtitle">Systems software engineer. I write mostly about Kubernetes and Go. <a href="/about/">About</a></p><div id=social>
     <nav>
-      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://twitter.com/maelvls"><i title="Twitter" class="icons fab fa-twitter"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
+      <ul><li><a href="https://github.com/maelvls"><i title="Github" class="icons fab fa-github"></i></a></li><li><a href="https://x.com/maelvls"><i title="X" class="icons fab fa-x"></i></a></li><li><a href="https://dev.to/maelvls"><i title="Maël Valais&#39;s DEV Community Profile" class="icons fab fa-dev"></i></a></li></ul>
     </nav>
   </div>
   </div>
@@ -79,255 +82,250 @@ Woah! Because interface values in Go are represented by two pointers causing ass
 <p>Once again, my beloved language takes a hit. As time passes, I come to realize Go has its strenghts (ease of adoption, no overly abstract REST framework, readability, fast compilation) but also its weaknesses. I can think of the weirdness of variable scoping (<a href="https://github.com/kyoh86/scopelint">scopelint</a> really helps) and also variable shadowing, weird syntax around variable assignment, <code>go help</code> is unreadable and just not up to the standard (compared to <code>git help</code> for example), the ever-changing behaviour of GO111MODULE (that&rsquo;s a temporary issue), <code>go get</code> that do too many things and changes <code>go.mod</code> when you just want to install some tool, but also <code>go install</code> &amp; <code>go run</code> that don&rsquo;t support versions (e.g. ). Wait, also the &ldquo;semantic import versioning&rdquo; that everybody seems to avoid (including Google itself in <a href="https://github.com/golang/protobuf/issues/1049">protobuf</a>).</p>
 <p>But the issue Sylvain raised really bothered me: it felt like a bug.</p>
 <blockquote>
-<p>Given <code>v</code> a pointer to an interface, <code>v != nil</code> when <code>v</code> is <code>nil</code>.</p>
-</blockquote>
+<p>Given <code>v</code> a pointer to an interface, <code>v != nil</code> when <code>v</code> is <code>nil</code>.</p></blockquote>
 <p>Oooh, let&rsquo;s see.</p>
 <blockquote>
 <p>Boxed type, fat pointer:</p>
-<p>Do Go use boxed types for map[string]string? No! It doesn&rsquo;t use interface{} boxing (boxed = fat pointer = one more level of indirection, less locality – same problem as linked lists).</p>
-</blockquote>
+<p>Do Go use boxed types for map[string]string? No! It doesn&rsquo;t use interface{} boxing (boxed = fat pointer = one more level of indirection, less locality – same problem as linked lists).</p></blockquote>
 <p>Here is a short program:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;strconv&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">abstract</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nf">f</span><span class="p">()</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">concrete</span> <span class="kd">struct</span><span class="p">{}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">concrete</span><span class="p">)</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
-	<span class="nx">i</span><span class="o">++</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="kd">var</span> <span class="nx">v1</span> <span class="nx">abstract</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">concrete</span><span class="p">{}</span>
-	<span class="nx">v1</span><span class="p">.</span><span class="nf">f</span><span class="p">()</span>
-
-	<span class="nx">v2</span> <span class="o">:=</span> <span class="nx">concrete</span><span class="p">{}</span>
-	<span class="nx">v2</span><span class="p">.</span><span class="nf">f</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></div><p>Let&rsquo;s go over what <code>f1</code> and <code>f2</code> do.</p>
-<div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s"><span class="c1"># go build . -o ./main</span>
-<span class="c1"># go tool objdump -S ./main &gt; main.s</span>
-
-
-<span class="n">TEXT</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">mvalais</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">go</span><span class="o">-</span><span class="n">atomic</span><span class="o">-</span><span class="n">issue</span><span class="o">-</span><span class="n">wallez</span><span class="o">-</span><span class="n">tweet</span><span class="o">/</span><span class="n">main.go</span>
-<span class="nf">func </span><span class="p">(</span><span class="n">concrete</span><span class="p">)</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
-  <span class="mh">0x10994c0</span>		<span class="m">65488</span><span class="n">b0c2530000000</span>	<span class="n">MOVQ</span> <span class="n">GS</span><span class="o">:</span><span class="mh">0x30</span><span class="p">,</span> <span class="n">CX</span>
-  <span class="mh">0x10994c9</span>		<span class="m">483</span><span class="n">b6110</span>		<span class="n">CMPQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">SP</span>
-  <span class="mh">0x10994cd</span>		<span class="m">0</span><span class="n">f869c000000</span>		<span class="n">JBE</span> <span class="mh">0x109956f</span>
-  <span class="mh">0x10994d3</span>		<span class="m">4883</span><span class="n">ec58</span>		<span class="n">SUBQ</span> <span class="o">$</span><span class="mh">0x58</span><span class="p">,</span> <span class="n">SP</span>
-  <span class="mh">0x10994d7</span>		<span class="m">48896</span><span class="n">c2450</span>		<span class="n">MOVQ</span> <span class="n">BP</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x10994dc</span>		<span class="m">488</span><span class="n">d6c2450</span>		<span class="n">LEAQ</span> <span class="mh">0x50</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
-	<span class="nf">fmt.Print</span><span class="p">(</span><span class="nf">strconv.Itoa</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-  <span class="mh">0x10994e1</span>		<span class="m">48</span><span class="n">c7042401000000</span>	<span class="n">MOVQ</span> <span class="o">$</span><span class="mh">0x1</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-	<span class="n">return</span> <span class="nf">FormatInt</span><span class="p">(</span><span class="nf">int64</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="m">10</span><span class="p">)</span>
-  <span class="mh">0x10994e9</span>		<span class="m">48</span><span class="n">c74424080a000000</span>	<span class="n">MOVQ</span> <span class="o">$</span><span class="mh">0xa</span><span class="p">,</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x10994f2</span>		<span class="n">e8097ffcff</span>		<span class="n">CALL</span> <span class="nf">strconv.FormatInt</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-  <span class="mh">0x10994f7</span>		<span class="m">488</span><span class="n">b442410</span>		<span class="n">MOVQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">AX</span>
-  <span class="mh">0x10994fc</span>		<span class="m">488</span><span class="n">b4c2418</span>		<span class="n">MOVQ</span> <span class="mh">0x18</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">CX</span>
-	<span class="nf">fmt.Print</span><span class="p">(</span><span class="nf">strconv.Itoa</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-  <span class="mh">0x1099501</span>		<span class="m">48890424</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x1099505</span>		<span class="m">48894</span><span class="n">c2408</span>		<span class="n">MOVQ</span> <span class="n">CX</span><span class="p">,</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x109950a</span>		<span class="n">e8a1f7f6ff</span>		<span class="n">CALL</span> <span class="nf">runtime.convTstring</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-  <span class="mh">0x109950f</span>		<span class="m">488</span><span class="n">b442410</span>		<span class="n">MOVQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">AX</span>
-  <span class="mh">0x1099514</span>		<span class="m">0</span><span class="n">f57c0</span>			<span class="n">XORPS</span> <span class="n">X0</span><span class="p">,</span> <span class="n">X0</span>
-  <span class="mh">0x1099517</span>		<span class="m">0</span><span class="n">f11442440</span>		<span class="n">MOVUPS</span> <span class="n">X0</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x109951c</span>		<span class="m">488</span><span class="n">d0dfd1a0100</span>		<span class="n">LEAQ</span> <span class="n">runtime.types</span><span class="m">+72160</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">CX</span>
-  <span class="mh">0x1099523</span>		<span class="m">48894</span><span class="n">c2440</span>		<span class="n">MOVQ</span> <span class="n">CX</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x1099528</span>		<span class="m">4889442448</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-	<span class="n">return</span> <span class="nf">Fprint</span><span class="p">(</span><span class="n">os.Stdout</span><span class="p">,</span> <span class="n">a...</span><span class="p">)</span>
-  <span class="mh">0x109952d</span>		<span class="m">488</span><span class="n">b05c4ea0d00</span>		<span class="n">MOVQ</span> <span class="nf">os.Stdout</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
-  <span class="mh">0x1099534</span>		<span class="m">488</span><span class="n">d0d251b0500</span>		<span class="n">LEAQ</span> <span class="n">go.itab.</span><span class="o">*</span><span class="n">os.File</span><span class="p">,</span><span class="nf">io.Writer</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">CX</span>
-  <span class="mh">0x109953b</span>		<span class="m">48890</span><span class="n">c24</span>		<span class="n">MOVQ</span> <span class="n">CX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x109953f</span>		<span class="m">4889442408</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x1099544</span>		<span class="m">488</span><span class="n">d442440</span>		<span class="n">LEAQ</span> <span class="mh">0x40</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">AX</span>
-  <span class="mh">0x1099549</span>		<span class="m">4889442410</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x109954e</span>		<span class="m">48</span><span class="n">c744241801000000</span>	<span class="n">MOVQ</span> <span class="o">$</span><span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x18</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x1099557</span>		<span class="m">48</span><span class="n">c744242001000000</span>	<span class="n">MOVQ</span> <span class="o">$</span><span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x1099560</span>		<span class="n">e8cb97ffff</span>		<span class="n">CALL</span> <span class="nf">fmt.Fprint</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-  <span class="mh">0x1099565</span>		<span class="m">488</span><span class="n">b6c2450</span>		<span class="n">MOVQ</span> <span class="mh">0x50</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
-  <span class="mh">0x109956a</span>		<span class="m">4883</span><span class="n">c458</span>		<span class="n">ADDQ</span> <span class="o">$</span><span class="mh">0x58</span><span class="p">,</span> <span class="n">SP</span>
-  <span class="mh">0x109956e</span>		<span class="n">c3</span>			<span class="n">RET</span>
-<span class="nf">func </span><span class="p">(</span><span class="n">concrete</span><span class="p">)</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
-  <span class="mh">0x109956f</span>		<span class="n">e8ac7ffbff</span>		<span class="n">CALL</span> <span class="nf">runtime.morestack_noctxt</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-  <span class="mh">0x1099574</span>		<span class="n">e947ffffff</span>		<span class="n">JMP</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-
-  <span class="mh">0x1099579</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x109957a</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x109957b</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x109957c</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x109957d</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x109957e</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x109957f</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-
-<span class="n">TEXT</span> <span class="nf">main.main</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">mvalais</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">go</span><span class="o">-</span><span class="n">atomic</span><span class="o">-</span><span class="n">issue</span><span class="o">-</span><span class="n">wallez</span><span class="o">-</span><span class="n">tweet</span><span class="o">/</span><span class="n">main.go</span>
-<span class="n">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="mh">0x1099580</span>		<span class="m">65488</span><span class="n">b0c2530000000</span>	<span class="n">MOVQ</span> <span class="n">GS</span><span class="o">:</span><span class="mh">0x30</span><span class="p">,</span> <span class="n">CX</span>
-  <span class="mh">0x1099589</span>		<span class="m">483</span><span class="n">b6110</span>		<span class="n">CMPQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">SP</span>
-  <span class="mh">0x109958d</span>		<span class="m">7631</span>			<span class="n">JBE</span> <span class="mh">0x10995c0</span>
-  <span class="mh">0x109958f</span>		<span class="m">4883</span><span class="n">ec10</span>		<span class="n">SUBQ</span> <span class="o">$</span><span class="mh">0x10</span><span class="p">,</span> <span class="n">SP</span>
-  <span class="mh">0x1099593</span>		<span class="m">48896</span><span class="n">c2408</span>		<span class="n">MOVQ</span> <span class="n">BP</span><span class="p">,</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x1099598</span>		<span class="m">488</span><span class="n">d6c2408</span>		<span class="n">LEAQ</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
-	<span class="nf">v.f</span><span class="p">()</span>
-  <span class="mh">0x109959d</span>		<span class="m">488</span><span class="n">d059c1a0500</span>		<span class="n">LEAQ</span> <span class="n">go.itab.</span><span class="o">*</span><span class="n">main.concrete</span><span class="p">,</span><span class="nf">main.abstract</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
-  <span class="mh">0x10995a4</span>		<span class="m">8400</span>			<span class="n">TESTB</span> <span class="n">AL</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">AX</span><span class="p">)</span>
-  <span class="mh">0x10995a6</span>		<span class="m">488</span><span class="n">d05eba40f00</span>		<span class="n">LEAQ</span> <span class="nf">runtime.zerobase</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
-  <span class="mh">0x10995ad</span>		<span class="m">48890424</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x10995b1</span>		<span class="n">e81a000000</span>		<span class="n">CALL</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-<span class="p">}</span>
-  <span class="mh">0x10995b6</span>		<span class="m">488</span><span class="n">b6c2408</span>		<span class="n">MOVQ</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
-  <span class="mh">0x10995bb</span>		<span class="m">4883</span><span class="n">c410</span>		<span class="n">ADDQ</span> <span class="o">$</span><span class="mh">0x10</span><span class="p">,</span> <span class="n">SP</span>
-  <span class="mh">0x10995bf</span>		<span class="n">c3</span>			<span class="n">RET</span>
-<span class="n">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="mh">0x10995c0</span>		<span class="n">e85b7ffbff</span>		<span class="n">CALL</span> <span class="nf">runtime.morestack_noctxt</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-  <span class="mh">0x10995c5</span>		<span class="n">ebb9</span>			<span class="n">JMP</span> <span class="nf">main.main</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-
-  <span class="mh">0x10995c7</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x10995c8</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x10995c9</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x10995ca</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x10995cb</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x10995cc</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x10995cd</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x10995ce</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-  <span class="mh">0x10995cf</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
-
-<span class="n">TEXT</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span> <span class="o">&lt;</span><span class="n">autogenerated</span><span class="o">&gt;</span>
-
-  <span class="mh">0x10995d0</span>		<span class="m">65488</span><span class="n">b0c2530000000</span>	<span class="n">MOVQ</span> <span class="n">GS</span><span class="o">:</span><span class="mh">0x30</span><span class="p">,</span> <span class="n">CX</span>
-  <span class="mh">0x10995d9</span>		<span class="m">483</span><span class="n">b6110</span>		<span class="n">CMPQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">SP</span>
-  <span class="mh">0x10995dd</span>		<span class="m">7631</span>			<span class="n">JBE</span> <span class="mh">0x1099610</span>
-  <span class="mh">0x10995df</span>		<span class="m">4883</span><span class="n">ec08</span>		<span class="n">SUBQ</span> <span class="o">$</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">SP</span>
-  <span class="mh">0x10995e3</span>		<span class="m">48892</span><span class="n">c24</span>		<span class="n">MOVQ</span> <span class="n">BP</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x10995e7</span>		<span class="m">488</span><span class="n">d2c24</span>		<span class="n">LEAQ</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
-  <span class="mh">0x10995eb</span>		<span class="m">488</span><span class="n">b5920</span>		<span class="n">MOVQ</span> <span class="mh">0x20</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">BX</span>
-  <span class="mh">0x10995ef</span>		<span class="m">4885</span><span class="n">db</span>			<span class="n">TESTQ</span> <span class="n">BX</span><span class="p">,</span> <span class="n">BX</span>
-  <span class="mh">0x10995f2</span>		<span class="m">7523</span>			<span class="n">JNE</span> <span class="mh">0x1099617</span>
-  <span class="mh">0x10995f4</span>		<span class="m">48837</span><span class="n">c241000</span>		<span class="n">CMPQ</span> <span class="o">$</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x10995fa</span>		<span class="m">740</span><span class="n">e</span>			<span class="n">JE</span> <span class="mh">0x109960a</span>
-  <span class="mh">0x10995fc</span>		<span class="n">e8bffeffff</span>		<span class="n">CALL</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-  <span class="mh">0x1099601</span>		<span class="m">488</span><span class="n">b2c24</span>		<span class="n">MOVQ</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
-  <span class="mh">0x1099605</span>		<span class="m">4883</span><span class="n">c408</span>		<span class="n">ADDQ</span> <span class="o">$</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">SP</span>
-  <span class="mh">0x1099609</span>		<span class="n">c3</span>			<span class="n">RET</span>
-  <span class="mh">0x109960a</span>		<span class="n">e8c1ddf6ff</span>		<span class="n">CALL</span> <span class="nf">runtime.panicwrap</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-  <span class="mh">0x109960f</span>		<span class="m">90</span>			<span class="n">NOPL</span>
-  <span class="mh">0x1099610</span>		<span class="n">e80b7ffbff</span>		<span class="n">CALL</span> <span class="nf">runtime.morestack_noctxt</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-  <span class="mh">0x1099615</span>		<span class="n">ebb9</span>			<span class="n">JMP</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-  <span class="mh">0x1099617</span>		<span class="m">488</span><span class="n">d7c2410</span>		<span class="n">LEAQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">DI</span>
-  <span class="mh">0x109961c</span>		<span class="m">48393</span><span class="n">b</span>			<span class="n">CMPQ</span> <span class="n">DI</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">BX</span><span class="p">)</span>
-  <span class="mh">0x109961f</span>		<span class="m">75</span><span class="n">d3</span>			<span class="n">JNE</span> <span class="mh">0x10995f4</span>
-  <span class="mh">0x1099621</span>		<span class="m">488923</span>			<span class="n">MOVQ</span> <span class="n">SP</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">BX</span><span class="p">)</span>
-  <span class="mh">0x1099624</span>		<span class="n">ebce</span>			<span class="n">JMP</span> <span class="mh">0x10995f4</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;strconv&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">abstract</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nf">f</span><span class="p">()</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">concrete</span> <span class="kd">struct</span><span class="p">{}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">concrete</span><span class="p">)</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
-	<span class="nx">i</span><span class="o">++</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="kd">var</span> <span class="nx">v1</span> <span class="nx">abstract</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">concrete</span><span class="p">{}</span>
-	<span class="nx">v1</span><span class="p">.</span><span class="nf">f</span><span class="p">()</span>
-
-	<span class="nx">v2</span> <span class="o">:=</span> <span class="nx">concrete</span><span class="p">{}</span>
-	<span class="nx">v2</span><span class="p">.</span><span class="nf">f</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></div><h2 id="review-of-what-happens-in-v1f">Review of what happens in <code>v1.f()</code></h2>
-<div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s">  <span class="nf">v1.f</span><span class="p">()</span>
-  <span class="mh">0x109959d</span>		<span class="m">488</span><span class="n">d059c1a0500</span>		<span class="n">LEAQ</span> <span class="n">go.itab.</span><span class="o">*</span><span class="n">main.concrete</span><span class="p">,</span><span class="nf">main.abstract</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
-  <span class="mh">0x10995a4</span>		<span class="m">8400</span>			<span class="n">TESTB</span> <span class="n">AL</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">AX</span><span class="p">)</span>
-  <span class="mh">0x10995a6</span>		<span class="m">488</span><span class="n">d05eba40f00</span>		<span class="n">LEAQ</span> <span class="nf">runtime.zerobase</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
-  <span class="mh">0x10995ad</span>		<span class="m">48890424</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-  <span class="mh">0x10995b1</span>		<span class="n">e81a000000</span>		<span class="n">CALL</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-</code></pre></div><p>Let&rsquo;s read that line by line.</p>
-<div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s">  <span class="mh">0x109959d</span>		<span class="m">488</span><span class="n">d059c1a0500</span>		<span class="n">LEAQ</span> <span class="n">go.itab.</span><span class="o">*</span><span class="n">main.concrete</span><span class="p">,</span><span class="nf">main.abstract</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
-</code></pre></div><p>We first load the <code>tab</code> field of the <code>itab</code> struct into the address pointed by the stack pointer (SP). This <code>itab</code> refers to the field &lsquo;itab&rsquo; of the iface struct (see <a href="https://github.com/golang/go/blob/bf86aec25972f3a100c3aa58a6abcbcc35bdea49/src/runtime/runtime2.go#L143-L146">iface</a> in runtime2.go):</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">iface</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">tab</span>  <span class="o">*</span><span class="nx">itab</span>
-  <span class="nx">data</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
-<span class="p">}</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s"><span class="mh">0x10995a4</span>		<span class="m">8400</span>			<span class="n">TESTB</span> <span class="n">AL</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">AX</span><span class="p">)</span>
-</code></pre></div><p>Here, we test that AL, which contains</p>
-<div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s"><span class="mh">0x10995a6</span>		<span class="m">488</span><span class="n">d05eba40f00</span>		<span class="n">LEAQ</span> <span class="nf">runtime.zerobase</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
-<span class="mh">0x10995ad</span>		<span class="m">48890424</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-</code></pre></div><p>Now that the <code>tab</code> address is contained in the address pointed by the SP, it&rsquo;s time to find out which concrete implementation of <code>f()</code> should be called:</p>
-<div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s"><span class="mh">0x10995b1</span>		<span class="n">e81a000000</span>		<span class="n">CALL</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-</code></pre></div><p>And here is the dispath function <code>main.(*concrete).f</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s"><span class="n">TEXT</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span> <span class="o">&lt;</span><span class="n">autogenerated</span><span class="o">&gt;</span>
-
-<span class="mh">0x10995d0</span>		<span class="m">65488</span><span class="n">b0c2530000000</span>	<span class="n">MOVQ</span> <span class="n">GS</span><span class="o">:</span><span class="mh">0x30</span><span class="p">,</span> <span class="n">CX</span>
-<span class="mh">0x10995d9</span>		<span class="m">483</span><span class="n">b6110</span>		<span class="n">CMPQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">SP</span>
-<span class="mh">0x10995dd</span>		<span class="m">7631</span>			<span class="n">JBE</span> <span class="mh">0x1099610</span>
-</code></pre></div><p>That&rsquo;s the <a href="https://cmc.gitbook.io/go-internals/chapter-i-go-assembly#splits">stack-split prologue</a> that deals with growing the stack when the goroutine doesn&rsquo;t have enough stack space. Basicall, <code>JBE</code> means &lsquo;jump to the stack-split epilogue if the value contained in <code>GS:0x30</code> is lower or equal to the SP (stack pointer). Since the stack grows backwards, meaning that SP will decrease as the stack grows).</p>
-<div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s"><span class="mh">0x10995df</span>		<span class="m">4883</span><span class="n">ec08</span>		<span class="n">SUBQ</span> <span class="o">$</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">SP</span>
-<span class="mh">0x10995e3</span>		<span class="m">48892</span><span class="n">c24</span>		<span class="n">MOVQ</span> <span class="n">BP</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-<span class="mh">0x10995e7</span>		<span class="m">488</span><span class="n">d2c24</span>		<span class="n">LEAQ</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
-<span class="mh">0x10995eb</span>		<span class="m">488</span><span class="n">b5920</span>		<span class="n">MOVQ</span> <span class="mh">0x20</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">BX</span>
-<span class="mh">0x10995ef</span>		<span class="m">4885</span><span class="n">db</span>			<span class="n">TESTQ</span> <span class="n">BX</span><span class="p">,</span> <span class="n">BX</span>
-<span class="mh">0x10995f2</span>		<span class="m">7523</span>			<span class="n">JNE</span> <span class="mh">0x1099617</span>
-<span class="mh">0x10995f4</span>		<span class="m">48837</span><span class="n">c241000</span>		<span class="n">CMPQ</span> <span class="o">$</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
-<span class="mh">0x10995fa</span>		<span class="m">740</span><span class="n">e</span>			<span class="n">JE</span> <span class="mh">0x109960a</span>
-<span class="mh">0x10995fc</span>		<span class="n">e8bffeffff</span>		<span class="n">CALL</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-<span class="mh">0x1099601</span>		<span class="m">488</span><span class="n">b2c24</span>		<span class="n">MOVQ</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
-<span class="mh">0x1099605</span>		<span class="m">4883</span><span class="n">c408</span>		<span class="n">ADDQ</span> <span class="o">$</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">SP</span>
-<span class="mh">0x1099609</span>		<span class="n">c3</span>			<span class="n">RET</span>
-<span class="mh">0x109960a</span>		<span class="n">e8c1ddf6ff</span>		<span class="n">CALL</span> <span class="nf">runtime.panicwrap</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-<span class="mh">0x109960f</span>		<span class="m">90</span>			<span class="n">NOPL</span>
-<span class="mh">0x1099610</span>		<span class="n">e80b7ffbff</span>		<span class="n">CALL</span> <span class="nf">runtime.morestack_noctxt</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-<span class="mh">0x1099615</span>		<span class="n">ebb9</span>			<span class="n">JMP</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-<span class="mh">0x1099617</span>		<span class="m">488</span><span class="n">d7c2410</span>		<span class="n">LEAQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">DI</span>
-<span class="mh">0x109961c</span>		<span class="m">48393</span><span class="n">b</span>			<span class="n">CMPQ</span> <span class="n">DI</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">BX</span><span class="p">)</span>
-<span class="mh">0x109961f</span>		<span class="m">75</span><span class="n">d3</span>			<span class="n">JNE</span> <span class="mh">0x10995f4</span>
-<span class="mh">0x1099621</span>		<span class="m">488923</span>			<span class="n">MOVQ</span> <span class="n">SP</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">BX</span><span class="p">)</span>
-<span class="mh">0x1099624</span>		<span class="n">ebce</span>			<span class="n">JMP</span> <span class="mh">0x10995f4</span>
-</code></pre></div><h2 id="review-of-what-happens-in-v2f">Review of what happens in <code>v2.f()</code></h2>
-<div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s">	<span class="nf">v2.f</span><span class="p">()</span>
-  <span class="mh">0x10995b6</span>		<span class="n">e805ffffff</span>		<span class="n">CALL</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-</code></pre></div><h2 id="notes">Notes</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;strconv&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">abstract</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">concrete</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">concrete</span><span class="p">)</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">i</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">v1</span> <span class="nx">abstract</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">concrete</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v1</span><span class="p">.</span><span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">v2</span> <span class="o">:=</span> <span class="nx">concrete</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v2</span><span class="p">.</span><span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Let&rsquo;s go over what <code>f1</code> and <code>f2</code> do.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-s" data-lang="s"><span class="line"><span class="cl"><span class="c1"># go build . -o ./main</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># go tool objdump -S ./main &gt; main.s</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">TEXT</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">mvalais</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">go</span><span class="o">-</span><span class="n">atomic</span><span class="o">-</span><span class="n">issue</span><span class="o">-</span><span class="n">wallez</span><span class="o">-</span><span class="n">tweet</span><span class="o">/</span><span class="n">main.go</span>
+</span></span><span class="line"><span class="cl"><span class="nf">func </span><span class="p">(</span><span class="n">concrete</span><span class="p">)</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994c0</span>		<span class="m">65488</span><span class="n">b0c2530000000</span>	<span class="n">MOVQ</span> <span class="n">GS</span><span class="o">:</span><span class="mh">0x30</span><span class="p">,</span> <span class="n">CX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994c9</span>		<span class="m">483</span><span class="n">b6110</span>		<span class="n">CMPQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994cd</span>		<span class="m">0</span><span class="n">f869c000000</span>		<span class="n">JBE</span> <span class="mh">0x109956f</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994d3</span>		<span class="m">4883</span><span class="n">ec58</span>		<span class="n">SUBQ</span> <span class="o">$</span><span class="mh">0x58</span><span class="p">,</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994d7</span>		<span class="m">48896</span><span class="n">c2450</span>		<span class="n">MOVQ</span> <span class="n">BP</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994dc</span>		<span class="m">488</span><span class="n">d6c2450</span>		<span class="n">LEAQ</span> <span class="mh">0x50</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">fmt.Print</span><span class="p">(</span><span class="nf">strconv.Itoa</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994e1</span>		<span class="m">48</span><span class="n">c7042401000000</span>	<span class="n">MOVQ</span> <span class="o">$</span><span class="mh">0x1</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="kr">return</span> <span class="nf">FormatInt</span><span class="p">(</span><span class="nf">int64</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="m">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994e9</span>		<span class="m">48</span><span class="n">c74424080a000000</span>	<span class="n">MOVQ</span> <span class="o">$</span><span class="mh">0xa</span><span class="p">,</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994f2</span>		<span class="n">e8097ffcff</span>		<span class="n">CALL</span> <span class="nf">strconv.FormatInt</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994f7</span>		<span class="m">488</span><span class="n">b442410</span>		<span class="n">MOVQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">AX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10994fc</span>		<span class="m">488</span><span class="n">b4c2418</span>		<span class="n">MOVQ</span> <span class="mh">0x18</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">CX</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">fmt.Print</span><span class="p">(</span><span class="nf">strconv.Itoa</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099501</span>		<span class="m">48890424</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099505</span>		<span class="m">48894</span><span class="n">c2408</span>		<span class="n">MOVQ</span> <span class="n">CX</span><span class="p">,</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109950a</span>		<span class="n">e8a1f7f6ff</span>		<span class="n">CALL</span> <span class="nf">runtime.convTstring</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109950f</span>		<span class="m">488</span><span class="n">b442410</span>		<span class="n">MOVQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">AX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099514</span>		<span class="m">0</span><span class="n">f57c0</span>			<span class="n">XORPS</span> <span class="n">X0</span><span class="p">,</span> <span class="n">X0</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099517</span>		<span class="m">0</span><span class="n">f11442440</span>		<span class="n">MOVUPS</span> <span class="n">X0</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109951c</span>		<span class="m">488</span><span class="n">d0dfd1a0100</span>		<span class="n">LEAQ</span> <span class="n">runtime.types</span><span class="m">+72160</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">CX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099523</span>		<span class="m">48894</span><span class="n">c2440</span>		<span class="n">MOVQ</span> <span class="n">CX</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099528</span>		<span class="m">4889442448</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="kr">return</span> <span class="nf">Fprint</span><span class="p">(</span><span class="n">os.Stdout</span><span class="p">,</span> <span class="n">a...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109952d</span>		<span class="m">488</span><span class="n">b05c4ea0d00</span>		<span class="n">MOVQ</span> <span class="nf">os.Stdout</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099534</span>		<span class="m">488</span><span class="n">d0d251b0500</span>		<span class="n">LEAQ</span> <span class="n">go.itab.</span><span class="o">*</span><span class="n">os.File</span><span class="p">,</span><span class="nf">io.Writer</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">CX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109953b</span>		<span class="m">48890</span><span class="n">c24</span>		<span class="n">MOVQ</span> <span class="n">CX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109953f</span>		<span class="m">4889442408</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099544</span>		<span class="m">488</span><span class="n">d442440</span>		<span class="n">LEAQ</span> <span class="mh">0x40</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">AX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099549</span>		<span class="m">4889442410</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109954e</span>		<span class="m">48</span><span class="n">c744241801000000</span>	<span class="n">MOVQ</span> <span class="o">$</span><span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x18</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099557</span>		<span class="m">48</span><span class="n">c744242001000000</span>	<span class="n">MOVQ</span> <span class="o">$</span><span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099560</span>		<span class="n">e8cb97ffff</span>		<span class="n">CALL</span> <span class="nf">fmt.Fprint</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099565</span>		<span class="m">488</span><span class="n">b6c2450</span>		<span class="n">MOVQ</span> <span class="mh">0x50</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109956a</span>		<span class="m">4883</span><span class="n">c458</span>		<span class="n">ADDQ</span> <span class="o">$</span><span class="mh">0x58</span><span class="p">,</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109956e</span>		<span class="n">c3</span>			<span class="n">RET</span>
+</span></span><span class="line"><span class="cl"><span class="nf">func </span><span class="p">(</span><span class="n">concrete</span><span class="p">)</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109956f</span>		<span class="n">e8ac7ffbff</span>		<span class="n">CALL</span> <span class="nf">runtime.morestack_noctxt</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099574</span>		<span class="n">e947ffffff</span>		<span class="n">JMP</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099579</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109957a</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109957b</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109957c</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109957d</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109957e</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109957f</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">TEXT</span> <span class="nf">main.main</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">mvalais</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">go</span><span class="o">-</span><span class="n">atomic</span><span class="o">-</span><span class="n">issue</span><span class="o">-</span><span class="n">wallez</span><span class="o">-</span><span class="n">tweet</span><span class="o">/</span><span class="n">main.go</span>
+</span></span><span class="line"><span class="cl"><span class="n">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099580</span>		<span class="m">65488</span><span class="n">b0c2530000000</span>	<span class="n">MOVQ</span> <span class="n">GS</span><span class="o">:</span><span class="mh">0x30</span><span class="p">,</span> <span class="n">CX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099589</span>		<span class="m">483</span><span class="n">b6110</span>		<span class="n">CMPQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109958d</span>		<span class="m">7631</span>			<span class="n">JBE</span> <span class="mh">0x10995c0</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109958f</span>		<span class="m">4883</span><span class="n">ec10</span>		<span class="n">SUBQ</span> <span class="o">$</span><span class="mh">0x10</span><span class="p">,</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099593</span>		<span class="m">48896</span><span class="n">c2408</span>		<span class="n">MOVQ</span> <span class="n">BP</span><span class="p">,</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099598</span>		<span class="m">488</span><span class="n">d6c2408</span>		<span class="n">LEAQ</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">v.f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109959d</span>		<span class="m">488</span><span class="n">d059c1a0500</span>		<span class="n">LEAQ</span> <span class="n">go.itab.</span><span class="o">*</span><span class="n">main.concrete</span><span class="p">,</span><span class="nf">main.abstract</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995a4</span>		<span class="m">8400</span>			<span class="n">TESTB</span> <span class="n">AL</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">AX</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995a6</span>		<span class="m">488</span><span class="n">d05eba40f00</span>		<span class="n">LEAQ</span> <span class="nf">runtime.zerobase</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995ad</span>		<span class="m">48890424</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995b1</span>		<span class="n">e81a000000</span>		<span class="n">CALL</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995b6</span>		<span class="m">488</span><span class="n">b6c2408</span>		<span class="n">MOVQ</span> <span class="mh">0x8</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995bb</span>		<span class="m">4883</span><span class="n">c410</span>		<span class="n">ADDQ</span> <span class="o">$</span><span class="mh">0x10</span><span class="p">,</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995bf</span>		<span class="n">c3</span>			<span class="n">RET</span>
+</span></span><span class="line"><span class="cl"><span class="n">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995c0</span>		<span class="n">e85b7ffbff</span>		<span class="n">CALL</span> <span class="nf">runtime.morestack_noctxt</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995c5</span>		<span class="n">ebb9</span>			<span class="n">JMP</span> <span class="nf">main.main</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995c7</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995c8</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995c9</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995ca</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995cb</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995cc</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995cd</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995ce</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995cf</span>		<span class="n">cc</span>			<span class="n">INT</span> <span class="o">$</span><span class="mh">0x3</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">TEXT</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span> <span class="o">&lt;</span><span class="n">autogenerated</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995d0</span>		<span class="m">65488</span><span class="n">b0c2530000000</span>	<span class="n">MOVQ</span> <span class="n">GS</span><span class="o">:</span><span class="mh">0x30</span><span class="p">,</span> <span class="n">CX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995d9</span>		<span class="m">483</span><span class="n">b6110</span>		<span class="n">CMPQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995dd</span>		<span class="m">7631</span>			<span class="n">JBE</span> <span class="mh">0x1099610</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995df</span>		<span class="m">4883</span><span class="n">ec08</span>		<span class="n">SUBQ</span> <span class="o">$</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995e3</span>		<span class="m">48892</span><span class="n">c24</span>		<span class="n">MOVQ</span> <span class="n">BP</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995e7</span>		<span class="m">488</span><span class="n">d2c24</span>		<span class="n">LEAQ</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995eb</span>		<span class="m">488</span><span class="n">b5920</span>		<span class="n">MOVQ</span> <span class="mh">0x20</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">BX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995ef</span>		<span class="m">4885</span><span class="n">db</span>			<span class="n">TESTQ</span> <span class="n">BX</span><span class="p">,</span> <span class="n">BX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995f2</span>		<span class="m">7523</span>			<span class="n">JNE</span> <span class="mh">0x1099617</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995f4</span>		<span class="m">48837</span><span class="n">c241000</span>		<span class="n">CMPQ</span> <span class="o">$</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995fa</span>		<span class="m">740</span><span class="n">e</span>			<span class="n">JE</span> <span class="mh">0x109960a</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995fc</span>		<span class="n">e8bffeffff</span>		<span class="n">CALL</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099601</span>		<span class="m">488</span><span class="n">b2c24</span>		<span class="n">MOVQ</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099605</span>		<span class="m">4883</span><span class="n">c408</span>		<span class="n">ADDQ</span> <span class="o">$</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099609</span>		<span class="n">c3</span>			<span class="n">RET</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109960a</span>		<span class="n">e8c1ddf6ff</span>		<span class="n">CALL</span> <span class="nf">runtime.panicwrap</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109960f</span>		<span class="m">90</span>			<span class="n">NOPL</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099610</span>		<span class="n">e80b7ffbff</span>		<span class="n">CALL</span> <span class="nf">runtime.morestack_noctxt</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099615</span>		<span class="n">ebb9</span>			<span class="n">JMP</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099617</span>		<span class="m">488</span><span class="n">d7c2410</span>		<span class="n">LEAQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">DI</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109961c</span>		<span class="m">48393</span><span class="n">b</span>			<span class="n">CMPQ</span> <span class="n">DI</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">BX</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109961f</span>		<span class="m">75</span><span class="n">d3</span>			<span class="n">JNE</span> <span class="mh">0x10995f4</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099621</span>		<span class="m">488923</span>			<span class="n">MOVQ</span> <span class="n">SP</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">BX</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x1099624</span>		<span class="n">ebce</span>			<span class="n">JMP</span> <span class="mh">0x10995f4</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;strconv&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">abstract</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">concrete</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">concrete</span><span class="p">)</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">i</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">v1</span> <span class="nx">abstract</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">concrete</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v1</span><span class="p">.</span><span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">v2</span> <span class="o">:=</span> <span class="nx">concrete</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v2</span><span class="p">.</span><span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="review-of-what-happens-in-v1f">Review of what happens in <code>v1.f()</code></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-s" data-lang="s"><span class="line"><span class="cl">  <span class="nf">v1.f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x109959d</span>		<span class="m">488</span><span class="n">d059c1a0500</span>		<span class="n">LEAQ</span> <span class="n">go.itab.</span><span class="o">*</span><span class="n">main.concrete</span><span class="p">,</span><span class="nf">main.abstract</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995a4</span>		<span class="m">8400</span>			<span class="n">TESTB</span> <span class="n">AL</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">AX</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995a6</span>		<span class="m">488</span><span class="n">d05eba40f00</span>		<span class="n">LEAQ</span> <span class="nf">runtime.zerobase</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995ad</span>		<span class="m">48890424</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995b1</span>		<span class="n">e81a000000</span>		<span class="n">CALL</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span></code></pre></div><p>Let&rsquo;s read that line by line.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-s" data-lang="s"><span class="line"><span class="cl">  <span class="mh">0x109959d</span>		<span class="m">488</span><span class="n">d059c1a0500</span>		<span class="n">LEAQ</span> <span class="n">go.itab.</span><span class="o">*</span><span class="n">main.concrete</span><span class="p">,</span><span class="nf">main.abstract</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
+</span></span></code></pre></div><p>We first load the <code>tab</code> field of the <code>itab</code> struct into the address pointed by the stack pointer (SP). This <code>itab</code> refers to the field &lsquo;itab&rsquo; of the iface struct (see <a href="https://github.com/golang/go/blob/bf86aec25972f3a100c3aa58a6abcbcc35bdea49/src/runtime/runtime2.go#L143-L146">iface</a> in runtime2.go):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">iface</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">tab</span>  <span class="o">*</span><span class="nx">itab</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">data</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-s" data-lang="s"><span class="line"><span class="cl"><span class="mh">0x10995a4</span>		<span class="m">8400</span>			<span class="n">TESTB</span> <span class="n">AL</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">AX</span><span class="p">)</span>
+</span></span></code></pre></div><p>Here, we test that AL, which contains</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-s" data-lang="s"><span class="line"><span class="cl"><span class="mh">0x10995a6</span>		<span class="m">488</span><span class="n">d05eba40f00</span>		<span class="n">LEAQ</span> <span class="nf">runtime.zerobase</span><span class="p">(</span><span class="n">SB</span><span class="p">),</span> <span class="n">AX</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995ad</span>		<span class="m">48890424</span>		<span class="n">MOVQ</span> <span class="n">AX</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span></code></pre></div><p>Now that the <code>tab</code> address is contained in the address pointed by the SP, it&rsquo;s time to find out which concrete implementation of <code>f()</code> should be called:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-s" data-lang="s"><span class="line"><span class="cl"><span class="mh">0x10995b1</span>		<span class="n">e81a000000</span>		<span class="n">CALL</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span></code></pre></div><p>And here is the dispath function <code>main.(*concrete).f</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-s" data-lang="s"><span class="line"><span class="cl"><span class="n">TEXT</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span> <span class="o">&lt;</span><span class="n">autogenerated</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995d0</span>		<span class="m">65488</span><span class="n">b0c2530000000</span>	<span class="n">MOVQ</span> <span class="n">GS</span><span class="o">:</span><span class="mh">0x30</span><span class="p">,</span> <span class="n">CX</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995d9</span>		<span class="m">483</span><span class="n">b6110</span>		<span class="n">CMPQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995dd</span>		<span class="m">7631</span>			<span class="n">JBE</span> <span class="mh">0x1099610</span>
+</span></span></code></pre></div><p>That&rsquo;s the <a href="https://cmc.gitbook.io/go-internals/chapter-i-go-assembly#splits">stack-split prologue</a> that deals with growing the stack when the goroutine doesn&rsquo;t have enough stack space. Basicall, <code>JBE</code> means &lsquo;jump to the stack-split epilogue if the value contained in <code>GS:0x30</code> is lower or equal to the SP (stack pointer). Since the stack grows backwards, meaning that SP will decrease as the stack grows).</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-s" data-lang="s"><span class="line"><span class="cl"><span class="mh">0x10995df</span>		<span class="m">4883</span><span class="n">ec08</span>		<span class="n">SUBQ</span> <span class="o">$</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995e3</span>		<span class="m">48892</span><span class="n">c24</span>		<span class="n">MOVQ</span> <span class="n">BP</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995e7</span>		<span class="m">488</span><span class="n">d2c24</span>		<span class="n">LEAQ</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995eb</span>		<span class="m">488</span><span class="n">b5920</span>		<span class="n">MOVQ</span> <span class="mh">0x20</span><span class="p">(</span><span class="n">CX</span><span class="p">),</span> <span class="n">BX</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995ef</span>		<span class="m">4885</span><span class="n">db</span>			<span class="n">TESTQ</span> <span class="n">BX</span><span class="p">,</span> <span class="n">BX</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995f2</span>		<span class="m">7523</span>			<span class="n">JNE</span> <span class="mh">0x1099617</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995f4</span>		<span class="m">48837</span><span class="n">c241000</span>		<span class="n">CMPQ</span> <span class="o">$</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995fa</span>		<span class="m">740</span><span class="n">e</span>			<span class="n">JE</span> <span class="mh">0x109960a</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10995fc</span>		<span class="n">e8bffeffff</span>		<span class="n">CALL</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1099601</span>		<span class="m">488</span><span class="n">b2c24</span>		<span class="n">MOVQ</span> <span class="m">0</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">BP</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1099605</span>		<span class="m">4883</span><span class="n">c408</span>		<span class="n">ADDQ</span> <span class="o">$</span><span class="mh">0x8</span><span class="p">,</span> <span class="n">SP</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1099609</span>		<span class="n">c3</span>			<span class="n">RET</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x109960a</span>		<span class="n">e8c1ddf6ff</span>		<span class="n">CALL</span> <span class="nf">runtime.panicwrap</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x109960f</span>		<span class="m">90</span>			<span class="n">NOPL</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1099610</span>		<span class="n">e80b7ffbff</span>		<span class="n">CALL</span> <span class="nf">runtime.morestack_noctxt</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1099615</span>		<span class="n">ebb9</span>			<span class="n">JMP</span> <span class="nf">main.</span><span class="p">(</span><span class="o">*</span><span class="n">concrete</span><span class="p">)</span><span class="nf">.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1099617</span>		<span class="m">488</span><span class="n">d7c2410</span>		<span class="n">LEAQ</span> <span class="mh">0x10</span><span class="p">(</span><span class="n">SP</span><span class="p">),</span> <span class="n">DI</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x109961c</span>		<span class="m">48393</span><span class="n">b</span>			<span class="n">CMPQ</span> <span class="n">DI</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">BX</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x109961f</span>		<span class="m">75</span><span class="n">d3</span>			<span class="n">JNE</span> <span class="mh">0x10995f4</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1099621</span>		<span class="m">488923</span>			<span class="n">MOVQ</span> <span class="n">SP</span><span class="p">,</span> <span class="m">0</span><span class="p">(</span><span class="n">BX</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1099624</span>		<span class="n">ebce</span>			<span class="n">JMP</span> <span class="mh">0x10995f4</span>
+</span></span></code></pre></div><h2 id="review-of-what-happens-in-v2f">Review of what happens in <code>v2.f()</code></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-s" data-lang="s"><span class="line"><span class="cl">	<span class="nf">v2.f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995b6</span>		<span class="n">e805ffffff</span>		<span class="n">CALL</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span></code></pre></div><h2 id="notes">Notes</h2>
 <h3 id="the-ax-and-al-registers">The AX and AL registers</h3>
 <p>From <a href="https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf" title="Intel 64's x86_64 specification">intel64</a> (Figure 3-5. Alternate General-Purpose Register Names, p. 3-12 Vol. 1):</p>
-<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">| 0000 0001 0010 0011 0100 0101 0110 0111 | ------&gt; EAX
-
-|                     0100 0101 0110 0111 | ------&gt; AX
-
-|                               0110 0111 | ------&gt; AL
-
-|                     0100 0101           | ------&gt; AH
-</code></pre></div><p>(from a Stackoverflow <a href="https://stackoverflow.com/a/52892696/3808537%3E">post</a>)</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">| 0000 0001 0010 0011 0100 0101 0110 0111 | ------&gt; EAX
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">|                     0100 0101 0110 0111 | ------&gt; AX
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">|                               0110 0111 | ------&gt; AL
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">|                     0100 0101           | ------&gt; AH
+</span></span></code></pre></div><p>(from a Stackoverflow <a href="https://stackoverflow.com/a/52892696/3808537%3E">post</a>)</p>
 <p>From <a href="https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf" title="Intel 64's x86_64 specification">intel64</a> (p. 3-16, Vol. 1):</p>
 <blockquote>
-<p>AF (bit 4) Auxiliary Carry flag — Set if an arithmetic operation generates a carry or a borrow out of bit 3 of the result; cleared otherwise. This flag is used in binary-coded decimal (BCD) arithmetic.</p>
-</blockquote>
+<p>AF (bit 4) Auxiliary Carry flag — Set if an arithmetic operation generates a carry or a borrow out of bit 3 of the result; cleared otherwise. This flag is used in binary-coded decimal (BCD) arithmetic.</p></blockquote>
 <h3 id="the-gs-register">The GS register</h3>
 <p>In the x86-64 <a href="https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf" title="Intel 64's x86_64 specification">intel64</a> (p. 3-14, Vol. 1):</p>
 <blockquote>
-<p>The DS, ES, FS, and GS registers point to four data segments. The availability of four data segments permits efficient and secure access to different types of data structures. For example, four separate data segments might be created: one for the data structures of the current module, another for the data exported from a higher-level module, a third for a dynamically created data structure, and a fourth for data shared with another program. To access additional data segments, the application program must load segment selectors for these segments into the DS, ES, FS, and GS registers, as needed.</p>
-</blockquote>
+<p>The DS, ES, FS, and GS registers point to four data segments. The availability of four data segments permits efficient and secure access to different types of data structures. For example, four separate data segments might be created: one for the data structures of the current module, another for the data exported from a higher-level module, a third for a dynamically created data structure, and a fourth for data shared with another program. To access additional data segments, the application program must load segment selectors for these segments into the DS, ES, FS, and GS registers, as needed.</p></blockquote>
 <h3 id="the-q-suffix-in-movq-and-leaq">The &lsquo;Q&rsquo; suffix in MOVQ and LEAQ</h3>
 <p>I could not find that in the <a href="https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf" title="Intel 64's x86_64 specification">Intel 64 PDF</a>. Apparently, these prefixes were introduced with the assembler (<code>as</code>). See binutils&rsquo;s as <a href="https://sourceware.org/binutils/docs/as/i386_002dMnemonics.html#Instruction-Naming">i386mnemonics</a>:</p>
 <blockquote>
-<p>Instruction mnemonics are suffixed with one character modifiers which specify the size of operands. The letters ‘b’, ‘w’, ‘l’ and ‘q’ specify byte, word, long and quadruple word operands.</p>
-</blockquote>
+<p>Instruction mnemonics are suffixed with one character modifiers which specify the size of operands. The letters ‘b’, ‘w’, ‘l’ and ‘q’ specify byte, word, long and quadruple word operands.</p></blockquote>
 <h2 id="what-are-sp-and-sb">What are SP and SB</h2>
 <p>From <a href="https://golang.org/doc/asm#symbols">https://golang.org/doc/asm#symbols</a>:</p>
 <ul>
@@ -341,9 +339,9 @@ Woah! Because interface values in Go are represented by two pointers causing ass
 <li>go-internals book: <a href="https://github.com/teh-cmc/go-internals">https://github.com/teh-cmc/go-internals</a></li>
 <li>x86 Programming course: <a href="https://courses.cs.washington.edu/courses/cse351/17wi/lectures/CSE351-L09-x86-II_17wi.pdf">https://courses.cs.washington.edu/courses/cse351/17wi/lectures/CSE351-L09-x86-II_17wi.pdf</a></li>
 </ul>
-<div class="highlight"><pre class="chroma"><code class="language-s" data-lang="s">	<span class="nf">v2.f</span><span class="p">()</span>
-  <span class="mh">0x10995b6</span>		<span class="n">e805ffffff</span>		<span class="n">CALL</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-s" data-lang="s"><span class="line"><span class="cl">	<span class="nf">v2.f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="mh">0x10995b6</span>		<span class="n">e805ffffff</span>		<span class="n">CALL</span> <span class="nf">main.concrete.f</span><span class="p">(</span><span class="n">SB</span><span class="p">)</span>
+</span></span></code></pre></div>
     </div>
     <a href="https://github.com/maelvls/maelvls.github.io/edit/source/content/2020/deep-dive-go-assembly/index.md">📝 Edit this page</a>
     <div class="tags">
@@ -356,34 +354,9 @@ Woah! Because interface values in Go are represented by two pointers causing ass
         
         
         
-    </div>
-
-<script
-  src="https://utteranc.es/client.js"
-  repo="maelvls/maelvls.github.io"
-  issue-term="pathname"
-  label="💬"
-  theme="github-light"
-  crossorigin="anonymous"
-  async
-></script>
-</div>
+    </div></div>
 
 </main><footer>
-
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-88710120-3', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-</footer>
-</body>
+    
+</footer></body>
 </html>

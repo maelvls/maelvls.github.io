@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>kubernetes on maelvls dev blog</title>
+    <title>Kubernetes on maelvls dev blog</title>
     <link>https://maelvls.dev/do-not-share-yet/tags/kubernetes/</link>
-    <description>Recent content in kubernetes on maelvls.dev</description>
+    <description>Recent content in Kubernetes on maelvls.dev</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 07 Jul 2020 16:33:55 +0200</lastBuildDate>
