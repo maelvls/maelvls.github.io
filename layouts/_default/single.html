@@ -74,7 +74,7 @@
         {{ end }}
         {{ end }}
     </div>
-    {{- if .Site.DisqusShortname -}}
+    {{- if .Site.Params.DisqusShortname -}}
     {{- $.Scratch.Set "isDisqus" true -}}
     {{- if and (isset .Params "type") (in .Site.Params.disableDisqusTypes .Params.type) -}}
     {{- $.Scratch.Set "isDisqus" false -}}

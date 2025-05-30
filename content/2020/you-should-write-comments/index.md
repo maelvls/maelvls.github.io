@@ -301,7 +301,7 @@ As a final word, I want us to remember that yes, maintaining comments is a pain.
 <!--
 Join the discussion on Twitter:
 
-{{< twitter user="maelvls" id="1233140530017644544" >}}
+{{< x user="maelvls" id="1233140530017644544" >}}
 \-->
 
 Updates:

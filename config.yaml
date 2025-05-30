@@ -7,6 +7,10 @@ theme: hugo-vitae
 # fork of hugo-vitae because the latest version of Hugo removed the internal
 # template that was used to render the Google Analytics script.
 
+# Set this to a very high number to effectively disable pagination.
+pagination:
+  pagerSize: 1000
+
 # NOTE: I'm not using disqus. I'm using utterance.us. The short name for
 # utterance.us is the Github repo slug, for example:
 # maelvls/maelvls.github.io.
@@ -55,9 +59,9 @@ params:
     - name: Github
       icon: fab fa-github
       url: "https://github.com/maelvls"
-    - name: Twitter
-      icon: fab fa-twitter
-      url: "https://twitter.com/maelvls"
+    - name: X
+      icon: fab fa-x
+      url: "https://x.com/maelvls"
     - name: Maël Valais's DEV Community Profile
       icon: fab fa-dev
       url: https://dev.to/maelvls

@@ -267,5 +267,5 @@ Yay! In the end, the issue was not so deep... A manual edit to the firewall rule
 <!--
 If you with to leave a comment, here is a Twitter thread:
 
-{{< twitter user="maelvls" id="1221488683485925376" >}}
+{{< x user="maelvls" id="1221488683485925376" >}}
 -->

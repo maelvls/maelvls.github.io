@@ -1,6 +1,6 @@
 ---
 title: About
-date: 00-00-00
+date: 2025-05-27T11:17:16Z
 type: page
 disqus: false
 author: Maël Valais

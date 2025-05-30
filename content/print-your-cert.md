@@ -1,6 +1,6 @@
 ---
 title: print-your-cert redirect
-date: 00-00-00
+date: 2025-05-27T11:17:16Z
 type: page
 devtoSkip: true
 ---

@@ -51,7 +51,7 @@ We can see that one single object (Pod) can be read, edited and updated by diffe
 
 As Brian Grant put it,
 
-{{< twitter user="bgrant0607" id="1111473660479430656" >}}
+{{< x user="bgrant0607" id="1111473660479430656" >}}
 
 ## Pod example
 
@@ -295,7 +295,7 @@ status:
 <!--
 Discussion is happening here:
 
-{{< twitter user="maelvls" id="1195058503695642627" >}}
+{{< x user="maelvls" id="1195058503695642627" >}}
 -->
 
 **Update 20 Dec 2021:** Xiang Yuxuan kindly nudged me about the fact that I was was saying that the 2017 thread was talking about removing conditions, but it was initially to remove the 'phase' field.
