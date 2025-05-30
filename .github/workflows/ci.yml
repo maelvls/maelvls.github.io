@@ -9,13 +9,13 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
-      - uses: peaceiris/actions-hugo@v2
+      - uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: "0.75.1"
+          hugo-version: "0.147.6"
 
       - run: hugo -d ./public --minify
       - run: hugo -d ./public/do-not-share-yet --baseURL "https://maelvls.dev/do-not-share-yet/" --buildDrafts --buildFuture
@@ -24,7 +24,7 @@ jobs:
       # sufficient. It allows me to push to master but for some reason it
       # won't trigger a github-pages "build & push to CDN". I had to create a
       # personnal access token with the 'repo' scope.
-      - uses: peaceiris/actions-gh-pages@v3
+      - uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.GITHUB_PAT }}
           publish_dir: ./public
