@@ -11,11 +11,6 @@ theme: hugo-vitae
 pagination:
   pagerSize: 1000
 
-# NOTE: I'm not using disqus. I'm using utterance.us. The short name for
-# utterance.us is the Github repo slug, for example:
-# maelvls/maelvls.github.io.
-disqusShortname: maelvls/maelvls.github.io
-
 algolia:
   index: "maelvls.dev"
   appID: "3XE19IWIB0"
@@ -46,6 +41,10 @@ params:
   algolia:
     vars: [title, summary, date, publishdate, expirydate, permalink]
     params: [categories, tags]
+  # NOTE: I'm using utterance.us. The short name for utterance.us is the Github
+  # repo slug, for example: maelvls/maelvls.github.io. To disable comments for a
+  # single page, use `disableComments: true` in the front matter of that page.
+  utteranceShortname: maelvls/maelvls.github.io
 
   mainSections: ["2024", "2023", "2022", "2021", "2020", "2019"]
 

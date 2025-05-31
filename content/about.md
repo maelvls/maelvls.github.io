@@ -2,7 +2,7 @@
 title: About
 date: 2025-05-27T11:17:16Z
 type: page
-disqus: false
+disableComments: true
 author: Maël Valais
 devtoSkip: true
 ---

@@ -74,19 +74,10 @@
         {{ end }}
         {{ end }}
     </div>
-    {{- if .Site.Params.DisqusShortname -}}
-    {{- $.Scratch.Set "isDisqus" true -}}
-    {{- if and (isset .Params "type") (in .Site.Params.disableDisqusTypes .Params.type) -}}
-    {{- $.Scratch.Set "isDisqus" false -}}
-    {{- end -}}
-    {{- if and (isset .Params "disqus") (eq .Params.disqus false) -}}
-    {{- $.Scratch.Set "isDisqus" false -}}
-    {{- else if and (isset .Params "disqus") (eq .Params.disqus true) -}}
-    {{- $.Scratch.Set "isDisqus" true -}}
-    {{- end -}}
-    {{- if eq ($.Scratch.Get "isDisqus") true -}}
-    {{- partial "disqus.html" . -}}
-    {{- end -}}
+    <!-- Debug: DisableComments value -->
+
+    {{- if and .Site.Params.UtteranceShortname (not (eq .Params.DisableComments true)) -}}
+    {{- partial "utterance.html" . -}}
     {{- end -}}
 </div>
 {{ end }}
