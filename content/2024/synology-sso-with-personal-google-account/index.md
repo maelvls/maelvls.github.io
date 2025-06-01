@@ -137,13 +137,6 @@ enablePasswordDB: false
 
 Finally, run Dex:
 
-> With this command, you will be using Dex images that I built:
->
-> ```text
-> ghcr.io/maelvls/dex
-> ```
->
-> I wouldn't recommend using random Docker images from the internet, especially since this is about authentication. I might be a malicious actor trying to steal your Synology credentials! But if you still want to proceed, here is an image! Note that I am not monitoring the image for security vulnerabilities, and do not guarantee that it is secure. Use at your own risk!
 
 ```bash
 docker run --name dex -d \
@@ -155,10 +148,22 @@ docker run --name dex -d \
   -e GOOGLE_CLIENT_ID=207842732284-l7nhetlsvimmds80fa2knir8fundp3h4.apps.googleusercontent.com \
   -e GOOGLE_CLIENT_SECRET=redacted \
   -p 5556:5556 \
-  ghcr.io/maelvls/dex:google-to-synology-sso-v1@sha256:345c8fec6b222c308759f21864c6af3b16c373801fd5e0b7ad4b131a743d3b07 serve /dex.yaml
+  ghcr.io/maelvls/dex:google-to-synology-sso-v2@sha256:252713d98c8369612994fbbed6f257d79dc35ff84b2cbb6952a11d63c57b64bb serve /dex.yaml
 ```
 
-## Rebuilding the image yourself and pushing it to your Synology NAS
+> With this command, you will be using Dex images that I built:
+>
+> ```text
+> ghcr.io/maelvls/dex
+> ```
+>
+> I wouldn't recommend using random Docker images from the internet, especially since this is about authentication. I might be a malicious actor trying to steal your Synology credentials! But if you still want to proceed, here is an image! Note that I am not monitoring the image for security vulnerabilities, and do not guarantee that it is secure. Use at your own risk!
+
+## The Docker image
+
+The Docker image is available on GitHub Container Registry: <https://ghcr.io/maelvls/dex>.
+
+### Rebuilding the image yourself and pushing it to your Synology NAS
 
 First, install `zig` and `ko`. That will allow you to cross-compile Dex to `linux/amd64` on macOS without Buildx (cross-compiling is required because Dex's sqlite library needs CGO)
 
@@ -187,7 +192,7 @@ Then, copy the image to your NAS:
 ssh yournas /usr/local/bin/docker load </tmp/out.tar
 ```
 
-## (Just so that I don't forget) Here is how I pushed `ghcr.io/maelvls/dex` to GitHub Container Registry
+### (Just so that I don't forget) Here is how I pushed `ghcr.io/maelvls/dex` to GitHub Container Registry
 
 ```bash
 git tag google-to-synology-sso-v1
@@ -207,10 +212,24 @@ CC="zig cc -target x86_64-linux" CXX="zig c++ -target x86_64-linux" CGO_ENABLED=
     --image-annotation "org.opencontainers.image.documentation=https://maelvls.dev/synology-sso-with-personal-google-account/"
 ```
 
-The image (with hash) is:
+See the history below to know the image hashes.
+
+### History
+
+#### Apr 12nd, 2024
+
+I pushed the `google-to-synology-sso-v1` tag with the image:
 
 ```text
 ghcr.io/maelvls/dex:google-to-synology-sso-v1@sha256:345c8fec6b222c308759f21864c6af3b16c373801fd5e0b7ad4b131a743d3b07
+```
+
+#### June 1st, 2025
+
+The `google-to-synology-sso-v1` tag was buggy, the `ExtendPayload` func wasn't being called correctly. I've pushed `google-to-synology-sso-v2` to fix that. Here is the new image:
+
+```text
+ghcr.io/maelvls/dex:google-to-synology-sso-v2@sha256:252713d98c8369612994fbbed6f257d79dc35ff84b2cbb6952a11d63c57b64bb
 ```
 
 ## Conclusion
