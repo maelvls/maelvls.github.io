@@ -163,10 +163,6 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># I have disabled email login.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">enablePasswordDB</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
 </span></span></span></code></pre></div><p>Finally, run Dex:</p>
-<blockquote>
-<p>With this command, you will be using Dex images that I built:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">ghcr.io/maelvls/dex
-</span></span></code></pre></div><p>I wouldn&rsquo;t recommend using random Docker images from the internet, especially since this is about authentication. I might be a malicious actor trying to steal your Synology credentials! But if you still want to proceed, here is an image! Note that I am not monitoring the image for security vulnerabilities, and do not guarantee that it is secure. Use at your own risk!</p></blockquote>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">docker run --name dex -d <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>  -v <span class="nv">$HOME</span>/dex.yaml:/dex.yaml <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>  -v <span class="nv">$HOME</span>/dex.sqlite:/dex.sqlite <span class="se">\
@@ -176,8 +172,14 @@
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>  -e <span class="nv">GOOGLE_CLIENT_ID</span><span class="o">=</span>207842732284-l7nhetlsvimmds80fa2knir8fundp3h4.apps.googleusercontent.com <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>  -e <span class="nv">GOOGLE_CLIENT_SECRET</span><span class="o">=</span>redacted <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>  -p 5556:5556 <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>  ghcr.io/maelvls/dex:google-to-synology-sso-v1@sha256:345c8fec6b222c308759f21864c6af3b16c373801fd5e0b7ad4b131a743d3b07 serve /dex.yaml
-</span></span></code></pre></div><h2 id="rebuilding-the-image-yourself-and-pushing-it-to-your-synology-nas">Rebuilding the image yourself and pushing it to your Synology NAS</h2>
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  ghcr.io/maelvls/dex:google-to-synology-sso-v2@sha256:252713d98c8369612994fbbed6f257d79dc35ff84b2cbb6952a11d63c57b64bb serve /dex.yaml
+</span></span></code></pre></div><blockquote>
+<p>With this command, you will be using Dex images that I built:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">ghcr.io/maelvls/dex
+</span></span></code></pre></div><p>I wouldn&rsquo;t recommend using random Docker images from the internet, especially since this is about authentication. I might be a malicious actor trying to steal your Synology credentials! But if you still want to proceed, here is an image! Note that I am not monitoring the image for security vulnerabilities, and do not guarantee that it is secure. Use at your own risk!</p></blockquote>
+<h2 id="the-docker-image">The Docker image</h2>
+<p>The Docker image is available on GitHub Container Registry: <a href="https://ghcr.io/maelvls/dex">https://ghcr.io/maelvls/dex</a>.</p>
+<h3 id="rebuilding-the-image-yourself-and-pushing-it-to-your-synology-nas">Rebuilding the image yourself and pushing it to your Synology NAS</h3>
 <p>First, install <code>zig</code> and <code>ko</code>. That will allow you to cross-compile Dex to <code>linux/amd64</code> on macOS without Buildx (cross-compiling is required because Dex&rsquo;s sqlite library needs CGO)</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">brew install ko zig
 </span></span></code></pre></div><p>Clone the fork:</p>
@@ -189,7 +191,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>  ko build ./cmd/dex --bare --tarball /tmp/out.tar --push<span class="o">=</span><span class="nb">false</span>
 </span></span></code></pre></div><p>Then, copy the image to your NAS:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ssh yournas /usr/local/bin/docker load &lt;/tmp/out.tar
-</span></span></code></pre></div><h2 id="just-so-that-i-dont-forget-here-is-how-i-pushed-ghcriomaelvlsdex-to-github-container-registry">(Just so that I don&rsquo;t forget) Here is how I pushed <code>ghcr.io/maelvls/dex</code> to GitHub Container Registry</h2>
+</span></span></code></pre></div><h3 id="just-so-that-i-dont-forget-here-is-how-i-pushed-ghcriomaelvlsdex-to-github-container-registry">(Just so that I don&rsquo;t forget) Here is how I pushed <code>ghcr.io/maelvls/dex</code> to GitHub Container Registry</h3>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git tag google-to-synology-sso-v1
 </span></span><span class="line"><span class="cl">git push maelvls google-to-synology-sso-v1
 </span></span></code></pre></div><p>Then, I built and pushed the image with <code>ko</code>:</p>
@@ -201,8 +203,14 @@
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>    --image-annotation <span class="s2">&#34;org.opencontainers.image.source=https://github.com/maelvls/dex&#34;</span> <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>    --image-annotation <span class="s2">&#34;org.opencontainers.image.revision=</span><span class="k">$(</span>git rev-parse HEAD<span class="k">)</span><span class="s2">&#34;</span> <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>    --image-annotation <span class="s2">&#34;org.opencontainers.image.documentation=https://maelvls.dev/synology-sso-with-personal-google-account/&#34;</span>
-</span></span></code></pre></div><p>The image (with hash) is:</p>
+</span></span></code></pre></div><p>See the history below to know the image hashes.</p>
+<h3 id="history">History</h3>
+<h4 id="apr-12nd-2024">Apr 12nd, 2024</h4>
+<p>I pushed the <code>google-to-synology-sso-v1</code> tag with the image:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">ghcr.io/maelvls/dex:google-to-synology-sso-v1@sha256:345c8fec6b222c308759f21864c6af3b16c373801fd5e0b7ad4b131a743d3b07
+</span></span></code></pre></div><h4 id="june-1st-2025">June 1st, 2025</h4>
+<p>The <code>google-to-synology-sso-v1</code> tag was buggy, the <code>ExtendPayload</code> func wasn&rsquo;t being called correctly. I&rsquo;ve pushed <code>google-to-synology-sso-v2</code> to fix that. Here is the new image:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">ghcr.io/maelvls/dex:google-to-synology-sso-v2@sha256:252713d98c8369612994fbbed6f257d79dc35ff84b2cbb6952a11d63c57b64bb
 </span></span></code></pre></div><h2 id="conclusion">Conclusion</h2>
 <p>With this method, my parents can log into the NAS with their Google account and no longer have to remember their Synology username and password.</p>
 <p>Although it works, I wish I didn&rsquo;t have to fork Dex to customize the claims it puts into the JWT payload. I came across a couple of designs that would aim to make Dex more extendable, but none have been implemented yet.</p>
