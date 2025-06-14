@@ -216,7 +216,17 @@ See the history below to know the image hashes.
 
 ### History
 
-#### Apr 12nd, 2024
+#### June 14th, 2025: v4
+
+The dex container kept crashing due to i/o timeouts when Dex was trying to connect to the Synology API. I fixed that by adding a retry mechanism with an exponential backoff and a maximum of 10 retries and maximum of 1 hour between retries.
+
+The image:
+
+```text
+ghcr.io/maelvls/dex:google-to-synology-sso-v4@sha256:f8bf15901c2b994337994c4f60c48c154437af656cbe85701cb8d1d7d94127ba
+```
+
+#### Apr 12nd, 2024: v1
 
 I pushed the `google-to-synology-sso-v1` tag with the image:
 
