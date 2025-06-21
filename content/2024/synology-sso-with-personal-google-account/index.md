@@ -195,26 +195,50 @@ ssh yournas /usr/local/bin/docker load </tmp/out.tar
 ### (Just so that I don't forget) Here is how I pushed `ghcr.io/maelvls/dex` to GitHub Container Registry
 
 ```bash
-git tag google-to-synology-sso-v1
-git push maelvls google-to-synology-sso-v1
+export VERSION=google-to-synology-sso-v6
+git tag $VERSION -m "Release $VERSION"
+git push maelvls $VERSION
 ```
 
-Then, I built and pushed the image with `ko`:
+Then:
 
 ```bash
 CC="zig cc -target x86_64-linux" CXX="zig c++ -target x86_64-linux" CGO_ENABLED=1 \
   KO_DOCKER_REPO=ghcr.io/maelvls/dex \
   KO_DEFAULTBASEIMAGE=alpine \
-  ko build ./cmd/dex --bare --push=true --tags google-to-synology-sso-v1 \
-    --image-annotation "org.opencontainers.image.description=Google to Synology SSO" \
+  ko build ./cmd/dex --bare --push=true --tags $VERSION \
+    --image-annotation "org.opencontainers.image.created=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --image-annotation "org.opencontainers.image.url=https://maelvls.dev/synology-sso-with-personal-google-account/" \
     --image-annotation "org.opencontainers.image.source=https://github.com/maelvls/dex" \
+    --image-annotation "org.opencontainers.image.version=$VERSION" \
     --image-annotation "org.opencontainers.image.revision=$(git rev-parse HEAD)" \
-    --image-annotation "org.opencontainers.image.documentation=https://maelvls.dev/synology-sso-with-personal-google-account/"
+    --image-annotation "org.opencontainers.image.vendor=Maël Valais" \
+    --image-annotation "org.opencontainers.image.title=google-to-synology-sso" \
+    --image-annotation "org.opencontainers.image.description=Fork of Dex to use Synology SSO with Google accounts" \
+    --image-annotation "org.opencontainers.image.documentation=https://maelvls.dev/synology-sso-with-personal-google-account/" \
+    --image-annotation "org.opencontainers.image.authors=Maël Valais <mael.valais@gmail.com>" \
+    --image-annotation "org.opencontainers.image.licenses=Apache-2.0" \
+    --image-annotation "org.opencontainers.image.ref.name=google-to-synology-sso"
 ```
 
 See the history below to know the image hashes.
 
 ### History
+
+#### June 21st, 2025: v5
+
+I somehow didn't realize that I was hardcoding the Synology URL. In this
+version, I've added `SYNO_URL` (I thought I had already added it, but I
+hadn't!).
+
+I've also renamed the fork to google-to-synology-sso to help with
+discoverability.
+
+The image:
+
+```text
+ghcr.io/maelvls/dex:google-to-synology-sso-v5@sha256:e805a95be565268421ccdb2271dfc0d85ae12b6b53cf82c47b294d34891ff3d1
+```
 
 #### June 14th, 2025: v4
 
