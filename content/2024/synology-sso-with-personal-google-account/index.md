@@ -227,6 +227,8 @@ See the history below to know the image hashes.
 
 #### June 21st, 2025: v5
 
+Release: [google-to-synology-sso-v5](https://github.com/maelvls/google-to-synology-sso/releases/tag/google-to-synology-sso-v5)
+
 I somehow didn't realize that I was hardcoding the Synology URL. In this
 version, I've added `SYNO_URL` (I thought I had already added it, but I
 hadn't!).
@@ -242,6 +244,8 @@ ghcr.io/maelvls/dex:google-to-synology-sso-v5@sha256:e805a95be565268421ccdb2271d
 
 #### June 14th, 2025: v4
 
+Release: [google-to-synology-sso-v4](https://github.com/maelvls/google-to-synology-sso/releases/tag/google-to-synology-sso-v4)
+
 The dex container kept crashing due to i/o timeouts when Dex was trying to connect to the Synology API. I fixed that by adding a retry mechanism with an exponential backoff and a maximum of 10 retries and maximum of 1 hour between retries.
 
 The image:
@@ -250,20 +254,34 @@ The image:
 ghcr.io/maelvls/dex:google-to-synology-sso-v4@sha256:f8bf15901c2b994337994c4f60c48c154437af656cbe85701cb8d1d7d94127ba
 ```
 
-#### Apr 12nd, 2024: v1
+#### June 4th, 2025: v3
 
-I pushed the `google-to-synology-sso-v1` tag with the image:
+Release: [google-to-synology-sso-v3](https://github.com/maelvls/google-to-synology-sso/releases/tag/google-to-synology-sso-v3)
+
+Reduced the Synology SSO loading time from 10 seconds to 1 second. The reason it was so slow is that I wasn't caching the Synology users and was fetching them every time someone was logging into Synology. The image:
 
 ```text
-ghcr.io/maelvls/dex:google-to-synology-sso-v1@sha256:345c8fec6b222c308759f21864c6af3b16c373801fd5e0b7ad4b131a743d3b07
+ghcr.io/maelvls/dex:google-to-synology-sso-v3@sha256:d0d889e32400ef70529daef32e7a77bf9da021cbaff9954589db2204a5c49335
 ```
 
-#### June 1st, 2025
+#### June 1st, 2025: v2
+
+Release: [google-to-synology-sso-v2](https://github.com/maelvls/google-to-synology-sso/releases/tag/google-to-synology-sso-v2)
 
 The `google-to-synology-sso-v1` tag was buggy, the `ExtendPayload` func wasn't being called correctly. I've pushed `google-to-synology-sso-v2` to fix that. Here is the new image:
 
 ```text
 ghcr.io/maelvls/dex:google-to-synology-sso-v2@sha256:252713d98c8369612994fbbed6f257d79dc35ff84b2cbb6952a11d63c57b64bb
+```
+
+#### Apr 12nd, 2024: v1
+
+Release: [google-to-synology-sso-v1](https://github.com/maelvls/google-to-synology-sso/releases/tag/google-to-synology-sso-v1)
+
+Image:
+
+```text
+ghcr.io/maelvls/dex:google-to-synology-sso-v1@sha256:345c8fec6b222c308759f21864c6af3b16c373801fd5e0b7ad4b131a743d3b07
 ```
 
 ## Conclusion
