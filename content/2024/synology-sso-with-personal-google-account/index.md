@@ -9,6 +9,7 @@ tags: [Synology, NAS, Single Sign-On, Google, OIDC]
 author: Maël Valais
 devtoId: 1826751
 devtoPublished: true
+devtoUrl: https://dev.to/maelvls/logging-into-synology-nas-with-personal-google-accounts-16go
 ---
 
 ## Introduction
