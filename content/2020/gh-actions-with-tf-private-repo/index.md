@@ -109,3 +109,6 @@ The actions also makes sure all `ssh` calls are rewritten to `https`. The 'crede
   with:
     credentials: https://foo:{{secrets.GH_TOKEN}}@github.com
 ```
+
+## Additional resources:
+- [Terraform Init – Command Overview with Quick Usage Examples](https://spacelift.io/blog/terraform-init)
